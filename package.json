@@ -7,6 +7,8 @@
     "start:production": "ng s --configuration production",
     "build": "ng build",
     "build:prod": "ng build --configuration production --base-href",
+    "clean": "rm -rf dist",
+    "clean-modules": "rm -rf node_modules",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
