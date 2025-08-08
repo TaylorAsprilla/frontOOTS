@@ -8,8 +8,8 @@ describe('WeatherComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ WeatherComponent ]
-    })
+    imports: [WeatherComponent]
+})
     .compileComponents();
   });
 

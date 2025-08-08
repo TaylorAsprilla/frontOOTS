@@ -8,8 +8,8 @@ describe('CanadaMapComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CanadaMapComponent ]
-    })
+    imports: [CanadaMapComponent]
+})
     .compileComponents();
   });
 

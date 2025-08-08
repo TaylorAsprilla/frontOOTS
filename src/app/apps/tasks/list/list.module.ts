@@ -4,18 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { QuillModule } from 'ngx-quill';
 import { NgbCollapseModule, NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { SortablejsModule } from 'ngx-sortablejs';
-import { PageTitleModule } from 'src/app/shared/page-title/page-title.module';
+
 import { ListRoutingModule } from './list-routing.module';
 import { ListComponent } from './list.component';
 import { TaskDetailComponent } from './task-detail/task-detail.component';
 
 
 @NgModule({
-  declarations: [
-    ListComponent,
-    TaskDetailComponent
-  ],
-  imports: [
+    imports: [
     CommonModule,
     FormsModule,
     QuillModule,
@@ -23,8 +19,9 @@ import { TaskDetailComponent } from './task-detail/task-detail.component';
     NgbCollapseModule,
     NgbTooltipModule,
     SortablejsModule,
-    PageTitleModule,
-    ListRoutingModule
-  ]
+    ListRoutingModule,
+    ListComponent,
+    TaskDetailComponent
+]
 })
 export class ListModule { }

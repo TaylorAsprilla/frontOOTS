@@ -6,8 +6,8 @@ import {
   NgbNavModule,
   NgbPaginationModule,
 } from "@ng-bootstrap/ng-bootstrap";
-import { PageTitleModule } from "src/app/shared/page-title/page-title.module";
-import { WidgetModule } from "src/app/shared/widget/widget.module";
+
+
 import { ProfileComponent } from "./profile/profile.component";
 import { MemberInfoComponent } from "../member-info/member-info.component";
 import { UserboxComponent } from "./profile/userbox/userbox.component";
@@ -17,32 +17,28 @@ import { AboutComponent } from "./profile/about/about.component";
 import { ContactsRoutingModule } from "./contacts-routing.module";
 
 @NgModule({
-  declarations: [
-    ProfileComponent,
-    MemberInfoComponent,
-    UserboxComponent,
-    SettingsComponent,
-    TimelineComponent,
-    AboutComponent,
-  ],
-  imports: [
+    imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     NgbModalModule,
     NgbNavModule,
     NgbPaginationModule,
-    PageTitleModule,
-    WidgetModule,
     ContactsRoutingModule,
-  ],
-  exports: [
     ProfileComponent,
     MemberInfoComponent,
     UserboxComponent,
     SettingsComponent,
     TimelineComponent,
     AboutComponent,
-  ],
+],
+    exports: [
+        ProfileComponent,
+        MemberInfoComponent,
+        UserboxComponent,
+        SettingsComponent,
+        TimelineComponent,
+        AboutComponent,
+    ],
 })
 export class ContactsModule {}

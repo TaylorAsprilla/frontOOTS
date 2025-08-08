@@ -8,8 +8,8 @@ describe('LockScreenComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LockScreenComponent ]
-    })
+    imports: [LockScreenComponent]
+})
     .compileComponents();
   });
 

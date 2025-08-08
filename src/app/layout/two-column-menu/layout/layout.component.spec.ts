@@ -8,8 +8,8 @@ describe('TwoColumnMenuLayoutComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TwoColumnMenuLayoutComponent]
-    })
+    imports: [TwoColumnMenuLayoutComponent]
+})
       .compileComponents();
   });
 

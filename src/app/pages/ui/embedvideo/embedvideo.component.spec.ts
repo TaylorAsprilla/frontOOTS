@@ -8,8 +8,8 @@ describe('EmbedvideoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EmbedvideoComponent ]
-    })
+    imports: [EmbedvideoComponent]
+})
     .compileComponents();
   });
 

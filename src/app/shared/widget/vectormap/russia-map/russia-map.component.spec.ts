@@ -8,8 +8,8 @@ describe('RussiaMapComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RussiaMapComponent ]
-    })
+    imports: [RussiaMapComponent]
+})
     .compileComponents();
   });
 

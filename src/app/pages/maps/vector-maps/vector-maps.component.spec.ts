@@ -8,8 +8,8 @@ describe('VectorMapsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ VectorMapsComponent ]
-    })
+    imports: [VectorMapsComponent]
+})
     .compileComponents();
   });
 

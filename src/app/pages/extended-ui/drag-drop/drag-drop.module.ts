@@ -4,18 +4,15 @@ import { CommonModule } from '@angular/common';
 import { DragDropRoutingModule } from './drag-drop-routing.module';
 import { DragDropComponent } from './drag-drop.component';
 import { SortablejsModule } from 'ngx-sortablejs';
-import { PageTitleModule } from 'src/app/shared/page-title/page-title.module';
+
 
 
 @NgModule({
-  declarations: [
-    DragDropComponent
-  ],
-  imports: [
+    imports: [
     CommonModule,
     SortablejsModule,
-    PageTitleModule,
-    DragDropRoutingModule
-  ]
+    DragDropRoutingModule,
+    DragDropComponent
+]
 })
 export class DragDropModule { }

@@ -8,8 +8,8 @@ describe('PlaceholdersComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PlaceholdersComponent ]
-    })
+    imports: [PlaceholdersComponent]
+})
     .compileComponents();
   });
 

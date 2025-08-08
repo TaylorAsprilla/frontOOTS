@@ -8,8 +8,8 @@ describe('HorizontalLayoutComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [HorizontalLayoutComponent]
-    })
+    imports: [HorizontalLayoutComponent]
+})
       .compileComponents();
   });
 

@@ -8,8 +8,8 @@ describe('Error500Component', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ Error500Component ]
-    })
+    imports: [Error500Component]
+})
     .compileComponents();
   });
 

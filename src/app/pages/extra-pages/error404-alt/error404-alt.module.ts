@@ -5,12 +5,10 @@ import { Error404AltComponent } from './error404-alt.component';
 
 
 @NgModule({
-  declarations: [
-    Error404AltComponent
-  ],
-  imports: [
-    CommonModule,
-    Error404AltRoutingModule
-  ]
+    imports: [
+        CommonModule,
+        Error404AltRoutingModule,
+        Error404AltComponent
+    ]
 })
 export class Error404AltModule { }

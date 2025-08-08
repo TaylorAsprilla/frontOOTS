@@ -3,21 +3,17 @@ import { CommonModule } from '@angular/common';
 
 import { InboxRoutingModule } from './inbox-routing.module';
 import { InboxComponent } from './inbox.component';
-import { SharedModule } from '../shared/shared.module';
+
 import { FormsModule } from '@angular/forms';
-import { PageTitleModule } from 'src/app/shared/page-title/page-title.module';
+
 
 
 @NgModule({
-  declarations: [
-    InboxComponent
-  ],
-  imports: [
+    imports: [
     CommonModule,
     FormsModule,
-    PageTitleModule,
-    SharedModule,
-    InboxRoutingModule
-  ]
+    InboxRoutingModule,
+    InboxComponent
+]
 })
 export class InboxModule { }

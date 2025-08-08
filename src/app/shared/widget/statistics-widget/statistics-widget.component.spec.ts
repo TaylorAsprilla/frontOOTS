@@ -8,8 +8,8 @@ describe('StatisticsWidgetComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ StatisticsWidgetComponent ]
-    })
+    imports: [StatisticsWidgetComponent]
+})
     .compileComponents();
   });
 

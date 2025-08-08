@@ -8,8 +8,8 @@ describe('PortletCardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PortletCardComponent ]
-    })
+    imports: [PortletCardComponent]
+})
     .compileComponents();
   });
 

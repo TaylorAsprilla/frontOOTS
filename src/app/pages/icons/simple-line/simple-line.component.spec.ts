@@ -8,8 +8,8 @@ describe('SimpleLineComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SimpleLineComponent ]
-    })
+    imports: [SimpleLineComponent]
+})
     .compileComponents();
   });
 

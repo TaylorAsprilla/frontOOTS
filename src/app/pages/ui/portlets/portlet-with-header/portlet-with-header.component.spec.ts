@@ -8,8 +8,8 @@ describe('PortletWithHeaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PortletWithHeaderComponent ]
-    })
+    imports: [PortletWithHeaderComponent]
+})
     .compileComponents();
   });
 

@@ -8,8 +8,8 @@ describe('Error404AltComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ Error404AltComponent ]
-    })
+    imports: [Error404AltComponent]
+})
     .compileComponents();
   });
 

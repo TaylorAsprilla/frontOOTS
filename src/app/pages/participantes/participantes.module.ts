@@ -4,21 +4,20 @@ import { CrearParticipanteComponent } from "./crear-participante/crear-participa
 import { ParticipantesRoutingModule } from "./participantes-routing.module";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbNavModule, NgbProgressbarModule } from "@ng-bootstrap/ng-bootstrap";
-import { PageTitleModule } from "src/app/shared/page-title/page-title.module";
+
 import { WizardRoutingModule } from "../forms/wizard/wizard-routing.module";
 
 @NgModule({
-  declarations: [CrearParticipanteComponent],
-  imports: [
+    imports: [
     CommonModule,
     ParticipantesRoutingModule,
     ReactiveFormsModule,
     FormsModule,
     NgbProgressbarModule,
     NgbNavModule,
-    PageTitleModule,
     WizardRoutingModule,
-  ],
-  exports: [CrearParticipanteComponent],
+    CrearParticipanteComponent,
+],
+    exports: [CrearParticipanteComponent],
 })
 export class ParticipantesModule {}

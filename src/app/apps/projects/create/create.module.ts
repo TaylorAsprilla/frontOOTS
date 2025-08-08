@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbDatepickerModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Select2Module } from 'ng-select2-component';
 import { NgxDropzoneModule } from 'ngx-dropzone';
-import { PageTitleModule } from 'src/app/shared/page-title/page-title.module';
+
 import { CreateRoutingModule } from './create-routing.module';
 import { CreateComponent } from './create.component';
 
@@ -22,8 +22,7 @@ import { CreateComponent } from './create.component';
     Select2Module,
     NgxDropzoneModule,
     NgbDatepickerModule,
-    PageTitleModule,
     CreateRoutingModule
-  ]
+]
 })
 export class CreateModule { }

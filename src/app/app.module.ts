@@ -8,7 +8,7 @@ import { AppComponent } from './app.component';
 import { ErrorInterceptor } from './core/helpers/error.interceptor';
 import { FakeBackendProvider } from './core/helpers/fake-backend';
 import { JwtInterceptor } from './core/helpers/jwt.interceptor';
-import { LayoutModule } from './layout/layout.module';
+
 
 @NgModule({
   declarations: [
@@ -19,9 +19,8 @@ import { LayoutModule } from './layout/layout.module';
     HttpClientModule,
     JoyrideModule.forRoot(),
     SweetAlert2Module.forRoot(),
-    AppRoutingModule,
-    LayoutModule
-  ],
+    AppRoutingModule
+],
   providers: [
     Title,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
