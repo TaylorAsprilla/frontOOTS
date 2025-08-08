@@ -8,26 +8,26 @@
               <a
                 [routerLink]="'../../dashboard-1'"
                 class="logo logo-dark text-center"
-              >
+                >
                 <span class="logo-lg">
                   <img
                     src="../assets/images/logos/logo-oots.png"
                     alt="OOTS Colombia"
                     width="150"
-                  />
+                    />
                 </span>
               </a>
 
               <a
                 [routerLink]="'../../dashboard-1'"
                 class="logo logo-light text-center"
-              >
+                >
                 <span class="logo-lg">
                   <img
                     src="../assets/images/logos/logo-oots.png"
                     alt="OOTS Colombia"
                     width="150"
-                  />
+                    />
                 </span>
               </a>
             </div>
@@ -41,124 +41,136 @@
             name="login-form"
             [formGroup]="loginForm"
             (ngSubmit)="onSubmit()"
-          >
+            >
             <app-ui-preloader [display]="loading"></app-ui-preloader>
-            <ngb-alert type="danger" *ngIf="error" [dismissible]="false">{{
-              error
-            }}</ngb-alert>
+            @if (error) {
+              <ngb-alert type="danger" [dismissible]="false">{{
+                error
+              }}</ngb-alert>
+            }
 
             <div class="mb-3">
               <label for="emailaddress" class="form-label" i18n
                 >Correo Electrónico</label
-              >
-              <input
-                class="form-control"
-                type="email"
-                id="emailaddress"
-                i18n-placeholder
-                placeholder="Ingrese su correo electrónico"
-                formControlName="email"
+                >
+                <input
+                  class="form-control"
+                  type="email"
+                  id="emailaddress"
+                  i18n-placeholder
+                  placeholder="Ingrese su correo electrónico"
+                  formControlName="email"
                 [ngClass]="{
                   'is-invalid': formSubmitted && formValues.email.invalid
                 }"
-                required
-              />
+                  required
+                  />
 
-              <div
-                *ngIf="formSubmitted && formValues.email.invalid"
-                class="invalid-feedback"
-              >
-                <div *ngIf="formValues.email.errors?.required" i18n>
+                @if (formSubmitted && formValues.email.invalid) {
+                  <div
+                    class="invalid-feedback"
+                    >
+                    @if (formValues.email.errors?.required) {
+                      <div i18n>
                   EL correo electrónico es obligatorio.
                 </div>
-                <div *ngIf="formValues.email.errors?.email" i18n>
+                    }
+                    @if (formValues.email.errors?.email) {
+                      <div i18n>
                   Debe ser una dirección de correo electrónico válida.
                 </div>
+                    }
+                  </div>
+                }
               </div>
-            </div>
 
-            <div class="mb-3">
-              <label for="password" class="form-label" i18n>Contraseña</label>
-              <div class="input-group input-group-merge">
-                <input
-                  [type]="showPassword ? 'text' : 'password'"
-                  id="password"
-                  class="form-control"
-                  i18n-placeholder
-                  placeholder="Enter your password"
-                  formControlName="password"
-                  required
-                  minlength="4"
+              <div class="mb-3">
+                <label for="password" class="form-label" i18n>Contraseña</label>
+                <div class="input-group input-group-merge">
+                  <input
+                    [type]="showPassword ? 'text' : 'password'"
+                    id="password"
+                    class="form-control"
+                    i18n-placeholder
+                    placeholder="Enter your password"
+                    formControlName="password"
+                    required
+                    minlength="4"
                   [ngClass]="{
                     'is-invalid': formSubmitted && formValues.password.invalid
                   }"
-                />
-                <div
-                  class="input-group-text"
-                  (click)="showPassword = !showPassword"
-                >
-                  <span class="password-eye"></span>
-                </div>
-                <div
-                  *ngIf="formSubmitted && formValues.password.invalid"
-                  class="invalid-feedback"
-                >
-                  <div *ngIf="formValues.password.errors?.required" i18n>
+                    />
+                  <div
+                    class="input-group-text"
+                    (click)="showPassword = !showPassword"
+                    >
+                    <span class="password-eye"></span>
+                  </div>
+                  @if (formSubmitted && formValues.password.invalid) {
+                    <div
+                      class="invalid-feedback"
+                      >
+                      @if (formValues.password.errors?.required) {
+                        <div i18n>
                     La contraseña es obligatoria.
                   </div>
-                  <div *ngIf="formValues.password.errors?.minlength" i18n>
+                      }
+                      @if (formValues.password.errors?.minlength) {
+                        <div i18n>
                     La longitud de la contraseña debe ser mayor que 3.
                   </div>
+                      }
+                    </div>
+                  }
                 </div>
               </div>
-            </div>
 
-            <div class="mb-3">
-              <div class="form-check">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  id="checkbox-signin"
-                  checked
-                />
-                <label class="form-check-label" for="checkbox-signin" i18n
-                  >Recordar</label
-                >
-              </div>
-            </div>
+              <div class="mb-3">
+                <div class="form-check">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    id="checkbox-signin"
+                    checked
+                    />
+                  <label class="form-check-label" for="checkbox-signin" i18n
+                    >Recordar</label
+                    >
+                  </div>
+                </div>
 
-            <div class="text-center d-grid">
-              <button
-                class="btn btn-primary"
-                type="button"
-                (click)="onSubmit()"
-                i18n
-              >
+                <div class="text-center d-grid">
+                  <button
+                    class="btn btn-primary"
+                    type="button"
+                    (click)="onSubmit()"
+                    i18n
+                    >
                 Iniciar Sesión
               </button>
+                </div>
+              </form>
             </div>
-          </form>
-        </div>
-        <!-- end card-body -->
-      </div>
-      <!-- end card -->
+            <!-- end card-body -->
+          </div>
+          <!-- end card -->
 
-      <div class="row mt-3">
-        <div class="col-12 text-center">
-          <p>
-            <a
-              [routerLink]="['../reset-password']"
-              class="text-white-50 ms-1"
-              i18n
-              >¿Olvidaste tu contraseña?</a
-            >
-          </p>
+          <div class="row mt-3">
+            <div class="col-12 text-center">
+              <p>
+                <a
+                  [routerLink]="['../reset-password']"
+                  class="text-white-50 ms-1"
+                  i18n
+                  >¿Olvidaste tu contraseña?</a
+                  >
+                </p>
+              </div>
+              <!-- end col -->
+            </div>
+            <!-- end row -->
+          </div>
+          <!-- end col -->
         </div>
-        <!-- end col -->
-      </div>
-      <!-- end row -->
-    </div>
-    <!-- end col -->
-  </div>
-  <!-- end row -->
-</app-default-layout>
+        <!-- end row -->
+      </app-default-layout>

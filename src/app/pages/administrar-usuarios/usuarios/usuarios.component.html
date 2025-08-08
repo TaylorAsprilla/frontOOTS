@@ -15,7 +15,7 @@
             type="button"
             class="btn btn-primary waves-effect waves-light"
             (click)="openModal()"
-          >
+            >
             <i class="mdi mdi-plus-circle me-1"></i> Nuevo Usuario
           </button>
         </div>
@@ -33,7 +33,7 @@
           (search)="searchData($event)"
           [isSortable]="true"
           (sort)="onSort($event)"
-        >
+          >
         </app-advanced-table>
       </div>
       <!-- end card body-->
@@ -74,15 +74,16 @@
             'is-invalid':
               nuevoUsuario.submitted && formularioUsuario.primerNombre.invalid
           }"
-        />
-        <div
-          *ngIf="
-            nuevoUsuario.submitted && formularioUsuario.primerNombre.invalid
-          "
-          class="invalid-feedback"
-        >
-          Por favor ingrese el nombre
-        </div>
+          />
+        @if (
+          nuevoUsuario.submitted && formularioUsuario.primerNombre.invalid
+          ) {
+          <div
+            class="invalid-feedback"
+            >
+            Por favor ingrese el nombre
+          </div>
+        }
       </div>
       <div class="mb-3">
         <label for="segundoNombre" class="form-label"> Segundo Nombre </label>
@@ -93,7 +94,7 @@
           placeholder="Ingrese el segundo nombre"
           required
           formControlName="segundoNombre"
-        />
+          />
       </div>
       <div class="mb-3">
         <label for="primerApellido" class="form-label obligatorio">
@@ -110,199 +111,207 @@
             'is-invalid':
               nuevoUsuario.submitted && formularioUsuario.primerApellido.invalid
           }"
-        />
-        <div
-          *ngIf="
-            nuevoUsuario.submitted && formularioUsuario.primerApellido.invalid
-          "
-          class="invalid-feedback"
-        >
-          Por favor ingrese el apellido
-        </div>
+          />
+        @if (
+          nuevoUsuario.submitted && formularioUsuario.primerApellido.invalid
+          ) {
+          <div
+            class="invalid-feedback"
+            >
+            Por favor ingrese el apellido
+          </div>
+        }
       </div>
       <div class="mb-3">
         <label for="segundoApellido" class="form-label">
           Segundo Apellido</label
-        >
-        <input
-          type="text"
-          class="form-control"
-          id="segundoApellido"
-          placeholder="Ingrese el segundo apellido"
-          required
-          formControlName="segundoApellido"
-        />
-      </div>
+          >
+          <input
+            type="text"
+            class="form-control"
+            id="segundoApellido"
+            placeholder="Ingrese el segundo apellido"
+            required
+            formControlName="segundoApellido"
+            />
+        </div>
 
-      <div class="mb-3">
-        <label for="celular" class="form-label obligatorio"> Celular </label>
-        <input
-          type="text"
-          class="form-control"
-          id="celular"
-          placeholder="Ingrese el número de celular"
-          required
-          formControlName="celular"
+        <div class="mb-3">
+          <label for="celular" class="form-label obligatorio"> Celular </label>
+          <input
+            type="text"
+            class="form-control"
+            id="celular"
+            placeholder="Ingrese el número de celular"
+            required
+            formControlName="celular"
           [ngClass]="{
             'is-invalid':
               nuevoUsuario.submitted && formularioUsuario.celular.invalid
           }"
-        />
+            />
 
-        <div
-          *ngIf="nuevoUsuario.submitted && formularioUsuario.celular.invalid"
-          class="invalid-feedback"
-        >
-          Por favor ingrese el número de celular
+          @if (nuevoUsuario.submitted && formularioUsuario.celular.invalid) {
+            <div
+              class="invalid-feedback"
+              >
+              Por favor ingrese el número de celular
+            </div>
+          }
         </div>
-      </div>
 
-      <div class="mb-3">
-        <label for="email" class="form-label obligatorio">
-          Correo Electrónico
-        </label>
-        <input
-          type="email"
-          class="form-control"
-          id="email"
-          placeholder="ingrese el correo electrónico"
-          required
-          formControlName="email"
+        <div class="mb-3">
+          <label for="email" class="form-label obligatorio">
+            Correo Electrónico
+          </label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            placeholder="ingrese el correo electrónico"
+            required
+            formControlName="email"
           [ngClass]="{
             'is-invalid':
               nuevoUsuario.submitted && formularioUsuario.email.invalid
           }"
-        />
+            />
 
-        <div
-          *ngIf="nuevoUsuario.submitted && formularioUsuario.email.invalid"
-          class="invalid-feedback"
-        >
-          Por favor ingrese el correo electrónico
+          @if (nuevoUsuario.submitted && formularioUsuario.email.invalid) {
+            <div
+              class="invalid-feedback"
+              >
+              Por favor ingrese el correo electrónico
+            </div>
+          }
         </div>
-      </div>
 
-      <div class="mb-3">
-        <label for="tipoDocumento" class="form-label obligatorio">
-          Tipo de Documento
-        </label>
-        <select
-          class="form-select"
-          id="tipoDocumento"
-          formControlName="tipoDocumento"
-        >
-          <option value="" disabled selected>
-            Seleccione un tipo de documento
-          </option>
-          <option value="Cédula de Ciudadanía">Cédula de Ciudadanía</option>
-          <option value="Tarjeta de Identidad">Tarjeta de Identidad</option>
-          <option value="Cédula de Extranjería">Cédula de Extranjería</option>
-          <option value="Pasaporte">Pasaporte</option>
-        </select>
-        <div
-          *ngIf="
+        <div class="mb-3">
+          <label for="tipoDocumento" class="form-label obligatorio">
+            Tipo de Documento
+          </label>
+          <select
+            class="form-select"
+            id="tipoDocumento"
+            formControlName="tipoDocumento"
+            >
+            <option value="" disabled selected>
+              Seleccione un tipo de documento
+            </option>
+            <option value="Cédula de Ciudadanía">Cédula de Ciudadanía</option>
+            <option value="Tarjeta de Identidad">Tarjeta de Identidad</option>
+            <option value="Cédula de Extranjería">Cédula de Extranjería</option>
+            <option value="Pasaporte">Pasaporte</option>
+          </select>
+          @if (
             nuevoUsuario.submitted && formularioUsuario.tipoDocumento.invalid
-          "
-          class="text-danger"
-        >
-          Tipo de Documento es requerido
+            ) {
+            <div
+              class="text-danger"
+              >
+              Tipo de Documento es requerido
+            </div>
+          }
         </div>
-      </div>
 
-      <!-- Número de Documento -->
-      <div class="mb-3">
-        <label for="numeroDocumento" class="form-label obligatorio">
-          Número de Documento
-        </label>
-        <input
-          type="text"
-          id="numeroDocumento"
-          class="form-control"
-          formControlName="numeroDocumento"
-        />
-        <div
-          *ngIf="
+        <!-- Número de Documento -->
+        <div class="mb-3">
+          <label for="numeroDocumento" class="form-label obligatorio">
+            Número de Documento
+          </label>
+          <input
+            type="text"
+            id="numeroDocumento"
+            class="form-control"
+            formControlName="numeroDocumento"
+            />
+          @if (
             nuevoUsuario.submitted && formularioUsuario.numeroDocumento.invalid
-          "
-          class="text-danger"
-        >
-          Número de Documento es requerido
+            ) {
+            <div
+              class="text-danger"
+              >
+              Número de Documento es requerido
+            </div>
+          }
         </div>
-      </div>
 
-      <!-- Dirección -->
-      <div class="mb-3">
-        <label for="direccion" class="form-label obligatorio">
-          Dirección
-        </label>
-        <input
-          type="text"
-          id="direccion"
-          class="form-control"
-          formControlName="direccion"
-        />
-        <div
-          *ngIf="nuevoUsuario.submitted && formularioUsuario.direccion.invalid"
-          class="text-danger"
-        >
-          Dirección es requerida
+        <!-- Dirección -->
+        <div class="mb-3">
+          <label for="direccion" class="form-label obligatorio">
+            Dirección
+          </label>
+          <input
+            type="text"
+            id="direccion"
+            class="form-control"
+            formControlName="direccion"
+            />
+          @if (nuevoUsuario.submitted && formularioUsuario.direccion.invalid) {
+            <div
+              class="text-danger"
+              >
+              Dirección es requerida
+            </div>
+          }
         </div>
-      </div>
 
-      <!-- Ciudad -->
-      <div class="mb-3">
-        <label for="ciudad" class="form-label obligatorio"> Ciudad </label>
-        <input
-          type="text"
-          id="ciudad"
-          class="form-control"
-          formControlName="ciudad"
-        />
-        <div
-          *ngIf="nuevoUsuario.submitted && formularioUsuario.ciudad.invalid"
-          class="text-danger"
-        >
-          Ciudad es requerida
+        <!-- Ciudad -->
+        <div class="mb-3">
+          <label for="ciudad" class="form-label obligatorio"> Ciudad </label>
+          <input
+            type="text"
+            id="ciudad"
+            class="form-control"
+            formControlName="ciudad"
+            />
+          @if (nuevoUsuario.submitted && formularioUsuario.ciudad.invalid) {
+            <div
+              class="text-danger"
+              >
+              Ciudad es requerida
+            </div>
+          }
         </div>
-      </div>
 
-      <!-- Ciudad -->
-      <div class="mb-3">
-        <label for="fechaNacimiento" class="form-label obligatorio">
-          Fecha de Nacimiento
-        </label>
-        <input
-          type="date"
-          id="fechaNacimiento"
-          class="form-control"
-          formControlName="fechaNacimiento"
-        />
-        <div
-          *ngIf="
+        <!-- Ciudad -->
+        <div class="mb-3">
+          <label for="fechaNacimiento" class="form-label obligatorio">
+            Fecha de Nacimiento
+          </label>
+          <input
+            type="date"
+            id="fechaNacimiento"
+            class="form-control"
+            formControlName="fechaNacimiento"
+            />
+          @if (
             nuevoUsuario.submitted && formularioUsuario.fechaNacimiento.invalid
-          "
-          class="text-danger"
-        >
-          La Fecha de nacimiento es requerida
+            ) {
+            <div
+              class="text-danger"
+              >
+              La Fecha de nacimiento es requerida
+            </div>
+          }
         </div>
-      </div>
 
-      <div class="text-end">
-        <button
-          type="submit"
-          class="btn btn-success waves-effect waves-light me-1"
-          (click)="crearUsuario()"
-        >
-          Guardar
-        </button>
-        <button
-          type="button"
-          class="btn btn-danger waves-effect waves-light"
-          (click)="modal.close('')"
-        >
-          Cancelar
-        </button>
-      </div>
-    </form>
-  </div>
-</ng-template>
+        <div class="text-end">
+          <button
+            type="submit"
+            class="btn btn-success waves-effect waves-light me-1"
+            (click)="crearUsuario()"
+            >
+            Guardar
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger waves-effect waves-light"
+            (click)="modal.close('')"
+            >
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </ng-template>

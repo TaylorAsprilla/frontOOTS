@@ -8,26 +8,26 @@
               <a
                 [routerLink]="'../../dashboard-1'"
                 class="logo logo-dark text-center"
-              >
+                >
                 <span class="logo-lg">
                   <img
                     src="../assets/images/logo-dark.png"
                     alt=""
                     height="22"
-                  />
+                    />
                 </span>
               </a>
 
               <a
                 [routerLink]="'../../dashboard-1'"
                 class="logo logo-light text-center"
-              >
+                >
                 <span class="logo-lg">
                   <img
                     src="../assets/images/logo-light.png"
                     alt=""
                     height="22"
-                  />
+                    />
                 </span>
               </a>
             </div>
@@ -39,7 +39,7 @@
               height="88"
               alt="user-image"
               class="rounded-circle shadow"
-            />
+              />
             <h4 class="text-dark-50 text-center mt-3">Hola Myriam</h4>
             <p class="text-muted mb-4">
               Enter your password to access the admin.
@@ -50,10 +50,12 @@
             name="lock-screen-form"
             [formGroup]="lockScreenForm"
             (ngSubmit)="onSubmit()"
-          >
-            <ngb-alert type="danger" *ngIf="error" [dismissible]="false">{{
-              error
-            }}</ngb-alert>
+            >
+            @if (error) {
+              <ngb-alert type="danger" [dismissible]="false">{{
+                error
+              }}</ngb-alert>
+            }
 
             <div class="mb-3">
               <label for="password" class="form-label">Password</label>
@@ -68,19 +70,24 @@
                 [ngClass]="{
                   'is-invalid': formSubmitted && formValues.password.invalid
                 }"
-              />
+                />
 
-              <div
-                *ngIf="formSubmitted && formValues.password.invalid"
-                class="invalid-feedback"
-              >
-                <div *ngIf="formValues.password.errors?.required">
-                  Password is required.
+              @if (formSubmitted && formValues.password.invalid) {
+                <div
+                  class="invalid-feedback"
+                  >
+                  @if (formValues.password.errors?.required) {
+                    <div>
+                      Password is required.
+                    </div>
+                  }
+                  @if (formValues.password.errors?.minlength) {
+                    <div>
+                      Password length must be greater than 3.
+                    </div>
+                  }
                 </div>
-                <div *ngIf="formValues.password.errors?.minlength">
-                  Password length must be greater than 3.
-                </div>
-              </div>
+              }
             </div>
 
             <div class="text-center d-grid">
@@ -98,14 +105,14 @@
             Not you? return
             <a [routerLink]="['../login']" class="text-white ms-1"
               ><b>Sign In</b></a
-            >
-          </p>
+              >
+            </p>
+          </div>
+          <!-- end col -->
         </div>
-        <!-- end col -->
+        <!-- end row -->
       </div>
-      <!-- end row -->
+      <!-- end col -->
     </div>
-    <!-- end col -->
-  </div>
-  <!-- end row -->
-</app-default-layout>
+    <!-- end row -->
+  </app-default-layout>

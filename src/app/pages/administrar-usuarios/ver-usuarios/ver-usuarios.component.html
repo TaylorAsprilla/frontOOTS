@@ -21,7 +21,7 @@
                   placeholder="Buscar..."
                   [(ngModel)]="searchTerm"
                   (ngModelChange)="searchData($event)"
-                />
+                  />
               </div>
               <label for="status-select" class="me-2">Ordenar por</label>
               <div class="me-sm-3">
@@ -48,9 +48,11 @@
 <!-- end row -->
 
 <div class="row">
-  <div class="col-lg-4" *ngFor="let usuario of listaDeUsuarios">
-    <app-contact-member-info [usuario]="usuario"></app-contact-member-info>
-  </div>
+  @for (usuario of listaDeUsuarios; track usuario) {
+    <div class="col-lg-4">
+      <app-contact-member-info [usuario]="usuario"></app-contact-member-info>
+    </div>
+  }
   <!-- end col -->
 </div>
 <!-- end row -->
@@ -62,7 +64,7 @@
         [collectionSize]="50"
         [(page)]="page"
         class="pagination-rounded d-flex justify-content-end"
-      >
+        >
       </ngb-pagination>
     </div>
   </div>

@@ -1,4 +1,7 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
+
+// RouterOutlet not used directly here; child layouts host router-outlet.
+import { LayoutModule } from './layout.module';
 import { environment } from 'src/environments/environment.prod';
 import { EventService } from '../core/service/event.service';
 import { LAYOUT_DETACHED, LAYOUT_HORIZONTAL, LAYOUT_TWO_COLUMN_MENU, LAYOUT_VERTICAL, LAYOUT_WIDTH_BOXED, LEFT_SIDEBAR_TYPE_CONDENSED, LEFT_SIDEBAR_TYPE_DEFAULT } from './shared/config/layout.model';
@@ -7,6 +10,8 @@ import { LayoutConfig } from './shared/models/layout-config.model';
 
 @Component({
   selector: 'app-layout-container',
+  standalone: true,
+  imports: [LayoutModule],
   templateUrl: './layout-container.component.html',
   styleUrls: ['./layout-container.component.scss']
 })

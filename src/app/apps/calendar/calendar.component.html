@@ -11,7 +11,7 @@
               class="btn btn-lg font-16 btn-primary w-100"
               id="btn-new-event"
               (click)="createNewEvent()"
-            >
+              >
               <i class="mdi mdi-plus-circle-outline"></i> Crear una cita
             </button>
 
@@ -21,43 +21,44 @@
                 Arrastra y suelta tu evento o haz clic en el calendario
               </p>
 
-              <div
-                *ngFor="let event of externalEvents"
-                class="external-event bg-{{ event.type }}"
-                [attr.data-type]="event.type"
-              >
-                <i
-                  class="mdi mdi-checkbox-blank-circle me-2 vertical-middle"
-                ></i
-                >{{ event.title }}
+              @for (event of externalEvents; track event) {
+                <div
+                  class="external-event bg-{{ event.type }}"
+                  [attr.data-type]="event.type"
+                  >
+                  <i
+                    class="mdi mdi-checkbox-blank-circle me-2 vertical-middle"
+                    ></i
+                    >{{ event.title }}
+                  </div>
+                }
               </div>
             </div>
-          </div>
-          <!-- end col-->
+            <!-- end col-->
 
-          <div class="col-lg-9">
-            <div id="calendar">
-              <full-calendar
-                #calendar
-                [options]="calendarOptions"
-              ></full-calendar>
+            <div class="col-lg-9">
+              <div id="calendar">
+                <full-calendar
+                  #calendar
+                  [options]="calendarOptions"
+                ></full-calendar>
+              </div>
             </div>
+            <!-- end col -->
           </div>
-          <!-- end col -->
+          <!-- end row -->
         </div>
-        <!-- end row -->
+        <!-- end card body-->
       </div>
-      <!-- end card body-->
-    </div>
-    <!-- end card -->
+      <!-- end card -->
 
-    <app-calendar-event
-      #eventModal
-      (eventSaved)="handleEventSave($event)"
-      (eventDeleted)="handleEventDelete($event)"
-    >
-    </app-calendar-event>
+      <app-calendar-event
+        #eventModal
+        (eventSaved)="handleEventSave($event)"
+        (eventDeleted)="handleEventDelete($event)"
+        >
+      </app-calendar-event>
+    </div>
+    <!-- end col-12 -->
   </div>
-  <!-- end col-12 -->
-</div>
-<!-- end row -->
+  <!-- end row -->

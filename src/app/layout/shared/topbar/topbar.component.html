@@ -13,7 +13,7 @@
                 placeholder="Search..."
                 id="topSearch"
                 ngbDropdownToggle
-              />
+                />
               <button class="btn input-group-text" type="submit">
                 <i class="fe-search"></i>
               </button>
@@ -22,22 +22,23 @@
               class="dropdown-lg noti-dropdown"
               aria-labelledby="topSearch"
               ngbDropdownMenu
-            >
+              >
               <!-- item-->
               <div class="dropdown-header noti-title">
                 <h5 class="text-overflow mb-2">Found 22 results</h5>
               </div>
 
               <!-- item-->
-              <a
-                ngbDropdownItem
-                href="javascript:void(0);"
-                class="notify-item"
-                *ngFor="let result of searchResults"
-              >
-                <i class="{{ result.icon }} me-1"></i>
-                <span>{{ result.text }}</span>
-              </a>
+              @for (result of searchResults; track result) {
+                <a
+                  ngbDropdownItem
+                  href="javascript:void(0);"
+                  class="notify-item"
+                  >
+                  <i class="{{ result.icon }} me-1"></i>
+                  <span>{{ result.text }}</span>
+                </a>
+              }
 
               <!-- item-->
               <div class="dropdown-header noti-title">
@@ -46,25 +47,26 @@
 
               <div class="notification-list">
                 <!-- item -->
-                <a
-                  ngbDropdownItem
-                  href="javascript:void(0);"
-                  class="notify-item"
-                  *ngFor="let user of searchUsers"
-                >
-                  <div class="d-flex align-items-start">
-                    <img
-                      class="d-flex me-2 rounded-circle"
-                      [src]="user.profile"
-                      [alt]="user.name"
-                      height="32"
-                    />
-                    <div class="w-100">
-                      <h5 class="m-0 font-14">{{ user.name }}</h5>
-                      <span class="font-12 mb-0">{{ user.position }}</span>
+                @for (user of searchUsers; track user) {
+                  <a
+                    ngbDropdownItem
+                    href="javascript:void(0);"
+                    class="notify-item"
+                    >
+                    <div class="d-flex align-items-start">
+                      <img
+                        class="d-flex me-2 rounded-circle"
+                        [src]="user.profile"
+                        [alt]="user.name"
+                        height="32"
+                        />
+                      <div class="w-100">
+                        <h5 class="m-0 font-14">{{ user.name }}</h5>
+                        <span class="font-12 mb-0">{{ user.position }}</span>
+                      </div>
                     </div>
-                  </div>
-                </a>
+                  </a>
+                }
               </div>
             </div>
           </div>
@@ -77,20 +79,20 @@
           href="javascript:void(0);"
           role="button"
           ngbDropdownToggle
-        >
+          >
           <i class="fe-search noti-icon"></i>
         </a>
         <div
           class="dropdown-menu-end dropdown-lg p-0 noti-dropdown"
           ngbDropdownMenu
-        >
+          >
           <form class="p-3" ngbDropdownItem>
             <input
               type="text"
               class="form-control"
               placeholder="Buscar..."
               aria-label="Recipient's username"
-            />
+              />
           </form>
         </div>
       </li>
@@ -101,7 +103,7 @@
           class="nav-link dropdown-toggle arrow-none waves-effect waves-light maximize-icon"
           href="javascript:void(0)"
           (click)="toggleFullScreen()"
-        >
+          >
           <i class="fe-maximize noti-icon"></i>
         </a>
       </li>
@@ -112,7 +114,7 @@
           href="javascript:void(0)"
           role="button"
           ngbDropdownToggle
-        >
+          >
           <i class="fe-bell noti-icon"></i>
           <span class="badge bg-danger rounded-circle noti-icon-badge">9</span>
         </a>
@@ -124,184 +126,197 @@
                 <a href="" class="text-dark">
                   <small>Clear All</small>
                 </a> </span
-              >Notification
-            </h5>
-          </div>
+                >Notification
+              </h5>
+            </div>
 
-          <ngx-simplebar class="noti-scroll">
-            <!-- item -->
+            <ngx-simplebar class="noti-scroll">
+              <!-- item -->
+              @for (item of notificationList; track item) {
+                <a
+                  [routerLink]="[]"
+                  class="notify-item"
+                  [class.active]="item.isActive"
+                  ngbDropdownItem
+                  >
+                  @if (item.avatar) {
+                    <div class="notify-icon">
+                      <img
+                        [src]="item.avatar"
+                        class="img-fluid rounded-circle"
+                        alt=""
+                        />
+                    </div>
+                  }
+                  @if (item.icon) {
+                    <div class="notify-icon bg-{{ item.bgColor }}">
+                      <i [class]="item.icon"></i>
+                    </div>
+                  }
+                  <p class="notify-details">{{ item.text }}</p>
+                  <p class="text-muted mb-0 user-msg">
+                    <small>{{ item.subText }}</small>
+                  </p>
+                </a>
+              }
+            </ngx-simplebar>
+
+            <!-- All-->
             <a
-              [routerLink]="[]"
-              class="notify-item"
-              [class.active]="item.isActive"
-              *ngFor="let item of notificationList"
-              ngbDropdownItem
-            >
-              <div class="notify-icon" *ngIf="item.avatar">
-                <img
-                  [src]="item.avatar"
-                  class="img-fluid rounded-circle"
-                  alt=""
-                />
-              </div>
-              <div class="notify-icon bg-{{ item.bgColor }}" *ngIf="item.icon">
-                <i [class]="item.icon"></i>
-              </div>
-              <p class="notify-details">{{ item.text }}</p>
-              <p class="text-muted mb-0 user-msg">
-                <small>{{ item.subText }}</small>
-              </p>
+              href="javascript:void(0);"
+              class="dropdown-item text-center text-primary notify-item notify-all"
+              >
+              View all
+              <i class="fe-arrow-right"></i>
             </a>
-          </ngx-simplebar>
+          </div>
+        </li>
 
-          <!-- All-->
+        <!-- profile menu -->
+        <li class="dropdown notification-list topbar-dropdown" ngbDropdown>
+          <a
+            ngbDropdownToggle
+            class="nav-link nav-user me-0 waves-effect waves-light"
+            id="profileMenuDropdown"
+            href="javascript:void(0)"
+            aria-expanded="false"
+            >
+            <span class="account-user-avatar">
+              <img
+                [src]="loggedInUser.avatar"
+                alt="user-image"
+                class="rounded-circle"
+                />
+            </span>
+            <span class="pro-user-name ms-1">
+              {{ loggedInUser.firstName }} <i class="mdi mdi-chevron-down"></i>
+            </span>
+          </a>
+          <div
+            ngbDropdownMenu
+            aria-labelledby="profileMenuDropdown"
+            class="dropdown-menu-end profile-dropdown"
+            >
+            <!-- item -->
+            <div ngbDropdownItem class="dropdown-header noti-title">
+              <h6 class="text-overflow m-0">Bienvenido</h6>
+            </div>
+            <!-- item -->
+            @for (option of profileOptions; track option) {
+              <a
+                class="notify-item"
+                ngbDropdownItem
+                >
+                <i class="{{ option.icon }} me-1"></i>
+                <span style="cursor: pointer" [routerLink]="option.redirectTo">{{
+                  option.label
+                }}</span>
+              </a>
+            }
+          </div>
+        </li>
+
+        <!-- right menu button -->
+        <li class="dropdown notification-list">
           <a
             href="javascript:void(0);"
-            class="dropdown-item text-center text-primary notify-item notify-all"
-          >
-            View all
-            <i class="fe-arrow-right"></i>
+            class="nav-link right-bar-toggle waves-effect waves-light"
+            (click)="toggleRightSidebar()"
+            >
+            <i class="fe-settings noti-icon"></i>
           </a>
-        </div>
-      </li>
+        </li>
+      </ul>
 
-      <!-- profile menu -->
-      <li class="dropdown notification-list topbar-dropdown" ngbDropdown>
-        <a
-          ngbDropdownToggle
-          class="nav-link nav-user me-0 waves-effect waves-light"
-          id="profileMenuDropdown"
-          href="javascript:void(0)"
-          aria-expanded="false"
-        >
-          <span class="account-user-avatar">
-            <img
-              [src]="loggedInUser.avatar"
-              alt="user-image"
-              class="rounded-circle"
-            />
+      <!-- LOGO -->
+      <div class="logo-box">
+        <a [routerLink]="'../dashboard-1'" class="logo logo-dark text-center">
+          <span class="logo-sm">
+            <img src="../assets/images/logo-sm.png" alt="" height="50" />
           </span>
-          <span class="pro-user-name ms-1">
-            {{ loggedInUser.firstName }} <i class="mdi mdi-chevron-down"></i>
+          <span class="logo-lg">
+            @if (layoutType !== 'two-column') {
+              <img
+                src="../assets/images/logo-dark.png"
+                alt=""
+                height="50"
+                />
+            }
+            @if (layoutType === 'two-column') {
+              <img
+                src="../assets/images/logo-dark-2.png"
+                alt=""
+                height="50"
+                />
+            }
           </span>
         </a>
-        <div
-          ngbDropdownMenu
-          aria-labelledby="profileMenuDropdown"
-          class="dropdown-menu-end profile-dropdown"
-        >
-          <!-- item -->
-          <div ngbDropdownItem class="dropdown-header noti-title">
-            <h6 class="text-overflow m-0">Bienvenido</h6>
-          </div>
-          <!-- item -->
-          <a
-            *ngFor="let option of profileOptions"
-            class="notify-item"
-            ngbDropdownItem
-          >
-            <i class="{{ option.icon }} me-1"></i>
-            <span style="cursor: pointer" [routerLink]="option.redirectTo">{{
-              option.label
-            }}</span>
-          </a>
-        </div>
-      </li>
 
-      <!-- right menu button -->
-      <li class="dropdown notification-list">
-        <a
-          href="javascript:void(0);"
-          class="nav-link right-bar-toggle waves-effect waves-light"
-          (click)="toggleRightSidebar()"
-        >
-          <i class="fe-settings noti-icon"></i>
+        <a [routerLink]="'../dashboard-1'" class="logo logo-light text-center">
+          <span class="logo-sm">
+            <img src="../assets/images/logo-sm.png" alt="" height="50" />
+          </span>
+          <span class="logo-lg">
+            @if (layoutType !== 'two-column') {
+              <img
+                src="../assets/images/logo-light.png"
+                alt=""
+                height="50"
+                />
+            }
+            @if (layoutType === 'two-column') {
+              <img
+                src="../assets/images/logo-light-2.png"
+                alt=""
+                height="50"
+                />
+            }
+          </span>
         </a>
-      </li>
-    </ul>
+      </div>
 
-    <!-- LOGO -->
-    <div class="logo-box">
-      <a [routerLink]="'../dashboard-1'" class="logo logo-dark text-center">
-        <span class="logo-sm">
-          <img src="../assets/images/logo-sm.png" alt="" height="50" />
-        </span>
-        <span class="logo-lg">
-          <img
-            src="../assets/images/logo-dark.png"
-            alt=""
-            height="50"
-            *ngIf="layoutType !== 'two-column'"
-          />
-          <img
-            src="../assets/images/logo-dark-2.png"
-            alt=""
-            height="50"
-            *ngIf="layoutType === 'two-column'"
-          />
-        </span>
-      </a>
+      <ul class="list-unstyled topnav-menu topnav-menu-left m-0">
+        <li>
+          @if (layoutType !== 'horizontal') {
+            <button
+              class="button-menu-mobile waves-effect waves-light d-none d-lg-block"
+              (click)="changeSidebarWidth()"
+              >
+              <i class="fe-menu"></i>
+            </button>
+          }
+        </li>
 
-      <a [routerLink]="'../dashboard-1'" class="logo logo-light text-center">
-        <span class="logo-sm">
-          <img src="../assets/images/logo-sm.png" alt="" height="50" />
-        </span>
-        <span class="logo-lg">
-          <img
-            src="../assets/images/logo-light.png"
-            alt=""
-            height="50"
-            *ngIf="layoutType !== 'two-column'"
-          />
-          <img
-            src="../assets/images/logo-light-2.png"
-            alt=""
-            height="50"
-            *ngIf="layoutType === 'two-column'"
-          />
-        </span>
-      </a>
+        <li>
+          @if (layoutType !== 'horizontal') {
+            <button
+              class="button-menu-mobile open-left d-block d-lg-none waves-effect waves-light"
+              (click)="toggleMobileMenu($event)"
+              >
+              <i class="fe-menu"></i>
+            </button>
+          }
+        </li>
+
+        <li>
+          <!-- Mobile menu toggle (Horizontal Layout)-->
+          @if (layoutType === 'horizontal') {
+            <a
+              class="navbar-toggle nav-link"
+              [ngClass]="{ open: topnavCollapsed }"
+              (click)="toggleMobileMenu($event)"
+              >
+              <div class="lines">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </a>
+          }
+          <!-- End mobile menu toggle-->
+        </li>
+      </ul>
+      <div class="clearfix"></div>
     </div>
-
-    <ul class="list-unstyled topnav-menu topnav-menu-left m-0">
-      <li>
-        <button
-          class="button-menu-mobile waves-effect waves-light d-none d-lg-block"
-          (click)="changeSidebarWidth()"
-          *ngIf="layoutType !== 'horizontal'"
-        >
-          <i class="fe-menu"></i>
-        </button>
-      </li>
-
-      <li>
-        <button
-          class="button-menu-mobile open-left d-block d-lg-none waves-effect waves-light"
-          *ngIf="layoutType !== 'horizontal'"
-          (click)="toggleMobileMenu($event)"
-        >
-          <i class="fe-menu"></i>
-        </button>
-      </li>
-
-      <li>
-        <!-- Mobile menu toggle (Horizontal Layout)-->
-        <a
-          class="navbar-toggle nav-link"
-          [ngClass]="{ open: topnavCollapsed }"
-          (click)="toggleMobileMenu($event)"
-          *ngIf="layoutType === 'horizontal'"
-        >
-          <div class="lines">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-        </a>
-        <!-- End mobile menu toggle-->
-      </li>
-    </ul>
-    <div class="clearfix"></div>
   </div>
-</div>
-<!-- end Topbar -->
+  <!-- end Topbar -->

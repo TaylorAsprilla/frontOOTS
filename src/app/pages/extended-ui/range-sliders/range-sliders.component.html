@@ -2,15 +2,17 @@
 <app-page-title [breadcrumbItems]="pageTitle" title="Range Slider"></app-page-title>
 
 <div class="row">
-    <div class="col-xl-6" *ngFor="let slider of rangeSliders">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="header-title">{{slider.title}}</h4>
-                <ngx-slider [(value)]="slider.minValue! || slider.default!" [(highValue)]="slider.maxValue!"
-                    [options]="slider.options"></ngx-slider>
-            </div> <!-- end card-body -->
-        </div> <!-- end card-->
-    </div> <!-- end col -->
+  @for (slider of rangeSliders; track slider) {
+    <div class="col-xl-6">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="header-title">{{slider.title}}</h4>
+          <ngx-slider [(value)]="slider.minValue! || slider.default!" [(highValue)]="slider.maxValue!"
+          [options]="slider.options"></ngx-slider>
+        </div> <!-- end card-body -->
+      </div> <!-- end card-->
+    </div>
+    } <!-- end col -->
 
-</div>
-<!-- end row -->
+  </div>
+  <!-- end row -->
