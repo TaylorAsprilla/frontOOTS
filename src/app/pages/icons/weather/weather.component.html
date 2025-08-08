@@ -1,0 +1,126 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Weather Icons"></app-page-title>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title mb-3">26 New 2.0 Icons</h4>
+                <div class="row icons-list-demo">
+                    <div class="col-sm-6 col-md-4 col-xl-3" *ngFor="let icon of filterIcons('new-icons')">
+                        <i class="wi wi-{{icon.name}}"></i> wi wi-{{icon.name}}
+                    </div>
+                </div>
+                <!-- End row -->
+
+                <h4 class="header-title my-3">Daytime Icons</h4>
+                <div class="row icons-list-demo">
+                    <div class="col-sm-6 col-md-4 col-xl-3" *ngFor="let icon of filterIcons('day-time')">
+                        <i class="wi wi-{{icon.name}}"></i> wi wi-{{icon.name}}
+                    </div>
+                </div>
+                <!-- End row -->
+
+                <h4 class="header-title my-3">Nighttime Icons</h4>
+                <div class="row icons-list-demo">
+                    <div class="col-sm-6 col-md-4 col-xl-3" *ngFor="let icon of filterIcons('night-time')">
+                        <i class="wi wi-{{icon.name}}"></i> wi wi-{{icon.name}}
+                    </div>
+                </div>
+                <!-- End row -->
+
+                <h4 class="header-title my-3">Neutral Icons</h4>
+                <div class="row icons-list-demo">
+                    <div class="col-sm-6 col-md-4 col-xl-3" *ngFor="let icon of filterIcons('neutral')">
+                        <i class="wi wi-{{icon.name}}"></i> wi wi-{{icon.name}}
+                    </div>
+                </div>
+                <!-- End row -->
+
+                <h4 class="header-title my-3">Miscellaneous Icons</h4>
+                <div class="row icons-list-demo">
+                    <div class="col-sm-6 col-md-4 col-xl-3" *ngFor="let icon of filterIcons('miscellaneous')">
+                        <i class="wi wi-{{icon.name}}"></i> wi wi-{{icon.name}}
+                    </div>
+                </div>
+                <!-- End row -->
+
+                <h4 class="header-title my-3">Moon Phases Icons</h4>
+                <ngb-alert [dismissible]="false" type="success">
+                    The moons are split into 28 icons, to correspond neatly with the 28 day moon cycle. There is a
+                    primary
+                    set and alternate set. The primary set is meant to be interpreted as: where there are pixels, that
+                    is the
+                    illuminated part of the moon. The alternate set is meant to be interpreted as: where there are
+                    pixels,
+                    that is the shadowed part of the moon.
+                </ngb-alert>
+
+                <div class="row icons-list-demo">
+                    <div class="col-sm-6 col-md-4 col-xl-3" *ngFor="let icon of filterIcons('moon-phase')">
+                        <i class="wi wi-{{icon.name}}"></i> wi wi-{{icon.name}}
+                    </div>
+                </div>
+                <!-- End row -->
+
+                <h4 class="header-title my-3">Time Icons</h4>
+
+                <div class="row icons-list-demo">
+                    <div class="col-sm-6 col-md-4 col-xl-3" *ngFor="let icon of filterIcons('time')">
+                        <i class="wi wi-{{icon.name}}"></i> wi wi-{{icon.name}}
+                    </div>
+                </div>
+                <!-- End row -->
+
+                <h4 class="header-title my-3">Directional Arrows</h4>
+
+                <div class="row icons-list-demo">
+                    <div class="col-sm-6 col-md-4 col-xl-3" *ngFor="let icon of filterIcons('direction-arrows')">
+                        <i class="wi wi-{{icon.name}}"></i> wi wi-{{icon.name}}
+                    </div>
+                </div>
+                <!-- End row -->
+
+                <h4 class="header-title my-3">Utility Classes</h4>
+                <ngb-alert [dismissible]="false" type="success">
+                    Use these special, built-in utility classes to flip, rotate, or assign a fixed width to any icon.
+                </ngb-alert>
+                <div class="row">
+
+                    <div class="col-sm-4">
+                        <h5>Flip</h5>
+                        <p>
+                            <code>wi-flip-horizontal</code>
+                        </p>
+                        <p>
+                            <code>wi-flip-vertical</code>
+                        </p>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <h5>Rotate</h5>
+                        <p>
+                            <code>wi-rotate-90</code>
+                        </p>
+                        <p>
+                            <code>wi-rotate-180</code>
+                        </p>
+                        <p>
+                            <code>wi-rotate-270</code>
+                        </p>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <h5>Fixed Width</h5>
+                        <p>
+                            <code>wi-fw</code>
+                        </p>
+                    </div>
+
+                </div>
+                <!-- End row -->
+            </div>
+        </div> <!-- end card-->
+    </div> <!-- end col-->
+</div>
+<!-- end row-->

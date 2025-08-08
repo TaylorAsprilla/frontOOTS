@@ -1,0 +1,61 @@
+<div class="card">
+    <div class="card-body">
+        <div class="float-end" ngbDropdown>
+            <a href="javascript:void(0)" class="arrow-none card-drop" id="socialProfileOption" ngbDropdownToggle
+                aria-expanded="false">
+                <i class="mdi mdi-dots-horizontal"></i>
+            </a>
+            <div class="dropdown-menu-end" ngbDropdownMenu aria-labelledby="socialProfileOption">
+                <!-- item-->
+                <a [routerLink]="'.'" ngbDropdownItem>Edit Profile</a>
+                <!-- item-->
+                <a [routerLink]="'.'" ngbDropdownItem>Settings</a>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-start">
+            <img class="d-flex align-items-start rounded me-2" [src]="loggedInUser.avatar"
+                [alt]="loggedInUser.firstName" height="48">
+            <div class="w-100 ps-1">
+                <h5 class="mt-1 mb-0">{{loggedInUser.name}}</h5>
+                <p class="mb-1 mt-1 text-muted">{{loggedInUser.location}}</p>
+            </div>
+        </div>
+
+        <div class="list-group list-group-flush mt-2 font-15">
+            <a href="javascript:void(0);"
+                class="list-group-item list-group-item-action text-primary fw-semibold border-0"><i
+                    class='mdi mdi-image-filter-black-white font-16 me-1'></i> News Feed</a>
+            <a href="javascript:void(0);" class="list-group-item list-group-item-action border-0"><i
+                    class='mdi mdi-forum font-16 me-1'></i> Messages</a>
+            <a href="javascript:void(0);" class="list-group-item list-group-item-action border-0"><i
+                    class='mdi mdi-calendar-month-outline font-16 me-1'></i> Events</a>
+            <a href="javascript:void(0);" class="list-group-item list-group-item-action border-0"><i
+                    class='mdi mdi-account-multiple-outline font-16 me-1'></i> Friends</a>
+            <a href="javascript:void(0);" class="list-group-item list-group-item-action border-0"><i
+                    class='mdi mdi-video font-16 me-1'></i> Watch Videos</a>
+            <a href="javascript:void(0);" class="list-group-item list-group-item-action border-0"><i
+                    class='mdi mdi-image-multiple font-16 me-1'></i> Photos</a>
+            <a href="javascript:void(0);" class="list-group-item list-group-item-action border-0"><i
+                    class='mdi mdi-storefront font-16 me-1'></i> Marketplaces</a>
+        </div>
+
+        <h6 class="font-13 text-muted ps-3 my-3 text-uppercase">Pages you Like</h6>
+
+        <div class="px-2">
+            <div class="d-flex align-items-start mb-2" *ngFor="let page of pagesLiked">
+                <div class="avatar-xs bg-{{page.variant}} rounded-circle">
+                    <span class="avatar-title font-14 fw-bold text-white">{{page.icon}}</span>
+                </div>
+                <div class="w-100 ps-2">
+                    <span class="badge bg-{{page.count.variant}} mt-1 float-end"
+                        *ngIf="page.count">{{page.count.text}}</span>
+                    <h5 class="mt-1 mb-0 font-family-primary fw-semibold"><a href="javascript: void(0);"
+                            class="text-reset">{{page.pageName}}</a></h5>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

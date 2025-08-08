@@ -1,0 +1,66 @@
+//
+// accordions.scss
+//
+
+//
+// accordions.scss
+//
+
+.custom-accordion {
+    .accordion-header {
+        border-bottom: none;
+    }
+    .accordion-arrow {
+        transform: rotate(90deg);
+        font-size: 1.2rem !important;
+        position: absolute !important;
+        right: 22px !important;
+    }
+    .accordion-button {
+        padding: 1.005rem 1.5rem;
+        &:after {
+            background-image: none;
+        }
+        &:not(.collapsed) {
+            .accordion-arrow {
+                display: block;
+            }
+        }
+    }
+    button {
+        &.collapsed {
+            i.accordion-arrow {
+                transform: rotate(0deg);
+                &:before {
+                    content: "\F0142";
+                }
+            }
+        }
+    }
+}
+
+.accordion {
+    .accordion-item {
+        border: none;
+        box-shadow: $box-shadow;
+        .accordion-header {
+            background-color: $card-cap-bg !important;
+            border-radius: 0;
+            border-bottom: none !important;
+            margin-bottom: -1px;
+            .accordion-button {
+                box-shadow: none !important;
+                &:after {
+                    background-image: none;
+                }
+                &:not(.collapsed) {
+                    color: inherit;
+                    background-color: inherit;
+                }
+            }
+        }
+        .accordion-body {
+            padding: 0 !important;
+        }
+    }
+}

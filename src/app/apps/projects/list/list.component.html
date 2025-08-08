@@ -1,0 +1,98 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Projects List"></app-page-title>
+
+<div class="row mb-2">
+    <div class="col-sm-4">
+        <a [routerLink]="['../create']" class="btn btn-danger rounded-pill waves-effect waves-light mb-3"><i
+                class="mdi mdi-plus"></i> Create Project</a>
+    </div>
+    <div class="col-sm-8">
+        <div class="text-sm-end">
+            <div class="btn-group mb-3">
+                <button type="button" class="btn btn-primary">All</button>
+            </div>
+            <div class="btn-group mb-3 ms-1">
+                <button type="button" class="btn btn-light">Ongoing</button>
+                <button type="button" class="btn btn-light">Finished</button>
+            </div>
+            <div class="btn-group mb-3 ms-2 d-none d-sm-inline-block">
+                <button type="button" class="btn btn-dark"><i class="mdi mdi-apps"></i></button>
+            </div>
+            <div class="btn-group mb-3 d-none d-sm-inline-block">
+                <button type="button" class="btn btn-link text-dark"><i
+                        class="mdi mdi-format-list-bulleted-type"></i></button>
+            </div>
+        </div>
+    </div><!-- end col-->
+</div>
+<!-- end row-->
+
+<div class="row">
+    <div class="col-lg-4" *ngFor="let project of projectList">
+        <div class="card project-box">
+            <div class="card-body">
+                <div class="float-end" ngbDropdown>
+                    <a href="javascript:void(0)" class="card-drop arrow-none" ngbDropdownToggle>
+                        <i class="mdi mdi-dots-horizontal m-0 text-muted h3"></i>
+                    </a>
+                    <div class="dropdown-menu-end" ngbDropdownMenu>
+                        <a ngbDropdownItem [routerLink]="'.'">Edit</a>
+                        <a ngbDropdownItem [routerLink]="'.'">Delete</a>
+                        <a ngbDropdownItem [routerLink]="'.'">Add Members</a>
+                        <a ngbDropdownItem [routerLink]="'.'">Add Due Date</a>
+                    </div>
+                </div> <!-- end dropdown -->
+                <!-- Title-->
+                <h4 class="mt-0">
+                    <a [routerLink]="['../details']" [queryParams]="{id:project.id}" class="text-dark">
+                        {{project.title}}</a>
+                </h4>
+                <p class="text-muted text-uppercase"><i class="mdi mdi-account-circle"></i>
+                    <small> {{project.companyName}}</small>
+                </p>
+                <div class="badge  mb-3"
+                    [class]="project.state==='Finished' ? 'bg-soft-success text-success' : 'bg-soft-secondary text-secondary'">
+                    {{project.state}}</div>
+                <!-- Desc-->
+                <p class="text-muted font-13 mb-3 sp-line-2">{{project.shortDesc}}...<a [routerLink]="['../details']"
+                        [queryParams]="{id:project.id}" class="fw-bold text-muted">view more</a>
+                </p>
+                <!-- Task info-->
+                <p class="mb-1">
+                    <span class="pe-2 text-nowrap mb-2 d-inline-block">
+                        <i class="mdi mdi-format-list-bulleted-type text-muted me-1"></i>
+                        <b>{{project.totalTasks}}</b> Tasks
+                    </span>
+                    <span class="text-nowrap mb-2 d-inline-block">
+                        <i class="mdi mdi-comment-multiple-outline text-muted me-1"></i>
+                        <b>{{project.totalComments}}</b> Comments
+                    </span>
+                </p>
+                <!-- Team-->
+                <div class="avatar-group mb-3" id="tooltips-container">
+                    <a href="javascript: void(0);" class="avatar-group-item" *ngFor="let member of project.teamMembers">
+                        <img [src]="member.image" class="rounded-circle avatar-sm" alt="friend" placement="top"
+                            [ngbTooltip]="member.name" />
+                    </a>
+                </div>
+                <!-- Progress-->
+                <p class="mb-2 fw-semibold">Task completed: <span
+                        class="float-end">{{project.totalTasksCompleted}}/{{project.totalTasks}}</span></p>
+
+                <ngb-progressbar type="primary" [value]="project.progress!" class="mb-1" height='7px'></ngb-progressbar>
+
+            </div>
+        </div> <!-- end card box-->
+    </div><!-- end col-->
+
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="text-center mb-3">
+            <a href="javascript:void(0);" class="text-danger"><i class="mdi mdi-spin mdi-loading me-1"></i> Load more
+            </a>
+        </div>
+    </div> <!-- end col-->
+</div>
+<!-- end row -->

@@ -1,0 +1,49 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Ticket List"></app-page-title>
+
+<div class="row">
+    <div class="col-md-6 col-xl-3">
+        <app-widget-statistics-card4 variant="white" iconContainerClass="rounded-circle bg-primary"
+            description="Total Tickets" [stats]="3947" icon="fe-tag">
+        </app-widget-statistics-card4>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <app-widget-statistics-card4 variant="white" iconContainerClass="rounded-circle bg-warning"
+            description="Pending Tickets" [stats]="624" icon="fe-clock">
+        </app-widget-statistics-card4>
+    </div> <!-- end col-->
+
+    <div class="col-md-6 col-xl-3">
+        <app-widget-statistics-card4 variant="white" iconContainerClass="rounded-circle bg-success"
+            description="Closed Tickets" [stats]="3195" icon="fe-check-circle">
+        </app-widget-statistics-card4>
+    </div> <!-- end col-->
+
+    <div class="col-md-6 col-xl-3">
+        <app-widget-statistics-card4 variant="white" iconContainerClass="rounded-circle bg-danger"
+            description="Deleted Tickets" [stats]="128" icon="fe-trash-2">
+        </app-widget-statistics-card4>
+    </div> <!-- end col-->
+</div>
+<!-- end row -->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <button type="button" class="btn btn-sm btn-blue waves-effect waves-light float-end">
+                    <i class="mdi mdi-plus-circle"></i> Add Ticket
+                </button>
+                <h4 class="header-title mb-4">Manage Tickets</h4>
+
+                <!-- customer table -->
+                <app-advanced-table #advancedTable [tableData]="ticketList" (handleTableLoad)="handleTableLoad($event)"
+                    [columns]="columns" [hasRowSelection]="false" [pagination]="true" [isSearchable]="true"
+                    [pageSizeOptions]="pageSizeOptions" (search)="searchData($event)" [isSortable]="true"
+                    (sort)="sort($event)" tableClasses="table-centered">
+                </app-advanced-table>
+            </div>
+        </div>
+    </div><!-- end col -->
+</div>
+<!-- end row -->

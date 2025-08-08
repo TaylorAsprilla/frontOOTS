@@ -1,0 +1,29 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Sellers"></app-page-title>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-12">
+                        <div>
+                            <button type="button" class="btn btn-success waves-effect waves-light mb-2 float-end"><i
+                                    class="mdi mdi-cog"></i></button>
+                            <button type="button" class="btn btn-danger waves-effect waves-light mb-2"><i
+                                    class="mdi mdi-basket me-1"></i> Add Sellers</button>
+
+                        </div>
+                    </div><!-- end col-->
+                </div>
+                <app-ui-preloader [display]="loading"></app-ui-preloader>
+                <!-- seller table -->
+                <app-advanced-table #advancedTable [tableData]="sellerList" [columns]="columns" [hasRowSelection]="true"
+                    [pagination]="true" [isSearchable]="true" (search)="searchData($event)" [isSortable]="true"
+                    (sort)="sort($event)" tableClasses="table-centered" theadClasses="table-light">
+                </app-advanced-table>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+</div>
+<!-- end row -->

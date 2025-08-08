@@ -1,0 +1,22 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="FAQ"></app-page-title>
+
+<div class="row">
+    <div class="col-12">
+        <div class="text-center">
+            <i class="h1 mdi mdi-comment-multiple-outline text-muted"></i>
+            <h3 class="mb-3">Frequently Asked Questions</h3>
+            <p class="text-muted"> Nisi praesentium similique totam odio obcaecati, reprehenderit,
+                dignissimos rem temporibus ea inventore alias!<br /> Beatae animi nemo ea
+                tempora, temporibus laborum facilis ut!</p>
+
+            <button type="button" class="btn btn-success waves-effect waves-light mt-2 me-1"><i
+                    class="mdi mdi-email-outline me-1"></i> Email us your question</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light mt-2"><i
+                    class="mdi mdi-twitter me-1"></i> Send us a tweet</button>
+
+        </div>
+    </div><!-- end col -->
+</div><!-- end row -->
+
+<app-widget-faq [rawFAQ]="rawFAQ" containerClass="pt-5"></app-widget-faq>

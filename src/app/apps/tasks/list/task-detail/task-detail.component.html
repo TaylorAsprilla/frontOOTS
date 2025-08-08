@@ -1,0 +1,188 @@
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col">
+                <div class="float-end" ngbDropdown>
+
+                    <a href="javascript:void(0);" class="arrow-none text-muted" id="taskDetailDropdown"
+                        aria-expanded="false" ngbDropdownToggle>
+                        <i class='mdi mdi-dots-horizontal font-18'></i>
+                    </a>
+                    <div ngbDropdownMenu aria-labelledby="taskDetailDropdown" class="dropdown-menu-end">
+                        <!-- item-->
+                        <a ngbDropdownItem [routerLink]="'.'">
+                            <i class='mdi mdi-attachment me-1'></i>Attachment
+                        </a>
+                        <!-- item-->
+                        <a ngbDropdownItem [routerLink]="'.'">
+                            <i class='mdi mdi-pencil-outline me-1'></i>Edit
+                        </a>
+                        <!-- item-->
+                        <a ngbDropdownItem [routerLink]="'.'">
+                            <i class='mdi mdi-content-copy me-1'></i>Mark as Duplicate
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <!-- item-->
+                        <a ngbDropdownItem [routerLink]="'.'" class="text-danger">
+                            <i class='mdi mdi-delete-outline me-1'></i>Delete
+                        </a>
+                    </div> <!-- end dropdown menu-->
+                </div> <!-- end dropdown-->
+
+                <div class="form-check float-start">
+                    <input type="checkbox" class="form-check-input" id="completedCheck" name="task-complete-checkbox"
+                        (change)="selectedTask.completed=!selectedTask.completed">
+                    <label class="form-check-label" for="completedCheck">
+                        Mark as completed
+                    </label>
+                </div> <!-- end form-check-->
+
+                <div class="clearfix"></div>
+                <hr class="my-2" />
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col">
+
+                <h4>{{selectedTask.title}}</h4>
+
+                <div class="row">
+                    <div class="col-6">
+                        <!-- assignee -->
+                        <p class="mt-2 mb-1 text-muted">Assigned To</p>
+                        <div class="d-flex align-items-start">
+                            <img [src]="selectedTask.assignee_avatar" [alt]="selectedTask.assigned_to"
+                                class="rounded-circle me-2" height="24" />
+                            <div class="w-100">
+                                <h5 class="mt-1 font-size-14">
+                                    {{selectedTask.assigned_to}}
+                                </h5>
+                            </div>
+                        </div>
+                        <!-- end assignee -->
+                    </div> <!-- end col -->
+
+                    <div class="col-6">
+                        <!-- start due date -->
+                        <p class="mt-2 mb-1 text-muted">Due Date</p>
+                        <div class="d-flex align-items-start">
+                            <i class='mdi mdi-calendar-month-outline font-18 text-success me-1'></i>
+                            <div class="w-100">
+                                <h5 class="mt-1 font-14">
+                                    {{selectedTask.due_date}}
+                                </h5>
+                            </div>
+                        </div>
+                        <!-- end due date -->
+                    </div> <!-- end col -->
+                </div> <!-- end row -->
+
+                <!-- task description -->
+                <div class="row mt-3">
+                    <div class="col">
+
+                        <div id="bubble-editor">
+                            <quill-editor [(ngModel)]="selectedTask.description" theme="bubble"
+                                [styles]="{height:'120px'}"></quill-editor>
+
+                        </div> <!-- end Snow-editor-->
+
+                    </div> <!-- end col -->
+                </div>
+                <!-- end task description -->
+
+                <!-- start sub tasks/checklists -->
+                <h5 class="mt-4 mb-2 font-size-16">Checklists/Sub-tasks</h5>
+                <div class="form-check mt-1" *ngFor="let item of selectedTask.checklists">
+                    <input type="checkbox" class="form-check-input" id="checklist{{item.id}}"
+                        name="task-complete-checkbox">
+                    <label class="form-check-label strikethrough" for="checklist{{item.id}}">
+                        {{item.title}}
+                    </label>
+                </div>
+
+
+                <!-- end sub tasks/checklists -->
+
+                <!-- start attachments -->
+                <h5 class="mt-4 mb-2 font-size-16">Attachments</h5>
+                <div class="card mb-1 shadow-none border" *ngFor="let item of selectedTask.attachments">
+                    <div class="p-2">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <div class="avatar-sm">
+                                    <span class="avatar-title badge-soft-primary text-primary rounded">
+                                        ZIP
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col ps-0">
+                                <a href="javascript:void(0);" class="text-muted fw-bold">{{item.filename}}</a>
+                                <p class="mb-0">{{item.size}}</p>
+                            </div>
+                            <div class="col-auto" id="tooltip-container9">
+                                <!-- Button -->
+                                <a href="javascript:void(0);" placement="bottom" ngbTooltip="Download"
+                                    class="btn btn-link font-16 text-muted">
+                                    <i class='dripicons-download'></i>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end attachments -->
+
+                <!-- comments -->
+                <div class="row mt-3">
+                    <div class="col">
+                        <h5 class="mb-2 font-size-16">Comments</h5>
+                        <ng-container *ngFor="let comment of selectedTask.comments">
+                            <div class="d-flex align-items-start mt-3 p-1">
+                                <img [src]="comment.author_avatar" class="me-2 rounded-circle" height="36"
+                                    [alt]="comment.author" />
+                                <div class="w-100">
+                                    <h5 class="mt-0 mb-0 font-size-14">
+                                        <span class="float-end text-muted font-12">{{comment.posted_on}}</span>
+                                        {{comment.author}}
+                                    </h5>
+                                    <p class="mt-1 mb-0 text-muted">
+                                        {{comment.text}}
+                                    </p>
+                                </div>
+                            </div> <!-- end comment -->
+
+                            <hr />
+                        </ng-container>
+
+                    </div> <!-- end col -->
+                </div> <!-- end row -->
+
+                <div class="row mt-2">
+                    <div class="col">
+                        <div class="border rounded">
+                            <form (ngSubmit)="commentForm.valid" #commentForm="ngForm" class="comment-area-box">
+                                <textarea rows="3" class="form-control border-0 resize-none"
+                                    placeholder="Your comment..." [(ngModel)]="newComment" name="comment"
+                                    #comment="ngModel"></textarea>
+                                <div class="p-2 bg-light d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <a href="javascript:void(0)" class="btn btn-sm px-2 font-16 btn-light"><i
+                                                class="mdi mdi-cloud-upload-outline"></i></a>
+                                        <a href="javascript:void(0)" class="btn btn-sm px-2 font-16 btn-light"><i
+                                                class="mdi mdi-at"></i></a>
+                                    </div>
+                                    <button type="submit" class="btn btn-sm btn-success"><i
+                                            class="mdi mdi-send me-1"></i>Submit</button>
+                                </div>
+                            </form>
+                        </div> <!-- end .border-->
+                    </div> <!-- end col-->
+                </div> <!-- end row-->
+                <!-- end comments -->
+            </div> <!-- end col -->
+        </div> <!-- end row-->
+    </div> <!-- end card-body -->
+</div> <!-- end card-->

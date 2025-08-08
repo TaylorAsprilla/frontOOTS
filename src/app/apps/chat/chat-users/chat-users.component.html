@@ -1,0 +1,65 @@
+<div class="card">
+    <div class="card-body">
+
+        <div class="d-flex align-items-start mb-3">
+            <img [src]="loggedInUser.avatar" class="me-2 rounded-circle" height="42" [alt]="loggedInUser.name">
+            <div class="w-100">
+                <h5 class="mt-0 mb-0 font-15">
+                    <a href="javascript:void(0)" class="text-reset">{{loggedInUser.name}}</a>
+                </h5>
+                <p class="mt-1 mb-0 text-muted font-14">
+                    <small class="mdi mdi-circle text-success"></small> Online
+                </p>
+            </div>
+            <a href="javascript: void(0);" class="text-reset font-20">
+                <i class="mdi mdi-cog-outline"></i>
+            </a>
+        </div>
+
+        <!-- start search box -->
+        <form class="search-bar mb-3">
+            <div class="position-relative">
+                <input type="text" class="form-control form-control-light" placeholder="People, groups & messages...">
+                <span class="mdi mdi-magnify"></span>
+            </div>
+        </form>
+        <!-- end search box -->
+
+        <h6 class="font-13 text-muted text-uppercase">Group Chats</h6>
+        <div class="p-2">
+            <ng-container *ngFor="let group of chatGroups">
+                <app-widget-chat-group [group]="group"></app-widget-chat-group>
+            </ng-container>
+        </div>
+
+        <h6 class="font-13 text-muted text-uppercase mb-2">Contacts</h6>
+
+        <!-- users -->
+        <div class="row">
+            <div class="col">
+                <ngx-simplebar style="max-height: 369px;">
+                    <a href="javascript:void(0);" class="text-body" *ngFor="let user of userList"
+                        (click)="activateUser(user)">
+                        <div class="d-flex align-items-start p-2" [ngClass]="{'bg-light': user.id === selectedUser.id}">
+                            <img [src]="user.avatar" class="me-2 rounded-circle" height="42" alt="user.name" />
+                            <div class="w-100">
+                                <h5 class="mt-0 mb-0 font-14">
+                                    <span class="float-end text-muted fw-normal font-12">{{user.lastMessageOn}}</span>
+                                    {{user.name}}
+                                </h5>
+                                <p class="mt-1 mb-0 text-muted font-14">
+                                    <span class="w-25 float-end text-end" *ngIf="user.totalUnread!>0"><span
+                                            class="badge badge-soft-danger">{{user.totalUnread}}</span></span>
+                                    <span class="w-75">{{user.lastMessage}}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                </ngx-simplebar>
+                <!-- end slimscroll-->
+            </div>
+            <!-- End col -->
+        </div>
+        <!-- end users -->
+    </div> <!-- end card-body-->
+</div> <!-- end card-->

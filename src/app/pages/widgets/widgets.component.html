@@ -1,0 +1,205 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Widgets"></app-page-title>
+
+<div class="row">
+    <div class="col-md-6 col-xl-3" *ngFor="let item of statisticsCard1">
+        <app-widget-statistics-card1 [statisticsCardData]="item"></app-widget-statistics-card1>
+    </div> <!-- end col-->
+</div>
+<!-- end row-->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card widget-inline">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-6 col-xl-3" *ngFor="let widget of statisticsWidgets">
+                        <div class="p-2 text-center">
+                            <app-widget-statistics [stats]="widget.stats" [label]="widget.label"
+                                [labelCssClasses]="widget.labelCssClasses" [options]="widget.options"
+                                [icon]="widget.icon" [iconCssClasses]="widget.iconCssClasses">
+                            </app-widget-statistics>
+                        </div>
+                    </div>
+                </div> <!-- end row -->
+            </div>
+        </div> <!-- end card-->
+    </div> <!-- end col-->
+</div>
+<!-- end row-->
+
+<div class="row">
+    <div class="col-md-6 col-xl-3" *ngFor="let item of statisticsCard3">
+        <app-widget-statistics-card3 [title]="item.title" [stats]="item.stats" [trendLabel]="item.trendLabel"
+            [trendValue]="item.trendValue" [trendIcon]="item.trendIcon" [trendStats]="item.trendStats"
+            [variant]="item.variant" [options]="item.options"></app-widget-statistics-card3>
+    </div> <!-- end col -->
+</div>
+<!-- end row -->
+
+<div class="row">
+    <div class="col-md-6 col-xl-3" *ngFor="let item of statisticsCard2">
+        <app-widget-statistics-card2 [variant]="item.variant" [description]="item.description" [stats]="item.stats"
+            [icon]="item.icon" [progress]="item.progress" [options]="item.options"></app-widget-statistics-card2>
+    </div> <!-- end col -->
+</div> <!-- end row -->
+
+<div class="row">
+    <div class="col-md-6 col-xl-3" *ngFor="let user of userCards">
+        <app-widget-user-card [user]="user"></app-widget-user-card>
+    </div> <!-- end col-->
+</div>
+<!-- end row-->
+
+<div class="row">
+    <div class="col-12">
+        <h4 class="mb-4">Other Widgets</h4>
+    </div> <!-- end col-->
+</div>
+<!-- end row -->
+
+
+<div class="row">
+    <!-- INBOX -->
+    <div class="col-xl-4">
+        <app-widget-inbox [messages]="inboxMessages"></app-widget-inbox>
+    </div> <!-- end col -->
+
+    <!-- CHAT -->
+    <div class="col-xl-4">
+        <app-widget-chat [chatMessages]="chatMessages"></app-widget-chat>
+    </div> <!-- end col-->
+
+    <!-- Todos app -->
+    <div class="col-xl-4 ">
+        <app-widget-todo [toDoItems]="todoList" [height]="312" [archivable]="true" [addable]="true"
+            (archiveTodos)="archiveTodos()" (addTask)="addTask($event)">
+        </app-widget-todo>
+    </div> <!-- end col -->
+
+</div> <!-- end row -->
+
+<div class="row">
+    <div class="col-12">
+        <h4 class="mb-4">Chart Widgets</h4>
+    </div> <!-- end col-->
+</div>
+<!-- end row -->
+
+<div class="row">
+    <div class="col-xl-4">
+        <app-widget-chart-card [stats]="8145" title="Income Status" variant="warning" [options]="{prefix:'$'}"
+            icon="fe-aperture">
+            <apx-chart class="apex-charts" [series]="barChart.series!" [chart]="barChart.chart!"
+                [plotOptions]="barChart.plotOptions!" [fill]="barChart.fill!" [xaxis]="barChart.xaxis!"
+                [stroke]="barChart.stroke!" [tooltip]="barChart.tooltip!">
+            </apx-chart>
+        </app-widget-chart-card>
+    </div> <!-- end col -->
+
+    <div class="col-xl-4">
+        <app-widget-chart-card [stats]="367" title="Sales Status" variant="blue" icon="fe-shopping-bag">
+            <apx-chart class="apex-charts" [series]="lineChart.series!" [chart]="lineChart.chart!"
+                [colors]="lineChart.colors!" [yaxis]="lineChart.yaxis!" [legend]="lineChart.legend!"
+                [xaxis]="lineChart.xaxis!" [stroke]="lineChart.stroke!" [tooltip]="lineChart.tooltip!"></apx-chart>
+        </app-widget-chart-card>
+    </div> <!-- end col -->
+
+    <div class="col-xl-4">
+        <app-widget-chart-card [stats]="7204" title="Recent Users" variant="success" icon="fe-users">
+            <apx-chart class="apex-charts" [series]="areaChart.series!" [chart]="areaChart.chart!"
+                [colors]="areaChart.colors!" [yaxis]="areaChart.yaxis!" [legend]="areaChart.legend!"
+                [xaxis]="areaChart.xaxis!" [stroke]="areaChart.stroke!" [tooltip]="areaChart.tooltip!"
+                [fill]="areaChart.fill!"></apx-chart>
+        </app-widget-chart-card>
+    </div> <!-- end col -->
+
+</div>
+<!-- end row -->
+
+<div class="row">
+    <div class="col-xl-4">
+        <app-widget-rounded-progress-chart cardTitle="Total Revenue" [progress]="60" variant="#f1556c" totalSales="$178"
+            target="$12k" lastWeek="$2487" lastMonth="$14.5k"></app-widget-rounded-progress-chart>
+    </div> <!-- end col-->
+
+    <div class="col-xl-4">
+        <app-widget-rounded-progress-chart cardTitle="Sales Status" [progress]="37" variant="#6658dd" totalSales="29"
+            target="480" lastWeek="136" lastMonth="514"></app-widget-rounded-progress-chart>
+    </div> <!-- end col-->
+
+    <div class="col-xl-4">
+        <app-widget-rounded-progress-chart cardTitle="Recent Users" [progress]="81" variant="#1abc9c" totalSales="72"
+            target="8k" lastWeek="2.5k" lastMonth="10.2k"></app-widget-rounded-progress-chart>
+    </div> <!-- end col-->
+</div>
+<!-- end row -->
+
+<div class="row">
+    <div class="col-xl-4">
+        <app-ui-portlet-card cardTitle="Lifetime Sales">
+            <div class="text-center">
+                <div id="lifetime-sales">
+                    <apx-chart class="apex-charts mt-0" [series]="salesChart.series!" [chart]="salesChart.chart!"
+                        [yaxis]="salesChart.yaxis!" [legend]="salesChart.legend!" [fill]="salesChart.fill!"
+                        [colors]="salesChart.colors!" [tooltip]="salesChart.tooltip!" [xaxis]="salesChart.xaxis!"
+                        [stroke]="salesChart.stroke!">
+                    </apx-chart>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-4" *ngFor="let item of salesChartStatistics">
+                        <app-widget-chart-statistics [title]="item.title" [icon]="item.icon" [stats]="item.stats"
+                            [variant]="item.variant">
+                        </app-widget-chart-statistics>
+                    </div>
+                </div> <!-- end row -->
+
+            </div>
+        </app-ui-portlet-card>
+    </div> <!-- end col-->
+
+    <div class="col-xl-4">
+        <app-ui-portlet-card cardTitle="Income Amounts">
+            <div class="text-center">
+                <div id="income-amounts">
+                    <apx-chart class="apex-charts" [series]="incomeChart.series!" [chart]="incomeChart.chart!"
+                        [plotOptions]="incomeChart.plotOptions!" [colors]="incomeChart.colors!"
+                        [tooltip]="incomeChart.tooltip!" [xaxis]="incomeChart.xaxis!" [stroke]="incomeChart.stroke!">
+                    </apx-chart>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-4" *ngFor="let item of incomeChartStatistics">
+                        <app-widget-chart-statistics [title]="item.title" [icon]="item.icon" [stats]="item.stats"
+                            [variant]="item.variant">
+                        </app-widget-chart-statistics>
+                    </div>
+                </div> <!-- end row -->
+
+            </div>
+        </app-ui-portlet-card>
+    </div> <!-- end col-->
+
+    <div class="col-xl-4">
+        <app-ui-portlet-card cardTitle="Total Users">
+            <div class="text-center">
+                <div id="total-users">
+                    <apx-chart class="apex-charts" [series]="usersChart.series!" [chart]="usersChart.chart!"
+                        [legend]="usersChart.legend!" [colors]="usersChart.colors!"
+                        [dataLabels]="usersChart.dataLabels!" [tooltip]="usersChart.tooltip!"></apx-chart>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-4" *ngFor="let item of userChartStatistics">
+                        <app-widget-chart-statistics [title]="item.title" [icon]="item.icon" [stats]="item.stats"
+                            [variant]="item.variant">
+                        </app-widget-chart-statistics>
+                    </div>
+                </div> <!-- end row -->
+
+            </div>
+        </app-ui-portlet-card>
+    </div> <!-- end col-->
+</div>
+<!-- end row -->

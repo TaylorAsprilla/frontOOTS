@@ -1,0 +1,48 @@
+<nav class="navbar navbar-expand-lg fixed-top navbar-landing sticky-dark" id="sticky">
+    <div class="container">
+        <a class="navbar-brand logo" [routerLink]="'.'">
+            <img src="assets/images/logo-light.png" alt="" class="logo-light" height="21" />
+            <img src="assets/images/logo-dark.png" alt="" class="logo-dark" height="21" />
+        </a>
+        <button class="navbar-toggler shadow-none px-0" type="button" (click)="mobileMenuOpen=!mobileMenuOpen"
+            [attr.aria-expanded]="mobileMenuOpen" aria-label="Toggle navigation">
+            <i class="mdi mdi-menu"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" #collapse="ngbCollapse" [(ngbCollapse)]="!mobileMenuOpen"
+            id="navbarNavDropdown">
+            <ul class="navbar-nav mx-auto navbar-center">
+                <li class="nav-item">
+                    <a [routerLink]="['.']" fragment="home" [class.active]="isSectionActive('home')" class="nav-link"
+                        (click)="toggleMenu($event)">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a [routerLink]="['.']" fragment="features" [class.active]="isSectionActive('features')"
+                        class="nav-link" (click)="toggleMenu($event)">Features</a>
+                </li>
+                <li class="nav-item">
+                    <a [routerLink]="['.']" fragment="demo" [class.active]="isSectionActive('demo')" class="nav-link"
+                        (click)="toggleMenu($event)">Demos</a>
+                </li>
+                <li class="nav-item">
+                    <a [routerLink]="['.']" fragment="pricing" [class.active]="isSectionActive('pricing')"
+                        class="nav-link" (click)="toggleMenu($event)">Pricing</a>
+                </li>
+                <li class="nav-item">
+                    <a [routerLink]="['.']" fragment="faq" [class.active]="isSectionActive('faq')" class="nav-link"
+                        (click)="toggleMenu($event)">Faqs</a>
+                </li>
+                <li class="nav-item">
+                    <a [routerLink]="['.']" fragment="clients" [class.active]="isSectionActive('clients')"
+                        class="nav-link" (click)="toggleMenu($event)">Clients</a>
+                </li>
+                <li class="nav-item">
+                    <a [routerLink]="['.']" fragment="contact" [class.active]="isSectionActive('contact')"
+                        class="nav-link" (click)="toggleMenu($event)">Contact</a>
+                </li>
+            </ul>
+            <button class="btn btn-info navbar-btn" [routerLink]="['/auth/login']" *ngIf="!loggedInUser">Login</button>
+            <button class="btn btn-info navbar-btn" [routerLink]="['/auth/logout']" *ngIf="loggedInUser">Logout</button>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,42 @@
+//
+// rangeslider.scss
+//
+
+.ngx-slider {
+  .ngx-slider-pointer {
+    background-color: $primary !important;
+    width: 18px !important;
+    height: 18px !important;
+    top: -7px !important;
+    outline: none !important;
+
+    &:after {
+      top: 5px !important;
+      left: 5px !important;
+    }
+  }
+
+  .ngx-slider-bar,
+  .ngx-slider-tick {
+    background-color: #{map-get($grays, "300")} !important;
+  }
+
+  .ngx-slider-selection {
+    background: $primary !important;
+  }
+
+  .ngx-slider-active {
+    &:after {
+      background-color: $white !important;
+    }
+  }
+}
+
+body[data-layout-color="dark"] {
+  .ngx-slider {
+    .ngx-slider-bar,
+    .ngx-slider-tick {
+      background-color: #{map-get($dark-grays, "300")} !important;
+    }
+  }
+}

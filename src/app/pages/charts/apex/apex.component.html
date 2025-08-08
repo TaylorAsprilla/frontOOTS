@@ -1,0 +1,144 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Apex Charts"></app-page-title>
+
+<div class="row">
+    <div class="col-xl-6">
+        <app-ui-portlet-card cardTitle="Simple Line Chart">
+
+            <div id="line-chart">
+                <apx-chart class="apex-charts" [series]="lineChartOptions1.series!" [chart]="lineChartOptions1.chart!"
+                    [xaxis]="lineChartOptions1.xaxis!" [dataLabels]="lineChartOptions1.dataLabels!"
+                    [grid]="lineChartOptions1.grid!" [stroke]="lineChartOptions1.stroke!"
+                    [colors]="lineChartOptions1.colors!"></apx-chart>
+            </div>
+
+        </app-ui-portlet-card>
+    </div>
+    <!-- end col-->
+
+    <div class="col-xl-6">
+        <app-ui-portlet-card cardTitle="Line With Data Labels">
+            <div id="line-chart-datalabel">
+                <apx-chart class="apex-charts" [series]="lineChartOptions2.series!" [chart]="lineChartOptions2.chart!"
+                    [xaxis]="lineChartOptions2.xaxis!" [dataLabels]="lineChartOptions2.dataLabels!"
+                    [grid]="lineChartOptions2.grid!" [stroke]="lineChartOptions2.stroke!"
+                    [labels]="lineChartOptions2.labels!" [annotations]="lineChartOptions2.annotations!"
+                    [colors]="lineChartOptions2.colors!"></apx-chart>
+            </div>
+        </app-ui-portlet-card>
+    </div>
+    <!-- end col-->
+</div>
+<!-- end row-->
+
+<div class="row">
+    <div class="col-xl-6">
+        <app-ui-portlet-card cardTitle="Basic Bar Chart">
+
+            <div id="bar-chart">
+
+                <apx-chart class="apex-charts" [series]="barChartOptions1.series!" [chart]="barChartOptions1.chart!"
+                    [dataLabels]="barChartOptions1.dataLabels!" [plotOptions]="barChartOptions1.plotOptions!"
+                    [xaxis]="barChartOptions1.xaxis!" [colors]="barChartOptions1.colors!"></apx-chart>
+
+            </div>
+
+        </app-ui-portlet-card>
+    </div>
+    <!-- end col-->
+
+    <div class="col-xl-6">
+        <app-ui-portlet-card cardTitle="Stacked Bar Chart">
+
+            <div id="bar-chart-stacked">
+                <apx-chart class="apex-charts" [series]="barChartOptions2.series!" [chart]="barChartOptions2.chart!"
+                    [dataLabels]="barChartOptions2.dataLabels!" [plotOptions]="barChartOptions2.plotOptions!"
+                    [xaxis]="barChartOptions2.xaxis!" [stroke]="barChartOptions2.stroke!"
+                    [fill]="barChartOptions2.fill!" [yaxis]="barChartOptions2.yaxis!"
+                    [tooltip]="barChartOptions2.tooltip!" [legend]="barChartOptions2.legend!"></apx-chart>
+            </div>
+        </app-ui-portlet-card>
+    </div>
+    <!-- end col-->
+</div>
+<!-- end row-->
+
+
+<div class="row">
+    <div class="col-xl-6">
+        <app-ui-portlet-card cardTitle="Simple Pie Chart">
+            <div id="pie-chart">
+                <apx-chart class="apex-charts" [series]="pieChartOption1.series!" [chart]="pieChartOption1.chart!"
+                    [labels]="pieChartOption1.labels!" [colors]="pieChartOption1.colors!"
+                    [dataLabels]="pieChartOption1.dataLabels!" [responsive]="pieChartOption1.responsive!"
+                    [legend]="pieChartOption1.legend!">
+                </apx-chart>
+            </div>
+        </app-ui-portlet-card>
+    </div>
+    <!-- end col-->
+
+    <div class="col-xl-6">
+        <app-ui-portlet-card cardTitle="Simple Donut Chart">
+
+            <div id="donut-chart">
+                <apx-chart class="apex-charts" [series]="donutChartOptions1.series!" [chart]="donutChartOptions1.chart!"
+                    [labels]="donutChartOptions1.labels!" [fill]="donutChartOptions1.fill!"
+                    [responsive]="donutChartOptions1.responsive!" [dataLabels]="pieChartOption1.dataLabels!"
+                    [colors]="donutChartOptions1.colors!" [legend]="donutChartOptions1.legend!"></apx-chart>
+            </div>
+        </app-ui-portlet-card>
+    </div>
+    <!-- end col-->
+</div>
+<!-- end row-->
+
+<div class="row">
+    <div class="col-xl-6">
+        <app-ui-portlet-card cardTitle="Simple Radial Chart">
+            <div id="radial-chart">
+                <apx-chart class="apex-charts" [series]="radialChartOptions1.series!"
+                    [chart]="radialChartOptions1.chart!" [plotOptions]="radialChartOptions1.plotOptions!"
+                    [labels]="radialChartOptions1.labels!" [colors]="radialChartOptions1.colors!">
+                </apx-chart>
+            </div>
+        </app-ui-portlet-card>
+    </div>
+    <!-- end col-->
+
+    <div class="col-xl-6">
+        <app-ui-portlet-card cardTitle="Multiple Radial Chart">
+
+            <div id="multi-radial-chart">
+                <apx-chart class="apex-charts" [series]="radialChartOptions2.series!"
+                    [chart]="radialChartOptions2.chart!" [plotOptions]="radialChartOptions2.plotOptions!"
+                    [labels]="radialChartOptions2.labels!">
+                </apx-chart>
+            </div>
+
+        </app-ui-portlet-card>
+    </div>
+    <!-- end col-->
+</div>
+<!-- end row-->
+
+
+<div class="row">
+    <div class="col-xl-6">
+        <app-ui-portlet-card cardTitle="Mixed Line, area and column">
+
+            <div id="mixed-chart">
+                <apx-chart class="apex-charts" [series]="mixedChartOptions.series!" [chart]="mixedChartOptions.chart!"
+                    [yaxis]="mixedChartOptions.yaxis!" [xaxis]="mixedChartOptions.xaxis!"
+                    [labels]="mixedChartOptions.labels!" [stroke]="mixedChartOptions.stroke!"
+                    [plotOptions]="mixedChartOptions.plotOptions!" [markers]="mixedChartOptions.markers!"
+                    [fill]="mixedChartOptions.fill!" [tooltip]="mixedChartOptions.tooltip!"
+                    [colors]="mixedChartOptions.colors!"></apx-chart>
+            </div>
+
+        </app-ui-portlet-card>
+    </div>
+    <!-- end col-->
+
+</div>
+<!-- end row-->

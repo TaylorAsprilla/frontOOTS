@@ -1,0 +1,169 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Create Project"></app-page-title>
+
+<form (ngSubmit)="onSubmit()" #newProject="ngForm">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="mb-3">
+                                <label for="projectname" class="form-label">Project Name</label>
+                                <input type="text" id="projectname" class="form-control" name="projectName" required
+                                    placeholder="Enter project name" [(ngModel)]="projectName" #name="ngModel"
+                                    [ngClass]="{'is-invalid': newProject.submitted && name.invalid}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="project-overview" class="form-label">Project Overview</label>
+                                <textarea class="form-control" id="project-overview" rows="5" name="projectOverview"
+                                    required placeholder="Enter some brief about project.."
+                                    [(ngModel)]="projectOverview" #overview="ngModel"
+                                    [ngClass]="{'is-invalid': newProject.submitted && overview.invalid}"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Project Privacy</label> <br />
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" id="customRadio1" name="customRadio" value="Private"
+                                        [(ngModel)]="projectPrivacy" class="form-check-input">
+                                    <label class="form-check-label" for="customRadio1">Private</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" id="customRadio2" name="customRadio" value="Team"
+                                        [(ngModel)]="projectPrivacy" class="form-check-input">
+                                    <label class="form-check-label" for="customRadio2">Team</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" id="customRadio3" name="customRadio" value="Public"
+                                        [(ngModel)]="projectPrivacy" class="form-check-input" checked>
+                                    <label class="form-check-label" for="customRadio3">Public</label>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <!-- Date View -->
+                                    <div class="mb-3 position-relative">
+                                        <label class="form-label">Start Date</label>
+                                        <input type="text" class="form-control" id="startDate" autocomplete="off"
+                                            name="startDate" ngbDatepicker placeholder="August 9, 2020"
+                                            #startDate="ngbDatepicker" (click)="startDate.toggle()" name="startDate"
+                                            [(ngModel)]="projectStartDate" />
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <!-- Date View -->
+                                    <div class="mb-3 position-relative">
+                                        <label class="form-label">Due Date</label>
+                                        <input type="text" class="form-control" id="endDate" autocomplete="off"
+                                            name="endDate" ngbDatepicker placeholder="March 9, 2020"
+                                            #endDate="ngbDatepicker" (click)="endDate.toggle()" name="endDate"
+                                            [(ngModel)]="projectEndDate" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="project-priority" class="form-label">Project Priority</label>
+
+                                <select2 [data]="priority" [value]="projectPriority">
+                                </select2>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="project-budget" class="form-label">Budget</label>
+                                <input type="text" id="project-budget" class="form-control"
+                                    placeholder="Enter project budget" name="budget" [(ngModel)]="projectBudget"
+                                    #budget="ngModel">
+
+                            </div>
+
+                        </div> <!-- end col-->
+
+                        <div class="col-xl-6">
+                            <div class="my-3 mt-xl-0">
+                                <label for="projectname" class="mb-0 form-label">Avatar</label>
+                                <p class="text-muted font-14">Recommended thumbnail size 800x400 (px).</p>
+
+                                <ngx-dropzone (change)="onSelect($event)" class="dropzone"
+                                    accept="image/jpeg,image/jpg,image/png,image/gif">
+                                    <ngx-dropzone-label>
+                                        <i class="h3 text-muted dripicons-cloud-upload"></i>
+                                        <h4>Drop files here or click to upload.</h4>
+                                    </ngx-dropzone-label>
+
+                                </ngx-dropzone>
+
+                                <!-- Preview -->
+                                <div class="dropzone-previews mt-3" id="file-previews">
+
+                                    <!-- file preview template -->
+                                    <div id="uploadPreviewTemplate" *ngFor="let f of files">
+                                        <div class="card mt-1 mb-0 shadow-none border">
+                                            <div class="p-2">
+                                                <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                        <img class="avatar-sm rounded bg-light" [alt]="f.name"
+                                                            [src]="getPreviewUrl(f)">
+                                                    </div>
+                                                    <div class="col ps-0">
+                                                        <a href="javascript:void(0);"
+                                                            class="text-muted fw-bold">{{f.name}}</a>
+                                                        <p class="mb-0">{{getSize(f)}}</p>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <!-- Button -->
+                                                        <a href="javascript:void(0)"
+                                                            class="btn btn-link btn-lg text-muted"
+                                                            (click)="onRemove($event)">
+                                                            <i class="dripicons-cross"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- end file preview template -->
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="project-overview" class="form-label">Team Members</label>
+                                <select2 [data]="teamMembers" (update)="addMember($event)">
+                                </select2>
+
+                                <div class="mt-2" id="tooltip-container">
+                                    <ng-container *ngFor="let member of selectedMembers; trackBy: trackByItemID">
+                                        <a href="javascript:void(0);" placement="top" [ngbTooltip]="member.name"
+                                            class="d-inline-block me-1">
+                                            <img [src]="member.image" class="rounded-circle avatar-xs" alt="friend">
+                                        </a>
+                                    </ng-container>
+                                </div>
+                            </div>
+
+
+                        </div> <!-- end col-->
+                    </div>
+                    <!-- end row -->
+
+
+                    <div class="row mt-3">
+                        <div class="col-12 text-center">
+                            <button type="submit" class="btn btn-success waves-effect waves-light m-1"><i
+                                    class="fe-check-circle me-1"></i> Create</button>
+                            <button type="button" class="btn btn-light waves-effect waves-light m-1"><i
+                                    class="fe-x me-1"></i> Cancel</button>
+                        </div>
+                    </div>
+
+                </div> <!-- end card-body -->
+            </div> <!-- end card-->
+        </div> <!-- end col-->
+    </div>
+    <!-- end row-->
+</form>

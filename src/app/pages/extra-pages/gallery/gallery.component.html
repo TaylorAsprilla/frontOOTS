@@ -1,0 +1,42 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Gallery"></app-page-title>
+
+<!-- Filter -->
+<div class="row">
+    <div class="col-12">
+        <div class="text-center filter-menu">
+            <a href="javascript: void(0);" class="filter-menu-item" [class.active]="imageCategory==='all'"
+                (click)='filterImages("all")'>All</a>
+            <a href="javascript: void(0);" class="filter-menu-item" [class.active]="imageCategory==='web'"
+                (click)='filterImages("web")'>Web Design</a>
+            <a href="javascript: void(0);" class="filter-menu-item" [class.active]="imageCategory==='graphic'"
+                (click)='filterImages("graphic")'>Graphic Design</a>
+            <a href="javascript: void(0);" class="filter-menu-item" [class.active]="imageCategory==='illustrator'"
+                (click)='filterImages("illustrator")'>Illustrator</a>
+            <a href="javascript: void(0);" class="filter-menu-item" [class.active]="imageCategory==='photography'"
+                (click)='filterImages("photography")'>Photography</a>
+        </div>
+    </div>
+</div>
+<!-- end row-->
+
+<div class="row filterable-content position-relative">
+    <app-ui-preloader [display]="loading"></app-ui-preloader>
+    <div class="col-sm-6 col-xl-3 filter-item all web illustrator" *ngFor="let album of galleryAlbums; let i=index">
+        <div class="gal-box">
+            <a href="javascript:void(0)" class="image-popup" [title]="album.image?.caption">
+                <img [src]="album.image?.thumb" (click)="open(i)" class="img-fluid" [alt]="album.image?.caption">
+            </a>
+            <div class="gall-info">
+                <h4 class="font-16 mt-0">{{album.title}}</h4>
+                <a href="javascript: void(0);">
+                    <img [src]="album.avatar!" alt="user-img" class="rounded-circle" height="24" />
+                    <span class="text-muted ms-1">{{album.userName}}</span>
+                </a>
+                <a href="javascript: void(0);" class="gal-like-btn" (click)="toggleLike(album)"><i
+                        [class]="album.isLiked ? 'mdi mdi-heart' : 'mdi mdi-heart-outline'" class="text-danger"></i></a>
+            </div> <!-- gallery info -->
+        </div> <!-- end gal-box -->
+    </div> <!-- end col -->
+
+</div>

@@ -1,0 +1,331 @@
+<!-- Right Sidebar -->
+<div class="right-bar" (clickOutside)="hide()" [exclude]="'.right-bar-toggle'" [excludeBeforeClick]="true">
+    <ngx-simplebar class="h-100">
+        <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs nav-bordered nav-justified">
+            <li ngbNavItem="chat">
+                <a ngbNavLink class="py-2">
+                    <i class="mdi mdi-message-text d-block font-22 my-1"></i>
+                </a>
+                <ng-template ngbNavContent>
+
+                    <form class="search-bar p-3">
+                        <div class="position-relative">
+                            <input type="text" class="form-control" name="search" placeholder="Search..."
+                                [(ngModel)]="searchTerm">
+                            <span class="mdi mdi-magnify"></span>
+                        </div>
+                    </form>
+
+                    <h6 class="fw-medium px-3 mt-2 text-uppercase">Group Chats</h6>
+
+                    <div class="p-2">
+                        <ng-container *ngFor="let group of chatGroups">
+                            <app-widget-chat-group [group]="group" containerClass="notification-item ps-3">
+                            </app-widget-chat-group>
+                        </ng-container>
+                    </div>
+
+                    <h6 class="fw-medium px-3 mt-3 text-uppercase">Favourites <a href="javascript: void(0);"
+                            class="font-18 text-danger"><i class="float-end mdi mdi-plus-circle"></i></a></h6>
+
+                    <div class="p-2">
+                        <ng-container *ngFor="let chatItem of chats">
+                            <a href="javascript: void(0);" class="text-reset notification-item"
+                                *ngIf="chatItem.group==='favourites'">
+                                <div class="d-flex align-items-start noti-user-item">
+                                    <div class="position-relative me-2">
+                                        <img [src]="chatItem.avatar" class="rounded-circle avatar-sm" alt="user-pic">
+                                        <i class="mdi mdi-circle user-status {{chatItem.userStatus}}"></i>
+                                    </div>
+                                    <div class="overflow-hidden">
+                                        <h6 class="mt-0 mb-1 font-14">{{chatItem.userName}}</h6>
+                                        <div class="font-13 text-muted">
+                                            <p class="mb-0 text-truncate">{{chatItem.message}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </ng-container>
+
+
+                    </div>
+
+                    <h6 class="fw-medium px-3 mt-3 text-uppercase">Other Chats <a href="javascript: void(0);"
+                            class="font-18 text-danger"><i class="float-end mdi mdi-plus-circle"></i></a></h6>
+
+                    <div class="p-2 pb-4">
+                        <ng-container *ngFor="let chatItem of chats">
+
+                            <a href="javascript: void(0);" class="text-reset notification-item"
+                                *ngIf="chatItem.group==='other'">
+                                <div class="d-flex align-items-start noti-user-item">
+                                    <div class="position-relative me-2">
+                                        <img [src]="chatItem.avatar" class="rounded-circle avatar-sm" alt="user-pic">
+                                        <i class="mdi mdi-circle user-status {{chatItem.userStatus}}"></i>
+                                    </div>
+                                    <div class="overflow-hidden">
+                                        <h6 class="mt-0 mb-1 font-14">{{chatItem.userName}}</h6>
+                                        <div class="font-13 text-muted">
+                                            <p class="mb-0 text-truncate">{{chatItem.message}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </ng-container>
+
+
+                        <div class="text-center mt-3">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white">
+                                <i class="mdi mdi-spin mdi-loading me-2"></i>
+                                Load more
+                            </a>
+                        </div>
+                    </div>
+
+                </ng-template>
+            </li>
+            <li ngbNavItem="tasks">
+                <a ngbNavLink class="py-2">
+                    <i class="mdi mdi-format-list-checkbox d-block font-22 my-1"></i>
+                </a>
+                <ng-template ngbNavContent>
+                    <h6 class="fw-medium p-3 m-0 text-uppercase">Working Tasks</h6>
+                    <div class="px-2">
+                        <ng-container *ngFor="let task of tasks">
+                            <a href="javascript: void(0);" class="text-reset item-hovered d-block p-2"
+                                *ngIf="task.stage==='working'">
+                                <p class="text-muted mb-0">{{task.task}}<span
+                                        class="float-end">{{task.progress}}%</span>
+                                </p>
+                                <ngb-progressbar [type]="task.variant" [value]="task.progress" class="mt-2"
+                                    height="4px">
+                                </ngb-progressbar>
+                            </a>
+                        </ng-container>
+                    </div>
+
+                    <h6 class="fw-medium px-3 mb-0 mt-4 text-uppercase">Upcoming Tasks</h6>
+
+                    <div class="p-2">
+                        <ng-container *ngFor="let task of tasks">
+                            <a href="javascript: void(0);" class="text-reset item-hovered d-block p-2"
+                                *ngIf="task.stage==='upcoming'">
+                                <p class="text-muted mb-0">{{task.task}}<span
+                                        class="float-end">{{task.progress}}%</span></p>
+                                <ngb-progressbar [type]="task.variant" [value]="task.progress" class="mt-2"
+                                    height="4px">
+                                </ngb-progressbar>
+                            </a>
+
+                        </ng-container>
+                    </div>
+
+                    <div class="p-3 mt-2 d-grid">
+                        <a href="javascript: void(0);" class="btn btn-success waves-effect waves-light">Create Task</a>
+                    </div>
+                </ng-template>
+            </li>
+            <li ngbNavItem="setting">
+                <a ngbNavLink class="py-2">
+                    <i class="mdi mdi-cog-outline d-block font-22 my-1"></i>
+                </a>
+                <ng-template ngbNavContent>
+                    <h6 class="fw-medium px-3 m-0 py-2 font-13 text-uppercase bg-light">
+                        <span class="d-block py-1">Theme Settings</span>
+                    </h6>
+
+                    <div class="p-3">
+
+                        <ngb-alert [dismissible]="false">
+                            <strong>Customize </strong> the overall color scheme, sidebar menu, etc.
+                        </ngb-alert>
+
+
+                        <h6 class="fw-medium font-14 mt-4 mb-2 pb-1">Layout Type</h6>
+
+                        <div class="form-check form-switch mb-1">
+                            <input type="radio" class="form-check-input" name="layoutType" value="vertical"
+                                id="vertical-check" [(ngModel)]="layoutType" (change)="changeLayout('vertical')" />
+                            <label class="form-check-label" for="vertical-check">Vertical Layout</label>
+                        </div>
+
+                        <div class="form-check form-switch mb-1">
+                            <input type="radio" class="form-check-input" name="layoutType" value="horizontal"
+                                id="horizontal-check" [(ngModel)]="layoutType" (change)="changeLayout('horizontal')" />
+                            <label class="form-check-label" for="horizontal-check">Horizontal Layout</label>
+                        </div>
+
+                        <div class="form-check form-switch mb-1">
+                            <input type="radio" class="form-check-input" name="layoutType" value="detached"
+                                id="detached-check" [(ngModel)]="layoutType" (change)="changeLayout('detached')" />
+                            <label class="form-check-label" for="detached-check">Detached Layout</label>
+                        </div>
+
+                        <div class="form-check form-switch mb-1">
+                            <input type="radio" class="form-check-input" name="layoutType" value="two-column"
+                                id="two-column-check" [(ngModel)]="layoutType" (change)="changeLayout('two-column')" />
+                            <label class="form-check-label" for="two-column-check">Two Column Menu</label>
+                        </div>
+                        <!-- Color -->
+                        <h6 class="fw-medium font-14 mt-4 mb-2 pb-1">Color Scheme</h6>
+                        <div class="form-check form-switch mb-1">
+                            <input type="radio" class="form-check-input" name="layoutColor" value="light"
+                                id="light-check" [(ngModel)]="layoutColor" (change)="changeLayoutColor('light')" />
+                            <label class="form-check-label" for="light-check">Light</label>
+                        </div>
+                        <div class="form-check form-switch mb-1">
+                            <input type="radio" class="form-check-input" name="layoutColor" value="dark" id="dark-check"
+                                [(ngModel)]="layoutColor" (change)="changeLayoutColor('dark')" />
+                            <label class="form-check-label" for="dark-check">Dark</label>
+                        </div>
+
+                        <!-- Width -->
+                        <h6 class="fw-medium font-14 mt-4 mb-2 pb-1">Width</h6>
+                        <div class="form-check form-switch mb-1">
+                            <input type="radio" class="form-check-input" name="layoutWidth" value="fluid"
+                                id="fluid-check" [(ngModel)]="layoutWidth" (change)="changeLayoutWidth('fluid')" />
+                            <label class="form-check-label" for="fluid-check">Fluid</label>
+                        </div>
+                        <div class="form-check form-switch mb-1">
+                            <input type="radio" class="form-check-input" name="layoutWidth" value="boxed"
+                                id="boxed-check" [(ngModel)]="layoutWidth" (change)="changeLayoutWidth('boxed')" />
+                            <label class="form-check-label" for="boxed-check">Boxed</label>
+                        </div>
+
+                        <!-- Menu positions -->
+                        <ng-container *ngIf="layoutType!=='two-column'">
+                            <h6 class="fw-medium font-14 mt-4 mb-2 pb-1">Menus (Leftsidebar and Topbar) Positon</h6>
+                            <div class="form-check form-switch mb-1">
+                                <input type="radio" class="form-check-input" name="menuPosition" value="fixed"
+                                    id="fixed-check" [(ngModel)]="menuPosition"
+                                    (change)="changeMenuPosition('fixed')" />
+                                <label class="form-check-label" for="fixed-check">Fixed</label>
+                            </div>
+
+                            <div class="form-check form-switch mb-1">
+                                <input type="radio" class="form-check-input" name="menuPosition" value="scrollable"
+                                    id="scrollable-check" [(ngModel)]="menuPosition"
+                                    (change)="changeMenuPosition('scrollable')" />
+                                <label class="form-check-label" for="scrollable-check">Scrollable</label>
+                            </div>
+                        </ng-container>
+
+                        <!-- Left Sidebar-->
+                        <ng-container *ngIf="layoutType!=='horizontal'">
+                            <h6 class="fw-medium font-14 mt-4 mb-2 pb-1">Left Sidebar Color</h6>
+
+                            <div class="form-check form-switch mb-1">
+                                <input type="radio" class="form-check-input" name="leftSidebarTheme" value="light"
+                                    id="light-check" [(ngModel)]="leftSidebarTheme"
+                                    (change)="changeLeftSidebarTheme('light')" />
+                                <label class="form-check-label" for="light-check">Light</label>
+                            </div>
+
+                            <div class="form-check form-switch mb-1">
+                                <input type="radio" class="form-check-input" name="leftSidebarTheme" value="dark"
+                                    id="dark-check" [(ngModel)]="leftSidebarTheme"
+                                    (change)="changeLeftSidebarTheme('dark')" />
+                                <label class="form-check-label" for="dark-check">Dark</label>
+                            </div>
+
+                            <div class="form-check form-switch mb-1">
+                                <input type="radio" class="form-check-input" name="leftSidebarTheme" value="brand"
+                                    id="brand-check" [(ngModel)]="leftSidebarTheme"
+                                    (change)="changeLeftSidebarTheme('brand')" />
+                                <label class="form-check-label" for="brand-check">Brand</label>
+                            </div>
+
+                            <div class="form-check form-switch mb-3">
+                                <input type="radio" class="form-check-input" name="leftSidebarTheme" value="gradient"
+                                    id="gradient-check" [(ngModel)]="leftSidebarTheme"
+                                    (change)="changeLeftSidebarTheme('gradient')" />
+                                <label class="form-check-label" for="gradient-check">Gradient</label>
+                            </div>
+                        </ng-container>
+
+                        <!-- size -->
+                        <ng-container
+                            *ngIf="layoutType!=='horizontal' && layoutType!=='two-column' && !disableLeftBarSize">
+                            <h6 class="fw-medium font-14 mt-4 mb-2 pb-1">Left Sidebar Size</h6>
+
+                            <div class="form-check form-switch mb-1">
+                                <input type="radio" class="form-check-input" name="leftSidebarType" value="default"
+                                    id="default-size-check" [(ngModel)]="leftSidebarType"
+                                    (change)="changeLeftSidebarType('default')" />
+                                <label class="form-check-label" for="default-size-check">Default</label>
+                            </div>
+
+                            <div class="form-check form-switch mb-1">
+                                <input type="radio" class="form-check-input" name="leftSidebarType" value="condensed"
+                                    id="condensed-check" [(ngModel)]="leftSidebarType"
+                                    (change)="changeLeftSidebarType('condensed')" />
+                                <label class="form-check-label" for="condensed-check">Condensed <small>(Extra Small
+                                        size)</small></label>
+                            </div>
+
+                            <div class="form-check form-switch mb-1">
+                                <input type="radio" class="form-check-input" name="leftSidebarType" value="compact"
+                                    id="compact-check" [(ngModel)]="leftSidebarType"
+                                    (change)="changeLeftSidebarType('compact')" />
+                                <label class="form-check-label" for="compact-check">Compact <small>(Small
+                                        size)</small></label>
+                            </div>
+                        </ng-container>
+                        <!-- Two tone icon -->
+                        <ng-container *ngIf="layoutType!=='horizontal' && layoutType!=='two-column'">
+                            <h6 class="fw-medium font-14 mt-4 mb-2 pb-1">Two Tones Icons</h6>
+
+                            <div class="form-check form-switch mb-1">
+                                <input type="checkbox" class="form-check-input" name="showTwotoneicon" value="fixed"
+                                    id="twotoneicon-check" [(ngModel)]="hasTwoToneIcon"
+                                    (change)="toggleTwoToneIcons(hasTwoToneIcon)" />
+                                <label class="form-check-label" for="twotoneicon-check">Enable</label>
+                            </div>
+                        </ng-container>
+
+                        <!-- User info -->
+                        <ng-container *ngIf="layoutType!=='horizontal' && layoutType!=='two-column'">
+                            <h6 class="fw-medium font-14 mt-4 mb-2 pb-1">Sidebar User Info</h6>
+
+                            <div class="form-check form-switch mb-1">
+                                <input type="checkbox" class="form-check-input" name="showSidebarUserInfo" value="fixed"
+                                    id="sidebaruser-check" [(ngModel)]="showSidebarUserInfo"
+                                    (change)="toggleLeftSidebarUserInfo(showSidebarUserInfo)" />
+                                <label class="form-check-label" for="sidebaruser-check">Enable</label>
+                            </div>
+                        </ng-container>
+
+                        <!-- Topbar -->
+                        <h6 class="fw-medium font-14 mt-4 mb-2 pb-1">Topbar</h6>
+
+                        <div class="form-check form-switch mb-1">
+                            <input type="radio" class="form-check-input" name="topbarTheme" value="dark"
+                                id="darktopbar-check" [(ngModel)]="topbarTheme" (change)="changeTopbarTheme('dark')" />
+                            <label class="form-check-label" for="darktopbar-check">Dark</label>
+                        </div>
+
+                        <div class="form-check form-switch mb-1">
+                            <input type="radio" class="form-check-input" name="topbarTheme" value="light"
+                                id="lighttopbar-check" [(ngModel)]="topbarTheme"
+                                (change)="changeTopbarTheme('light')" />
+                            <label class="form-check-label" for="lighttopbar-check">Light</label>
+                        </div>
+
+
+                        <div class="d-grid mt-4">
+                            <button class="btn btn-primary" id="resetBtn" (click)="reset()">Reset to Default</button>
+                        </div>
+
+                    </div>
+                </ng-template>
+            </li>
+        </ul>
+
+        <div [ngbNavOutlet]="nav" class="pt-0"></div>
+
+    </ngx-simplebar> <!-- end slimscroll-menu-->
+</div>
+<!-- Right-bar -->
+
+<!-- Right bar overlay-->
+<div class="rightbar-overlay"></div>

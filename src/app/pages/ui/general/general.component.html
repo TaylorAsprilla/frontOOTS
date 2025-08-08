@@ -1,0 +1,214 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="General UI"></app-page-title>
+
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Default</h4>
+                <p class="sub-header">
+                    A simple labeling component. Badges scale to match the size of the immediate parent element by using
+                    relative font sizing and <code>em</code> units.
+                </p>
+
+                <h1>h1.Example heading <span class="badge bg-secondary text-light">New</span></h1>
+                <h2>h2.Example heading <span class="badge badge-soft-success">New</span></h2>
+                <h3>
+                    h3.Example heading
+                    <button type="button" class="btn btn-sm btn-primary">
+                        Notifications <span class="badge bg-light text-dark">4</span>
+                    </button>
+                </h3>
+                <h4>h4.Example heading <a href="javascript:void(0)" class="badge badge-soft-info">Info Link</a></h4>
+                <h5>h5.Example heading <span class="badge badge-outline-warning">New</span></h5>
+                <h6>h6.Example heading <span class="badge bg-danger">New</span></h6>
+
+            </div> <!-- end card-body -->
+        </div> <!-- end card-->
+
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Contextual variations</h4>
+                <p class="sub-header">
+                    Add any of the below mentioned modifier classes to change the appearance of a badge.
+                    Badge can be more contextual as well. Just use regular convention e.g. <code>bg-*color</code> to
+                    have
+                    badge with different background.
+                </p>
+
+                <span *ngFor="let badge of badgeVariants" class="badge bg-{{badge.color}} me-1"
+                    [ngClass]="{'text-light': badge.color==='secondary','text-dark': badge.color==='light'}">{{badge.name}}</span>
+
+                <h5 class="mt-4">Soft Badges</h5>
+                <p class="sub-header">
+                    Using the <code>.badge-soft*</code> modifier class, you can have more soften variation.
+                </p>
+                <ng-container *ngFor="let badge of badgeVariants">
+                    <span class="badge badge-soft-{{badge.color}} me-1">{{badge.name}}</span>
+                </ng-container>
+
+                <h5 class="mt-4">Outline Badges</h5>
+                <p class="sub-header">
+                    Using the <code>.badge-outline-*</code> to quickly create a bordered badges.
+                </p>
+                <ng-container *ngFor="let badge of badgeVariants">
+                    <span class="badge badge-outline-{{badge.color}} me-1">{{badge.name}}</span>
+                </ng-container>
+
+            </div> <!-- end card-body -->
+        </div> <!-- end card-->
+
+    </div>
+    <div class="col-xl-6">
+
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Pill Badges</h4>
+                <p class="sub-header">
+                    Use the <code>.rounded-pill</code> modifier class to make badges more rounded.
+                </p>
+
+                <span *ngFor="let badge of badgeVariants" class="badge bg-{{badge.color}} rounded-pill me-1"
+                    [ngClass]="{'text-light': badge.color==='secondary','text-dark': badge.color==='light'}">{{badge.name}}</span>
+
+
+                <h5 class="mt-4">Soft Badges</h5>
+                <p class="sub-header">
+                    Use the <code>.badge-soft-*</code> modifier class to make badges soft.
+                </p>
+
+                <ng-container *ngFor="let badge of badgeVariants">
+                    <span class="badge badge-soft-{{badge.color}} rounded-pill me-1">{{badge.name}}</span>
+                </ng-container>
+
+                <h5 class="mt-4">Outline Badges</h5>
+                <p class="sub-header">
+                    Using the <code>.badge-outline-*</code> to quickly create a bordered badges.
+                </p>
+
+                <ng-container *ngFor="let badge of badgeVariants">
+                    <span class="badge badge-outline-{{badge.color}} rounded-pill me-1">{{badge.name}}</span>
+                </ng-container>
+
+            </div> <!-- end card-body -->
+        </div> <!-- end card -->
+
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Badge Positioned</h4>
+                <p class="sub-header">
+                    Use the <code>.rounded-pill</code> modifier class to make badges more rounded.
+                </p>
+
+                <div class="row">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-primary position-relative">
+                            Inbox
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                99+
+                                <span class="visually-hidden">unread messages</span>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-primary position-relative">
+                            Profile
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                                <span class="visually-hidden">New alerts</span>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-success mt-4">
+                            Notifications <span class="badge bg-light text-dark ms-1">4</span>
+                        </button>
+                    </div>
+                </div>
+            </div> <!-- end card-body -->
+        </div> <!-- end card -->
+    </div> <!-- end col -->
+</div>
+<!-- end row -->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="header-title">Pagination</h4>
+                        <p class="sub-header">
+                            Provide pagination links for your site or app with the multi-page pagination component.
+                        </p>
+
+                        <p class="mb-1 fw-bold">Default Pagination</p>
+                        <p class="text-muted font-14">
+                            Simple pagination inspired by Rdio, great for apps and search results.
+                        </p>
+
+                        <ngb-pagination [collectionSize]="50" [(page)]="page1" aria-label="Default pagination">
+                        </ngb-pagination>
+
+                        <p class="mb-1 fw-bold mt-4">Rounded Pagination</p>
+                        <p class="text-muted font-14">
+                            Add <code> .pagination-rounded</code> for rounded pagination.
+                        </p>
+                        <ngb-pagination [collectionSize]="50" [(page)]="page2" aria-label="Default pagination"
+                            class="pagination-rounded"></ngb-pagination>
+
+                        <p class="mb-1 fw-bold mt-4">Sizing</p>
+                        <p class="text-muted font-14">
+                            Add <code>size='sm'|'lg'</code>
+                            for additional sizes.
+                        </p>
+
+                        <ngb-pagination [collectionSize]="30" [(page)]="page3" aria-label="Default pagination"
+                            size="lg">
+                        </ngb-pagination>
+                        <ngb-pagination [collectionSize]="30" [(page)]="page4" aria-label="Default pagination"
+                            size="sm">
+                        </ngb-pagination>
+
+                        <p class="mb-1 fw-bold mt-4">Alignment</p>
+                        <p class="text-muted font-14">
+                            Change the alignment of pagination components with flexbox utilities.
+                        </p>
+
+                        <ngb-pagination class="d-flex justify-content-center" [collectionSize]="50" [(page)]="page5">
+                        </ngb-pagination>
+                        <ngb-pagination class="d-flex justify-content-end" [collectionSize]="50" [(page)]="page6">
+                        </ngb-pagination>
+
+                    </div>
+
+                    <div class="col-md-6">
+                        <h4 class="header-title mt-3 mt-sm-0">Breadcrumb</h4>
+                        <p class="text-muted font-14">
+                            Indicate the current page’s location within a navigational hierarchy.
+                        </p>
+
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item active">Home</li>
+                        </ol>
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                            <li class="breadcrumb-item active">Library</li>
+                        </ol>
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Library</a></li>
+                            <li class="breadcrumb-item active">Data</li>
+                        </ol>
+
+                    </div>
+
+                </div>
+                <!-- end row -->
+
+            </div> <!-- end card-body-->
+        </div> <!-- end card -->
+    </div> <!-- end col -->
+</div>
+<!-- end row -->

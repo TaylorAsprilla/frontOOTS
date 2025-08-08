@@ -1,0 +1,88 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Customers"></app-page-title>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-sm-4">
+                        <button type="button" class="btn btn-danger waves-effect waves-light" (click)="openModal()"><i
+                                class="mdi mdi-plus-circle me-1"></i> Add
+                            Customers</button>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="text-sm-end mt-2 mt-sm-0">
+                            <button type="button" class="btn btn-success mb-2 me-1"><i class="mdi mdi-cog"></i></button>
+                            <button type="button" class="btn btn-light mb-2 me-1">Import</button>
+                            <button type="button" class="btn btn-light mb-2">Export</button>
+                        </div>
+                    </div><!-- end col-->
+                </div>
+
+                <!-- customer table -->
+                <app-advanced-table #advancedTable [tableData]="customers" [columns]="columns" [pagination]="true"
+                    [isSearchable]="true" [hasRowSelection]="true" (search)="searchData($event)" [isSortable]="false"
+                    tableClasses="table-centered table-nowrap">
+                </app-advanced-table>
+
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+</div>
+<!-- end row -->
+
+
+<!-- Modal -->
+<ng-template #content let-modal>
+    <div class="modal-header bg-light">
+        <h4 class="modal-title" id="myCenterModalLabel">Add New Customers</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('')"></button>
+    </div>
+    <div class="modal-body p-4">
+        <form [formGroup]="newCustomer" #addCustomer="ngForm">
+            <div class="mb-3">
+                <label for="name" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="name" placeholder="Enter full name" required
+                    formControlName="name" [ngClass]="{ 'is-invalid': addCustomer.submitted && form1.name.invalid }">
+                <div *ngIf="addCustomer.submitted && form1.name.invalid " class="invalid-feedback">
+                    Please provide valid name
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email" required
+                    formControlName="email" [ngClass]="{ 'is-invalid': addCustomer.submitted && form1.email.invalid }">
+
+                <div *ngIf="addCustomer.submitted && form1.email.invalid " class="invalid-feedback">
+                    Please provide valid email
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="position" class="form-label">Phone</label>
+                <input type="text" class="form-control" id="position" placeholder="Enter phone number" required
+                    formControlName="phone" [ngClass]="{ 'is-invalid': addCustomer.submitted && form1.phone.invalid }">
+
+                <div *ngIf="addCustomer.submitted && form1.phone.invalid " class="invalid-feedback">
+                    Please provide valid phone
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="category" class="form-label">Location</label>
+                <input type="text" class="form-control" id="category" placeholder="Enter Location" required
+                    formControlName="location"
+                    [ngClass]="{ 'is-invalid': addCustomer.submitted && form1.location.invalid }">
+
+                <div *ngIf="addCustomer.submitted && form1.location.invalid " class="invalid-feedback">
+                    Please provide valid location
+                </div>
+            </div>
+
+            <div class="text-end">
+                <button type="submit" class="btn btn-success waves-effect waves-light me-1">Save</button>
+                <button type="button" class="btn btn-danger waves-effect waves-light"
+                    (click)="modal.close('')">Continue</button>
+            </div>
+        </form>
+    </div>
+</ng-template>

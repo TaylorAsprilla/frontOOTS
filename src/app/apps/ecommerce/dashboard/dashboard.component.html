@@ -1,0 +1,230 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Dashboard"></app-page-title>
+
+
+<div class="row">
+    <div class="col-md-6 col-xl-3">
+        <app-widget-statistics-card4 variant="primary" iconContainerClass="rounded bg-soft-primary"
+            description="Total Revenue" [stats]="58947" icon="dripicons-wallet" [options]="{prefix:'$'}">
+        </app-widget-statistics-card4>
+
+    </div> <!-- end col-->
+
+    <div class="col-md-6 col-xl-3">
+        <app-widget-statistics-card4 variant="success" iconContainerClass="rounded bg-soft-success" description="Orders"
+            [stats]="1845" icon="dripicons-basket">
+        </app-widget-statistics-card4>
+
+    </div> <!-- end col-->
+
+    <div class="col-md-6 col-xl-3">
+        <app-widget-statistics-card4 variant="info" iconContainerClass="rounded bg-soft-info" description="Stores"
+            [stats]="825" icon="dripicons-store">
+        </app-widget-statistics-card4>
+
+    </div> <!-- end col-->
+
+    <div class="col-md-6 col-xl-3">
+        <app-widget-statistics-card4 variant="warning" iconContainerClass="rounded bg-soft-warning"
+            description="Sellers" [stats]="2430" icon="dripicons-user-group">
+        </app-widget-statistics-card4>
+
+    </div> <!-- end col-->
+</div>
+<!-- end row -->
+
+
+<div class="row">
+    <div class="col-xl-8">
+        <div class="card">
+            <div class="card-body pb-0">
+                <div class="float-end d-none d-md-inline-block">
+                    <div class="btn-group mb-2">
+                        <button type="button" class="btn btn-xs btn-light">Today</button>
+                        <button type="button" class="btn btn-xs btn-light">Weekly</button>
+                        <button type="button" class="btn btn-xs btn-secondary">Monthly</button>
+                    </div>
+                </div>
+
+                <h4 class="header-title mb-3">Sales Analytics</h4>
+
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <p class="text-muted mb-0 mt-3">Current Week</p>
+                        <h2 class="fw-normal mb-3">
+                            <small class="mdi mdi-checkbox-blank-circle text-primary align-middle me-1"></small>
+                            <span>$58,254</span>
+                        </h2>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="text-muted mb-0 mt-3">Previous Week</p>
+                        <h2 class="fw-normal mb-3">
+                            <small class="mdi mdi-checkbox-blank-circle text-success align-middle me-1"></small>
+                            <span>$69,524</span>
+                        </h2>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="text-muted mb-0 mt-3">Targets</p>
+                        <h2 class="fw-normal mb-3">
+                            <small class="mdi mdi-checkbox-blank-circle text-success align-middle me-1"></small>
+                            <span>$95,025</span>
+                        </h2>
+                    </div>
+                </div>
+                <div id="revenue-chart" class="mt-3">
+
+                    <apx-chart class="apex-charts" [series]="salesChart.series!" [chart]="salesChart.chart!"
+                        [xaxis]="salesChart.xaxis!" [stroke]="salesChart.stroke!" [fill]="salesChart.fill!"
+                        [dataLabels]="salesChart.dataLabels!" [colors]="salesChart.colors!" [yaxis]="salesChart.yaxis!"
+                        [legend]="salesChart.legend!" [labels]="salesChart.labels!" *ngIf="salesChart">
+                    </apx-chart>
+
+                </div>
+            </div>
+        </div> <!-- end card -->
+    </div> <!-- end col-->
+
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="float-end" ngbDropdown>
+                    <a href="javascript:void(0)" class=" arrow-none card-drop" ngbDropdownToggle>
+                        <i class="mdi mdi-dots-vertical"></i>
+                    </a>
+                    <div class="dropdown-menu-end" ngbDropdownMenu>
+                        <!-- item-->
+                        <a href="javascript:void(0);" ngbDropdownItem>Sales Report</a>
+                        <!-- item-->
+                        <a href="javascript:void(0);" ngbDropdownItem>Export Report</a>
+                        <!-- item-->
+                        <a href="javascript:void(0);" ngbDropdownItem>Profit</a>
+                        <!-- item-->
+                        <a href="javascript:void(0);" ngbDropdownItem>Action</a>
+                    </div>
+                </div>
+
+                <h4 class="header-title mb-0">Total Revenue</h4>
+
+                <div class="widget-chart text-center" dir="ltr">
+
+
+                    <div class="mt-4">
+                        <app-widget-world-map mapId="world-map-markers" height="230px" width="100%"
+                            [options]="worldMapConfig">
+                        </app-widget-world-map>
+                    </div>
+
+                    <h5 class="text-muted mt-4">Total sales made today</h5>
+                    <h2>$178</h2>
+
+                    <p class="text-muted w-75 mx-auto sp-line-2">Traditional heading elements are designed to work best
+                        in the meat of your page content.</p>
+
+                    <div class="row mt-4">
+                        <div class="col-4">
+                            <app-widget-chart-statistics title="Target" icon="fe-arrow-down" stats="$7.8k"
+                                variant="danger">
+                            </app-widget-chart-statistics>
+                        </div>
+                        <div class="col-4">
+                            <app-widget-chart-statistics title="Last week" icon="fe-arrow-up" stats="$1.4k"
+                                variant="success">
+                            </app-widget-chart-statistics>
+                        </div>
+                        <div class="col-4">
+                            <app-widget-chart-statistics title="Last Month" icon="fe-arrow-down" stats="$15k"
+                                variant="danger">
+                            </app-widget-chart-statistics>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- end card -->
+    </div> <!-- end col-->
+</div>
+<!-- end row -->
+
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title mb-3">Transaction History</h4>
+
+                <div class="table-responsive">
+                    <table class="table table-centered table-nowrap table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th class="border-top-0">Name</th>
+                                <th class="border-top-0">Card</th>
+                                <th class="border-top-0">Date</th>
+                                <th class="border-top-0">Amount</th>
+                                <th class="border-top-0">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let transaction of transactionHistory">
+                                <td>
+                                    <img [src]="transaction.avatar" alt="user-pic"
+                                        class="rounded-circle avatar-sm bx-shadow-lg" />
+                                    <span class="ms-2">{{transaction.name}}</span>
+                                </td>
+                                <td>
+                                    <img [src]="transaction.cardDetails.image" alt="user-card" height="24" />
+                                    <span class="ms-2">{{transaction.cardDetails.cardNum}}</span>
+                                </td>
+                                <td>{{transaction.date}}</td>
+                                <td>{{transaction.amount | currency}}</td>
+                                <td><span class="badge rounded-pill bg-danger"
+                                        *ngIf="transaction.status==='Failed'">{{transaction.status}}</span>
+                                    <span class="badge rounded-pill bg-success"
+                                        *ngIf="transaction.status==='Paid'">{{transaction.status}}</span>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div> <!-- end table-responsive -->
+            </div>
+        </div> <!-- end card-->
+    </div> <!-- end col-->
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title mb-3">Recent Products</h4>
+
+                <div class="table-responsive">
+                    <table class="table table-centered table-nowrap table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th class="border-top-0">Product</th>
+                                <th class="border-top-0">Category</th>
+                                <th class="border-top-0">Added Date</th>
+                                <th class="border-top-0">Amount</th>
+                                <th class="border-top-0">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let product of recentProducts">
+                                <td>
+                                    <img [src]="product.image" alt="product-pic" height="36" />
+                                    <span class="ms-2">{{product.name}}</span>
+                                </td>
+                                <td>
+                                    {{product.category}}
+                                </td>
+                                <td>{{product.added_date}}</td>
+                                <td>{{product.amount | currency}}</td>
+                                <td><span class="badge bg-soft-success text-success"
+                                        *ngIf="product.status==='Active'">{{product.status}}</span>
+                                    <span class="badge bg-soft-danger text-danger"
+                                        *ngIf="product.status==='Deactive'">{{product.status}}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div> <!-- end table-responsive -->
+            </div>
+        </div> <!-- end card-->
+    </div> <!-- end col-->
+</div>
+<!-- end row-->

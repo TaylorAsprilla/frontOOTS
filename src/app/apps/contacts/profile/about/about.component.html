@@ -1,0 +1,45 @@
+<h5 class="mb-4 text-uppercase"><i class="mdi mdi-briefcase me-1"></i>
+    Experience</h5>
+
+<ul class="list-unstyled timeline-sm">
+    <li class="timeline-sm-item" *ngFor="let item of experienceList">
+        <span class="timeline-sm-date">{{item.year}}</span>
+        <h5 class="mt-0 mb-1">{{item.title}}</h5>
+        <p>{{item.company}}</p>
+        <p class="text-muted mt-2">{{item.description}}</p>
+
+    </li>
+</ul>
+
+<!-- end timeline -->
+<h5 class="mb-3 mt-4 text-uppercase"><i class="mdi mdi-cards-variant me-1"></i>
+    Projects</h5>
+<div class="table-responsive">
+    <table class="table table-borderless mb-0">
+        <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>Project Name</th>
+                <th>Start Date</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Clients</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let project of projects">
+                <td>{{project.id}}</td>
+                <td>{{project.projectName}}</td>
+
+
+                <td>{{project.startDate}}</td>
+                <td>{{project.dueDate}}</td>
+                <td><span class="badge"
+                        [ngClass]="{'bg-info': project.status==='Work in Progress','bg-success': project.status === 'Pending', 'bg-warning': project.status === 'Coming soon','bg-pink': project.status === 'Done'}">{{project.status}}</span>
+                </td>
+                <td>{{project.clientName}} </td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,38 @@
+<section class="section pb-0 bg-gradient" id="pricing">
+    <div class="bg-shape">
+        <svg version="1.0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2000.000000 350.000000"
+            preserveAspectRatio="xMidYMid meet" class="w-100">
+
+            <g transform="translate(0.000000,350.000000) scale(0.100000,-0.100000)" stroke="none" class="bg-shape-svg">
+                <path d="M8395 3469 c-2378 -45 -4839 -213 -6805 -465 -531 -67 -1508 -211
+        -1572 -230 -17 -5 -18 -80 -18 -1390 l0 -1384 10000 0 10000 0 -2 1387 -3
+        1388 -200 32 c-2047 333 -4669 560 -7420 643 -979 29 -2943 39 -3980 19z" />
+            </g>
+        </svg>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="text-center mb-4">
+                    <h3 class="text-white">Choose Our Pricing Plans</h3>
+                    <p class="text-white-50">The clean and well commented code allows easy customization of the
+                        theme.It's designed
+                        for describing your app, agency or business.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-xl-10">
+            </div> <!-- end col-xl-10 -->
+            <!-- Plans -->
+            <app-widget-pricing-cards [pricingPlans]="pricingPlans" containerClass="align-items-center"
+                pricingCardClass="pricing-plan mt-4">
+            </app-widget-pricing-cards>
+        </div>
+        <!-- end row -->
+    </div>
+
+
+</section>

@@ -1,0 +1,151 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Kanban Board"></app-page-title>
+
+<!-- kanban board start -->
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-body">
+
+                <div class="float-end" ngbDropdown>
+                    <a href="javascript:void(0)" class="arrow-none" ngbDropdownToggle>
+                        <i class="mdi mdi-dots-vertical m-0 text-muted h3"></i>
+                    </a>
+                    <div class="dropdown-menu-end" ngbDropdownMenu>
+                        <a ngbDropdownItem>Edit</a>
+                        <a ngbDropdownItem>Delete</a>
+                        <a ngbDropdownItem>Add Members</a>
+                        <a ngbDropdownItem>Add Due Date</a>
+                    </div>
+                </div> <!-- end dropdown -->
+
+                <!-- upcoming tasks -->
+
+                <h4 class="header-title">Upcoming</h4>
+                <p class="sub-header">
+                    Your awesome text goes here. Your awesome text goes here.
+                </p>
+
+                <ul class="sortable-list tasklist list-unstyled" id="upcoming" [sortablejs]="upcomingTasks"
+                    [sortablejsOptions]="options">
+
+                    <li *ngFor="let task of upcomingTasks">
+                        <ng-template [ngTemplateOutlet]="KanbanTask" [ngTemplateOutletContext]="{task:task}">
+                        </ng-template>
+                    </li>
+
+                </ul>
+
+                <a href="javascript: void(0);" class="btn btn-primary w-100 mt-3 waves-effect waves-light"><i
+                        class="mdi mdi-plus-circle"></i> Add New</a>
+
+            </div>
+        </div>
+    </div> <!-- end col -->
+
+    <!-- in progress tasks -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-body">
+
+                <div class="float-end" ngbDropdown>
+                    <a href="javascript:void(0)" class="arrow-none" ngbDropdownToggle>
+                        <i class="mdi mdi-dots-vertical m-0 text-muted h3"></i>
+                    </a>
+                    <div class="dropdown-menu-end" ngbDropdownMenu>
+                        <a ngbDropdownItem>Edit</a>
+                        <a ngbDropdownItem>Delete</a>
+                        <a ngbDropdownItem>Add Members</a>
+                        <a ngbDropdownItem>Add Due Date</a>
+                    </div>
+                </div> <!-- end dropdown -->
+
+                <!-- upcoming tasks -->
+
+                <h4 class="header-title">In Progress</h4>
+                <p class="sub-header">
+                    Your awesome text goes here.
+                </p>
+
+                <ul class="sortable-list tasklist list-unstyled" id="inprogress" [sortablejs]="inprogressTasks"
+                    [sortablejsOptions]="options">
+
+                    <li *ngFor="let task of inprogressTasks">
+                        <ng-template [ngTemplateOutlet]="KanbanTask" [ngTemplateOutletContext]="{task:task}">
+                        </ng-template>
+                    </li>
+
+                </ul>
+                <a href="javascript: void(0);" class="btn btn-primary w-100 mt-3 waves-effect waves-light"><i
+                        class="mdi mdi-plus-circle"></i> Add New</a>
+
+            </div>
+        </div>
+    </div> <!-- end col -->
+
+    <!-- completed tasks -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-body">
+
+                <div class="float-end" ngbDropdown>
+                    <a href="javascript:void(0)" class="arrow-none" ngbDropdownToggle>
+                        <i class="mdi mdi-dots-vertical m-0 text-muted h3"></i>
+                    </a>
+                    <div class="dropdown-menu-end" ngbDropdownMenu>
+                        <a ngbDropdownItem>Edit</a>
+                        <a ngbDropdownItem>Delete</a>
+                        <a ngbDropdownItem>Add Members</a>
+                        <a ngbDropdownItem>Add Due Date</a>
+                    </div>
+                </div> <!-- end dropdown -->
+
+                <!-- upcoming tasks -->
+
+                <h4 class="header-title">Completed</h4>
+                <p class="sub-header">
+                    Your awesome text goes here. Your awesome text goes here.
+                </p>
+
+                <ul class="sortable-list tasklist list-unstyled" id="completed" [sortablejs]="completedTasks"
+                    [sortablejsOptions]="options">
+
+                    <li *ngFor="let task of completedTasks">
+                        <ng-template [ngTemplateOutlet]="KanbanTask" [ngTemplateOutletContext]="{task:task}">
+                        </ng-template>
+                    </li>
+
+                </ul>
+                <a href="javascript: void(0);" class="btn btn-primary w-100 mt-3 waves-effect waves-light"><i
+                        class="mdi mdi-plus-circle"></i> Add New</a>
+
+            </div>
+        </div>
+    </div> <!-- end col -->
+
+
+    <ng-template #KanbanTask let-task="task">
+        <!-- Task Item -->
+        <span class="badge float-end"
+            [class]="task.priority==='High' ? 'bg-soft-danger text-danger' : task.priority==='Low' ? 'bg-soft-success text-success' : 'bg-soft-warning text-warning'">{{task.priority}}</span>
+        <h5 class="mt-0"><a href="javascript: void(0);" class="text-dark">{{task.title}}</a></h5>
+        <div class="form-check float-end ps-0">
+            <input class="form-check-input" type="checkbox" value="">
+        </div>
+        <p>{{task.description}}</p>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col">
+                <p class="font-13 mt-2 mb-0"><i class="mdi mdi-calendar"></i> {{task.dueDate}}</p>
+            </div>
+            <div class="col-auto">
+                <div class="text-end">
+                    <a href="javascript: void(0);" class="text-muted" *ngFor="let user of task.userAvatar">
+                        <img [src]="user" alt="task-user" class="avatar-sm img-thumbnail rounded-circle">
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Item End -->
+    </ng-template>

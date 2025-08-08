@@ -1,0 +1,20 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Pricing"></app-page-title>
+
+<div class="row justify-content-center">
+    <div class="col-xl-10">
+        <!-- Pricing Title-->
+        <div class="text-center">
+            <h3 class="mb-2">Our <b>Plans</b></h3>
+            <p class="text-muted w-50 m-auto">
+                We have plans and prices that fit your business perfectly. Make your client site a success with our
+                products.
+            </p>
+        </div>
+        <!-- Plans -->
+        <app-widget-pricing-cards [pricingPlans]="pricingPlans" containerClass="my-3">
+        </app-widget-pricing-cards>
+
+    </div>
+</div>
+<!-- end row -->

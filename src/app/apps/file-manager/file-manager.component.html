@@ -1,0 +1,90 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="File Manager"></app-page-title>
+
+<div class="row">
+
+    <!-- Right Sidebar -->
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- Left sidebar -->
+                <div class="inbox-leftbar">
+                    <div class="btn-group d-block mb-2" ngbDropdown>
+                        <button type="button" class="btn btn-success w-100 waves-effect waves-light"
+                            aria-expanded="false" id="optionDropdown" ngbDropdownToggle><i class="mdi mdi-plus"></i>
+                            Create New </button>
+                        <div ngbDropdownMenu aria-labelledby="optionDropdown">
+                            <a ngbDropdownItem [routerLink]="'.'"><i class="mdi mdi-folder-plus-outline me-1"></i>
+                                Folder</a>
+                            <a ngbDropdownItem [routerLink]="'.'"><i class="mdi mdi-file-plus-outline me-1"></i>
+                                File</a>
+                            <a ngbDropdownItem [routerLink]="'.'"><i class="mdi mdi-file-document me-1"></i>
+                                Document</a>
+                            <a ngbDropdownItem [routerLink]="'.'"><i class="mdi mdi-upload me-1"></i> Choose File</a>
+                        </div>
+                    </div>
+
+
+                    <div class="mail-list mt-3">
+                        <a href="javascript:void(0)" class="list-group-item border-0"><i
+                                class="mdi mdi-folder-outline font-18 align-middle me-2"></i>My Files</a>
+                        <a href="javascript:void(0)" class="list-group-item border-0"><i
+                                class="mdi mdi-google-drive font-18 align-middle me-2"></i>Google Drive</a>
+                        <a href="javascript:void(0)" class="list-group-item border-0"><i
+                                class="mdi mdi-dropbox font-18 align-middle me-2"></i>Dropbox</a>
+                        <a href="javascript:void(0)" class="list-group-item border-0"><i
+                                class="mdi mdi-share-variant font-18 align-middle me-2"></i>Share with me</a>
+                        <a href="javascript:void(0)" class="list-group-item border-0"><i
+                                class="mdi mdi-clock-outline font-18 align-middle me-2"></i>Recent</a>
+                        <a href="javascript:void(0)" class="list-group-item border-0"><i
+                                class="mdi mdi-star-outline font-18 align-middle me-2"></i>Starred</a>
+                        <a href="javascript:void(0)" class="list-group-item border-0"><i
+                                class="mdi mdi-delete font-18 align-middle me-2"></i>Deleted Files</a>
+                    </div>
+
+                    <div class="mt-5">
+                        <h4><span class="badge rounded-pill p-1 px-2 badge-soft-secondary">FREE</span></h4>
+                        <h6 class="text-uppercase mt-3">Storage</h6>
+
+                        <ngb-progressbar type="success" [value]="46" class="progress-sm my-2"></ngb-progressbar>
+
+                        <p class="text-muted font-12 mb-0">7.02 GB (46%) of 15 GB used</p>
+                    </div>
+
+                </div>
+                <!-- End Left sidebar -->
+
+                <div class="inbox-rightbar">
+
+                    <div class="d-md-flex justify-content-between align-items-center">
+                        <form class="search-bar">
+                            <div class="position-relative">
+                                <input type="text" class="form-control form-control-light"
+                                    placeholder="Search files...">
+                                <span class="mdi mdi-magnify"></span>
+                            </div>
+                        </form>
+                        <div class="mt-2 mt-md-0">
+                            <button type="submit" class="btn btn-sm btn-white"><i
+                                    class="mdi mdi-format-list-bulleted"></i></button>
+                            <button type="submit" class="btn btn-sm btn-white"><i
+                                    class="mdi mdi-view-grid"></i></button>
+                            <button type="submit" class="btn btn-sm btn-white"><i
+                                    class="mdi mdi-information-outline"></i></button>
+                        </div>
+                    </div>
+
+
+                    <!-- quick access files -->
+                    <app-file-quick-access [quickAccessFiles]="quickAccessData"></app-file-quick-access>
+                    <!-- recent files -->
+                    <app-recent-files [recentFiles]="recentFiles"></app-recent-files>
+                </div>
+                <!-- end inbox-rightbar-->
+
+                <div class="clearfix"></div>
+            </div>
+        </div> <!-- end card -->
+
+    </div> <!-- end Col -->
+</div><!-- End row -->

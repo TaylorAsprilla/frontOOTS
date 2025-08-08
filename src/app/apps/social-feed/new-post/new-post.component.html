@@ -1,0 +1,66 @@
+<div class="card">
+    <div class="card-body p-0">
+        <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs nav-bordered">
+            <li [ngbNavItem]="1">
+                <a ngbNavLink class="px-3 py-2">
+                    <i class="mdi mdi-pencil-box-multiple font-18 d-md-none d-block"></i>
+                    <span class="d-none d-md-block">Create Post</span></a>
+                <ng-template ngbNavContent>
+                    <ng-container *ngTemplateOutlet="NewPostArea">
+                    </ng-container>
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="2">
+                <a ngbNavLink class="px-3 py-2">
+                    <i class="mdi mdi-image font-18 d-md-none d-block"></i>
+                    <span class="d-none d-md-block">Photos/Videos</span></a>
+                <ng-template ngbNavContent>
+                    <ng-container *ngTemplateOutlet="NewPostArea">
+                    </ng-container>
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="3">
+                <a ngbNavLink class="px-3 py-2">
+                    <i class="mdi mdi-book-open-variant font-18 d-md-none d-block"></i>
+                    <span class="d-none d-md-block">Story</span></a>
+                <ng-template ngbNavContent>
+                    <ng-container *ngTemplateOutlet="NewPostArea">
+                    </ng-container>
+                </ng-template>
+            </li>
+        </ul>
+
+        <div [ngbNavOutlet]="nav" class="p-3"></div>
+
+    </div>
+    <!-- end card-body -->
+</div>
+<!-- end card -->
+
+<!-- reusable templates -->
+<ng-template #NewPostArea>
+    <!-- comment box -->
+    <div class="border rounded">
+        <form class="comment-area-box" (ngSubmit)="postForm.form.valid" #postForm="ngForm">
+            <textarea rows="4" class="form-control border-0 resize-none" placeholder="Write something...."
+                name="postText" [(ngModel)]="postText" #postArea="ngModel" required></textarea>
+            <div *ngIf="postForm.submitted && postArea.invalid && (postArea.dirty || postArea.touched)"
+                class="invalid-feedback">
+                Please enter your messsage
+            </div>
+            <div class="p-2 bg-light d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="javascript:void(0)" class="btn btn-sm px-2 font-16 btn-light"><i
+                            class="mdi mdi-image-outline"></i></a>
+                    <a href="javascript:void(0)" class="btn btn-sm px-2 font-16 btn-light"><i
+                            class="mdi mdi-crosshairs-gps"></i></a>
+                    <a href="javascript:void(0)" class="btn btn-sm px-2 font-16 btn-light"><i
+                            class="mdi mdi-attachment"></i></a>
+                </div>
+                <button type="submit" class="btn btn-sm btn-success" [disabled]="!postForm.form.valid"><i
+                        class='mdi mdi-send-outline me-1'></i>Post</button>
+            </div>
+        </form>
+    </div> <!-- end .border-->
+    <!-- end comment box -->
+</ng-template>

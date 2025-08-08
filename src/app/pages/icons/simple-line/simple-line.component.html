@@ -1,0 +1,25 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Simple Line Icons"></app-page-title>
+
+<!-- icon list start -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Examples</h4>
+                <p class="sub-header">
+                    Use <code>&lt;i class="icon-user-female"&gt;&lt;/i&gt;</code>.
+                </p>
+                <div class="row icons-list-demo">
+                    <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let icon of simpleLineIcons">
+                        <div class="preview">
+                            <i [class]="icon.name"></i> {{icon.name}}
+                        </div>
+                    </div>
+                </div>
+                <!-- end row -->
+            </div> <!-- end card-body -->
+        </div> <!-- end card -->
+    </div> <!-- end col -->
+</div> <!-- end row -->
+<!-- icon list end -->

@@ -1,0 +1,33 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Quilljs Editor"></app-page-title>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Snow Editor</h4>
+                <p class="sub-header">Snow is a clean, flat toolbar theme.</p>
+                <!-- quill editor -->
+                <quill-editor [(ngModel)]="editorText1" #quillEditor [sanitize]="true" [modules]="quillConfig">
+                </quill-editor>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div><!-- end col -->
+</div>
+<!-- end row -->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Bubble Editor</h4>
+                <p class="sub-header">Bubble is a simple tooltip based theme.</p>
+
+                <!-- quill editor -->
+                <quill-editor [(ngModel)]="editorText2" #quillEditor [sanitize]="true" theme="bubble">
+                </quill-editor>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div><!-- end col -->
+</div>
+<!-- end row -->

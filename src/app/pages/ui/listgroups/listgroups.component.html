@@ -1,0 +1,265 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="List Group"></app-page-title>
+
+<div class="row">
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Basic example</h4>
+
+                <p class="sub-header">The most basic list group is an unordered list with list items and the
+                    proper classes.
+                    Build upon it with the options that follow, or with your own CSS as needed.
+                </p>
+
+                <ul class="list-group">
+                    <li class="list-group-item" *ngFor="let item of listGroupData"><i [class]="item.icon"
+                            class="me-1"></i> {{item.text}}</li>
+                </ul>
+
+            </div> <!-- end card-body -->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Active items</h4>
+                <p class="sub-header">Add <code>.active</code> to a <code>.list-group-item</code> to indicate
+                    the
+                    current active selection.</p>
+
+                <ul class="list-group">
+                    <li *ngFor="let item of listGroupData;let i=index" class="list-group-item" [class.active]="i===0"><i
+                            [class]="item.icon" class="me-1"></i>
+                        {{item.text}}</li>
+                </ul>
+            </div> <!-- end card-body -->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Disabled items</h4>
+                <p class="sub-header">Add <code>.disabled</code> to a <code>.list-group-item</code> to make it
+                    <em>appear</em> disabled.
+                </p>
+
+
+                <ul class="list-group">
+                    <li *ngFor="let item of listGroupData;let i=index" class="list-group-item" [class.disabled]="i===0"
+                        aria-disabled="i===0"><i [class]="item.icon" class="me-1"></i>
+                        {{item.text}}</li>
+                </ul>
+            </div> <!-- end card-body -->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+</div>
+<!-- end row -->
+
+<div class="row">
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Links and Buttons</h4>
+                <p class="sub-header">Use <code>&lt;a&gt;</code>s or <code>&lt;button&gt;</code>s to create
+                    <em>actionable</em> list group items with hover, disabled, and active states by adding
+                    <code>.list-group-item-action</code>.
+                </p>
+
+                <ul class="list-group">
+                    <a *ngFor="let item of listGroupData;let i=index" [routerLink]="'.'"
+                        class="list-group-item list-group-item-action" [class.active]="i===0"><i [class]="item.icon"
+                            class="me-1"></i>
+                        {{item.text}}</a>
+                </ul>
+            </div> <!-- end card-body -->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Flush</h4>
+                <p class="sub-header">Add <code>.list-group-flush</code> to remove some borders and rounded
+                    corners
+                    to render list group items edge-to-edge in a parent container (e.g., cards).</p>
+
+
+                <ul class="list-group list-group-flush">
+                    <li *ngFor="let item of listGroupData;let i=index" class="list-group-item">
+                        {{item.text}}</li>
+                </ul>
+            </div> <!-- end card-body -->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Horizontal</h4>
+                <p class="sub-header">Add <code>.list-group-horizontal</code> to change the layout of list group
+                    items from vertical to horizontal across all breakpoints. Alternatively, choose a responsive variant
+                    <code>.list-group-horizontal-{{'{'}}sm|md|lg|xl{{'}'}}</code> to make a list group horizontal
+                    starting at that
+                    breakpoint’s <code>min-width</code>.
+                </p>
+
+                <ul class="list-group list-group-horizontal mb-3">
+                    <li class="list-group-item" *ngFor="let item of horizontalList">{{item}}</li>
+                </ul>
+
+                <ul class="list-group list-group-horizontal-sm mb-3">
+                    <li class="list-group-item" *ngFor="let item of horizontalList">{{item}}</li>
+                </ul>
+
+                <ul class="list-group list-group-horizontal-md mb-3">
+                    <li class="list-group-item" *ngFor="let item of horizontalList">{{item}}</li>
+                </ul>
+            </div> <!-- end card-body -->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+</div>
+<!-- end row -->
+<div class="row">
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Contextual classes</h4>
+                <p class="sub-header">Use contextual classes to style list items with a stateful background and
+                    color.</p>
+                <ul class="list-group">
+                    <li class="list-group-item">Dapibus ac facilisis in</li>
+                    <li *ngFor="let item of listItemVariants" class="list-group-item list-group-item-{{item.color}}">A
+                        simple {{item.name}} list group item</li>
+                </ul>
+
+
+            </div> <!-- end card-body -->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Contextual classes with Link</h4>
+                <p class="sub-header">Use contextual classes to style list items with a stateful background and
+                    color.</p>
+
+                <ul class="list-group">
+                    <a [routerLink]="'.'" class="list-group-item list-group-item-action">Dapibus ac facilisis in</a>
+                    <a [routerLink]="'.'" *ngFor="let item of listItemVariants"
+                        class="list-group-item list-group-item-{{item.color}}  list-group-item-action">A
+                        simple {{item.name}} list group item</a>
+                </ul>
+
+            </div> <!-- end card-body -->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Custom content</h4>
+                <p class="sub-header">Add nearly any HTML within, even for linked list groups like the one
+                    below,
+                    with the help of flexbox utilities.</p>
+
+                <div class="list-group">
+                    <a href="javascript:void(0)" *ngFor="let number of [0,1,2]"
+                        class="list-group-item list-group-item-action" [class.active]="number===0">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1" [class.text-white]="number===0">List group item heading</h5>
+                            <small>3 days ago</small>
+                        </div>
+                        <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus
+                            varius blandit.
+                        </p>
+                        <small>Donec id elit non mi porta.</small>
+                    </a>
+
+                </div>
+            </div> <!-- end card-body -->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+
+</div>
+<!-- end row -->
+
+<div class="row">
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">With badges</h4>
+                <p class="text-muted font-14">Add badges to any list group item to show unread counts, activity, and
+                    more with the help of some utilities.</p>
+
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Gmail Emails
+                        <span class="badge bg-primary rounded-pill">14</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Pending Payments
+                        <span class="badge bg-success rounded-pill">2</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Action Needed
+                        <span class="badge bg-danger rounded-pill">99+</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Payments Done
+                        <span class="badge bg-success rounded-pill">20+</span>
+                    </li>
+                </ul>
+
+            </div> <!-- end card-body -->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Checkboxes and radios</h4>
+                <p class="text-muted font-14">Place Bootstrap’s checkboxes and radios within list group items and
+                    customize
+                    as needed. You can use them without <code>&lt;label&gt;</code>s, but please remember to include an
+                    <code>aria-label</code> attribute and value for accessibility.
+                </p>
+
+                <ul class="list-group">
+                    <li class="list-group-item" *ngFor="let number of ['First','Second','Third','Fourth']">
+                        <input class="form-check-input me-1" type="checkbox" value="" aria-label="...">
+                        {{number}} checkbox
+                    </li>
+                </ul>
+            </div> <!-- end card-body -->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Numbere List</h4>
+                <p class="text-muted font-14">Numbers are generated by <code>counter-reset</code> on the
+                    <code>&lt;ol&gt;</code>, and then styled and placed with a <code>::before</code> psuedo-element on
+                    the
+                    <code>&lt;li&gt;</code> with <code>counter-increment</code> and <code>content</code>.
+                </p>
+                <ol class="list-group list-group-numbered">
+                    <li class="list-group-item d-flex justify-content-between align-items-start"
+                        *ngFor="let number of [0,1,2]">
+                        <div class="ms-2 me-auto">
+                            <div class="fw-bold">Subheading</div>
+                            Cras justo odio
+                        </div>
+                        <span class="badge bg-primary rounded-pill">14</span>
+                    </li>
+
+                </ol>
+            </div> <!-- end card-body -->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+</div>
+<!-- end row -->

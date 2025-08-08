@@ -1,0 +1,310 @@
+<!-- start page title -->
+<div class="row">
+  <div class="col-12">
+    <div class="page-title-box">
+      <div class="page-title-right">
+        <form class="d-flex align-items-center mb-3">
+          <div class="input-group input-group-sm">
+            <input
+              type="text"
+              name="datepicker"
+              id="dash-datepicker"
+              class="form-control border"
+              [(ngModel)]="date"
+              ngbDatepicker
+              #datepicker="ngbDatepicker"
+              (click)="datepicker.toggle()"
+              autoClose="'outside'"
+            />
+
+            <span class="input-group-text bg-blue border-blue text-white">
+              <i class="mdi mdi-calendar-range"></i>
+            </span>
+          </div>
+          <a href="javascript: void(0);" class="btn btn-blue btn-sm ms-2">
+            <i class="mdi mdi-autorenew"></i>
+          </a>
+          <a href="javascript: void(0);" class="btn btn-blue btn-sm ms-1">
+            <i class="mdi mdi-filter-variant"></i>
+          </a>
+        </form>
+      </div>
+      <h4 class="page-title" i18n>Inicio</h4>
+    </div>
+  </div>
+</div>
+<!-- end page title -->
+
+<div class="row">
+  <div class="col-md-6 col-xl-3" *ngFor="let item of statisticsCardData">
+    <app-widget-statistics-card1
+      [statisticsCardData]="item"
+    ></app-widget-statistics-card1>
+  </div>
+  <!-- end col-->
+</div>
+<!-- end row-->
+
+<div class="row">
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-body">
+        <div class="float-end" ngbDropdown>
+          <a
+            href="javascript:void(0);"
+            class="arrow-none card-drop"
+            ngbDropdownToggle
+          >
+            <i class="mdi mdi-dots-vertical"></i>
+          </a>
+          <div class="dropdown-menu-end" ngbDropdownMenu>
+            <!-- item-->
+            <a href="javascript:void(0);" ngbDropdownItem i18n>Sales Report</a>
+            <!-- item-->
+            <a href="javascript:void(0);" ngbDropdownItem i18n>Export Report</a>
+            <!-- item-->
+            <a href="javascript:void(0);" ngbDropdownItem i18n>Profit</a>
+            <!-- item-->
+            <a href="javascript:void(0);" ngbDropdownItem i18n>Action</a>
+          </div>
+        </div>
+
+        <h4 class="header-title mb-0" i18n>Cantidad de Participantes</h4>
+
+        <div class="widget-chart text-center" dir="ltr">
+          <div id="total-revenue" class="mt-0">
+            <apx-chart
+              class="apex-charts"
+              [series]="revenuChart.series!"
+              [chart]="revenuChart.chart!"
+              [plotOptions]="revenuChart.plotOptions!"
+              [colors]="revenuChart.colors!"
+              [labels]="revenuChart.labels!"
+            ></apx-chart>
+          </div>
+
+          <h5 class="text-muted mt-0" i18n>Cantidad de Casos</h5>
+          <h2>208</h2>
+
+          <div class="row mt-3">
+            <!-- <div class="col-4" *ngFor="let item of chartStatisticsData">
+              <app-widget-chart-statistics
+                [title]="item.title"
+                [icon]="item.icon"
+                [stats]="item.stats"
+                [variant]="item.variant"
+              ></app-widget-chart-statistics>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end card -->
+  </div>
+  <!-- end col-->
+
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-body pb-2">
+        <div class="float-end d-none d-md-inline-block">
+          <div class="btn-group mb-2">
+            <button type="button" class="btn btn-xs btn-light" i18n>
+              Today
+            </button>
+            <button type="button" class="btn btn-xs btn-light" i18n>
+              Weekly
+            </button>
+            <button type="button" class="btn btn-xs btn-secondary" i18n>
+              Monthly
+            </button>
+          </div>
+        </div>
+
+        <h4 class="header-title mb-3" i18n>Casos Realizados</h4>
+
+        <div dir="ltr">
+          <div id="sales-analytics" class="mt-4">
+            <apx-chart
+              class="apex-charts"
+              [series]="salesAnalyticsChart.series!"
+              [chart]="salesAnalyticsChart.chart!"
+              [plotOptions]="salesAnalyticsChart.plotOptions!"
+              [dataLabels]="salesAnalyticsChart.dataLabels!"
+              [yaxis]="salesAnalyticsChart.yaxis!"
+              [legend]="salesAnalyticsChart.legend!"
+              [grid]="salesAnalyticsChart.grid!"
+              [fill]="salesAnalyticsChart.fill!"
+              [colors]="salesAnalyticsChart.colors!"
+              [labels]="salesAnalyticsChart.labels!"
+              [xaxis]="salesAnalyticsChart.xaxis!"
+              [stroke]="salesAnalyticsChart.stroke!"
+            ></apx-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end card -->
+  </div>
+  <!-- end col-->
+</div>
+<!-- end row -->
+
+<div class="row">
+  <div class="col-xl-6">
+    <div class="card">
+      <div class="card-body">
+        <div class="float-end" ngbDropdown>
+          <a
+            href="javascript:void(0);"
+            class="arrow-none card-drop"
+            ngbDropdownToggle
+          >
+            <i class="mdi mdi-dots-vertical"></i>
+          </a>
+          <div class="dropdown-menu-end" ngbDropdownMenu>
+            <!-- item-->
+            <a href="javascript:void(0);" ngbDropdownItem i18n>Edit Report</a>
+            <!-- item-->
+            <a href="javascript:void(0);" ngbDropdownItem i18n>Export Report</a>
+            <!-- item-->
+            <a href="javascript:void(0);" ngbDropdownItem i18n>Action</a>
+          </div>
+        </div>
+
+        <h4 class="header-title mb-3" i18n>Participantes Recientes</h4>
+
+        <div class="table-responsive">
+          <table
+            class="table table-borderless table-hover table-nowrap table-centered m-0"
+          >
+            <thead class="table-light">
+              <tr>
+                <th colspan="2" i18n>Nombre</th>
+                <th i18n>Tipo</th>
+                <th i18n>Estado</th>
+                <th i18n>Asignado</th>
+                <th i18n>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let record of userBalanceData">
+                <td style="width: 36px">
+                  <img
+                    [src]="record.avatar"
+                    alt="contact-img"
+                    title="contact-img"
+                    class="rounded-circle avatar-sm"
+                  />
+                </td>
+
+                <td>
+                  <h5 class="m-0 fw-normal" i18n>{{ record.name }}</h5>
+                  <p class="mb-0 text-muted">
+                    <small i18n>Abril - 2024</small>
+                  </p>
+                </td>
+
+                <td>Trabajo Social</td>
+
+                <td>Abierto</td>
+
+                <td>Myriam Cortes</td>
+
+                <td>
+                  <a href="javascript: void(0);" class="btn btn-xs btn-light"
+                    ><i class="mdi mdi-plus"></i
+                  ></a>
+                  <a href="javascript: void(0);" class="btn btn-xs btn-danger"
+                    ><i class="mdi mdi-minus"></i
+                  ></a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end col -->
+
+  <div class="col-xl-6">
+    <div class="card">
+      <div class="card-body">
+        <div class="float-end" ngbDropdown>
+          <a
+            href="javascript:void(0);"
+            class="arrow-none card-drop"
+            ngbDropdownToggle
+          >
+            <i class="mdi mdi-dots-vertical"></i>
+          </a>
+          <div class="dropdown-menu-end" ngbDropdownMenu>
+            <!-- item-->
+            <a href="javascript:void(0);" ngbDropdownItem i18n>Edit Report</a>
+            <!-- item-->
+            <a href="javascript:void(0);" ngbDropdownItem i18n>Export Report</a>
+            <!-- item-->
+            <a href="javascript:void(0);" ngbDropdownItem i18n>Action</a>
+          </div>
+        </div>
+
+        <h4 class="header-title mb-3" i18n>Historial</h4>
+
+        <div class="table-responsive">
+          <table
+            class="table table-borderless table-nowrap table-hover table-centered m-0"
+          >
+            <thead class="table-light">
+              <tr>
+                <th i18n>Tipo de citas</th>
+                <th i18n>Fecha</th>
+
+                <th i18n>Estatus</th>
+                <th i18n>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let record of revenueHistoryData">
+                <td>
+                  <h5 class="m-0 fw-normal" i18n>{{ record.marketplaces }}</h5>
+                </td>
+
+                <td>
+                  {{ record.date | date : "MMM dd, y" }}
+                </td>
+
+                <td>
+                  <span
+                    class="badge bg-soft-warning text-warning"
+                    *ngIf="record.status === 'Upcoming'"
+                    >Cerrados</span
+                  >
+                  <span
+                    class="badge bg-soft-danger text-danger"
+                    *ngIf="record.status === 'Overdue'"
+                    >Abiertos</span
+                  >
+                  <span
+                    class="badge bg-soft-success text-success"
+                    *ngIf="record.status === 'Paid'"
+                    >No Regresó</span
+                  >
+                </td>
+
+                <td>
+                  <a href="javascript: void(0);" class="btn btn-xs btn-light"
+                    ><i class="mdi mdi-pencil"></i
+                  ></a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- end .table-responsive-->
+      </div>
+    </div>
+    <!-- end card-->
+  </div>
+  <!-- end col -->
+</div>
+<!-- end row -->

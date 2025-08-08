@@ -1,0 +1,22 @@
+<div class="row" [class]="containerClass">
+    <ng-container *ngFor="let item of rawFAQ">
+        <div class="col-lg-5 offset-lg-1" *ngIf="item.id%2!=0">
+            <!-- Question/Answer -->
+            <div>
+                <div class="faq-question-q-box">Q.</div>
+                <h4 class="faq-question">{{item.question}}</h4>
+                <p class="faq-answer mb-4" [class]="item.textClass">{{item.answer}}</p>
+            </div>
+        </div>
+
+        <div class="col-lg-5" *ngIf="item.id%2==0">
+            <!-- Question/Answer -->
+            <div>
+                <div class="faq-question-q-box">Q.</div>
+                <h4 class="faq-question">{{item.question}}</h4>
+                <p class="faq-answer mb-4" [class]="item.textClass">{{item.answer}}</p>
+            </div>
+        </div>
+
+    </ng-container>
+</div>

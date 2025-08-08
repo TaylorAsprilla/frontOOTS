@@ -1,0 +1,70 @@
+<!-- page title -->
+<app-page-title
+  [breadcrumbItems]="pageTitle"
+  title="Lista de Usuarios"
+></app-page-title>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row justify-content-between">
+          <div class="col-md-8">
+            <form class="d-flex flex-wrap align-items-center">
+              <label for="inputPassword2" class="visually-hidden">Buscar</label>
+              <div class="me-3">
+                <input
+                  type="search"
+                  class="form-control my-1 my-md-0"
+                  id="inputPassword2"
+                  name="search"
+                  placeholder="Buscar..."
+                  [(ngModel)]="searchTerm"
+                  (ngModelChange)="searchData($event)"
+                />
+              </div>
+              <label for="status-select" class="me-2">Ordenar por</label>
+              <div class="me-sm-3">
+                <select class="form-select my-1 my-md-0" id="status-select">
+                  <option selected="">Todos</option>
+                  <option value="1">Nombre</option>
+                  <option value="2">Cédula</option>
+                  <option value="3">Participantes</option>
+                  <option value="4">Casos</option>
+                </select>
+              </div>
+            </form>
+          </div>
+
+          <!-- end col-->
+        </div>
+        <!-- end row -->
+      </div>
+    </div>
+    <!-- end card -->
+  </div>
+  <!-- end col-->
+</div>
+<!-- end row -->
+
+<div class="row">
+  <div class="col-lg-4" *ngFor="let usuario of listaDeUsuarios">
+    <app-contact-member-info [usuario]="usuario"></app-contact-member-info>
+  </div>
+  <!-- end col -->
+</div>
+<!-- end row -->
+
+<div class="row">
+  <div class="col-12">
+    <div class="text-end">
+      <ngb-pagination
+        [collectionSize]="50"
+        [(page)]="page"
+        class="pagination-rounded d-flex justify-content-end"
+      >
+      </ngb-pagination>
+    </div>
+  </div>
+</div>
+<!-- end row -->

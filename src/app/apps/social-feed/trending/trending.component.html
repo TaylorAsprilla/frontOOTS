@@ -1,0 +1,35 @@
+<div class="card">
+    <div class="card-body">
+        <div class="float-end" ngbDropdown>
+            <a href="javascript:void(0)" class="arrow-none card-drop" id="socialNewsOption" ngbDropdownToggle
+                aria-expanded="false">
+                <i class="mdi mdi-dots-horizontal"></i>
+            </a>
+            <div class="dropdown-menu-end" ngbDropdownMenu aria-labelledby="socialNewsOption">
+                <!-- item-->
+                <a [routerLink]="'.'" ngbDropdownItem>Today</a>
+                <!-- item-->
+                <a [routerLink]="'.'" ngbDropdownItem>Yesterday</a>
+                <!-- item-->
+                <a [routerLink]="'.'" ngbDropdownItem>Last Week</a>
+                <!-- item-->
+                <a [routerLink]="'.'" ngbDropdownItem>Last Month</a>
+            </div>
+        </div>
+
+        <h4 class="header-title mb-1">Trending</h4>
+
+        <div class="d-flex align-items-start mt-3" *ngFor="let news of trendingTopics">
+            <i class='mdi mdi-trending-up me-2 font-18 text-primary'></i>
+            <div class="w-100">
+                <a class="mt-1 font-14 text-reset" href="javascript:void(0);">
+                    <strong>{{news.title}}:</strong>
+                    <span class="text-muted">
+                        {{news.description}}
+                    </span>
+                </a>
+            </div>
+        </div>
+
+    </div> <!-- end card-body-->
+</div> <!-- end card-->

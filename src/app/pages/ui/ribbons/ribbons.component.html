@@ -1,0 +1,62 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Ribbons"></app-page-title>
+
+<div class="row">
+    <div class="col-lg-4" *ngFor="let ribbon of ribbonVariants">
+        <ng-container *ngIf="ribbon.direction==='left'">
+            <ng-container *ngTemplateOutlet="RibbonCard1;context:{color:ribbon.color,name:ribbon.name}"></ng-container>
+        </ng-container>
+
+        <ng-container *ngIf="ribbon.direction==='right'">
+            <ng-container *ngTemplateOutlet="RibbonCard2;context:{color:ribbon.color,name:ribbon.name}"></ng-container>
+        </ng-container>
+    </div> <!-- end col -->
+
+    <div class="col-lg-4" *ngFor="let ribbon of ribbonVariants">
+        <ng-container *ngTemplateOutlet="RibbonCard3;context:{color:ribbon.color,name:ribbon.name}"></ng-container>
+    </div>
+</div>
+<!-- end row -->
+
+
+<!-- resubale templates -->
+<ng-template #RibbonCard1 let-color="color" let-name="name">
+    <div class="card ribbon-box">
+        <div class="card-body">
+            <div class="ribbon ribbon-{{color}} float-start"><i class="mdi mdi-access-point me-1"></i> {{name}}</div>
+            <h5 class="text-{{color}} float-end mt-0">{{name}} Header</h5>
+            <div class="ribbon-content">
+                <p class="mb-0">Quisque nec turpis at urna dictum luctus.
+                    Suspendisse convallis dignissim eros at volutpat. In egestas
+                    mattis dui. Aliquam mattis dictum aliquet. Nulla sapien
+                    mauris, eleifend et sem ac, commodo dapibus odio.</p>
+            </div>
+        </div> <!-- end card-body -->
+    </div> <!-- end card-->
+</ng-template>
+<ng-template #RibbonCard2 let-color="color" let-name="name">
+    <div class="card ribbon-box">
+        <div class="card-body">
+            <div class="ribbon ribbon-{{color}} float-end"><i class="mdi mdi-access-point me-1"></i> {{name}}</div>
+            <h5 class="text-{{color}} float-start mt-0">{{name}} Header</h5>
+            <div class="ribbon-content">
+                <p class="mb-0">Quisque nec turpis at urna dictum luctus.
+                    Suspendisse convallis dignissim eros at volutpat. In egestas
+                    mattis dui. Aliquam mattis dictum aliquet. Nulla sapien
+                    mauris, eleifend et sem ac, commodo dapibus odio.</p>
+            </div>
+        </div> <!-- end card-body -->
+    </div> <!-- end card-->
+</ng-template>
+<ng-template #RibbonCard3 let-color="color" let-name="name">
+    <div class="card ribbon-box">
+        <div class="card-body">
+            <div class="ribbon-two ribbon-two-{{color}}"><span>{{name}}</span></div>
+            <p class="mb-0">Quisque nec turpis at urna dictum luctus. Suspendisse
+                convallis dignissim eros at volutpat. In egestas mattis dui. Aliquam
+                mattis dictum aliquet. Nulla sapien mauris, eleifend et sem ac,
+                commodo dapibus odio. Vivamus pretium nec odio cursus elementum.
+                Suspendisse molestie ullamcorper ornare.</p>
+        </div> <!-- end card-body -->
+    </div> <!-- end card-->
+</ng-template>

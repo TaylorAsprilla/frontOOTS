@@ -1,0 +1,30 @@
+<section class="section-sm bg-body" id="features">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="text-center mb-4 pb-1">
+                    <h3 class="mb-3">The admin is fully responsive and easy to customize</h3>
+                    <p class="text-muted">The clean and well commented code allows easy customization of the theme.It's
+                        designed for describing your app, agency or business.</p>
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+
+        <div class="row">
+            <div class="col-lg-4 col-md-6" *ngFor="let service of services">
+                <div class="features-box">
+                    <div class="features-img mb-4">
+                        <img [src]="service.icon" alt="">
+                    </div>
+                    <h4 class="mb-2">{{service.title}}</h4>
+                    <p class="text-muted">{{service.description}}</p>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+
+    </div>
+    <!-- end container -->
+</section>

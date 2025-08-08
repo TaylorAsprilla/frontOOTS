@@ -1,0 +1,18 @@
+<!-- vertical layout -->
+<app-vertical-layout [layoutWidth]="layoutWidth" [layoutColor]="layoutColor" *ngIf="isVerticalLayoutRequested()">
+</app-vertical-layout>
+
+
+<!-- horizontal layout -->
+<app-horizontal-layout *ngIf="isHorizontalLayoutRequested()" [layoutColor]="layoutColor" [layoutWidth]="layoutWidth">
+</app-horizontal-layout>
+
+
+<!-- detached layout -->
+<app-detached-layout [layoutWidth]="layoutWidth" [layoutColor]="layoutColor" *ngIf="isDetachedLayoutRequested()">
+</app-detached-layout>
+
+<!-- two-column-menu layout -->
+<app-two-column-menu-layout [layoutWidth]="layoutWidth" [layoutColor]="layoutColor"
+    *ngIf="isTwoColumnMenuLayoutRequested()">
+</app-two-column-menu-layout>

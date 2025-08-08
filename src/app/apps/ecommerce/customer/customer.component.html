@@ -1,0 +1,34 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Customers"></app-page-title>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-sm-4">
+                        <a href="javascript:void(0);" class="btn btn-danger mb-2"><i
+                                class="mdi mdi-plus-circle me-2"></i> Add Customers</a>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="text-sm-end">
+                            <button type="button" class="btn btn-success mb-2 me-1"><i class="mdi mdi-cog"></i></button>
+                            <button type="button" class="btn btn-light mb-2 me-1">Import</button>
+                            <button type="button" class="btn btn-light mb-2">Export</button>
+                        </div>
+                    </div><!-- end col-->
+                </div>
+
+                <app-ui-preloader [display]="loading"></app-ui-preloader>
+
+                <!-- customer table -->
+                <app-advanced-table #advancedTable [tableData]="customerList" [columns]="columns" [pagination]="true"
+                    [isSearchable]="true" [hasRowSelection]="true" [pageSizeOptions]="pageSizeOptions"
+                    (search)="searchData($event)" [isSortable]="true" (sort)="sort($event)"
+                    tableClasses="table-centered table-striped">
+                </app-advanced-table>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+</div>
+<!-- end row -->

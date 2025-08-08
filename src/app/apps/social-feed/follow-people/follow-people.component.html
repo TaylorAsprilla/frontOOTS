@@ -1,0 +1,33 @@
+<div class="card">
+    <div class="card-body pb-0">
+        <div class="float-end" ngbDropdown>
+            <a href="javascript: void(0)" class="arrow-none card-drop" aria-expanded="false" id="socialFollowersOptions"
+                ngbDropdownToggle>
+                <i class="mdi mdi-dots-horizontal"></i>
+            </a>
+            <div ngbDropdownMenu aria-labelledby="socialFollowersOptions" class="dropdown-menu-end">
+                <!-- item-->
+                <a [routerLink]="'.'" ngbDropdownItem>View All</a>
+            </div>
+        </div>
+
+        <h4 class="header-title mb-3">People you may know</h4>
+
+        <div class="inbox-widget" *ngFor="let person of peopleToFollow">
+            <div class="inbox-item">
+                <div class="inbox-item-img"><img [src]="person.avatar" class="rounded-circle" [alt]="person.name"></div>
+                <p class="inbox-item-author">{{person.name}}</p>
+                <p class="inbox-item-text">{{person.status}}</p>
+                <p class="inbox-item-date">
+                    <button type="button" class="btn btn-sm btn-outline-primary px-1 py-0"> <i
+                            class='mdi mdi-plus font-16'></i> </button>
+                </p>
+            </div>
+        </div> <!-- end inbox-widget -->
+
+        <div class="mt-2 mb-3 text-center">
+            <a href="">View More <i class="mdi mdi-arrow-right"></i></a>
+        </div>
+
+    </div> <!-- end card-body -->
+</div>

@@ -1,0 +1,133 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Loading Buttons"></app-page-title>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Examples</h4>
+                <p class="sub-header">
+                    Buttons with built-in loading indicators.
+                </p>
+
+                <div class="row text-center">
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="p-3">
+                            <h5 class="text-muted">Expand-left</h5>
+                            <app-simple-loading-button btnClasses="btn btn-primary" dataStyle="expand-left">
+                            </app-simple-loading-button>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="p-3">
+                            <h5 class="text-muted">Expand-right</h5>
+                            <app-simple-loading-button btnClasses="btn btn-primary" dataStyle="expand-right">
+                            </app-simple-loading-button>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="p-3">
+                            <h5 class="text-muted">Expand-up</h5>
+                            <app-simple-loading-button btnClasses="btn btn-primary" dataStyle="expand-up">
+                            </app-simple-loading-button>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="p-3">
+                            <h5 class="text-muted">Expand-down</h5>
+                            <app-simple-loading-button btnClasses="btn btn-primary" dataStyle="expand-down">
+                            </app-simple-loading-button>
+                        </div>
+                    </div>
+                </div> <!-- end row -->
+
+                <div class="row text-center">
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="p-3">
+                            <h5 class="text-muted">Contract</h5>
+                            <app-simple-loading-button btnClasses="btn btn-warning" dataStyle="contract">
+                            </app-simple-loading-button>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="p-3">
+                            <h5 class="text-muted">Zoom-in</h5>
+                            <app-simple-loading-button btnClasses="btn btn-warning" dataStyle="zoom-in">
+                            </app-simple-loading-button>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="p-3">
+                            <h5 class="text-muted">Zoom-out</h5>
+                            <app-simple-loading-button btnClasses="btn btn-warning" dataStyle="zoom-out">
+                            </app-simple-loading-button>
+                        </div>
+                    </div>
+                </div> <!-- end row -->
+
+                <div class="row text-center">
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="p-3">
+                            <h5 class="text-muted">Slide-left</h5>
+                            <app-simple-loading-button btnClasses="btn btn-info" dataStyle="slide-left">
+                            </app-simple-loading-button>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="p-3">
+                            <h5 class="text-muted">Slide-right</h5>
+                            <app-simple-loading-button btnClasses="btn btn-info" dataStyle="slide-right">
+                            </app-simple-loading-button>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="p-3">
+                            <h5 class="text-muted">Slide-up</h5>
+                            <app-simple-loading-button btnClasses="btn btn-info" dataStyle="slide-up">
+                            </app-simple-loading-button>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="p-3">
+                            <h5 class="text-muted">Slide-down</h5>
+                            <app-simple-loading-button btnClasses="btn btn-info" dataStyle="slide-down">
+                            </app-simple-loading-button>
+                        </div>
+                    </div>
+                </div> <!-- end row -->
+
+                <div class="row text-center">
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="p-3">
+                            <section class="progress-demo">
+                                <h5 class="text-muted">Expand-right</h5>
+                                <app-button-with-progress btnClasses="btn btn-danger" dataStyle="expand-right">
+                                </app-button-with-progress>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="p-3">
+                            <section class="progress-demo">
+                                <h5 class="text-muted">Contract</h5>
+                                <app-button-with-progress btnClasses="btn btn-danger" dataStyle="contract">
+                                </app-button-with-progress>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="p-3">
+                            <section class="progress-demo">
+                                <h5 class="text-muted">Demo how to use with api services</h5>
+                                <app-button-with-progress btnClasses="ladda-button-demo btn btn-success"
+                                    dataStyle="zoom-in">
+                                </app-button-with-progress>
+                            </section>
+                        </div>
+                    </div>
+                </div> <!-- end row -->
+            </div>
+        </div> <!-- end card -->
+    </div> <!-- end col -->
+</div>
+<!-- end row-->

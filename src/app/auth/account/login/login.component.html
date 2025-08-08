@@ -1,0 +1,164 @@
+<app-default-layout containerClass="account-pages mt-5 mb-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6 col-xl-4">
+      <div class="card bg-pattern">
+        <div class="card-body p-4">
+          <div class="text-center w-75 m-auto">
+            <div class="auth-logo">
+              <a
+                [routerLink]="'../../dashboard-1'"
+                class="logo logo-dark text-center"
+              >
+                <span class="logo-lg">
+                  <img
+                    src="../assets/images/logos/logo-oots.png"
+                    alt="OOTS Colombia"
+                    width="150"
+                  />
+                </span>
+              </a>
+
+              <a
+                [routerLink]="'../../dashboard-1'"
+                class="logo logo-light text-center"
+              >
+                <span class="logo-lg">
+                  <img
+                    src="../assets/images/logos/logo-oots.png"
+                    alt="OOTS Colombia"
+                    width="150"
+                  />
+                </span>
+              </a>
+            </div>
+            <p class="text-muted mb-4 mt-3" i18n>
+              Ingrese su dirección de correo electrónico y contraseña para
+              acceder al panel de administración.
+            </p>
+          </div>
+
+          <form
+            name="login-form"
+            [formGroup]="loginForm"
+            (ngSubmit)="onSubmit()"
+          >
+            <app-ui-preloader [display]="loading"></app-ui-preloader>
+            <ngb-alert type="danger" *ngIf="error" [dismissible]="false">{{
+              error
+            }}</ngb-alert>
+
+            <div class="mb-3">
+              <label for="emailaddress" class="form-label" i18n
+                >Correo Electrónico</label
+              >
+              <input
+                class="form-control"
+                type="email"
+                id="emailaddress"
+                i18n-placeholder
+                placeholder="Ingrese su correo electrónico"
+                formControlName="email"
+                [ngClass]="{
+                  'is-invalid': formSubmitted && formValues.email.invalid
+                }"
+                required
+              />
+
+              <div
+                *ngIf="formSubmitted && formValues.email.invalid"
+                class="invalid-feedback"
+              >
+                <div *ngIf="formValues.email.errors?.required" i18n>
+                  EL correo electrónico es obligatorio.
+                </div>
+                <div *ngIf="formValues.email.errors?.email" i18n>
+                  Debe ser una dirección de correo electrónico válida.
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="password" class="form-label" i18n>Contraseña</label>
+              <div class="input-group input-group-merge">
+                <input
+                  [type]="showPassword ? 'text' : 'password'"
+                  id="password"
+                  class="form-control"
+                  i18n-placeholder
+                  placeholder="Enter your password"
+                  formControlName="password"
+                  required
+                  minlength="4"
+                  [ngClass]="{
+                    'is-invalid': formSubmitted && formValues.password.invalid
+                  }"
+                />
+                <div
+                  class="input-group-text"
+                  (click)="showPassword = !showPassword"
+                >
+                  <span class="password-eye"></span>
+                </div>
+                <div
+                  *ngIf="formSubmitted && formValues.password.invalid"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="formValues.password.errors?.required" i18n>
+                    La contraseña es obligatoria.
+                  </div>
+                  <div *ngIf="formValues.password.errors?.minlength" i18n>
+                    La longitud de la contraseña debe ser mayor que 3.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="checkbox-signin"
+                  checked
+                />
+                <label class="form-check-label" for="checkbox-signin" i18n
+                  >Recordar</label
+                >
+              </div>
+            </div>
+
+            <div class="text-center d-grid">
+              <button
+                class="btn btn-primary"
+                type="button"
+                (click)="onSubmit()"
+                i18n
+              >
+                Iniciar Sesión
+              </button>
+            </div>
+          </form>
+        </div>
+        <!-- end card-body -->
+      </div>
+      <!-- end card -->
+
+      <div class="row mt-3">
+        <div class="col-12 text-center">
+          <p>
+            <a
+              [routerLink]="['../reset-password']"
+              class="text-white-50 ms-1"
+              i18n
+              >¿Olvidaste tu contraseña?</a
+            >
+          </p>
+        </div>
+        <!-- end col -->
+      </div>
+      <!-- end row -->
+    </div>
+    <!-- end col -->
+  </div>
+  <!-- end row -->
+</app-default-layout>

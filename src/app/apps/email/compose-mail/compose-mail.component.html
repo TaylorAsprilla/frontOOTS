@@ -1,0 +1,73 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Email Compose"></app-page-title>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- Left sidebar -->
+                <app-email-left-sidebar>
+                    <a [routerLink]="['../inbox']" class="btn btn-danger w-100 waves-effect waves-light">Inbox</a>
+                </app-email-left-sidebar>
+
+                <!-- End Left sidebar -->
+
+                <div class="inbox-rightbar">
+                    <app-email-topbar></app-email-topbar>
+
+                    <div class="mt-4">
+                        <form #mail="ngForm">
+                            <div class="mb-3">
+                                <input type="email" class="form-control" placeholder="To" name="mailto" required
+                                    [(ngModel)]="mailTo" #mailto="ngModel"
+                                    pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
+                                    [ngClass]="{'is-invalid': mail.submitted && mailto.invalid}">
+
+                                <div *ngIf="mail.submitted && mailto.invalid" class="invalid-feedback">
+
+                                    <div *ngIf="mailto.errors?.required">
+                                        Email is required.
+                                    </div>
+                                    <div *ngIf="mailto.errors?.pattern">
+                                        Email must be valid
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" placeholder="Subject" name="mail-subject"
+                                    [(ngModel)]="mailSubject">
+                            </div>
+                            <div class="mb-3 card border-0">
+                                <div id="snow-editor">
+                                    <!-- quill editor -->
+                                    <quill-editor name="editor" [(ngModel)]="mailBody" format="html" #quillEditor
+                                        [styles]="{height:'230px'}" [sanitize]="true">
+                                    </quill-editor>
+
+                                </div> <!-- end Snow-editor-->
+                            </div>
+
+                            <div>
+                                <div class="text-end">
+                                    <button type="button" class="btn btn-success waves-effect waves-light me-1"><i
+                                            class="mdi mdi-content-save-outline"></i></button>
+                                    <button type="button" class="btn btn-success waves-effect waves-light me-1"><i
+                                            class="mdi mdi-delete"></i></button>
+                                    <button type="submit" class="btn btn-primary waves-effect waves-light">
+                                        <span>Send</span> <i class="mdi mdi-send ms-2"></i> </button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div> <!-- end card-->
+                </div>
+                <!-- end inbox-rightbar-->
+
+                <div class="clearfix"></div>
+            </div>
+        </div> <!-- end card -->
+
+    </div> <!-- end Col -->
+</div><!-- End row -->

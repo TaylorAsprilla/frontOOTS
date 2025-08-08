@@ -1,0 +1,113 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Two Tone Icons"></app-page-title>
+
+<!-- icon list start -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Examples</h4>
+                <p class="mb-3">Use <code>&lt;i data-feather="activity" class="icon-dual"&gt;&lt;/i&gt;</code>.</p>
+
+                <div class="row icons-list-demo">
+                    <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let icon of twoToneIcons">
+                        <div class="icon-item">
+                            <i [attr.data-feather]="icon.name" class="icon-dual"></i>
+                            <span>{{icon.name}}</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- end row -->
+            </div> <!-- end card-body -->
+        </div> <!-- end card -->
+    </div> <!-- end col -->
+</div> <!-- end row -->
+<!-- icon list end -->
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+
+                <h4 class="header-title">Sizes</h4>
+                <p class="mb-3">Use <code>&lt;i data-feather="activity" class="icons-**"&gt;&lt;/i&gt;</code>. Available
+                    sizes <code>sm,md,lg,xl,xxl</code></p>
+
+
+                <div class="row icons-list-demo">
+
+                    <div class="col-sm-6 col-md-4 col-lg-3">
+                        <div class="icon-item">
+                            <i data-feather="airplay" class="icons-xs icon-dual"></i>
+                            <span>Extra Small</span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-4 col-lg-3">
+                        <div class="icon-item">
+                            <i data-feather="airplay" class="icons-sm icon-dual"></i>
+                            <span>Small</span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-4 col-lg-3">
+                        <div class="icon-item">
+                            <i data-feather="airplay" class="icons-md icon-dual"></i>
+                            <span>Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-4 col-lg-3">
+                        <div class="icon-item">
+                            <i data-feather="airplay" class="icons-lg icon-dual"></i>
+                            <span>Large</span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-4 col-lg-3">
+                        <div class="icon-item">
+                            <i data-feather="airplay" class="icons-xl icon-dual"></i>
+                            <span>Extra Large</span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-4 col-lg-3">
+                        <div class="icon-item">
+                            <i data-feather="airplay" class="icons-xxl icon-dual"></i>
+                            <span>Extra Extra Large</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end row -->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+
+                <h5 class="mt-0 mb-1 header-title">Two Tones Color Icons</h5>
+                <p class="mb-3">Use <code>&lt;i data-feather="activity" class="icon-dual-**"&gt;&lt;/i&gt;</code>.</p>
+
+
+                <div class="row icons-list-demo">
+                    <div class="col-xl-3 col-lg-4 col-sm-6" *ngFor="let icon of IconWithVariant">
+                        <div class="icon-item">
+                            <i [attr.data-feather]="icon.name" class="icon-dual-{{icon.variant}}"></i>
+                            <span>{{icon.name}}</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- end card -->
+    </div>
+</div>
+<!-- end row -->

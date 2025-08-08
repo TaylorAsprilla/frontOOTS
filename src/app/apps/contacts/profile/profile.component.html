@@ -1,0 +1,53 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Profile"></app-page-title>
+
+<div class="row">
+  <div class="col-lg-4 col-xl-4">
+    <!-- userbox -->
+    <app-profile-userbox [member]="selectedMember"></app-profile-userbox>
+
+    <!-- messages -->
+    <app-widget-inbox
+      [messages]="inboxMessages"
+      [height]="350"
+    ></app-widget-inbox>
+  </div>
+  <!-- end col-->
+
+  <div class="col-lg-8 col-xl-8">
+    <div class="card">
+      <div class="card-body">
+        <ul
+          ngbNav
+          #nav="ngbNav"
+          [(activeId)]="activeID"
+          class="nav-pills nav-fill navtab-bg"
+        >
+          <li [ngbNavItem]="1">
+            <a ngbNavLink>About Me</a>
+            <ng-template ngbNavContent>
+              <app-profile-about></app-profile-about>
+            </ng-template>
+          </li>
+          <li [ngbNavItem]="2">
+            <a ngbNavLink>Timeline</a>
+            <ng-template ngbNavContent>
+              <app-profile-timeline></app-profile-timeline>
+            </ng-template>
+          </li>
+          <li [ngbNavItem]="3">
+            <a ngbNavLink>Settings</a>
+            <ng-template ngbNavContent>
+              <app-profile-settings></app-profile-settings>
+            </ng-template>
+          </li>
+        </ul>
+        <div [ngbNavOutlet]="nav"></div>
+      </div>
+      <!-- end card body -->
+    </div>
+    <!-- end card -->
+  </div>
+  <!-- end col -->
+</div>
+<!-- end row-->

@@ -1,0 +1,63 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Agenda"></app-page-title>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-lg-3">
+            <button
+              class="btn btn-lg font-16 btn-primary w-100"
+              id="btn-new-event"
+              (click)="createNewEvent()"
+            >
+              <i class="mdi mdi-plus-circle-outline"></i> Crear una cita
+            </button>
+
+            <div id="external-events">
+              <br />
+              <p class="text-muted">
+                Arrastra y suelta tu evento o haz clic en el calendario
+              </p>
+
+              <div
+                *ngFor="let event of externalEvents"
+                class="external-event bg-{{ event.type }}"
+                [attr.data-type]="event.type"
+              >
+                <i
+                  class="mdi mdi-checkbox-blank-circle me-2 vertical-middle"
+                ></i
+                >{{ event.title }}
+              </div>
+            </div>
+          </div>
+          <!-- end col-->
+
+          <div class="col-lg-9">
+            <div id="calendar">
+              <full-calendar
+                #calendar
+                [options]="calendarOptions"
+              ></full-calendar>
+            </div>
+          </div>
+          <!-- end col -->
+        </div>
+        <!-- end row -->
+      </div>
+      <!-- end card body-->
+    </div>
+    <!-- end card -->
+
+    <app-calendar-event
+      #eventModal
+      (eventSaved)="handleEventSave($event)"
+      (eventDeleted)="handleEventDelete($event)"
+    >
+    </app-calendar-event>
+  </div>
+  <!-- end col-12 -->
+</div>
+<!-- end row -->

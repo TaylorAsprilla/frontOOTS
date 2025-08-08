@@ -1,0 +1,25 @@
+<div class="card" *ngIf="!isClosed">
+    <div class="card-header py-3 " [class]="cardHeaderClass">
+        <div class="card-widgets">
+            <a href="javascript:void(0);" (click)="refreshContent()"><i class="mdi mdi-refresh"></i></a>
+            <a href="javascript:void(0)" (click)="collapse.toggle()" [attr.aria-expanded]="!isCollapsed" role="button"
+                aria-expanded="false"><i [class]="isCollapsed ? 'mdi mdi-plus' : 'mdi mdi-minus'"></i></a>
+            <a href="javascript:void(0)" (click)="closeCard()"><i class="mdi mdi-close"></i></a>
+        </div>
+        <h5 class="card-title mb-0" [class]="cardTitleClass">Card title</h5>
+    </div>
+    <div #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed">
+        <div class="card-body">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf
+            moon
+            officia aute,
+            non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon
+            tempor, sunt aliqua
+            put a bird on it squid single-origin coffee nulla assumenda shoreditch et.
+        </div>
+    </div>
+
+    <div class="card-disabled" *ngIf="refreshRequsted">
+        <div class="card-portlets-loader"></div>
+    </div>
+</div> <!-- end card-->

@@ -1,0 +1,68 @@
+<!-- page title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Inbox"></app-page-title>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- Left sidebar -->
+                <app-email-left-sidebar>
+                    <a [routerLink]="['../compose']" class="btn btn-danger w-100 waves-effect waves-light">Compose</a>
+                </app-email-left-sidebar>
+
+                <!-- End Left sidebar -->
+
+                <div class="inbox-rightbar">
+                    <app-email-topbar></app-email-topbar>
+                    <div class="mt-3">
+                        <ul class="message-list">
+
+                            <li [class.unread]="!email.is_read" *ngFor="let email of emailList">
+                                <div class="col-mail col-mail-1">
+                                    <div class="checkbox-wrapper-mail">
+                                        <input type="checkbox" id="chk{{email.id}}">
+                                        <label for="chk{{email.id}}" class="toggle"></label>
+                                    </div>
+                                    <span class="star-toggle far fa-star"
+                                        [class.text-warning]="email.is_important"></span>
+                                    <a [routerLink]="['../details']" class="title">{{email.from_name}}</a>
+                                </div>
+                                <div class="col-mail col-mail-2">
+                                    <a [routerLink]="['../details']" class="subject">{{email.subject}}
+                                        &nbsp;&ndash;&nbsp;
+                                        <span class="teaser">{{email.teaser}}</span>
+                                    </a>
+                                    <div class="date">{{email.date}}</div>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+                    <!-- end .mt-4 -->
+
+                    <div class="row">
+                        <div class="col-7 mt-1">
+                            Showing {{emailCountPerPage-20+1}} - {{emailCountPerPage}} of {{totalEmails}}
+                        </div> <!-- end col-->
+                        <div class="col-5">
+                            <div class="btn-group float-end">
+                                <button type="button" class="btn btn-light btn-sm" (click)="getPrevPage()"
+                                    [disabled]="emailCountPerPage<=20">
+                                    <i class="mdi mdi-chevron-left"></i></button>
+                                <button type="button" class="btn btn-info btn-sm" (click)="getNextPage()"
+                                    [disabled]="emailCountPerPage===totalEmails">
+                                    <i class="mdi mdi-chevron-right"></i></button>
+
+                            </div>
+                        </div> <!-- end col-->
+                    </div>
+                    <!-- end row-->
+                </div>
+                <!-- end inbox-rightbar-->
+
+                <div class="clearfix"></div>
+            </div>
+        </div> <!-- end card -->
+
+    </div> <!-- end Col -->
+</div><!-- End row -->

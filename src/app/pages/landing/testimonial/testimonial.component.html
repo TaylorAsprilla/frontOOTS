@@ -1,0 +1,37 @@
+<section class="section bg-light" id="clients">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="text-center mb-4">
+                    <h3>What our Users Says</h3>
+                    <p class="text-muted">The clean and well commented code allows easy customization of the theme.It's
+                        designed for describing your app, agency or business.</p>
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+
+        <div class="row">
+            <div class="col-lg-4" *ngFor="let testimonial of testimonials">
+                <div class="testi-box mt-4">
+                    <div class="testi-desc bg-body p-4">
+                        <p class="text-muted mb-0">" {{testimonial.message}} "</p>
+                    </div>
+                    <div class="p-4">
+                        <div class="testi-img float-start me-2">
+                            <img [src]="testimonial.avatar" alt="" class="rounded-circle">
+                        </div>
+                        <div>
+                            <h5 class="mb-0">{{testimonial.clientName}}</h5>
+                            <p class="text-muted m-0"><small>- {{testimonial.title}}</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end col -->
+
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- end container -->
+</section>
