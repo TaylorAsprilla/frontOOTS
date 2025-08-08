@@ -82,16 +82,16 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "oots-colombia:build:production"
+              "buildTarget": "oots-colombia:build:production"
             },
             "development": {
-              "browserTarget": "oots-colombia:build:development"
+              "buildTarget": "oots-colombia:build:development"
             },
             "es": {
-              "browserTarget": "oots-colombia:build:es"
+              "buildTarget": "oots-colombia:build:es"
             },
             "en": {
-              "browserTarget": "oots-colombia:build:en"
+              "buildTarget": "oots-colombia:build:en"
             }
           },
           "defaultConfiguration": "development"
@@ -99,7 +99,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "oots-colombia:build"
+            "buildTarget": "oots-colombia:build"
           }
         },
         "test": {
@@ -117,6 +117,5 @@
         }
       }
     }
-  },
-  "defaultProject": "oots-colombia"
+  }
 }
