@@ -59,10 +59,10 @@
         >
           <i class="fe-search noti-icon"></i>
         </a>
-        <div class="dropdown-menu-end dropdown-lg p-0 noti-dropdown" ngbDropdownMenu>
-          <form class="p-3" ngbDropdownItem>
-            <input type="text" class="form-control" placeholder="Buscar..." aria-label="Recipient's username" />
-          </form>
+        <div class="dropdown-menu dropdown-menu-end dropdown-lg p-0 noti-dropdown" ngbDropdownMenu>
+          <div class="p-3">
+            <input type="text" class="form-control" placeholder="Buscar..." aria-label="Buscar" />
+          </div>
         </div>
       </li>
 
@@ -70,8 +70,10 @@
       <li class="dropdown d-none d-lg-inline-block">
         <a
           class="nav-link dropdown-toggle arrow-none waves-effect waves-light maximize-icon"
-          href="javascript:void(0)"
+          href="javascript:void(0);"
           (click)="toggleFullScreen()"
+          title="Pantalla completa"
+          aria-label="Alternar pantalla completa"
         >
           <i class="fe-maximize noti-icon"></i>
         </a>
@@ -84,13 +86,13 @@
         </a>
         <div class="dropdown-menu-end dropdown-lg" ngbDropdownMenu>
           <!-- item-->
-          <div class="noti-title" ngbDropdownItem>
+          <div class="dropdown-item noti-title">
             <h5 class="m-0">
               <span class="float-end">
-                <a href="" class="text-dark">
-                  <small>Clear All</small>
+                <a href="javascript:void(0);" class="text-dark">
+                  <small>Limpiar Todo</small>
                 </a> </span
-              >Notification
+              >Notificaciones
             </h5>
           </div>
 
@@ -117,7 +119,7 @@
 
           <!-- All-->
           <a href="javascript:void(0);" class="dropdown-item text-center text-primary notify-item notify-all">
-            View all
+            Ver todas
             <i class="fe-arrow-right"></i>
           </a>
         </div>
@@ -144,9 +146,9 @@
           </div>
           <!-- item -->
           @for (option of profileOptions; track option) {
-          <a class="notify-item" ngbDropdownItem>
+          <a class="dropdown-item notify-item" [routerLink]="option.redirectTo" ngbDropdownItem>
             <i class="{{ option.icon }} me-1"></i>
-            <span style="cursor: pointer" [routerLink]="option.redirectTo">{{ option.label }}</span>
+            <span>{{ option.label }}</span>
           </a>
           }
         </div>
@@ -158,6 +160,8 @@
           href="javascript:void(0);"
           class="nav-link right-bar-toggle waves-effect waves-light"
           (click)="toggleRightSidebar()"
+          title="Configuración"
+          aria-label="Abrir configuración"
         >
           <i class="fe-settings noti-icon"></i>
         </a>
@@ -166,28 +170,28 @@
 
     <!-- LOGO -->
     <div class="logo-box">
-      <a [routerLink]="'../dashboard-1'" class="logo logo-dark text-center">
+      <a [routerLink]="['/dashboard/dashboard-1']" class="logo logo-dark text-center">
         <span class="logo-sm">
-          <img src="../assets/images/logo-sm.png" alt="" height="50" />
+          <img src="assets/images/logo-sm.png" alt="Logo SM" height="50" />
         </span>
         <span class="logo-lg">
           @if (layoutType !== 'two-column') {
-          <img src="../assets/images/logo-dark.png" alt="" height="50" />
+          <img src="assets/images/logo-dark.png" alt="Logo Dark" height="50" />
           } @if (layoutType === 'two-column') {
-          <img src="../assets/images/logo-dark-2.png" alt="" height="50" />
+          <img src="assets/images/logo-dark-2.png" alt="Logo Dark 2" height="50" />
           }
         </span>
       </a>
 
-      <a [routerLink]="'../dashboard-1'" class="logo logo-light text-center">
+      <a [routerLink]="['/dashboard/dashboard-1']" class="logo logo-light text-center">
         <span class="logo-sm">
-          <img src="../assets/images/logo-sm.png" alt="" height="50" />
+          <img src="assets/images/logo-sm.png" alt="Logo SM" height="50" />
         </span>
         <span class="logo-lg">
           @if (layoutType !== 'two-column') {
-          <img src="../assets/images/logo-light.png" alt="" height="50" />
+          <img src="assets/images/logo-light.png" alt="Logo Light" height="50" />
           } @if (layoutType === 'two-column') {
-          <img src="../assets/images/logo-light-2.png" alt="" height="50" />
+          <img src="assets/images/logo-light-2.png" alt="Logo Light 2" height="50" />
           }
         </span>
       </a>
@@ -216,7 +220,12 @@
       <li>
         <!-- Mobile menu toggle (Horizontal Layout)-->
         @if (layoutType === 'horizontal') {
-        <a class="navbar-toggle nav-link" [ngClass]="{ open: topnavCollapsed }" (click)="toggleMobileMenu($event)">
+        <a
+          class="navbar-toggle nav-link"
+          [class.open]="topnavCollapsed"
+          (click)="toggleMobileMenu($event)"
+          href="javascript:void(0);"
+        >
           <div class="lines">
             <span></span>
             <span></span>

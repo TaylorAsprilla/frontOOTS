@@ -12,13 +12,14 @@ import { SearchResultItem, SearchUserItem } from '../models/search.model';
 import { CommonModule } from '@angular/common';
 import { SimplebarAngularModule } from 'simplebar-angular';
 import { RouterModule } from '@angular/router';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-topbar',
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
   standalone: true,
-  imports: [CommonModule, SimplebarAngularModule, RouterModule],
+  imports: [CommonModule, SimplebarAngularModule, RouterModule, NgbDropdownModule],
 })
 export class TopbarComponent implements OnInit {
   @Input() layoutType: string = '';
@@ -205,7 +206,7 @@ export class TopbarComponent implements OnInit {
       {
         label: 'Configuración',
         icon: 'fe-settings',
-        redirectTo: '[]',
+        redirectTo: '/dashboard/dashboard-1', // Temporary redirect until settings page is ready
       },
       {
         label: 'Cambiar Contraseña',
