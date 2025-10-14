@@ -1,34 +1,37 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import feather from "feather-icons";
+import { CommonModule } from '@angular/common';
+import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
+import feather from 'feather-icons';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
 import { Icon } from '../shared/icons.model';
 import { TWOTONEICONLIST, TWOTONEICONWITHVARIANT } from './data';
 
-
 @Component({
   selector: 'app-two-tone-icon',
+  standalone: true,
+  imports: [CommonModule, PageTitleComponent],
   templateUrl: './two-tone-icon.component.html',
-  styleUrls: ['./two-tone-icon.component.scss']
+  styleUrls: ['./two-tone-icon.component.scss'],
 })
 export class TwoToneIconComponent implements OnInit, AfterViewInit {
-
   pageTitle: BreadcrumbItem[] = [];
 
   twoToneIcons: Icon[] = [];
   IconWithVariant: Icon[] = [];
 
-  constructor () { }
+  constructor() {}
 
   ngOnInit(): void {
-    this.pageTitle = [{ label: 'Icons', path: '/' }, { label: 'Two Tone Icons', path: '/', active: true }];
+    this.pageTitle = [
+      { label: 'Icons', path: '/' },
+      { label: 'Two Tone Icons', path: '/', active: true },
+    ];
     this._fetchData();
   }
 
   ngAfterViewInit(): void {
     feather.replace();
   }
-
-
 
   /**
    * fetch data
@@ -37,5 +40,4 @@ export class TwoToneIconComponent implements OnInit, AfterViewInit {
     this.twoToneIcons = TWOTONEICONLIST;
     this.IconWithVariant = TWOTONEICONWITHVARIANT;
   }
-
 }

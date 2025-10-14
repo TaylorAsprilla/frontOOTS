@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-profile-settings',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.scss']
+  styleUrls: ['./settings.component.scss'],
 })
 export class SettingsComponent implements OnInit {
   //profile form
@@ -21,13 +24,10 @@ export class SettingsComponent implements OnInit {
     instagram: [''],
     linkedin: [''],
     skype: [''],
-    github: ['']
+    github: [''],
   });
 
+  constructor(private fb: FormBuilder) {}
 
-  constructor (private fb: FormBuilder) { }
-
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

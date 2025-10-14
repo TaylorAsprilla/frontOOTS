@@ -1,21 +1,28 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
 import { Variant } from '../shared/ui.model';
 
 @Component({
   selector: 'app-ui-dropdowns',
+  standalone: true,
+  imports: [CommonModule, PageTitleComponent, NgbDropdownModule],
   templateUrl: './dropdowns.component.html',
-  styleUrls: ['./dropdowns.component.scss']
+  styleUrls: ['./dropdowns.component.scss'],
 })
 export class DropdownsComponent implements OnInit {
-
   pageTitle: BreadcrumbItem[] = [];
   dropdownVariants: Variant[] = [];
 
-  constructor () { }
+  constructor() {}
 
   ngOnInit(): void {
-    this.pageTitle = [{ label: 'Base UI', path: '/' }, { label: 'Dropdowns', path: '/', active: true }];
+    this.pageTitle = [
+      { label: 'Base UI', path: '/' },
+      { label: 'Dropdowns', path: '/', active: true },
+    ];
     this.dropdownVariants = [
       {
         name: 'Primary',
@@ -40,9 +47,7 @@ export class DropdownsComponent implements OnInit {
       {
         name: 'Danger',
         color: 'danger',
-      }
+      },
     ];
   }
-
-
 }

@@ -1,18 +1,42 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, Renderer2 } from '@angular/core';
 import { EventService } from 'src/app/core/service/event.service';
 import { ChatGroup } from 'src/app/shared/widget/chat-group/chat-group.model';
 import { Chat } from '../models/chat.model';
-import { LAYOUT_COLOR_LIGHT, LAYOUT_DETACHED, LAYOUT_VERTICAL, LAYOUT_WIDTH_FLUID, LEFT_SIDEBAR_THEME_LIGHT, LEFT_SIDEBAR_TYPE_DEFAULT, MENU_POSITION_FIXED, TOPBAR_THEME_DARK } from '../config/layout.model';
+import {
+  LAYOUT_COLOR_LIGHT,
+  LAYOUT_DETACHED,
+  LAYOUT_VERTICAL,
+  LAYOUT_WIDTH_FLUID,
+  LEFT_SIDEBAR_THEME_LIGHT,
+  LEFT_SIDEBAR_TYPE_DEFAULT,
+  MENU_POSITION_FIXED,
+  TOPBAR_THEME_DARK,
+} from '../config/layout.model';
 import { Task } from '../models/tasks.model';
+import { SimplebarAngularModule } from 'simplebar-angular';
+import { ChatGroupComponent } from 'src/app/shared/widget/chat-group/chat-group.component';
+import { NgbProgressbar, NgbAlert, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
+import { ClickOutsideModule } from 'ng-click-outside';
 
 @Component({
   selector: 'app-right-sidebar',
   templateUrl: './right-sidebar.component.html',
-  styleUrls: ['./right-sidebar.component.scss']
+  styleUrls: ['./right-sidebar.component.scss'],
+  imports: [
+    SimplebarAngularModule,
+    ChatGroupComponent,
+    CommonModule,
+    NgbProgressbar,
+    NgbAlert,
+    NgbNavModule,
+    FormsModule,
+    ClickOutsideModule,
+  ],
+  standalone: true,
 })
-
 export class RightSidebarComponent implements OnInit {
-
   // layout related config
   @Input() layoutType!: string;
   @Input() layoutColor!: string;
@@ -27,7 +51,6 @@ export class RightSidebarComponent implements OnInit {
 
   private isShowing: boolean = false;
 
-
   active: string = 'setting';
   tasks: Task[] = [];
   chats: Chat[] = [];
@@ -36,10 +59,7 @@ export class RightSidebarComponent implements OnInit {
 
   rightSidebarClass = 'right-bar-enabled';
 
-  constructor (
-    private renderer: Renderer2,
-    private eventService: EventService
-  ) {
+  constructor(private renderer: Renderer2, private eventService: EventService) {
     // listen to event and open/hide the right sidebar
     // show
     this.eventService.subscribe('showRightSideBar', () => {
@@ -50,9 +70,7 @@ export class RightSidebarComponent implements OnInit {
     this.eventService.subscribe('hideRightSideBar', () => {
       this.hide();
     });
-
   }
-
 
   ngOnInit(): void {
     this._fetchData();
@@ -69,13 +87,12 @@ export class RightSidebarComponent implements OnInit {
   }
 
   /**
-* changes left sidebar type based on screen dimensions
-*/
+   * changes left sidebar type based on screen dimensions
+   */
   updateDimensions(): void {
     if (window.innerWidth <= 991) {
       this.disableLeftBarSize = true;
-    }
-    else if (window.innerWidth > 991) {
+    } else if (window.innerWidth > 991) {
       this.disableLeftBarSize = false;
     }
   }
@@ -84,26 +101,27 @@ export class RightSidebarComponent implements OnInit {
    * fetches data
    */
   _fetchData(): void {
-    this.chatGroups = [{
-      id: 1,
-      groupName: 'App Development',
-      variant: 'success'
-    },
-    {
-      id: 2,
-      groupName: 'Office Work',
-      variant: 'warning'
-    },
-    {
-      id: 3,
-      groupName: 'Personal Group',
-      variant: 'danger'
-    },
-    {
-      id: 4,
-      groupName: 'Freelance',
-      variant: 'secondary'
-    }
+    this.chatGroups = [
+      {
+        id: 1,
+        groupName: 'App Development',
+        variant: 'success',
+      },
+      {
+        id: 2,
+        groupName: 'Office Work',
+        variant: 'warning',
+      },
+      {
+        id: 3,
+        groupName: 'Personal Group',
+        variant: 'danger',
+      },
+      {
+        id: 4,
+        groupName: 'Freelance',
+        variant: 'secondary',
+      },
     ];
 
     this.tasks = [
@@ -225,7 +243,6 @@ export class RightSidebarComponent implements OnInit {
         group: 'other',
       },
     ];
-
   }
 
   /**
@@ -247,18 +264,18 @@ export class RightSidebarComponent implements OnInit {
   }
 
   /**
- * Change the given layout
- * @param layout layout name
-*/
+   * Change the given layout
+   * @param layout layout name
+   */
   changeLayout(layout: string): void {
     this.layoutType = layout;
     this.eventService.broadcast('changeLayout', layout);
   }
 
   /**
- * Change the layout color
- * @param color color
-*/
+   * Change the layout color
+   * @param color color
+   */
   changeLayoutColor(color: string): void {
     this.layoutColor = color;
     this.eventService.broadcast('changeLayoutColor', color);
@@ -274,9 +291,9 @@ export class RightSidebarComponent implements OnInit {
   }
 
   /**
- * Change left and top menu position
- * @param position position of menu
- */
+   * Change left and top menu position
+   * @param position position of menu
+   */
   changeMenuPosition(position: string): void {
     this.menuPosition = position;
     this.eventService.broadcast('changeMenuPosition', position);
@@ -303,9 +320,9 @@ export class RightSidebarComponent implements OnInit {
   }
 
   /**
- * Change topbar theme
- * @param theme name
- */
+   * Change topbar theme
+   * @param theme name
+   */
   changeTopbarTheme(theme: string): void {
     this.topbarTheme = theme;
     this.eventService.broadcast('changeTopbarTheme', theme);
@@ -323,9 +340,9 @@ export class RightSidebarComponent implements OnInit {
   }
 
   /**
- * toggles visibility of sidebar user info
- * @param show true/false
- */
+   * toggles visibility of sidebar user info
+   * @param show true/false
+   */
   toggleTwoToneIcons(show: boolean): void {
     this.hasTwoToneIcon = show;
     this.eventService.broadcast('toggleTwoToneIcons', this.hasTwoToneIcon);
@@ -344,5 +361,4 @@ export class RightSidebarComponent implements OnInit {
     this.toggleLeftSidebarUserInfo(false);
     this.changeTopbarTheme(TOPBAR_THEME_DARK);
   }
-
 }

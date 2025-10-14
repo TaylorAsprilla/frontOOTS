@@ -1,24 +1,30 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CommonModule } from '@angular/common';
+import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { NgbAccordionModule, NgbModal, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
 
 @Component({
   selector: 'app-ui-modals',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, NgbAccordionModule, NgbNavModule, PageTitleComponent],
   templateUrl: './modals.component.html',
-  styleUrls: ['./modals.component.scss']
+  styleUrls: ['./modals.component.scss'],
 })
 export class ModalsComponent implements OnInit {
-
   pageTitle: BreadcrumbItem[] = [];
   signupForm!: FormGroup;
   loginForm!: FormGroup;
   responsiveModalForm!: FormGroup;
 
-  constructor (private modalService: NgbModal, private fb: FormBuilder) { }
+  constructor(private modalService: NgbModal, private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.pageTitle = [{ label: 'Base UI', path: '/' }, { label: 'Modals', path: '/', active: true }];
+    this.pageTitle = [
+      { label: 'Base UI', path: '/' },
+      { label: 'Modals', path: '/', active: true },
+    ];
 
     this.signupForm = this.fb.group({
       name: ['', Validators.required],
@@ -39,14 +45,14 @@ export class ModalsComponent implements OnInit {
       city: [''],
       country: [''],
       zip: [''],
-      personalInfo: ['']
+      personalInfo: [''],
     });
   }
 
   /**
- * opens modal
- * @param content modal content
- */
+   * opens modal
+   * @param content modal content
+   */
   open(content: TemplateRef<NgbModal>): void {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
   }
@@ -86,31 +92,31 @@ export class ModalsComponent implements OnInit {
   }
 
   /**
- * Opens the modal vertically centered
- * @param content modal content
- */
+   * Opens the modal vertically centered
+   * @param content modal content
+   */
   openVerticallyCentered(content: TemplateRef<NgbModal>): void {
     this.modalService.open(content, { centered: true });
   }
 
   /**
- * Opens the modal with custom class
- * @param content modal content
- * @param position position of modal
- */
+   * Opens the modal with custom class
+   * @param content modal content
+   * @param position position of modal
+   */
   openCustomPositionedModal(content: TemplateRef<NgbModal>, position: string, size?: string): void {
     this.modalService.open(content, { modalDialogClass: 'modal-' + position, size: size });
   }
 
   /**
- * opens stacked modal
- * @param model1 modal to be opened
- * @param model2 modal to be closed
- */
+   * opens stacked modal
+   * @param model1 modal to be opened
+   * @param model2 modal to be closed
+   */
   openStackedModal(model1: TemplateRef<NgbModal>, model2?: any): void {
     this.modalService.open(model1);
-    if (model2) { model2.close(); }
+    if (model2) {
+      model2.close();
+    }
   }
-
-
 }

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Comment } from 'src/app/apps/social-feed/shared/social-feed.model';
 import { TimelinePost } from '../../shared/contacts.model';
@@ -6,15 +8,16 @@ import { POSTS } from '../../shared/data';
 
 @Component({
   selector: 'app-profile-timeline',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './timeline.component.html',
-  styleUrls: ['./timeline.component.scss']
+  styleUrls: ['./timeline.component.scss'],
 })
 export class TimelineComponent implements OnInit {
-
   newPost: string = '';
   timelinePosts: TimelinePost[] = [];
 
-  constructor (private sanitizer: DomSanitizer) { }
+  constructor(private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
     this._fetchData();
@@ -28,11 +31,11 @@ export class TimelineComponent implements OnInit {
   }
 
   /**
- * returns the safe content which can be rendered
- * @param content string
- */
+   * returns the safe content which can be rendered
+   * @param content string
+   */
   getRenderedPostContent(content: string) {
-    if (content.includes("iframe")) {
+    if (content.includes('iframe')) {
       return this.sanitizer.bypassSecurityTrustHtml(content);
     }
     return this.sanitizer.sanitize(1, content);

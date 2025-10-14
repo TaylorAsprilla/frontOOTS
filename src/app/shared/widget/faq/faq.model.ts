@@ -1,6 +1,6 @@
-export interface FAQItem {
-    id: number;
-    question: string;
-    answer: string;
-    textClass?: string;
+export interface widgetFaqItem {
+  id: number;
+  question: string;
+  answer: string;
+  textClass?: string;
 }

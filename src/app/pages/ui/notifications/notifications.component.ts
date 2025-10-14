@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NgbToastModule, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
+import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
 
 interface Alert {
@@ -9,24 +13,28 @@ interface Alert {
 
 @Component({
   selector: 'app-ui-notifications',
+  standalone: true,
+  imports: [CommonModule, FormsModule, PageTitleComponent, NgbToastModule, NgbAlertModule],
   templateUrl: './notifications.component.html',
-  styleUrls: ['./notifications.component.scss']
+  styleUrls: ['./notifications.component.scss'],
 })
 export class NotificationsComponent implements OnInit {
-
   pageTitle: BreadcrumbItem[] = [];
   showClosable: boolean = true;
   show = false;
   autohide = true;
-  toastPlacement: string = "top-0 start-0";
+  toastPlacement: string = 'top-0 start-0';
   alertVariants: Alert[] = [];
   closableAlerts: Alert[] = [];
   closableAlerts2: Alert[] = [];
 
-  constructor () { }
+  constructor() {}
 
   ngOnInit(): void {
-    this.pageTitle = [{ label: 'Base UI', path: '/' }, { label: 'Alerts & Notifications', path: '/', active: true }];
+    this.pageTitle = [
+      { label: 'Base UI', path: '/' },
+      { label: 'Alerts & Notifications', path: '/', active: true },
+    ];
     this.alertVariants = [
       {
         type: 'primary',
@@ -37,31 +45,29 @@ export class NotificationsComponent implements OnInit {
       {
         type: 'success',
         message: 'This is a success alert',
-        icon: 'mdi mdi-check-all'
+        icon: 'mdi mdi-check-all',
       },
       {
         type: 'danger',
         message: 'This is a danger alert',
-        icon: 'mdi mdi-block-helper'
+        icon: 'mdi mdi-block-helper',
       },
       {
         type: 'warning',
         message: 'This is a warning alert',
-        icon: 'mdi mdi-alert-outline'
+        icon: 'mdi mdi-alert-outline',
       },
       {
         type: 'info',
         message: 'This is an info alert',
-        icon: 'mdi mdi-alert-circle-outline'
+        icon: 'mdi mdi-alert-circle-outline',
       },
       {
         type: 'light',
-
       },
       {
         type: 'dark',
-
-      }
+      },
     ];
 
     this.closableAlerts = [
@@ -79,20 +85,16 @@ export class NotificationsComponent implements OnInit {
       },
       {
         type: 'warning',
-
       },
       {
         type: 'info',
-
       },
       {
         type: 'light',
-
       },
       {
         type: 'dark',
-
-      }
+      },
     ];
 
     this.closableAlerts2 = [
@@ -110,20 +112,16 @@ export class NotificationsComponent implements OnInit {
       },
       {
         type: 'warning',
-
       },
       {
         type: 'info',
-
       },
       {
         type: 'light',
-
       },
       {
         type: 'dark',
-
-      }
+      },
     ];
   }
 
@@ -132,16 +130,14 @@ export class NotificationsComponent implements OnInit {
    */
   close(): void {
     this.showClosable = false;
-    setTimeout(() => this.showClosable = true, 3000);
+    setTimeout(() => (this.showClosable = true), 3000);
   }
 
-
   /**
- * closes alert
- * @param alert alert
- */
+   * closes alert
+   * @param alert alert
+   */
   closeAlert(list: Alert[], alert: Alert): void {
     list.splice(list.indexOf(alert), 1);
   }
-
 }

@@ -1,79 +1,113 @@
 <div class="sidebar-main-menu">
   <ngx-simplebar id="two-col-menu" class="h-100">
     @for (menu of menuItems; track menu; let i = $index) {
-      <div class="twocolumn-menu-item" [id]="menu.key"
-        [ngClass]="{'d-block': openMenuItems.includes(menu.key!)}">
-        <div class="title-box">
-          <h5 class="menu-title">{{menu.label}}</h5>
-          <ul class="nav flex-column">
-            @for (menuItem of menu.children; track menuItem) {
-              <!-- menu item without any child -->
-              @if (!hasSubmenu(menuItem)) {
-                <ng-container
-                  *ngTemplateOutlet="MenuItem;context:{menu: menuItem, className:'nav-item',linkClassName: 'nav-link two-column-nav-link-ref'}">
-                </ng-container>
+    <div class="twocolumn-menu-item" [id]="menu.key" [class.d-block]="openMenuItems.includes(menu.key!)">
+      <div class="title-box">
+        <h5 class="menu-title">{{ menu.label }}</h5>
+        <ul class="nav flex-column">
+          @for (menuItem of menu.children; track menuItem) {
+          <!-- menu item without any child -->
+          @if (!hasSubmenu(menuItem)) {
+          <ng-container
+            *ngTemplateOutlet="
+              MenuItem;
+              context: { menu: menuItem, className: 'nav-item', linkClassName: 'nav-link two-column-nav-link-ref' }
+            "
+          >
+          </ng-container>
+          }
+          <!-- menu item with child -->
+          @if (hasSubmenu(menuItem)) {
+          <ng-container
+            *ngTemplateOutlet="
+              MenuItemWithChildren;
+              context: {
+                menu: menuItem,
+                className: 'nav-item',
+                linkClassName: 'nav-link  two-column-nav-link-ref',
+                subMenuClassNames: 'nav-second-level'
               }
-              <!-- menu item with child -->
-              @if (hasSubmenu(menuItem)) {
-                <ng-container
-                  *ngTemplateOutlet="MenuItemWithChildren;context:{menu: menuItem, className:'nav-item', linkClassName: 'nav-link  two-column-nav-link-ref', subMenuClassNames: 'nav-second-level'}">
-                </ng-container>
-              }
-            }
-          </ul>
-        </div>
+            "
+          >
+          </ng-container>
+          } }
+        </ul>
       </div>
+    </div>
     }
   </ngx-simplebar>
 </div>
 
 <!-- Reusable Templates -->
-<ng-template #MenuItemWithChildren let-menu="menu" let-className="className" let-linkClassName="linkClassName"
-  let-subMenuClassNames="subMenuClassNames">
-  <li [ngClass]="{'menuitem-active': activeMenuItems.includes(menu.key)}" [class]="className">
-    <a href="javascript: void(0)" [class]="linkClassName" [attr.aria-expanded]="!menu.collapsed"
-      [attr.data-menu-key]="menu.key" (click)="toggleMenuItem(menu,collapse)">
+<ng-template
+  #MenuItemWithChildren
+  let-menu="menu"
+  let-className="className"
+  let-linkClassName="linkClassName"
+  let-subMenuClassNames="subMenuClassNames"
+>
+  <li [ngClass]="{ 'menuitem-active': activeMenuItems.includes(menu.key) }" [class]="className">
+    <a
+      href="javascript: void(0)"
+      [class]="linkClassName"
+      [attr.aria-expanded]="!menu.collapsed"
+      [attr.data-menu-key]="menu.key"
+      (click)="toggleMenuItem(menu, collapse)"
+    >
       @if (menu.badge) {
-        <span class="badge bg-{{menu.badge.variant}} rounded-pill float-end"
-        >{{menu.badge.text}}</span>
+      <span class="badge bg-{{ menu.badge.variant }} rounded-pill float-end">{{ menu.badge.text }}</span>
       }
       <span>{{ menu.label }}</span>
       @if (!menu.badge) {
-        <span class="menu-arrow"></span>
+      <span class="menu-arrow"></span>
       }
     </a>
 
     <div #collapse="ngbCollapse" [(ngbCollapse)]="menu.collapsed">
       <ul [class]="subMenuClassNames">
-        @for (child of menu.children; track child) {
-          @if (hasSubmenu(child)) {
-            <ng-container
-              *ngTemplateOutlet="MenuItemWithChildren;context:{menu: child, className:'',linkClassName: 'two-column-nav-link-ref', subMenuClassNames: 'nav-second-level'}">
-            </ng-container>
-          }
-          @if (!hasSubmenu(child)) {
-            <ng-container
-              *ngTemplateOutlet="MenuItem;context:{menu: child,className:'', linkClassName: 'two-column-nav-link-ref'}">
-            </ng-container>
-          }
-        }
+        @for (child of menu.children; track child) { @if (hasSubmenu(child)) {
+        <ng-container
+          *ngTemplateOutlet="
+            MenuItemWithChildren;
+            context: {
+              menu: child,
+              className: '',
+              linkClassName: 'two-column-nav-link-ref',
+              subMenuClassNames: 'nav-second-level'
+            }
+          "
+        >
+        </ng-container>
+        } @if (!hasSubmenu(child)) {
+        <ng-container
+          *ngTemplateOutlet="
+            MenuItem;
+            context: { menu: child, className: '', linkClassName: 'two-column-nav-link-ref' }
+          "
+        >
+        </ng-container>
+        } }
       </ul>
     </div>
   </li>
 </ng-template>
 
 <ng-template #MenuItem let-menu="menu" let-className="className" let-linkClassName="linkClassName">
-  <li [ngClass]="{'menuitem-active': activeMenuItems.includes(menu.key)}" [class]="className">
-    <ng-container *ngTemplateOutlet="MenuItemLink;context:{menu: menu, className: linkClassName}">
-    </ng-container>
+  <li [ngClass]="{ 'menuitem-active': activeMenuItems.includes(menu.key) }" [class]="className">
+    <ng-container *ngTemplateOutlet="MenuItemLink; context: { menu: menu, className: linkClassName }"> </ng-container>
   </li>
 </ng-template>
 
 <ng-template #MenuItemLink let-menu="menu" let-className="className">
-  <a [routerLink]="menu.link" href="javascript:void(0)" [class]="className"
-    [ngClass]="{'active': activeMenuItems.includes(menu.key)}" [attr.data-menu-key]="menu.key">
+  <a
+    [routerLink]="menu.link"
+    href="javascript:void(0)"
+    [class]="className"
+    [ngClass]="{ active: activeMenuItems.includes(menu.key) }"
+    [attr.data-menu-key]="menu.key"
+  >
     @if (menu.badge) {
-      <span class="badge bg-{{menu.badge.variant}}  float-end">{{menu.badge.text}}</span>
+    <span class="badge bg-{{ menu.badge.variant }}  float-end">{{ menu.badge.text }}</span>
     }
     <span>{{ menu.label }}</span>
   </a>

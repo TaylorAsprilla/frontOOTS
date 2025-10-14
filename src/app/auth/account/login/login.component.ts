@@ -1,21 +1,26 @@
-import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { ActivatedRoute, Router } from "@angular/router";
-import { first } from "rxjs/operators";
-import { AuthenticationService } from "src/app/core/service/auth.service";
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { first } from 'rxjs/operators';
+import { AuthenticationService } from 'src/app/core/service/auth.service';
+import { DefaultLayoutComponent } from 'src/app/shared/ui/default-layout/default-layout.component';
+import { PreloaderComponent } from 'src/app/shared/widget/preloader/preloader.component';
+import { NgbAlert } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: "app-auth-login",
-  templateUrl: "./login.component.html",
-  styleUrls: ["./login.component.scss"],
+  selector: 'app-auth-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
+  imports: [CommonModule, DefaultLayoutComponent, RouterModule, PreloaderComponent, NgbAlert, ReactiveFormsModule],
 })
 export class LoginComponent implements OnInit {
   loading: boolean = false;
-  returnUrl: string = "/";
+  returnUrl: string = '/';
 
   loginForm!: FormGroup;
   formSubmitted: boolean = false;
-  error: string = "";
+  error: string = '';
 
   showPassword: boolean = false;
 
@@ -28,19 +33,15 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
-      email: [
-        "oficinadeorientacion@congregacionmitacol.org",
-        [Validators.required, Validators.email],
-      ],
-      password: ["test", Validators.required],
+      email: ['oficinadeorientacion@congregacionmitacol.org', [Validators.required, Validators.email]],
+      password: ['test', Validators.required],
     });
 
     // reset login status
     this.authenticationService.logout();
 
     // get return url from route parameters or default to '/'
-    this.returnUrl =
-      this.route.snapshot.queryParams["returnUrl"] || "/dashboard-1";
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard-1';
   }
 
   /**

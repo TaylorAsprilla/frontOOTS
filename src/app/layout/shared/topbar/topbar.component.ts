@@ -1,26 +1,28 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { AuthenticationService } from "src/app/core/service/auth.service";
-import { EventService } from "src/app/core/service/event.service";
-import {
-  LEFT_SIDEBAR_TYPE_CONDENSED,
-  LEFT_SIDEBAR_TYPE_DEFAULT,
-} from "../config/layout.model";
-import { BrandItem } from "../models/brands.model";
-import { CreateNewMenuOption } from "../models/create-new.model";
-import { Language } from "../models/language.model";
-import { MegaMenuItem } from "../models/mega-menu.model";
-import { NotificationItem } from "../models/notification.model";
-import { ProfileOptionItem } from "../models/profileoption.model";
-import { SearchResultItem, SearchUserItem } from "../models/search.model";
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AuthenticationService } from 'src/app/core/service/auth.service';
+import { EventService } from 'src/app/core/service/event.service';
+import { LEFT_SIDEBAR_TYPE_CONDENSED, LEFT_SIDEBAR_TYPE_DEFAULT } from '../config/layout.model';
+import { BrandItem } from '../models/brands.model';
+import { CreateNewMenuOption } from '../models/create-new.model';
+import { Language } from '../models/language.model';
+import { MegaMenuItem } from '../models/mega-menu.model';
+import { NotificationItem } from '../models/notification.model';
+import { ProfileOptionItem } from '../models/profileoption.model';
+import { SearchResultItem, SearchUserItem } from '../models/search.model';
+import { CommonModule } from '@angular/common';
+import { SimplebarAngularModule } from 'simplebar-angular';
+import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: "app-topbar",
-  templateUrl: "./topbar.component.html",
-  styleUrls: ["./topbar.component.scss"],
+  selector: 'app-topbar',
+  templateUrl: './topbar.component.html',
+  styleUrls: ['./topbar.component.scss'],
+  standalone: true,
+  imports: [CommonModule, SimplebarAngularModule, RouterModule],
 })
 export class TopbarComponent implements OnInit {
-  @Input() layoutType: string = "";
-  @Input() leftSidebarTheme: string = "light";
+  @Input() layoutType: string = '';
+  @Input() leftSidebarTheme: string = 'light';
   createMenuOptions: CreateNewMenuOption[] = [];
   megaMenuItems: MegaMenuItem[] = [];
   notificationList: NotificationItem[] = [];
@@ -35,10 +37,7 @@ export class TopbarComponent implements OnInit {
   @Output() mobileMenuButtonClicked = new EventEmitter();
   @Output() settingsButtonClicked = new EventEmitter<boolean>();
 
-  constructor(
-    private authService: AuthenticationService,
-    private eventService: EventService
-  ) {}
+  constructor(private authService: AuthenticationService, private eventService: EventService) {}
 
   ngOnInit(): void {
     this._fetchMenus();
@@ -48,9 +47,9 @@ export class TopbarComponent implements OnInit {
 
     this.loggedInUser = this.authService.currentUser();
 
-    document.addEventListener("fullscreenchange", this.exitHandler);
-    document.addEventListener("webkitfullscreenchange", this.exitHandler);
-    document.addEventListener("mozfullscreenchange", this.exitHandler);
+    document.addEventListener('fullscreenchange', this.exitHandler);
+    document.addEventListener('webkitfullscreenchange', this.exitHandler);
+    document.addEventListener('mozfullscreenchange', this.exitHandler);
   }
 
   /**
@@ -60,69 +59,69 @@ export class TopbarComponent implements OnInit {
     this.createMenuOptions = [
       {
         id: 1,
-        label: "New Projects",
-        icon: "fe-briefcase",
+        label: 'New Projects',
+        icon: 'fe-briefcase',
       },
       {
         id: 2,
-        label: "Create Users",
-        icon: "fe-user",
+        label: 'Create Users',
+        icon: 'fe-user',
       },
       {
         id: 3,
-        label: "Revenue Report",
-        icon: "fe-bar-chart-line-",
+        label: 'Revenue Report',
+        icon: 'fe-bar-chart-line-',
       },
       {
         id: 4,
-        label: "Settings",
-        icon: "fe-settings",
+        label: 'Settings',
+        icon: 'fe-settings',
       },
       {
         id: 4,
-        label: "Help & Support",
-        icon: "fe-headphones",
+        label: 'Help & Support',
+        icon: 'fe-headphones',
       },
     ];
 
     this.megaMenuItems = [
       {
         id: 1,
-        menuTitle: "UI Components",
+        menuTitle: 'UI Components',
         menuItems: [
-          "Widgets",
-          "Nestable List",
-          "Range Sliders",
-          "Masonry Items",
-          "Sweet Alerts",
-          "Treeview Page",
-          "Tour Page",
+          'Widgets',
+          'Nestable List',
+          'Range Sliders',
+          'Masonry Items',
+          'Sweet Alerts',
+          'Treeview Page',
+          'Tour Page',
         ],
       },
       {
         id: 2,
-        menuTitle: "Applications",
+        menuTitle: 'Applications',
         menuItems: [
-          "eCommerce Pages",
-          "CRM Pages",
-          "Email",
-          "Calendar",
-          "Team Contacts",
-          "Task Board",
-          "Email Templates",
+          'eCommerce Pages',
+          'CRM Pages',
+          'Email',
+          'Calendar',
+          'Team Contacts',
+          'Task Board',
+          'Email Templates',
         ],
       },
       {
         id: 3,
-        menuTitle: "Extra Pages",
+        menuTitle: 'Extra Pages',
         menuItems: [
-          "Left Sidebar with User",
-          "Menu Collapsed",
-          "Small Left Sidebar",
-          "New Header Style",
-          "Search Result",
-          "Gallery Pages",
-          "Maintenance & Coming Soon",
+          'Left Sidebar with User',
+          'Menu Collapsed',
+          'Small Left Sidebar',
+          'New Header Style',
+          'Search Result',
+          'Gallery Pages',
+          'Maintenance & Coming Soon',
         ],
       },
     ];
@@ -134,61 +133,61 @@ export class TopbarComponent implements OnInit {
   _fetchNotifications(): void {
     this.notificationList = [
       {
-        text: "Caleb Flakelar commented on Admin",
+        text: 'Caleb Flakelar commented on Admin',
         isActive: true,
-        subText: "1 min ago",
-        icon: "mdi mdi-comment-account-outline",
-        bgColor: "primary",
-        redirectTo: "/dashboard-1",
+        subText: '1 min ago',
+        icon: 'mdi mdi-comment-account-outline',
+        bgColor: 'primary',
+        redirectTo: '/dashboard-1',
       },
       {
-        text: "New user registered.",
-        subText: "5 min ago",
-        icon: "mdi mdi-account-plus",
-        bgColor: "info",
-        redirectTo: "/dashboard-1",
+        text: 'New user registered.',
+        subText: '5 min ago',
+        icon: 'mdi mdi-account-plus',
+        bgColor: 'info',
+        redirectTo: '/dashboard-1',
       },
       {
-        text: "Cristina Pride",
-        subText: "Hi, How are you? What about our next meeting",
-        avatar: "assets/images/users/user-4.jpg",
-        bgColor: "success",
-        redirectTo: "/dashboard-1",
+        text: 'Cristina Pride',
+        subText: 'Hi, How are you? What about our next meeting',
+        avatar: 'assets/images/users/user-4.jpg',
+        bgColor: 'success',
+        redirectTo: '/dashboard-1',
       },
       {
-        text: "Caleb Flakelar commented on Admin",
-        subText: "2 days ago",
-        icon: "mdi mdi-comment-account-outline",
-        bgColor: "danger",
-        redirectTo: "/dashboard-1",
+        text: 'Caleb Flakelar commented on Admin',
+        subText: '2 days ago',
+        icon: 'mdi mdi-comment-account-outline',
+        bgColor: 'danger',
+        redirectTo: '/dashboard-1',
       },
       {
-        text: "Caleb Flakelar commented on Admin",
-        subText: "1 min ago",
-        icon: "mdi mdi-comment-account-outline",
-        bgColor: "primary",
-        redirectTo: "/dashboard-1",
+        text: 'Caleb Flakelar commented on Admin',
+        subText: '1 min ago',
+        icon: 'mdi mdi-comment-account-outline',
+        bgColor: 'primary',
+        redirectTo: '/dashboard-1',
       },
       {
-        text: "New user registered.",
-        subText: "5 min ago",
-        icon: "mdi mdi-account-plus",
-        bgColor: "info",
-        redirectTo: "/dashboard-1",
+        text: 'New user registered.',
+        subText: '5 min ago',
+        icon: 'mdi mdi-account-plus',
+        bgColor: 'info',
+        redirectTo: '/dashboard-1',
       },
       {
-        text: "Cristina Pride",
-        subText: "Hi, How are you? What about our next meeting",
-        avatar: "assets/images/users/user-1.jpg",
-        bgColor: "success",
-        redirectTo: "/dashboard-1",
+        text: 'Cristina Pride',
+        subText: 'Hi, How are you? What about our next meeting',
+        avatar: 'assets/images/users/user-1.jpg',
+        bgColor: 'success',
+        redirectTo: '/dashboard-1',
       },
       {
-        text: "Caleb Flakelar commented on Admin",
-        subText: "2 days ago",
-        icon: "mdi mdi-comment-account-outline",
-        bgColor: "danger",
-        redirectTo: "/dashboard-1",
+        text: 'Caleb Flakelar commented on Admin',
+        subText: '2 days ago',
+        icon: 'mdi mdi-comment-account-outline',
+        bgColor: 'danger',
+        redirectTo: '/dashboard-1',
       },
     ];
   }
@@ -199,24 +198,24 @@ export class TopbarComponent implements OnInit {
   _fetchProfileOptions(): void {
     this.profileOptions = [
       {
-        label: "Mi Cuenta",
-        icon: "fe-user",
-        redirectTo: "/apps/contacts/profile",
+        label: 'Mi Cuenta',
+        icon: 'fe-user',
+        redirectTo: '/apps/contacts/profile',
       },
       {
-        label: "Configuración",
-        icon: "fe-settings",
-        redirectTo: "[]",
+        label: 'Configuración',
+        icon: 'fe-settings',
+        redirectTo: '[]',
       },
       {
-        label: "Cambiar Contraseña",
-        icon: "fe-lock",
-        redirectTo: "/auth/lock-screen",
+        label: 'Cambiar Contraseña',
+        icon: 'fe-lock',
+        redirectTo: '/auth/lock-screen',
       },
       {
-        label: "Cerrar Sesión",
-        icon: "fe-log-out",
-        redirectTo: "/auth/logout",
+        label: 'Cerrar Sesión',
+        icon: 'fe-log-out',
+        redirectTo: '/auth/logout',
       },
     ];
   }
@@ -228,33 +227,33 @@ export class TopbarComponent implements OnInit {
     this.searchResults = [
       {
         id: 1,
-        text: "Analytics Report",
-        icon: "fe-home",
+        text: 'Analytics Report',
+        icon: 'fe-home',
       },
       {
         id: 2,
-        text: "How can I help you?",
-        icon: "fe-aperture",
+        text: 'How can I help you?',
+        icon: 'fe-aperture',
       },
       {
         id: 3,
-        text: "User profile settings",
-        icon: "fe-settings",
+        text: 'User profile settings',
+        icon: 'fe-settings',
       },
     ];
 
     this.searchUsers = [
       {
         id: 1,
-        name: "Erwin Brown",
-        position: "UI Designer",
-        profile: "assets/images/users/user-2.jpg",
+        name: 'Erwin Brown',
+        position: 'UI Designer',
+        profile: 'assets/images/users/user-2.jpg',
       },
       {
         id: 2,
-        name: "Jacob Deo",
-        position: "Developer",
-        profile: "assets/images/users/user-5.jpg",
+        name: 'Jacob Deo',
+        position: 'Developer',
+        profile: 'assets/images/users/user-5.jpg',
       },
     ];
   }
@@ -264,18 +263,12 @@ export class TopbarComponent implements OnInit {
    */
   changeSidebarWidth(): void {
     if (
-      document.body.hasAttribute("data-leftbar-size") &&
-      document.body.getAttribute("data-leftbar-size") === "condensed"
+      document.body.hasAttribute('data-leftbar-size') &&
+      document.body.getAttribute('data-leftbar-size') === 'condensed'
     ) {
-      this.eventService.broadcast(
-        "changeLeftSidebarType",
-        LEFT_SIDEBAR_TYPE_DEFAULT
-      );
+      this.eventService.broadcast('changeLeftSidebarType', LEFT_SIDEBAR_TYPE_DEFAULT);
     } else {
-      this.eventService.broadcast(
-        "changeLeftSidebarType",
-        LEFT_SIDEBAR_TYPE_CONDENSED
-      );
+      this.eventService.broadcast('changeLeftSidebarType', LEFT_SIDEBAR_TYPE_CONDENSED);
     }
   }
 
@@ -285,12 +278,8 @@ export class TopbarComponent implements OnInit {
   exitHandler(): void {
     let document: any = window.document;
 
-    if (
-      !document.webkitIsFullScreen &&
-      !document.mozFullScreen &&
-      !document.msFullscreenElement
-    ) {
-      document.body.classList.remove("fullscreen-enable");
+    if (!document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
+      document.body.classList.remove('fullscreen-enable');
     }
   }
 
@@ -300,17 +289,14 @@ export class TopbarComponent implements OnInit {
   toggleFullScreen(): void {
     let document: any = window.document;
 
-    document.body.classList.toggle("fullscreen-enable");
+    document.body.classList.toggle('fullscreen-enable');
 
-    let elem = document.querySelector(".maximize-icon");
+    let elem = document.querySelector('.maximize-icon');
 
-    if (
-      elem.hasAttribute("data-toggle") &&
-      document.body.getAttribute("data-toggle") === "fullscreen"
-    ) {
-      document.body.removeAttribute("data-toggle");
+    if (elem.hasAttribute('data-toggle') && document.body.getAttribute('data-toggle') === 'fullscreen') {
+      document.body.removeAttribute('data-toggle');
     } else {
-      elem.setAttribute("data-toggle", "fullscreen");
+      elem.setAttribute('data-toggle', 'fullscreen');
     }
 
     if (

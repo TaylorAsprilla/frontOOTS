@@ -1,14 +1,18 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
+import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
 import { Variant } from '../shared/ui.model';
 
 @Component({
   selector: 'app-ui-general',
+  standalone: true,
+  imports: [CommonModule, PageTitleComponent, NgbPaginationModule],
   templateUrl: './general.component.html',
-  styleUrls: ['./general.component.scss']
+  styleUrls: ['./general.component.scss'],
 })
 export class GeneralComponent implements OnInit {
-
   pageTitle: BreadcrumbItem[] = [];
   badgeVariants: Variant[] = [];
   page1 = 1;
@@ -18,12 +22,13 @@ export class GeneralComponent implements OnInit {
   page5 = 1;
   page6 = 1;
 
-
-
-  constructor () { }
+  constructor() {}
 
   ngOnInit(): void {
-    this.pageTitle = [{ label: 'Base UI', path: '/' }, { label: 'General UI', path: '/', active: true }];
+    this.pageTitle = [
+      { label: 'Base UI', path: '/' },
+      { label: 'General UI', path: '/', active: true },
+    ];
     this.badgeVariants = [
       {
         name: 'Primary',

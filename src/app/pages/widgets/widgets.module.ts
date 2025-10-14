@@ -1,21 +1,8 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { NgApexchartsModule } from 'ng-apexcharts';
-
-
-
-import { WidgetsRoutingModule } from './widgets-routing.module';
+import { RouterModule } from '@angular/router';
 import { WidgetsComponent } from './widgets.component';
 
-
-
-
 @NgModule({
-    imports: [
-    CommonModule,
-    NgApexchartsModule,
-    WidgetsRoutingModule,
-    WidgetsComponent
-]
+  imports: [RouterModule.forChild([{ path: '', component: WidgetsComponent }])],
 })
-export class WidgetsModule { }
+export class WidgetsModule {}

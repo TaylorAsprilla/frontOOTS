@@ -1,26 +1,28 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-portlet-with-header',
+  standalone: true,
+  imports: [CommonModule, NgbCollapseModule],
   templateUrl: './portlet-with-header.component.html',
-  styleUrls: ['./portlet-with-header.component.scss']
+  styleUrls: ['./portlet-with-header.component.scss'],
 })
 export class PortletWithHeaderComponent implements OnInit {
-
   @Input() cardTitleClass?: string;
   @Input() cardHeaderClass: string = '';
   isCollapsed: boolean = false;
   isClosed: boolean = false;
   refreshRequsted: boolean = false;
 
-  constructor () { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   /**
- * closes portlet card
- */
+   * closes portlet card
+   */
   closeCard(): void {
     this.isClosed = true;
   }
@@ -34,5 +36,4 @@ export class PortletWithHeaderComponent implements OnInit {
       this.refreshRequsted = false;
     }, 1000);
   }
-
 }

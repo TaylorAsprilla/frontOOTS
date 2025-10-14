@@ -1,27 +1,39 @@
 <div id="wrapper">
   <!-- topbar -->
-  <app-topbar (settingsButtonClicked)="onSettingsButtonClicked()" (mobileMenuButtonClicked)="onToggleMobileMenu()"
-  layoutType="two-column" [leftSidebarTheme]="leftSidebarTheme"></app-topbar>
+  <app-topbar
+    (settingsButtonClicked)="onSettingsButtonClicked()"
+    (mobileMenuButtonClicked)="onToggleMobileMenu()"
+    layoutType="two-column"
+    [leftSidebarTheme]="leftSidebarTheme"
+  ></app-topbar>
   <!-- left side bar-->
-  <app-two-column-left-sidebar [sidebarType]="leftSidebarType">
-  </app-two-column-left-sidebar>
+  <app-two-column-left-sidebar [sidebarType]="leftSidebarType"> </app-two-column-left-sidebar>
 
   @if (reRender) {
-    <div class="content-page">
-      <div class="content">
-        <!-- content -->
-        <div class="container-fluid">
-          <router-outlet></router-outlet>
-        </div> <!-- container -->
-      </div> <!-- content -->
-      <!-- footer -->
-      <app-footer></app-footer>
+  <div class="content-page">
+    <div class="content">
+      <!-- content -->
+      <div class="container-fluid">
+        <router-outlet></router-outlet>
+      </div>
+      <!-- container -->
     </div>
+    <!-- content -->
+    <!-- footer -->
+    <app-footer></app-footer>
+  </div>
   }
 </div>
 
 <!-- right sidebar -->
-<app-right-sidebar layoutType="two-column" [layoutColor]="layoutColor" [layoutWidth]="layoutWidth"
-  [menuPosition]="menuPosition" [leftSidebarTheme]="leftSidebarTheme" [leftSidebarType]="leftSidebarType"
-  [topbarTheme]="topbarTheme" [showSidebarUserInfo]="showSidebarUserInfo">
+<app-right-sidebar
+  layoutType="two-column"
+  [layoutColor]="layoutColor"
+  [layoutWidth]="layoutWidth"
+  [menuPosition]="menuPosition"
+  [leftSidebarTheme]="leftSidebarTheme"
+  [leftSidebarType]="leftSidebarType"
+  [topbarTheme]="topbarTheme"
+  [showSidebarUserInfo]="showSidebarUserInfo"
+>
 </app-right-sidebar>

@@ -1,4 +1,5 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
   FormArray,
@@ -7,13 +8,18 @@ import {
   ValidationErrors,
   ValidatorFn,
   Validators,
-} from "@angular/forms";
-import { BreadcrumbItem } from "src/app/shared/page-title/page-title.model";
+} from '@angular/forms';
+import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
+import { ReactiveFormsModule } from '@angular/forms';
+import { NgbNavModule, NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
+import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
 
 @Component({
-  selector: "app-crear-participante",
-  templateUrl: "./crear-participante.component.html",
-  styleUrls: ["./crear-participante.component.scss"],
+  selector: 'app-crear-participante',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, NgbNavModule, NgbProgressbarModule],
+  templateUrl: './crear-participante.component.html',
+  styleUrls: ['./crear-participante.component.scss'],
 })
 export class CrearParticipanteComponent implements OnInit {
   pageTitle: BreadcrumbItem[] = [];
@@ -29,30 +35,27 @@ export class CrearParticipanteComponent implements OnInit {
   ngOnInit(): void {
     this.formularioForm = this.formBuilder.group({
       datosPersonales: this.formBuilder.group({
-        primerNombre: ["", [Validators.required, Validators.maxLength(50)]],
-        segundoNombre: ["", Validators.maxLength(50)],
-        primerApellido: ["", [Validators.required, Validators.maxLength(50)]],
-        segundoApellido: ["", Validators.maxLength(50)],
-        celular: ["", [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
-        email: ["", [Validators.required, Validators.email]],
-        idTipoDocumento: ["", Validators.required],
-        numeroDocumento: [
-          "",
-          [Validators.required, Validators.pattern(/^[0-9]{6,12}$/)],
-        ],
-        direccion: ["", [Validators.required, Validators.maxLength(200)]],
-        ciudad: ["", [Validators.required, Validators.maxLength(50)]],
-        fechaNacimiento: ["", [Validators.required, this.validateAge(18)]],
-        afiliacionReligiosa: [""],
-        fuenteReferido: [""],
-        idGenero: ["", Validators.required],
-        idEstadoCivil: ["", Validators.required],
-        idEps: ["", Validators.required],
-        idTipoVivienda: ["", Validators.required],
+        primerNombre: ['', [Validators.required, Validators.maxLength(50)]],
+        segundoNombre: ['', Validators.maxLength(50)],
+        primerApellido: ['', [Validators.required, Validators.maxLength(50)]],
+        segundoApellido: ['', Validators.maxLength(50)],
+        celular: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
+        email: ['', [Validators.required, Validators.email]],
+        idTipoDocumento: ['', Validators.required],
+        numeroDocumento: ['', [Validators.required, Validators.pattern(/^[0-9]{6,12}$/)]],
+        direccion: ['', [Validators.required, Validators.maxLength(200)]],
+        ciudad: ['', [Validators.required, Validators.maxLength(50)]],
+        fechaNacimiento: ['', [Validators.required, this.validateAge(18)]],
+        afiliacionReligiosa: [''],
+        fuenteReferido: [''],
+        idGenero: ['', Validators.required],
+        idEstadoCivil: ['', Validators.required],
+        idEps: ['', Validators.required],
+        idTipoVivienda: ['', Validators.required],
       }),
 
       composicionFamiliar: this.formBuilder.group({
-        nombre: ["", Validators.required],
+        nombre: ['', Validators.required],
         fechaNacimiento: [],
         ocupacion: [],
         idParentesco: [],
@@ -72,53 +75,53 @@ export class CrearParticipanteComponent implements OnInit {
       }),
 
       historialAcademico: this.formBuilder.group({
-        escolaridad: [""],
-        gradoCompletado: [""],
-        institucion: [""],
-        profesion: [""],
-        fuenteIngresos: [""],
-        ingresoMensual: [""],
-        historialOcupacional: [""],
-        vivienda: [""],
+        escolaridad: [''],
+        gradoCompletado: [''],
+        institucion: [''],
+        profesion: [''],
+        fuenteIngresos: [''],
+        ingresoMensual: [''],
+        historialOcupacional: [''],
+        vivienda: [''],
       }),
 
       historialSaludFisica: this.formBuilder.group({
-        condicionesFisicas: [""],
-        recibeTratamiento: [""],
-        tratamientoDetalle: [""],
-        historialFamiliarPaterno: [""],
-        historialFamiliarMaterno: [""],
-        observacionesSaludFisica: [""],
+        condicionesFisicas: [''],
+        recibeTratamiento: [''],
+        tratamientoDetalle: [''],
+        historialFamiliarPaterno: [''],
+        historialFamiliarMaterno: [''],
+        observacionesSaludFisica: [''],
       }),
 
       historialSaludMental: this.formBuilder.group({
-        condicionesMentales: [""],
-        recibeTratamientoMental: [""],
-        tratamientoMentalDetalle: [""],
-        historialMentalPaterno: [""],
-        historialMentalMaterno: [""],
-        observacionesSaludMental: [""],
+        condicionesMentales: [''],
+        recibeTratamientoMental: [''],
+        tratamientoMentalDetalle: [''],
+        historialMentalPaterno: [''],
+        historialMentalMaterno: [''],
+        observacionesSaludMental: [''],
       }),
 
       ponderacion: this.formBuilder.group({
-        motivoConsulta: [""],
-        factoresConcurrentes: [""],
-        factoresCriticos: [""],
-        analisisProblema: [""],
+        motivoConsulta: [''],
+        factoresConcurrentes: [''],
+        factoresCriticos: [''],
+        analisisProblema: [''],
       }),
 
       planIntervencion: this.formBuilder.group({
-        descripcion: [""],
+        descripcion: [''],
       }),
 
       notasProgreso: this.formBuilder.array([this.crearNotaVacia()]),
 
       referidos: this.formBuilder.group({
-        descripcion: [""],
+        descripcion: [''],
       }),
 
       notaCierre: this.formBuilder.group({
-        observaciones: [""],
+        observaciones: [''],
       }),
     });
   }
@@ -133,10 +136,7 @@ export class CrearParticipanteComponent implements OnInit {
       let age = today.getFullYear() - birthDate.getFullYear();
       const monthDiff = today.getMonth() - birthDate.getMonth();
 
-      if (
-        monthDiff < 0 ||
-        (monthDiff === 0 && today.getDate() < birthDate.getDate())
-      ) {
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
         age--;
       }
 
@@ -146,13 +146,13 @@ export class CrearParticipanteComponent implements OnInit {
 
   crearNotaVacia(): FormGroup {
     return this.formBuilder.group({
-      fecha: ["", Validators.required],
-      hora: [""],
-      tipoAbordaje: ["", Validators.required],
-      proceso: [""],
-      resumen: ["", Validators.required],
-      observaciones: [""],
-      acuerdos: [""],
+      fecha: ['', Validators.required],
+      hora: [''],
+      tipoAbordaje: ['', Validators.required],
+      proceso: [''],
+      resumen: ['', Validators.required],
+      observaciones: [''],
+      acuerdos: [''],
     });
   }
   // Método para agregar notas de progreso
@@ -172,7 +172,7 @@ export class CrearParticipanteComponent implements OnInit {
 
   // Getter para facilitar el acceso a las notas
   get notasProgreso(): FormArray {
-    return this.formularioForm.get("notasProgreso") as FormArray;
+    return this.formularioForm.get('notasProgreso') as FormArray;
   }
 
   // goes to next wizard
@@ -197,13 +197,13 @@ export class CrearParticipanteComponent implements OnInit {
 
   onSubmit(): void {
     if (this.formularioForm.valid) {
-      if (confirm("¿Está seguro de enviar el formulario?")) {
-        console.log("Formulario enviado:", this.formularioForm.value);
+      if (confirm('¿Está seguro de enviar el formulario?')) {
+        console.log('Formulario enviado:', this.formularioForm.value);
         // Aquí iría la lógica para enviar los datos al servidor
       }
     } else {
       this.markAllAsTouched(this.formularioForm);
-      alert("Por favor complete todos los campos requeridos correctamente.");
+      alert('Por favor complete todos los campos requeridos correctamente.');
     }
   }
 }

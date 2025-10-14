@@ -1,14 +1,16 @@
-import { Component, Injectable, OnInit } from "@angular/core";
-import {
-  NgbCalendar,
-  NgbDateParserFormatter,
-  NgbDateStruct,
-} from "@ng-bootstrap/ng-bootstrap";
-import { ChartStatistics } from "src/app/shared/widget/chart-statistics/chart-statistics.model";
-import { StatisticsCard1 } from "src/app/shared/widget/statistics-card/statistics-card.model";
-import { ChartOptions } from "../../charts/apex/apex-chart.model";
-import { RevenueHistory, UserBalance } from "./dashboard-one.model";
-import { REVENUEHISTORYDATA, USERBALANCEDATA } from "./data";
+import { Component, Injectable, OnInit } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NgbDatepickerModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgApexchartsModule } from 'ng-apexcharts';
+import { StatisticsCardComponent } from 'src/app/shared/widget/statistics-card/statistics-card.component';
+import { ChartStatisticsComponent } from 'src/app/shared/widget/chart-statistics/chart-statistics.component';
+import { NgbCalendar, NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { ChartStatistics } from 'src/app/shared/widget/chart-statistics/chart-statistics.model';
+import { StatisticsCard1 } from 'src/app/shared/widget/statistics-card/statistics-card.model';
+import { ChartOptions } from '../../charts/apex/apex-chart.model';
+import { RevenueHistory, UserBalance } from './dashboard-one.model';
+import { REVENUEHISTORYDATA, USERBALANCEDATA } from './data';
 
 /**
  * This Service handles how the date is rendered and parsed from keyboard i.e. in the bound input field.
@@ -16,20 +18,20 @@ import { REVENUEHISTORYDATA, USERBALANCEDATA } from "./data";
 @Injectable()
 export class CustomDateParserFormatter extends NgbDateParserFormatter {
   readonly month_list = [
-    "Enero",
-    "Febrero",
-    "Marzo",
-    "Abril",
-    "Mayo",
-    "Junio",
-    "Julio",
-    "Agosto",
-    "Septiembre",
-    "Octubre",
-    "Noviembre",
-    "Diciembre",
+    'Enero',
+    'Febrero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Septiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre',
   ];
-  readonly DELIMITER = " ";
+  readonly DELIMITER = ' ';
 
   parse(value: string): NgbDateStruct | null {
     if (value) {
@@ -44,24 +46,25 @@ export class CustomDateParserFormatter extends NgbDateParserFormatter {
   }
 
   format(date: NgbDateStruct | null): string {
-    return date
-      ? this.month_list[date.month - 1] +
-          this.DELIMITER +
-          date.day +
-          "," +
-          this.DELIMITER +
-          date.year
-      : "";
+    return date ? this.month_list[date.month - 1] + this.DELIMITER + date.day + ',' + this.DELIMITER + date.year : '';
   }
 }
 
 @Component({
-  selector: "app-dashboard-one",
-  templateUrl: "./dashboard-one.component.html",
-  styleUrls: ["./dashboard-one.component.scss"],
-  providers: [
-    { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter },
+  selector: 'app-dashboard-one',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    NgbDatepickerModule,
+    NgbDropdownModule,
+    NgApexchartsModule,
+    StatisticsCardComponent,
+    DatePipe,
   ],
+  templateUrl: './dashboard-one.component.html',
+  styleUrls: ['./dashboard-one.component.scss'],
+  providers: [{ provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter }],
 })
 export class DashboardOneComponent implements OnInit {
   statisticsCardData: StatisticsCard1[] = [];
@@ -90,20 +93,20 @@ export class DashboardOneComponent implements OnInit {
     this.statisticsCardData = [
       {
         id: 1,
-        variant: "primary",
-        description: "Participantes",
-        icon: "fe-heart",
+        variant: 'primary',
+        description: 'Participantes',
+        icon: 'fe-heart',
         stats: 120,
         options: {
-          prefix: "",
+          prefix: '',
           duration: 2,
         },
       },
       {
         id: 2,
-        variant: "success",
-        description: "Casos Abiertos",
-        icon: "fe-user",
+        variant: 'success',
+        description: 'Casos Abiertos',
+        icon: 'fe-user',
         stats: 127,
         options: {
           duration: 2,
@@ -111,9 +114,9 @@ export class DashboardOneComponent implements OnInit {
       },
       {
         id: 3,
-        variant: "info",
-        description: "Casos Cerrados",
-        icon: "fe-bar-chart-line",
+        variant: 'info',
+        description: 'Casos Cerrados',
+        icon: 'fe-bar-chart-line',
         stats: 80,
         options: {
           duration: 2,
@@ -121,9 +124,9 @@ export class DashboardOneComponent implements OnInit {
       },
       {
         id: 4,
-        variant: "warning",
-        description: "Seguimientos",
-        icon: "fe-eye",
+        variant: 'warning',
+        description: 'Seguimientos',
+        icon: 'fe-eye',
         stats: 78.41,
         options: {
           duration: 2,
@@ -141,35 +144,35 @@ export class DashboardOneComponent implements OnInit {
       series: [68],
       chart: {
         height: 242,
-        type: "radialBar",
+        type: 'radialBar',
       },
       plotOptions: {
         radialBar: {
           hollow: {
-            size: "65%",
+            size: '65%',
           },
         },
       },
-      colors: ["#f86262"],
-      labels: ["Revenue"],
+      colors: ['#f86262'],
+      labels: ['Revenue'],
     };
 
     this.salesAnalyticsChart = {
       series: [
         {
-          name: "Revenue",
-          type: "column",
+          name: 'Revenue',
+          type: 'column',
           data: [440, 505, 414, 671, 227, 413, 201, 352, 752, 320, 257, 160],
         },
         {
-          name: "Sales",
-          type: "line",
+          name: 'Sales',
+          type: 'line',
           data: [23, 42, 35, 27, 43, 22, 17, 31, 22, 22, 12, 16],
         },
       ],
       chart: {
         height: 378,
-        type: "line",
+        type: 'line',
         offsetY: 10,
         toolbar: {
           show: false,
@@ -180,30 +183,30 @@ export class DashboardOneComponent implements OnInit {
       },
       plotOptions: {
         bar: {
-          columnWidth: "50%",
+          columnWidth: '50%',
         },
       },
-      colors: ["#1abc9c", "#4a81d4"],
+      colors: ['#1abc9c', '#4a81d4'],
       dataLabels: {
         enabled: true,
         enabledOnSeries: [1],
       },
       labels: [
-        "01/01/2001",
-        "02/01/2001",
-        "03/01/2001",
-        "04/01/2001",
-        "05/01/2001",
-        "06/01/2001",
-        "07/01/2001",
-        "08/01/2001",
-        "09/01/2001",
-        "10/01/2001",
-        "11/01/2001",
-        "12/01/2001",
+        '01/01/2001',
+        '02/01/2001',
+        '03/01/2001',
+        '04/01/2001',
+        '05/01/2001',
+        '06/01/2001',
+        '07/01/2001',
+        '08/01/2001',
+        '09/01/2001',
+        '10/01/2001',
+        '11/01/2001',
+        '12/01/2001',
       ],
       xaxis: {
-        type: "datetime",
+        type: 'datetime',
       },
       legend: {
         offsetY: 7,
@@ -214,10 +217,10 @@ export class DashboardOneComponent implements OnInit {
         },
       },
       fill: {
-        type: "gradient",
+        type: 'gradient',
         gradient: {
-          shade: "light",
-          type: "horizontal",
+          shade: 'light',
+          type: 'horizontal',
           shadeIntensity: 0.25,
           gradientToColors: undefined,
           inverseColors: true,
@@ -229,13 +232,13 @@ export class DashboardOneComponent implements OnInit {
       yaxis: [
         {
           title: {
-            text: "Net Revenue",
+            text: 'Net Revenue',
           },
         },
         {
           opposite: true,
           title: {
-            text: "Number of Sales",
+            text: 'Number of Sales',
           },
         },
       ],
@@ -248,22 +251,22 @@ export class DashboardOneComponent implements OnInit {
   _fetchChartStatistics(): void {
     this.chartStatisticsData = [
       {
-        title: "Target",
-        stats: "$7.8k",
-        icon: "fe-arrow-down",
-        variant: "danger",
+        title: 'Target',
+        stats: '$7.8k',
+        icon: 'fe-arrow-down',
+        variant: 'danger',
       },
       {
-        title: "Last week",
-        stats: "$1.4k",
-        icon: "fe-arrow-up",
-        variant: "success",
+        title: 'Last week',
+        stats: '$1.4k',
+        icon: 'fe-arrow-up',
+        variant: 'success',
       },
       {
-        title: "Last Month",
-        stats: "$15k",
-        icon: "fe-arrow-down",
-        variant: "danger",
+        title: 'Last Month',
+        stats: '$15k',
+        icon: 'fe-arrow-down',
+        variant: 'danger',
       },
     ];
   }

@@ -1,0 +1,20 @@
+// Temporary fix for Bootstrap CSS variable issues
+// Override problematic variables with static values
+
+// Primary color (Bootstrap primary)
+$primary: #3b82f6;
+
+// Override CSS variables that cause Bootstrap compilation issues
+$link-color: $primary;
+$link-hover-color: darken($primary, 15%);
+
+// Gray colors for borders and other elements
+$gray-300: #d1d5db;
+$border-color: $gray-300;
+
+// Box shadows
+$box-shadow: 0px 0px 35px 0px rgba(154, 161, 171, 0.15);
+$box-shadow-sm: 0 0.75rem 6rem rgba(56, 65, 74, 0.03);
+
+// Override any other problematic CSS variables
+$variable-prefix: 'ct-' !default;

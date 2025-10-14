@@ -1,21 +1,24 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NgbCarousel, NgbSlideEvent, NgbSlideEventSource } from '@ng-bootstrap/ng-bootstrap';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NgbCarouselModule, NgbSlideEvent, NgbSlideEventSource, NgbCarousel } from '@ng-bootstrap/ng-bootstrap';
+import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
-
 
 type CarouselCaptionSlide = {
   slideTitle: string;
   image: string;
   subTitle: string;
-}
+};
 
 @Component({
   selector: 'app-ui-carousel',
+  standalone: true,
+  imports: [CommonModule, FormsModule, NgbCarouselModule, PageTitleComponent],
   templateUrl: './carousel.component.html',
-  styleUrls: ['./carousel.component.scss']
+  styleUrls: ['./carousel.component.scss'],
 })
 export class CarouselComponent implements OnInit {
-
   pageTitle: BreadcrumbItem[] = [];
   carouselImages: string[] = [];
   caroselCaptionSlides: CarouselCaptionSlide[] = [];
@@ -26,36 +29,38 @@ export class CarouselComponent implements OnInit {
   pauseOnHover = true;
   pauseOnFocus = true;
 
-
   @ViewChild('carousel', { static: true }) carousel!: NgbCarousel;
 
-  constructor () { }
+  constructor() {}
 
   ngOnInit(): void {
-    this.pageTitle = [{ label: 'Base UI', path: '/' }, { label: 'Carousel', path: '/', active: true }];
+    this.pageTitle = [
+      { label: 'Base UI', path: '/' },
+      { label: 'Carousel', path: '/', active: true },
+    ];
     this.carouselImages = [1, 2, 3].map((n) => `assets/images/small/img-${n}.jpg`);
 
     this.caroselCaptionSlides = [
       {
         slideTitle: 'First slide label',
         image: 'assets/images/small/img-4.jpg',
-        subTitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+        subTitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
       },
       {
         slideTitle: 'Second slide label',
         image: 'assets/images/small/img-1.jpg',
-        subTitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+        subTitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
       },
       {
         slideTitle: 'Third slide label',
         image: 'assets/images/small/img-3.jpg',
-        subTitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-      }
+        subTitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      },
     ];
   }
 
   /**
-   * toggle carousel 
+   * toggle carousel
    */
   togglePaused(): void {
     if (this.paused) {
@@ -67,14 +72,15 @@ export class CarouselComponent implements OnInit {
   }
 
   onSlide(slideEvent: NgbSlideEvent) {
-    if (this.unpauseOnArrow && slideEvent.paused &&
-      (slideEvent.source === NgbSlideEventSource.ARROW_LEFT || slideEvent.source === NgbSlideEventSource.ARROW_RIGHT)) {
+    if (
+      this.unpauseOnArrow &&
+      slideEvent.paused &&
+      (slideEvent.source === NgbSlideEventSource.ARROW_LEFT || slideEvent.source === NgbSlideEventSource.ARROW_RIGHT)
+    ) {
       this.togglePaused();
     }
     if (this.pauseOnIndicator && !slideEvent.paused && slideEvent.source === NgbSlideEventSource.INDICATOR) {
       this.togglePaused();
     }
   }
-
-
 }

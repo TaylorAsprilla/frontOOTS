@@ -1,27 +1,32 @@
 import { Component, Input, OnInit, SimpleChange } from '@angular/core';
 import { EventService } from 'src/app/core/service/event.service';
 import { changeBodyAttribute, getLayoutConfig } from '../../shared/helper/utils';
+import { CommonModule } from '@angular/common';
+import { RouterOutlet } from '@angular/router';
+import { TopbarComponent } from '../../shared/topbar/topbar.component';
+import { FooterComponent } from '../../shared/footer/footer.component';
+import { RightSidebarComponent } from '../../shared/right-sidebar/right-sidebar.component';
+import { TopnavComponent } from '../topnav/topnav.component';
 
 @Component({
   selector: 'app-horizontal-layout',
   templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.scss']
+  styleUrls: ['./layout.component.scss'],
+  imports: [CommonModule, RouterOutlet, TopbarComponent, FooterComponent, RightSidebarComponent, TopnavComponent],
+  standalone: true,
 })
 export class HorizontalLayoutComponent implements OnInit {
-
   @Input() layoutWidth: string = '';
-  @Input() layoutColor: string = "";
-  menuPosition: string = "";
-  leftSidebarTheme: string = "";
-  leftSidebarType: string = "";
-  topbarTheme: string = "";
+  @Input() layoutColor: string = '';
+  menuPosition: string = '';
+  leftSidebarTheme: string = '';
+  leftSidebarType: string = '';
+  topbarTheme: string = '';
   showSidebarUserInfo: boolean = false;
   reRender: boolean = true;
   showMobileMenu: boolean = false;
 
-  constructor (
-    private eventService: EventService
-  ) { }
+  constructor(private eventService: EventService) {}
 
   ngOnInit(): void {
     let config = getLayoutConfig('horizontal');
@@ -54,17 +59,16 @@ export class HorizontalLayoutComponent implements OnInit {
     this.changeLayoutConfig();
   }
 
-
   /**
- * On view init - activating horizontal layout
- */
+   * On view init - activating horizontal layout
+   */
   ngAfterViewInit() {
-    changeBodyAttribute('data-layout-mode', 'horizontal')
+    changeBodyAttribute('data-layout-mode', 'horizontal');
   }
 
   /**
- * changes layout configurations 
- */
+   * changes layout configurations
+   */
   ngOnChanges(changes: SimpleChange) {
     this._setRerender();
     this.changeLayoutConfig();
@@ -86,12 +90,11 @@ export class HorizontalLayoutComponent implements OnInit {
     setTimeout(() => {
       this.reRender = true;
     }, 0.05);
-  }
-
+  };
 
   /**
- * changes layout related options
- */
+   * changes layout related options
+   */
   changeLayoutConfig(): void {
     // light vs dark mode
     changeBodyAttribute('data-layout-color', this.layoutColor);
@@ -112,21 +115,17 @@ export class HorizontalLayoutComponent implements OnInit {
     changeBodyAttribute('data-topbar-color', this.topbarTheme);
   }
 
-
   /**
-* on settings button clicked from topbar
-*/
+   * on settings button clicked from topbar
+   */
   onSettingsButtonClicked() {
     this.eventService.broadcast('showRightSideBar');
   }
 
   /**
- * On mobile toggle button clicked
- */
+   * On mobile toggle button clicked
+   */
   onToggleMobileMenu() {
     this.showMobileMenu = !this.showMobileMenu;
   }
-
-
-
 }

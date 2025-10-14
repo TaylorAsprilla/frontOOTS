@@ -1,20 +1,24 @@
 import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbCollapse } from '@ng-bootstrap/ng-bootstrap';
 import { EventService } from 'src/app/core/service/event.service';
 import { AuthenticationService } from '../../../core/service/auth.service';
 import { MENU_ITEMS } from '../config/menu-meta';
 import { MenuItem } from '../models/menu.model';
 import { findAllParent, findMenuItem } from '../helper/utils';
-import feather from "feather-icons";
+import feather from 'feather-icons';
+import { CommonModule } from '@angular/common';
+import { SimplebarAngularModule } from 'simplebar-angular';
+import { ClickOutsideModule } from 'ng-click-outside';
 
 @Component({
   selector: 'app-left-sidebar',
   templateUrl: './left-sidebar.component.html',
-  styleUrls: ['./left-sidebar.component.scss']
+  styleUrls: ['./left-sidebar.component.scss'],
+  imports: [CommonModule, RouterModule, NgbCollapse, SimplebarAngularModule, ClickOutsideModule],
+  standalone: true,
 })
 export class LeftSidebarComponent implements OnInit, AfterViewInit {
-
   @Input() navClasses: string | undefined;
   @Input() includeUserProfile: boolean = false;
   hasTwoToneIcons: boolean = false;
@@ -25,21 +29,15 @@ export class LeftSidebarComponent implements OnInit, AfterViewInit {
 
   loggedInUser: any = {};
 
-
   menuItems: MenuItem[] = [];
 
-  constructor (
-    router: Router,
-    private authService: AuthenticationService,
-    private eventService: EventService) {
+  constructor(router: Router, private authService: AuthenticationService, private eventService: EventService) {
     router.events.forEach((event) => {
       if (event instanceof NavigationEnd) {
         this._activateMenu(); //actiavtes menu
         this.hideMenu(); //hides leftbar on change of route
       }
     });
-
-
   }
 
   ngOnInit(): void {
@@ -49,20 +47,18 @@ export class LeftSidebarComponent implements OnInit, AfterViewInit {
     this.eventService.subscribe('toggleTwoToneIcons', (enable) => {
       this.hasTwoToneIcons = enable;
       if (this.hasTwoToneIcons) {
-        document.body.setAttribute("data-sidebar-icon", "twotones");
-      }
-      else {
-        document.body.removeAttribute("data-sidebar-icon");
+        document.body.setAttribute('data-sidebar-icon', 'twotones');
+      } else {
+        document.body.removeAttribute('data-sidebar-icon');
       }
     });
   }
 
   ngOnChanges(): void {
     if (this.includeUserProfile) {
-      document.body.setAttribute("data-sidebar-user", "true");
-    }
-    else {
-      document.body.setAttribute("data-sidebar-user", "false");
+      document.body.setAttribute('data-sidebar-user', 'true');
+    } else {
+      document.body.setAttribute('data-sidebar-user', 'false');
     }
   }
 
@@ -103,7 +99,6 @@ export class LeftSidebarComponent implements OnInit, AfterViewInit {
         const mid = matchingMenuItem.getAttribute('data-menu-key');
         const activeMt = findMenuItem(this.menuItems, mid);
         if (activeMt) {
-
           const matchingObjs = [activeMt['key'], ...findAllParent(this.menuItems, activeMt)];
 
           this.activeMenuItems = matchingObjs;
@@ -125,16 +120,14 @@ export class LeftSidebarComponent implements OnInit, AfterViewInit {
     collapse.toggle();
     let openMenuItems: string[];
     if (!menuItem.collapsed) {
-      openMenuItems = ([menuItem['key'], ...findAllParent(this.menuItems, menuItem)]);
+      openMenuItems = [menuItem['key'], ...findAllParent(this.menuItems, menuItem)];
       this.menuItems.forEach((menu: MenuItem) => {
         if (!openMenuItems.includes(menu.key!)) {
           menu.collapsed = true;
         }
-      })
+      });
     }
-
   }
-
 
   /**
    * Returns true or false if given menu item has child or not
@@ -144,12 +137,10 @@ export class LeftSidebarComponent implements OnInit, AfterViewInit {
     return menu.children ? true : false;
   }
 
-
   /**
    * Hides the menubar
    */
   hideMenu() {
     document.body.classList.remove('sidebar-enable');
   }
-
 }

@@ -1,16 +1,32 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { NgbAlertModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/core/service/auth.service';
+import { DefaultLayoutComponent } from 'src/app/shared/ui/default-layout/default-layout.component';
+import { PreloaderComponent } from 'src/app/shared/widget/preloader/preloader.component';
 
 @Component({
   selector: 'app-auth-signin-signup',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    RouterModule,
+    NgbAlertModule,
+    NgbNavModule,
+    DefaultLayoutComponent,
+    PreloaderComponent,
+  ],
   templateUrl: './signin-signup.component.html',
-  styleUrls: ['./signin-signup.component.scss']
+  styleUrls: ['./signin-signup.component.scss'],
 })
 export class SigninSignupComponent implements OnInit {
-
   returnUrl: string = '/';
   loading: boolean = false;
 
@@ -22,24 +38,23 @@ export class SigninSignupComponent implements OnInit {
   signupFormSubmitted: boolean = false;
   signupError: string = '';
 
-  constructor (
+  constructor(
     private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthenticationService,
     private fb: FormBuilder
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-
     this.loginForm = this.fb.group({
       email: ['ubold@coderthemes.com', [Validators.required, Validators.email]],
-      password: ['test', Validators.required]
+      password: ['test', Validators.required],
     });
 
     this.signUpForm = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(4)]]
+      password: ['', [Validators.required, Validators.minLength(4)]],
     });
 
     // reset login status
@@ -52,7 +67,9 @@ export class SigninSignupComponent implements OnInit {
   /**
    * convenience getter for easy access to form fields
    */
-  get loginFormFields() { return this.loginForm.controls; }
+  get loginFormFields() {
+    return this.loginForm.controls;
+  }
 
   /**
    * convenience getter for easy access to form fields
@@ -62,13 +79,14 @@ export class SigninSignupComponent implements OnInit {
   }
 
   /**
-  * On login form submit
-  */
+   * On login form submit
+   */
   onLogin(): void {
     this.loginFormSubmitted = true;
     if (this.loginForm.valid) {
       this.loading = true;
-      this.authenticationService.login(this.loginFormFields.email?.value, this.loginFormFields.password?.value)
+      this.authenticationService
+        .login(this.loginFormFields.email?.value, this.loginFormFields.password?.value)
         .pipe(first())
         .subscribe(
           (data: any) => {
@@ -77,18 +95,24 @@ export class SigninSignupComponent implements OnInit {
           (error: any) => {
             this.loginError = error;
             this.loading = false;
-          });
+          }
+        );
     }
   }
 
   /**
- * On signup form submit
- */
+   * On signup form submit
+   */
   onSignup(): void {
     this.signupFormSubmitted = true;
     if (this.signUpForm.valid) {
       this.loading = true;
-      this.authenticationService.signup(this.signupFormFields.name?.value, this.signupFormFields.email?.value, this.signupFormFields.password?.value)
+      this.authenticationService
+        .signup(
+          this.signupFormFields.name?.value,
+          this.signupFormFields.email?.value,
+          this.signupFormFields.password?.value
+        )
         .pipe(first())
         .subscribe(
           (data: any) => {
@@ -98,9 +122,8 @@ export class SigninSignupComponent implements OnInit {
           (error: any) => {
             this.signupError = error;
             this.loading = false;
-          });
+          }
+        );
     }
   }
-
-
 }

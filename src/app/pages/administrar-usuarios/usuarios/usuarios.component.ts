@@ -1,16 +1,23 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { BreadcrumbItem } from "src/app/shared/page-title/page-title.model";
-import { Column } from "src/app/shared/advanced-table/advanced-table.component";
-import { SortEvent } from "src/app/shared/advanced-table/sortable.directive";
-import { UsuarioInterface } from "src/app/core/interface/usuario.interface";
-import { usuarioData } from "../../../mocks/usuario.data";
-import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
+import { AdvancedTableComponent } from 'src/app/shared/advanced-table/advanced-table.component';
+import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
+import { Column } from 'src/app/shared/advanced-table/advanced-table.component';
+import { SortEvent } from 'src/app/shared/advanced-table/sortable.directive';
+import { UsuarioInterface } from 'src/app/core/interface/usuario.interface';
+import { usuarioData } from '../../../mocks/usuario.data';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
-  selector: "app-usuarios",
-  templateUrl: "./usuarios.component.html",
-  styleUrls: ["./usuarios.component.scss"],
+  selector: 'app-usuarios',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, NgbModalModule, PageTitleComponent, AdvancedTableComponent],
+  templateUrl: './usuarios.component.html',
+  styleUrls: ['./usuarios.component.scss'],
 })
 export class UsuariosComponent implements OnInit {
   pageTitle: BreadcrumbItem[] = [];
@@ -20,30 +27,30 @@ export class UsuariosComponent implements OnInit {
   formUsuario!: FormGroup;
   modalRef: NgbModalRef | undefined;
 
-  @ViewChild("content", { static: true }) content: any;
+  @ViewChild('content', { static: true }) content: any;
 
   constructor(public activeModal: NgbModal, private formBuilder: FormBuilder) {}
 
   ngOnInit(): void {
     this.pageTitle = [
-      { label: "Usuarios", path: "/" },
-      { label: "Usuarios Registrados", path: "/", active: true },
+      { label: 'Usuarios', path: '/' },
+      { label: 'Usuarios Registrados', path: '/', active: true },
     ];
     this._fetchData();
     this.initTableCofig();
 
     this.formUsuario = this.formBuilder.group({
-      primerNombre: ["", Validators.required],
-      segundoNombre: [""],
-      primerApellido: ["", Validators.required],
-      segundoApellido: [""],
-      celular: ["", Validators.required],
-      email: ["", [Validators.required, Validators.email]],
-      tipoDocumento: ["", Validators.required],
-      numeroDocumento: ["", Validators.required],
-      direccion: ["", Validators.required],
-      ciudad: ["", Validators.required],
-      fechaNacimiento: ["", Validators.required],
+      primerNombre: ['', Validators.required],
+      segundoNombre: [''],
+      primerApellido: ['', Validators.required],
+      segundoApellido: [''],
+      celular: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      tipoDocumento: ['', Validators.required],
+      numeroDocumento: ['', Validators.required],
+      direccion: ['', Validators.required],
+      ciudad: ['', Validators.required],
+      fechaNacimiento: ['', Validators.required],
     });
   }
 
@@ -65,37 +72,37 @@ export class UsuariosComponent implements OnInit {
   initTableCofig(): void {
     this.columns = [
       {
-        name: "primerNombre",
-        label: "Nombre",
+        name: 'primerNombre',
+        label: 'Nombre',
         formatter: (record: UsuarioInterface) => record.primerNombre,
         width: 245,
       },
       {
-        name: "primerApellido",
-        label: "Apellido",
+        name: 'primerApellido',
+        label: 'Apellido',
         formatter: (record: UsuarioInterface) => record.primerApellido,
         width: 245,
       },
       {
-        name: "email",
-        label: "Email",
+        name: 'email',
+        label: 'Email',
         formatter: (record: UsuarioInterface) => record.email,
         width: 360,
       },
       {
-        name: "celular",
-        label: "Celular",
+        name: 'celular',
+        label: 'Celular',
         formatter: (record: UsuarioInterface) => record.celular,
       },
       {
-        name: "ciudad",
-        label: "Ciudad",
+        name: 'ciudad',
+        label: 'Ciudad',
         formatter: (record: UsuarioInterface) => record.ciudad,
         width: 180,
       },
       {
-        name: "direccion",
-        label: "Direccion",
+        name: 'direccion',
+        label: 'Direccion',
         formatter: (record: UsuarioInterface) => record.direccion,
         width: 180,
       },
@@ -112,12 +119,12 @@ export class UsuariosComponent implements OnInit {
    * @param event column name, sort direction
    */
   onSort(event: SortEvent): void {
-    if (event.direction === "") {
+    if (event.direction === '') {
       this.records = usuarioData;
     } else {
       this.records = [...this.records].sort((a, b) => {
         const res = this.compare(a[event.column], b[event.column]);
-        return event.direction === "asc" ? res : -res;
+        return event.direction === 'asc' ? res : -res;
       });
     }
   }
@@ -141,15 +148,13 @@ export class UsuariosComponent implements OnInit {
    * Search Method
    */
   searchData(searchTerm: string): void {
-    if (searchTerm === "") {
+    if (searchTerm === '') {
       this._fetchData();
     } else {
       let updatedData = usuarioData;
 
       //  filter
-      updatedData = updatedData.filter((record) =>
-        this.matches(record, searchTerm)
-      );
+      updatedData = updatedData.filter((record) => this.matches(record, searchTerm));
       this.records = updatedData;
     }
   }
@@ -157,7 +162,7 @@ export class UsuariosComponent implements OnInit {
   crearUsuario() {
     if (this.formUsuario.valid) {
       const data: UsuarioInterface = this.formUsuario.value;
-      console.log("Usuarios,", data);
+      console.log('Usuarios,', data);
 
       this.records.push(data);
 

@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
 
 @Component({
   selector: 'app-vector-maps',
+  standalone: true,
+  imports: [CommonModule, PageTitleComponent],
   templateUrl: './vector-maps.component.html',
-  styleUrls: ['./vector-maps.component.scss']
+  styleUrls: ['./vector-maps.component.scss'],
 })
 export class VectorMapsComponent implements OnInit {
-
   pageTitle: BreadcrumbItem[] = [];
   worldMapConfig: any = {};
   canadaMapConfig: any = {};
@@ -17,10 +20,13 @@ export class VectorMapsComponent implements OnInit {
   italyMapConfig: any = {};
   iraqMapConfig: any = {};
 
-  constructor () { }
+  constructor() {}
 
   ngOnInit(): void {
-    this.pageTitle = [{ label: 'Maps', path: '/' }, { label: 'Vector Maps', path: '/', active: true }];
+    this.pageTitle = [
+      { label: 'Maps', path: '/' },
+      { label: 'Vector Maps', path: '/', active: true },
+    ];
     this.initMapConfig();
   }
 
@@ -74,7 +80,7 @@ export class VectorMapsComponent implements OnInit {
           'stroke-width': 1.5,
         },
       },
-    }
+    };
 
     this.canadaMapConfig = {
       zoomOnScroll: false,
@@ -123,7 +129,7 @@ export class VectorMapsComponent implements OnInit {
           fill: '#fa5c7c',
         },
       },
-    }
+    };
 
     this.iraqMapConfig = {
       zoomOnScroll: false,
@@ -133,7 +139,6 @@ export class VectorMapsComponent implements OnInit {
           fill: '#ffbc00',
         },
       },
-    }
+    };
   }
-
 }

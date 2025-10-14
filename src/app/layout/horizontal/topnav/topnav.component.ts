@@ -1,24 +1,25 @@
 import { Component, Input, OnInit, Type } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { HORIZONTAL_MENU_ITEMS, MENU_ITEMS, TWO_COl_MENU_ITEMS } from '../../shared/config/menu-meta';
 import { findAllParent, findMenuItem } from '../../shared/helper/utils';
 import { MenuItem } from '../../shared/models/menu.model';
+import { CommonModule } from '@angular/common';
+import { NgbDropdownModule, NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-horizontal-topnav',
   templateUrl: './topnav.component.html',
-  styleUrls: ['./topnav.component.scss']
+  styleUrls: ['./topnav.component.scss'],
+  imports: [CommonModule, RouterModule, NgbDropdownModule, NgbCollapseModule],
+  standalone: true,
 })
 export class TopnavComponent implements OnInit {
-
   @Input() showMobileMenu: boolean = true;
   menuItems: MenuItem[] = [];
   activeMenuItems: string[] = [];
   chunkSize: number = 7;
 
-  constructor (
-    private router: Router
-  ) {
+  constructor(private router: Router) {
     router.events.forEach((event) => {
       if (event instanceof NavigationEnd) {
         this._activateMenu();
@@ -39,15 +40,12 @@ export class TopnavComponent implements OnInit {
     });
   }
 
-
   /**
    * Initializing menuitems and controlling how many menu items can be displayed in it
    */
   initMenu(): void {
     this.menuItems = HORIZONTAL_MENU_ITEMS;
   }
-
-
 
   // split array for chumk size
   splitArray(array: any[], chunkSize: number): any[] {
@@ -68,14 +66,14 @@ export class TopnavComponent implements OnInit {
   }
 
   /**
- * checks if menuitem has grand children and controls rendering mega menu
- * @param menuItem menu item
- */
+   * checks if menuitem has grand children and controls rendering mega menu
+   * @param menuItem menu item
+   */
   hasGrandChildren(menuItem: MenuItem): boolean {
-    let hasGrandChild: MenuItem[] = menuItem.children && menuItem.children.filter((child: MenuItem) => child.children?.length && child.children);
+    let hasGrandChild: MenuItem[] =
+      menuItem.children && menuItem.children.filter((child: MenuItem) => child.children?.length && child.children);
     return hasGrandChild.length > 0;
   }
-
 
   /**
    *  Toggle the dropdown menu
@@ -84,17 +82,15 @@ export class TopnavComponent implements OnInit {
     menuItem.collapsed = !menuItem.collapsed;
     let openMenuItems: string[];
     if (!menuItem.collapsed) {
-      openMenuItems = ([menuItem['key'], ...findAllParent(this.menuItems, menuItem)]);
+      openMenuItems = [menuItem['key'], ...findAllParent(this.menuItems, menuItem)];
       // close other open menu
       this.menuItems.forEach((menu: MenuItem) => {
         if (!openMenuItems.includes(menu.key!)) {
           menu.collapsed = true;
         }
-      })
+      });
     }
-
-  };
-
+  }
 
   /**
    * activate the menuitems
@@ -114,17 +110,14 @@ export class TopnavComponent implements OnInit {
         const mid = matchingMenuItem.getAttribute('data-menu-key');
         const activeMt = findMenuItem(this.menuItems, mid);
         if (activeMt) {
-          this.activeMenuItems = ([activeMt['key'], ...findAllParent(this.menuItems, activeMt)]);
+          this.activeMenuItems = [activeMt['key'], ...findAllParent(this.menuItems, activeMt)];
         }
-
       }
     }
 
     // close all menu
     this.menuItems.forEach((menu: MenuItem) => {
       menu.collapsed = true;
-    })
-
+    });
   }
-
 }

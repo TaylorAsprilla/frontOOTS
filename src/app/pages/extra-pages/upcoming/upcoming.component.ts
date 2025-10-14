@@ -1,31 +1,30 @@
+import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
+import { DefaultLayoutComponent } from 'src/app/shared/ui/default-layout/default-layout.component';
+import { UpcomingRoutingModule } from './upcoming-routing.module';
 
 @Component({
   selector: 'app-upcoming',
   templateUrl: './upcoming.component.html',
-  styleUrls: ['./upcoming.component.scss']
+  styleUrls: ['./upcoming.component.scss'],
+  imports: [DefaultLayoutComponent, CommonModule, UpcomingRoutingModule],
 })
 export class UpcomingComponent implements OnInit, AfterViewInit {
-
   remainingTime: string[] = [];
-  countDownDate = new Date("2023/02/13");
+  countDownDate = new Date('2023/02/13');
   tick = 1000;
   days!: string;
   hours!: string;
   minutes!: string;
   seconds!: string;
 
-  constructor () {
-  }
+  constructor() {}
 
-
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
     document.body.classList.remove('authentication-bg-pattern');
-
   }
 
   /**
@@ -38,17 +37,13 @@ export class UpcomingComponent implements OnInit, AfterViewInit {
     this.days = event.days;
   }
 
-
   /**
-    * checks if count down completed
-    */
+   * checks if count down completed
+   */
   isCompeted(): boolean {
     if (new Date() > this.countDownDate) {
-      return true
+      return true;
     }
     return false;
   }
-
-
 }
-

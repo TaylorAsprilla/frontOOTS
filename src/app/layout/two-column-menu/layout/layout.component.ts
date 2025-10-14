@@ -1,28 +1,31 @@
 import { Component, Input, OnInit, SimpleChange } from '@angular/core';
 import { EventService } from 'src/app/core/service/event.service';
 import { changeBodyAttribute, getLayoutConfig } from '../../shared/helper/utils';
-
+import { RightSidebarComponent } from '../../shared/right-sidebar/right-sidebar.component';
+import { FooterComponent } from '../../shared/footer/footer.component';
+import { RouterOutlet } from '@angular/router';
+import { LeftSidebarComponent } from '../left-sidebar/left-sidebar.component';
+import { TopbarComponent } from '../../shared/topbar/topbar.component';
 
 @Component({
   selector: 'app-two-column-menu-layout',
   templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.scss']
+  styleUrls: ['./layout.component.scss'],
+  imports: [RightSidebarComponent, FooterComponent, RouterOutlet, LeftSidebarComponent, TopbarComponent],
+  standalone: true,
 })
 export class TwoColumnMenuLayoutComponent implements OnInit {
-
   @Input() layoutWidth: string = '';
-  @Input() layoutColor: string = "";
-  menuPosition: string = "";
-  leftSidebarTheme: string = "";
-  leftSidebarType: string = "";
-  topbarTheme: string = "";
+  @Input() layoutColor: string = '';
+  menuPosition: string = '';
+  leftSidebarTheme: string = '';
+  leftSidebarType: string = '';
+  topbarTheme: string = '';
   showSidebarUserInfo: boolean = false;
   reRender: boolean = true;
   showMobileMenu: boolean = false;
 
-  constructor (
-    private eventService: EventService
-  ) { }
+  constructor(private eventService: EventService) {}
 
   ngOnInit(): void {
     let config = getLayoutConfig('two-column');
@@ -63,8 +66,8 @@ export class TwoColumnMenuLayoutComponent implements OnInit {
   }
 
   /**
- * changes layout configurations 
- */
+   * changes layout configurations
+   */
   ngOnChanges(changes: SimpleChange) {
     this._setRerender();
     this.changeLayoutConfig();
@@ -86,7 +89,7 @@ export class TwoColumnMenuLayoutComponent implements OnInit {
     setTimeout(() => {
       this.reRender = true;
     });
-  }
+  };
 
   /**
    * changes layout related options
@@ -111,8 +114,6 @@ export class TwoColumnMenuLayoutComponent implements OnInit {
     changeBodyAttribute('data-topbar-color', this.topbarTheme);
   }
 
-
-
   /**
    * on settings button clicked from topbar
    */
@@ -127,6 +128,4 @@ export class TwoColumnMenuLayoutComponent implements OnInit {
     this.showMobileMenu = !this.showMobileMenu;
     document.body.classList.toggle('sidebar-enable');
   }
-
-
 }

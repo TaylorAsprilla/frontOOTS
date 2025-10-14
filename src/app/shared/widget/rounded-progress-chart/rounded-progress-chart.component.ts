@@ -1,13 +1,16 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { NgApexchartsModule } from 'ng-apexcharts';
 import { ChartOptions } from 'src/app/pages/charts/apex/apex-chart.model';
 
 @Component({
   selector: 'app-widget-rounded-progress-chart',
+  standalone: true,
+  imports: [CommonModule, NgApexchartsModule],
   templateUrl: './rounded-progress-chart.component.html',
-  styleUrls: ['./rounded-progress-chart.component.scss']
+  styleUrls: ['./rounded-progress-chart.component.scss'],
 })
 export class RoundedProgressChartComponent implements OnInit {
-
   @Input() cardTitle: string = '';
   @Input() progress: number = 0;
   @Input() variant: string = '';
@@ -18,7 +21,7 @@ export class RoundedProgressChartComponent implements OnInit {
   //chart options
   chartOptions: Partial<ChartOptions> = {};
 
-  constructor () { }
+  constructor() {}
 
   ngOnInit(): void {
     this.chartOptions = {
@@ -26,12 +29,11 @@ export class RoundedProgressChartComponent implements OnInit {
       chart: {
         height: 180,
         type: 'radialBar',
-
       },
       plotOptions: {
         radialBar: {
           hollow: {
-            size: "65%"
+            size: '65%',
           },
           dataLabels: {
             name: {
@@ -47,14 +49,13 @@ export class RoundedProgressChartComponent implements OnInit {
                 return String(val);
               },
             },
-          }
-        }
+          },
+        },
       },
       colors: [this.variant],
       stroke: {
-        lineCap: 'round'
+        lineCap: 'round',
       },
     };
   }
-
 }
