@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AuthenticationService } from 'src/app/core/service/auth.service';
-import { EventService } from 'src/app/core/service/event.service';
+import { EventService } from 'src/app/core/services/event.service';
 import { LEFT_SIDEBAR_TYPE_CONDENSED, LEFT_SIDEBAR_TYPE_DEFAULT } from '../config/layout.model';
 import { BrandItem } from '../models/brands.model';
 import { CreateNewMenuOption } from '../models/create-new.model';

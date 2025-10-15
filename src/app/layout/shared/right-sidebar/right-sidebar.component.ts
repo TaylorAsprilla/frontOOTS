@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, Renderer2 } from '@angular/core';
-import { EventService } from 'src/app/core/service/event.service';
+import { EventService } from 'src/app/core/services/event.service';
 import { ChatGroup } from 'src/app/shared/widget/chat-group/chat-group.model';
 import { Chat } from '../models/chat.model';
 import {

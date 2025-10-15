@@ -66,7 +66,7 @@
     "rxjs": "^7.8.2",
     "simplebar-angular": "3.3.2",
     "sortablejs": "^1.15.6",
-    "sweetalert2": "^11.22.3",
+    "sweetalert2": "^11.26.2",
     "tslib": "^2.8.1",
     "zone.js": "~0.15.1"
   },

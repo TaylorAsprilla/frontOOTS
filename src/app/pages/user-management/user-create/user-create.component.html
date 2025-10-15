@@ -1,0 +1,197 @@
+<!-- Page Title -->
+<app-page-title [breadcrumbItems]="pageTitle" title="Create New User"></app-page-title>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="header-title">User Information</h4>
+        <p class="text-muted font-14">Fill in the details to create a new user</p>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+          <div class="row">
+            <!-- First Name -->
+            <div class="col-md-6 mb-3">
+              <label for="firstName" class="form-label">First Name *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="firstName"
+                formControlName="firstName"
+                placeholder="Enter first name"
+                [class.is-invalid]="isFieldInvalid('firstName')"
+              />
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('firstName')">
+                First name is required (2-50 characters)
+              </div>
+            </div>
+
+            <!-- Second Name -->
+            <div class="col-md-6 mb-3">
+              <label for="secondName" class="form-label">Second Name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="secondName"
+                formControlName="secondName"
+                placeholder="Enter second name"
+              />
+            </div>
+
+            <!-- First Last Name -->
+            <div class="col-md-6 mb-3">
+              <label for="firstLastName" class="form-label">First Last Name *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="firstLastName"
+                formControlName="firstLastName"
+                placeholder="Enter first last name"
+                [class.is-invalid]="isFieldInvalid('firstLastName')"
+              />
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('firstLastName')">
+                First last name is required (2-50 characters)
+              </div>
+            </div>
+
+            <!-- Second Last Name -->
+            <div class="col-md-6 mb-3">
+              <label for="secondLastName" class="form-label">Second Last Name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="secondLastName"
+                formControlName="secondLastName"
+                placeholder="Enter second last name"
+              />
+            </div>
+
+            <!-- Email -->
+            <div class="col-md-6 mb-3">
+              <label for="email" class="form-label">Email *</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                formControlName="email"
+                placeholder="Enter email address"
+                [class.is-invalid]="isFieldInvalid('email')"
+              />
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('email')">Please enter a valid email address</div>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="col-md-6 mb-3">
+              <label for="phoneNumber" class="form-label">Phone Number *</label>
+              <input
+                type="tel"
+                class="form-control"
+                id="phoneNumber"
+                formControlName="phoneNumber"
+                placeholder="Enter phone number"
+                [class.is-invalid]="isFieldInvalid('phoneNumber')"
+              />
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('phoneNumber')">
+                Please enter a valid Colombian phone number
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="col-md-6 mb-3">
+              <label for="password" class="form-label">Password *</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                formControlName="password"
+                placeholder="Enter password"
+                [class.is-invalid]="isFieldInvalid('password')"
+              />
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('password')">
+                Password must be at least 8 characters long
+              </div>
+            </div>
+
+            <!-- Document Number -->
+            <div class="col-md-6 mb-3">
+              <label for="documentNumber" class="form-label">Document Number *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="documentNumber"
+                formControlName="documentNumber"
+                placeholder="Enter document number"
+                [class.is-invalid]="isFieldInvalid('documentNumber')"
+              />
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('documentNumber')">
+                Document number is required (6-15 characters)
+              </div>
+            </div>
+
+            <!-- Address -->
+            <div class="col-md-6 mb-3">
+              <label for="address" class="form-label">Address *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="address"
+                formControlName="address"
+                placeholder="Enter address"
+                [class.is-invalid]="isFieldInvalid('address')"
+              />
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('address')">
+                Address is required (5-200 characters)
+              </div>
+            </div>
+
+            <!-- City -->
+            <div class="col-md-6 mb-3">
+              <label for="city" class="form-label">City *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="city"
+                formControlName="city"
+                placeholder="Enter city"
+                [class.is-invalid]="isFieldInvalid('city')"
+              />
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('city')">City is required (2-50 characters)</div>
+            </div>
+
+            <!-- Birth Date -->
+            <div class="col-md-6 mb-3">
+              <label for="birthDate" class="form-label">Birth Date *</label>
+              <input
+                type="date"
+                class="form-control"
+                id="birthDate"
+                formControlName="birthDate"
+                [class.is-invalid]="isFieldInvalid('birthDate')"
+              />
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('birthDate')">Please enter a valid birth date</div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSubmitting">
+                  <i class="mdi mdi-arrow-left me-1"></i>
+                  Cancel
+                </button>
+
+                <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid || isSubmitting">
+                  <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  <i *ngIf="!isSubmitting" class="mdi mdi-account-plus me-1"></i>
+                  {{ isSubmitting ? 'Creating...' : 'Create User' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

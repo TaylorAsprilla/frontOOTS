@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 
 // RouterOutlet not used directly here; child layouts host router-outlet.
 import { environment } from 'src/environments/environment.prod';
-import { EventService } from '../core/service/event.service';
+import { EventService } from '../core/services/event.service';
 import {
   LAYOUT_DETACHED,
   LAYOUT_HORIZONTAL,

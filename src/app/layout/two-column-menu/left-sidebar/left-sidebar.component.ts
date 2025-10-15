@@ -2,7 +2,7 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import feather from 'feather-icons';
 import { NgbCollapse } from '@ng-bootstrap/ng-bootstrap';
 import { NavigationEnd, Router } from '@angular/router';
-import { EventService } from 'src/app/core/service/event.service';
+import { EventService } from 'src/app/core/services/event.service';
 import { TWO_COl_MENU_ITEMS } from '../../shared/config/menu-meta';
 import { MenuItem } from '../../shared/models/menu.model';
 import { findAllParent, findMenuItem } from '../../shared/helper/utils';

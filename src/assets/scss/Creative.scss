@@ -1,7 +1,10 @@
 // Styles
 
 // Main styles
-@import "./config/creative/app.scss";
+@import './config/creative/app.scss';
 
 // UBold Icons
-@import "./icons.scss";
+@import './icons.scss';
+
+// Custom SweetAlert2 styles
+@import './custom/sweetalert2-custom.scss';

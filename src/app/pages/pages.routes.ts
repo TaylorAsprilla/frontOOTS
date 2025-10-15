@@ -1,3 +1,4 @@
+import { UsersComponent } from './user-management/users/users.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -10,8 +11,13 @@ const routes: Routes = [
   },
   { path: 'icons', loadChildren: () => import('./icons/icons-routing.module') },
   {
-    path: 'usuarios',
-    loadChildren: () => import('./administrar-usuarios/usuarios.module').then((m) => m.UsuariosModule),
+    path: 'users',
+    title: 'User Management',
+    loadChildren: () => import('./user-management/user-management.routes').then((r) => r.USER_MANAGEMENT_ROUTES),
+    data: {
+      breadcrumb: 'User Management',
+      description: 'Comprehensive user management system',
+    },
   },
   {
     path: 'participantes',

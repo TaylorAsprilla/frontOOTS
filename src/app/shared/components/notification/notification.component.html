@@ -1,0 +1,26 @@
+<div class="notification-container">
+  @for (notification of notifications; track notification; let i = $index) {
+  <div
+    class="alert alert-dismissible fade show notification-item"
+    [ngClass]="{
+      'alert-success': notification.type === 'success',
+      'alert-danger': notification.type === 'error',
+      'alert-warning': notification.type === 'warning',
+      'alert-info': notification.type === 'info'
+    }"
+    role="alert"
+  >
+    <i
+      class="me-2"
+      [ngClass]="{
+        'fe-check-circle': notification.type === 'success',
+        'fe-x-circle': notification.type === 'error',
+        'fe-alert-triangle': notification.type === 'warning',
+        'fe-info': notification.type === 'info'
+      }"
+    ></i>
+    {{ notification.message }}
+    <button type="button" class="btn-close" (click)="removeNotification(i)" aria-label="Close"></button>
+  </div>
+  }
+</div>

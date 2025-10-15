@@ -8,12 +8,13 @@ import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { JoyrideModule } from 'ngx-joyride';
 import { JwtInterceptor } from './app/core/helpers/jwt.interceptor';
 import { ErrorInterceptor } from './app/core/helpers/error.interceptor';
-import { FakeBackendProvider } from './app/core/helpers/fake-backend';
+import { LoggingInterceptor } from './app/core/interceptors/logging.interceptor';
+import { FakeBackendProvider } from './app/core/helpers/fake-backend'; // Re-enabled for auth routes only
 import { routes } from './app/app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-  provideRouter(routes),
+    provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimations(),
     importProvidersFrom(
@@ -23,8 +24,9 @@ export const appConfig: ApplicationConfig = {
       SweetAlert2Module.forRoot()
     ),
     Title,
+    { provide: HTTP_INTERCEPTORS, useClass: LoggingInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-    FakeBackendProvider,
+    FakeBackendProvider, // Re-enabled but will only intercept auth routes
   ],
 };

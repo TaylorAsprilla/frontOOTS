@@ -1,0 +1,188 @@
+/* SweetAlert2 Custom Styles */
+
+/* Toast notifications positioning and styling */
+.swal-notification-container {
+  z-index: 9999 !important;
+}
+
+.swal-notification-popup {
+  font-size: 14px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.swal-notification-title {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  margin-bottom: 8px !important;
+}
+
+.swal-notification-content {
+  font-size: 14px !important;
+  color: #666 !important;
+}
+
+.swal-notification-icon {
+  width: 24px !important;
+  height: 24px !important;
+  margin: 0 !important;
+}
+
+/* Success notifications */
+.swal2-toast.swal2-success {
+  background-color: #d4edda !important;
+  border-left: 4px solid #28a745 !important;
+}
+
+.swal2-toast.swal2-success .swal2-title {
+  color: #155724 !important;
+}
+
+.swal2-toast.swal2-success .swal2-html-container {
+  color: #155724 !important;
+}
+
+/* Error notifications */
+.swal2-toast.swal2-error {
+  background-color: #f8d7da !important;
+  border-left: 4px solid #dc3545 !important;
+}
+
+.swal2-toast.swal2-error .swal2-title {
+  color: #721c24 !important;
+}
+
+.swal2-toast.swal2-error .swal2-html-container {
+  color: #721c24 !important;
+}
+
+/* Warning notifications */
+.swal2-toast.swal2-warning {
+  background-color: #fff3cd !important;
+  border-left: 4px solid #ffc107 !important;
+}
+
+.swal2-toast.swal2-warning .swal2-title {
+  color: #856404 !important;
+}
+
+.swal2-toast.swal2-warning .swal2-html-container {
+  color: #856404 !important;
+}
+
+/* Info notifications */
+.swal2-toast.swal2-info {
+  background-color: #d1ecf1 !important;
+  border-left: 4px solid #17a2b8 !important;
+}
+
+.swal2-toast.swal2-info .swal2-title {
+  color: #0c5460 !important;
+}
+
+.swal2-toast.swal2-info .swal2-html-container {
+  color: #0c5460 !important;
+}
+
+/* Progress bar styling */
+.swal2-timer-progress-bar {
+  height: 3px !important;
+}
+
+.swal2-toast.swal2-success .swal2-timer-progress-bar {
+  background-color: #28a745 !important;
+}
+
+.swal2-toast.swal2-error .swal2-timer-progress-bar {
+  background-color: #dc3545 !important;
+}
+
+.swal2-toast.swal2-warning .swal2-timer-progress-bar {
+  background-color: #ffc107 !important;
+}
+
+.swal2-toast.swal2-info .swal2-timer-progress-bar {
+  background-color: #17a2b8 !important;
+}
+
+/* Confirmation dialogs */
+.swal2-popup {
+  border-radius: 12px !important;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.swal2-title {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  color: #333 !important;
+  margin-bottom: 16px !important;
+}
+
+.swal2-html-container {
+  font-size: 16px !important;
+  color: #666 !important;
+  line-height: 1.5 !important;
+}
+
+/* Button styling */
+.swal2-confirm {
+  background-color: #007bff !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 10px 24px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+}
+
+.swal2-cancel {
+  background-color: #6c757d !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 10px 24px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+}
+
+.swal2-deny {
+  background-color: #dc3545 !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 10px 24px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+}
+
+/* Loading spinner */
+.swal2-loading .swal2-styled {
+  background-color: transparent !important;
+  color: transparent !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .swal2-popup {
+    margin: 20px !important;
+    max-width: calc(100% - 40px) !important;
+  }
+
+  .swal-notification-popup {
+    margin: 10px !important;
+    max-width: calc(100% - 20px) !important;
+  }
+}
+
+/* Dark theme support (optional) */
+@media (prefers-color-scheme: dark) {
+  .swal2-popup {
+    background-color: #2d3748 !important;
+    color: #e2e8f0 !important;
+  }
+
+  .swal2-title {
+    color: #f7fafc !important;
+  }
+
+  .swal2-html-container {
+    color: #cbd5e0 !important;
+  }
+}

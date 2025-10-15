@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, SimpleChange } from '@angular/core';
-import { EventService } from 'src/app/core/service/event.service';
+import { EventService } from 'src/app/core/services/event.service';
 import { changeBodyAttribute, getLayoutConfig } from '../../shared/helper/utils';
 import { RightSidebarComponent } from '../../shared/right-sidebar/right-sidebar.component';
 import { FooterComponent } from '../../shared/footer/footer.component';
