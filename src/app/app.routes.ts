@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
 import { LayoutContainerComponent } from './layout/layout-container.component';
 import { PublicLayoutComponent } from './layout/public-layout/public-layout.component';
+import { I18nDebugComponent } from './debug-i18n.component';
 
 export const routes: Routes = [
   {
@@ -18,6 +19,10 @@ export const routes: Routes = [
         loadChildren: () => import('./apps/apps.module').then((m) => m.AppsModule),
       },
     ],
+  },
+  {
+    path: 'debug-i18n',
+    component: I18nDebugComponent,
   },
   {
     path: 'auth',

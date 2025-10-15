@@ -3,6 +3,7 @@ import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@a
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { Title } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
+import { provideTransloco } from '@ngneat/transloco';
 
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { JoyrideModule } from 'ngx-joyride';
@@ -11,12 +12,17 @@ import { ErrorInterceptor } from './app/core/helpers/error.interceptor';
 import { LoggingInterceptor } from './app/core/interceptors/logging.interceptor';
 import { FakeBackendProvider } from './app/core/helpers/fake-backend'; // Re-enabled for auth routes only
 import { routes } from './app/app.routes';
+import { TranslocoHttpLoaderService, translocoAppConfig } from './app/transloco.config';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimations(),
+    provideTransloco({
+      config: translocoAppConfig,
+      loader: TranslocoHttpLoaderService,
+    }),
     importProvidersFrom(
       // Reutiliza tus NgModules existentes:
 

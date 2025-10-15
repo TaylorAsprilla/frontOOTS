@@ -34,6 +34,7 @@
     "@fullcalendar/list": "^6.1.18",
     "@fullcalendar/timegrid": "^6.1.18",
     "@ng-bootstrap/ng-bootstrap": "^19.0.1",
+    "@ngneat/transloco": "^6.0.4",
     "@popperjs/core": "^2.11.8",
     "@sweetalert2/ngx-sweetalert2": "^13.0.0",
     "@types/feather-icons": "^4.29.4",

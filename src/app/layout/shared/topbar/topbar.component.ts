@@ -13,13 +13,22 @@ import { CommonModule } from '@angular/common';
 import { SimplebarAngularModule } from 'simplebar-angular';
 import { RouterModule } from '@angular/router';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { TranslocoModule } from '@ngneat/transloco';
+import { LanguageSwitcherComponent } from '../../../shared/components/language-switcher/language-switcher.component';
 
 @Component({
   selector: 'app-topbar',
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
   standalone: true,
-  imports: [CommonModule, SimplebarAngularModule, RouterModule, NgbDropdownModule],
+  imports: [
+    CommonModule,
+    SimplebarAngularModule,
+    RouterModule,
+    NgbDropdownModule,
+    TranslocoModule,
+    LanguageSwitcherComponent,
+  ],
 })
 export class TopbarComponent implements OnInit {
   @Input() layoutType: string = '';
