@@ -113,7 +113,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       celular: user.phoneNumber,
       foto: this.getGenericAvatar(index),
       cargo: this.generateRandomPosition(), // Cargo aleatorio por ahora
-      participantes: Math.floor(Math.random() * 50) + 1, // Estadísticas simuladas
+      participants: Math.floor(Math.random() * 50) + 1, // Estadísticas simuladas
       casos: Math.floor(Math.random() * 25) + 1,
       proximasCitas: Math.floor(Math.random() * 10) + 1,
     }));

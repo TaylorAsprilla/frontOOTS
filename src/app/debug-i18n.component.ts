@@ -23,7 +23,7 @@ import { LanguageService } from './core/services/language.service';
               <ul class="list-group list-group-flush">
                 <li class="list-group-item"><strong>Idioma activo:</strong> {{ activeLanguage }}</li>
                 <li class="list-group-item">
-                  <strong>Idiomas disponibles:</strong> {{ availableLanguages?.join(', ') }}
+                  <strong>Idiomas disponibles:</strong> {{ availableLanguages.join(', ') }}
                 </li>
                 <li class="list-group-item">
                   <strong>Estado de carga:</strong>
@@ -94,7 +94,6 @@ export class I18nDebugComponent implements OnInit {
 
       // Verificar si las traducciones están cargadas
       this.transloco.langChanges$.subscribe((lang) => {
-        console.log('Idioma cambiado a:', lang);
         this.activeLanguage = lang;
         this.checkTranslationsLoaded();
       });
@@ -139,21 +138,17 @@ export class I18nDebugComponent implements OnInit {
   }
 
   changeToSpanish() {
-    console.log('Cambiando a español...');
     this.languageService.setLanguage('es');
   }
 
   changeToEnglish() {
-    console.log('Cambiando a inglés...');
     this.languageService.setLanguage('en');
   }
 
   reloadTranslations() {
-    console.log('Recargando traducciones...');
     try {
       this.transloco.load(this.activeLanguage).subscribe({
         next: (translations) => {
-          console.log('Traducciones recargadas:', translations);
           this.checkTranslationsLoaded();
         },
         error: (error) => {

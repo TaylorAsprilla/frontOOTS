@@ -1,0 +1,219 @@
+<div class="container-fluid">
+  <!-- Page Title -->
+  <app-page-title [breadcrumbItems]="breadcrumbItems" [title]="'participants.listTitle' | transloco"> </app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <!-- Header Actions -->
+          <div class="row align-items-center mb-4">
+            <div class="col-sm-6">
+              <h4 class="card-title mb-0">
+                <i class="mdi mdi-account-group me-2 text-primary"></i>
+                {{ 'participants.listTitle' | transloco }}
+              </h4>
+            </div>
+            <div class="col-sm-6">
+              <div class="text-sm-end">
+                <a [routerLink]="['/participants/create']" class="btn btn-primary">
+                  <i class="mdi mdi-plus me-1"></i>
+                  {{ 'participants.addNew' | transloco }}
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filters and Search -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <form [formGroup]="searchForm">
+                <div class="input-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="searchTerm"
+                    [placeholder]="'participants.searchPlaceholder' | transloco"
+                  />
+                  <button class="btn btn-outline-secondary" type="button" (click)="clearSearch()">
+                    <i class="mdi mdi-close"></i>
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div class="col-md-6">
+              <div class="d-flex justify-content-end">
+                <div ngbDropdown class="d-inline-block">
+                  <button class="btn btn-outline-primary dropdown-toggle" ngbDropdownToggle id="statusFilter">
+                    <i class="mdi mdi-filter me-1"></i>
+                    {{ getStatusLabel(statusFilter) | transloco }}
+                  </button>
+                  <div ngbDropdownMenu aria-labelledby="statusFilter">
+                    @for (option of statusOptions; track option.value) {
+                    <button
+                      ngbDropdownItem
+                      (click)="onStatusFilterChange(option.value)"
+                      [class.active]="statusFilter === option.value"
+                    >
+                      {{ option.label | transloco }}
+                    </button>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading State -->
+          @if (isLoading) {
+          <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">{{ 'app.loading' | transloco }}</span>
+            </div>
+            <p class="mt-2 text-muted">{{ 'participants.loadingParticipants' | transloco }}</p>
+          </div>
+          }
+
+          <!-- Participants Table -->
+          @if (!isLoading && filteredParticipants.length > 0) {
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>{{ 'participants.fullName' | transloco }}</th>
+                  <th>{{ 'participants.document' | transloco }}</th>
+                  <th>{{ 'participants.email' | transloco }}</th>
+                  <th>{{ 'participants.phone' | transloco }}</th>
+                  <th>{{ 'participants.status' | transloco }}</th>
+                  <th>{{ 'participants.createdAt' | transloco }}</th>
+                  <th class="text-center">{{ 'app.actions' | transloco }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (participant of filteredParticipants; track participant.id) {
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div
+                        class="avatar-sm bg-primary rounded-circle d-flex align-items-center justify-content-center me-2"
+                      >
+                        <span class="text-white fw-bold">
+                          {{ participant.personalData.firstName.charAt(0)
+                          }}{{ participant.personalData.firstLastName.charAt(0) }}
+                        </span>
+                      </div>
+                      <div>
+                        <h6 class="mb-0">
+                          {{ participant.personalData.firstName }} {{ participant.personalData.firstLastName }}
+                        </h6>
+                        @if (participant.personalData.secondName || participant.personalData.secondLastName) {
+                        <small class="text-muted">
+                          {{ participant.personalData.secondName }} {{ participant.personalData.secondLastName }}
+                        </small>
+                        }
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="fw-medium">{{ participant.personalData.documentNumber }}</span>
+                    <br />
+                    <small class="text-muted text-uppercase">{{ participant.personalData.documentTypeId }}</small>
+                  </td>
+                  <td>
+                    <a [href]="'mailto:' + participant.personalData.email" class="text-decoration-none">
+                      {{ participant.personalData.email }}
+                    </a>
+                  </td>
+                  <td>
+                    <a [href]="'tel:' + participant.personalData.phoneNumber" class="text-decoration-none">
+                      {{ participant.personalData.phoneNumber }}
+                    </a>
+                  </td>
+                  <td>
+                    <span [class]="getStatusBadgeClass(participant.status)">
+                      {{ 'participants.' + (participant.status || 'unknown') | transloco }}
+                    </span>
+                  </td>
+                  <td>
+                    @if (participant.createdAt) {
+                    <span>{{ participant.createdAt | date : 'short' }}</span>
+                    } @else {
+                    <span class="text-muted">{{ 'app.notAvailable' | transloco }}</span>
+                    }
+                  </td>
+                  <td class="text-center">
+                    <div class="btn-group" ngbDropdown>
+                      <button
+                        class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                        ngbDropdownToggle
+                        [attr.aria-label]="'participants.actions' | transloco"
+                      >
+                        <i class="mdi mdi-dots-horizontal"></i>
+                      </button>
+                      <div ngbDropdownMenu>
+                        <a ngbDropdownItem [routerLink]="['/participants/detail', participant.id]">
+                          <i class="mdi mdi-eye me-2"></i>
+                          {{ 'app.view' | transloco }}
+                        </a>
+                        <a ngbDropdownItem [routerLink]="['/participants/edit', participant.id]">
+                          <i class="mdi mdi-pencil me-2"></i>
+                          {{ 'app.edit' | transloco }}
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <button ngbDropdownItem class="text-danger" (click)="deleteParticipant(participant)">
+                          <i class="mdi mdi-delete me-2"></i>
+                          {{ 'app.delete' | transloco }}
+                        </button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          @if (totalItems > pageSize) {
+          <div class="d-flex justify-content-between align-items-center mt-4">
+            <div>
+              <small class="text-muted">
+                {{ 'app.showing' | transloco }}
+                {{ (currentPage - 1) * pageSize + 1 }} -
+                {{ Math.min(currentPage * pageSize, totalItems) }}
+                {{ 'app.of' | transloco }} {{ totalItems }}
+                {{ 'participants.participants' | transloco }}
+              </small>
+            </div>
+            <ngb-pagination
+              [(page)]="currentPage"
+              [pageSize]="pageSize"
+              [collectionSize]="totalItems"
+              [maxSize]="5"
+              [rotate]="true"
+              [boundaryLinks]="true"
+              (pageChange)="onPageChange($event)"
+            >
+            </ngb-pagination>
+          </div>
+          } }
+
+          <!-- Empty State -->
+          @if (!isLoading && filteredParticipants.length === 0) {
+          <div class="text-center py-5">
+            <div class="mb-3">
+              <i class="mdi mdi-account-search display-4 text-muted"></i>
+            </div>
+            <h5 class="text-muted">{{ 'participants.noParticipantsFound' | transloco }}</h5>
+            <p class="text-muted mb-4">{{ 'participants.noParticipantsMessage' | transloco }}</p>
+            <a [routerLink]="['/participants/create']" class="btn btn-primary">
+              <i class="mdi mdi-plus me-1"></i>
+              {{ 'participants.createFirst' | transloco }}
+            </a>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

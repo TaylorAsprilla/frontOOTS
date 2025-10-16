@@ -46,8 +46,6 @@ export class LanguageService {
     // Prioridad: localStorage > browser > default
     const initialLanguage = savedLanguage || browserLanguage || this.DEFAULT_LANGUAGE;
 
-    console.log('Inicializando con idioma:', initialLanguage);
-
     // Configurar el idioma inicial directamente
     this.transloco.setActiveLang(initialLanguage);
     this.currentLanguageSubject.next(initialLanguage);
@@ -109,17 +107,12 @@ export class LanguageService {
    */
   setLanguage(language: SupportedLanguage): void {
     if (!this.isValidLanguage(language)) {
-      console.warn(`Invalid language: ${language}. Using default: ${this.DEFAULT_LANGUAGE}`);
       language = this.DEFAULT_LANGUAGE;
     }
-
-    console.log(`Changing language to: ${language}`);
 
     // Cargar las traducciones primero, luego cambiar el idioma
     this.transloco.load(language).subscribe({
       next: (translations) => {
-        console.log(`Translations loaded for ${language}:`, Object.keys(translations));
-
         // Cambiar idioma en Transloco
         this.transloco.setActiveLang(language);
 
@@ -128,11 +121,8 @@ export class LanguageService {
 
         // Actualizar observable
         this.currentLanguageSubject.next(language);
-
-        console.log(`Language successfully changed to: ${language}`);
       },
       error: (error) => {
-        console.error(`Error loading translations for ${language}:`, error);
         // Intentar cambiar de todos modos
         this.transloco.setActiveLang(language);
         this.saveLanguage(language);
@@ -162,8 +152,8 @@ export class LanguageService {
    */
   getAvailableLanguages(): Array<{ code: SupportedLanguage; name: string; flag: string }> {
     return [
-      { code: 'es', name: 'Español', flag: '🇪🇸' },
-      { code: 'en', name: 'English', flag: '🇬🇧' },
+      { code: 'es', name: 'Español', flag: 'es' },
+      { code: 'en', name: 'English', flag: 'gb' },
     ];
   }
 

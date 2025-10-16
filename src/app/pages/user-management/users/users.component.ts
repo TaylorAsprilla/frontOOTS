@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NgbModalModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
+import { TranslocoModule } from '@ngneat/transloco';
 import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
 import { AdvancedTableComponent } from 'src/app/shared/advanced-table/advanced-table.component';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
@@ -26,6 +27,7 @@ import { ContactsModule } from 'src/app/apps/contacts/contacts.module';
     ReactiveFormsModule,
     FormsModule,
     NgbModalModule,
+    TranslocoModule,
     PageTitleComponent,
     AdvancedTableComponent,
     NgbPaginationModule,

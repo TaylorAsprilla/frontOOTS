@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Subject, Observable } from 'rxjs';
 import Swal, { SweetAlertIcon, SweetAlertOptions } from 'sweetalert2';
 
 export interface NotificationOptions {
@@ -22,10 +23,20 @@ export interface NotificationOptions {
     | 'bottom-end';
 }
 
+export interface SimpleNotification {
+  message: string;
+  type: 'success' | 'error' | 'warning' | 'info';
+  duration?: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationService {
+  // Observable para notificaciones simples
+  private notificationsSubject = new Subject<SimpleNotification>();
+  public notifications$ = this.notificationsSubject.asObservable();
+
   /**
    * Configuración por defecto para las notificaciones
    */
@@ -46,6 +57,13 @@ export class NotificationService {
       icon: 'swal-notification-icon',
     },
   };
+
+  /**
+   * Emite una notificación simple a través del observable
+   */
+  notify(notification: SimpleNotification): void {
+    this.notificationsSubject.next(notification);
+  }
 
   /**
    * Muestra una notificación de éxito

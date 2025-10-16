@@ -1,5 +1,5 @@
 <!-- page title -->
-<app-page-title [breadcrumbItems]="pageTitle" title="User Management"></app-page-title>
+<app-page-title [breadcrumbItems]="pageTitle" [title]="'navigation.userManagement' | transloco"></app-page-title>
 
 <!-- Navigation Actions Bar -->
 <div class="row mb-3">
@@ -7,16 +7,16 @@
     <div class="card">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center">
-          <h5 class="card-title mb-0">Quick Actions</h5>
+          <h5 class="card-title mb-0">{{ 'app.actions' | transloco }}</h5>
           <div class="btn-group" role="group">
             <button type="button" class="btn btn-outline-primary" (click)="navigateToCreate()">
-              <i class="mdi mdi-account-plus me-1"></i>Create User
+              <i class="mdi mdi-account-plus me-1"></i>{{ 'user.create' | transloco }}
             </button>
             <button type="button" class="btn btn-outline-info" (click)="navigateToDetails()">
-              <i class="mdi mdi-account-details me-1"></i>User Details
+              <i class="mdi mdi-account-details me-1"></i>{{ 'user.details' | transloco }}
             </button>
             <button type="button" class="btn btn-outline-dark" (click)="navigateToSettings()">
-              <i class="mdi mdi-cog me-1"></i>Settings
+              <i class="mdi mdi-cog me-1"></i>{{ 'app.settings' | transloco }}
             </button>
           </div>
         </div>
@@ -31,17 +31,17 @@
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center">
           <div>
-            <h4 class="header-title">Users List</h4>
+            <h4 class="header-title">{{ 'user.list' | transloco }}</h4>
             <p class="text-muted font-14">
-              Manage all system users
+              {{ 'navigation.userManagement' | transloco }}
               <span *ngIf="records.length > 0 && !loadingUsers" class="text-success ms-2">
-                ({{ records.length }} users loaded from backend)
+                ({{ records.length }} {{ 'user.usersLoadedSuccess' | transloco }})
               </span>
               <span *ngIf="loadingUsers" class="text-info ms-2">
-                <i class="mdi mdi-loading mdi-spin"></i> Loading users...
+                <i class="mdi mdi-loading mdi-spin"></i> {{ 'user.loadingUsers' | transloco }}
               </span>
               <span *ngIf="errorLoadingUsers" class="text-danger ms-2">
-                <i class="mdi mdi-alert-circle"></i> Error loading from backend
+                <i class="mdi mdi-alert-circle"></i> {{ 'states.backendError' | transloco }}
               </span>
             </p>
           </div>

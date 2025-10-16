@@ -60,24 +60,38 @@ const MENU_ITEMS: MenuItem[] = [
     ],
   },
 
-  { key: 'participantes', label: 'Participantes', isTitle: true },
+  { key: 'participants', label: 'Participants', isTitle: true },
 
   {
-    key: 'pages-participantes',
-    label: 'Participantes',
+    key: 'participants-management',
+    label: 'Participants',
     isTitle: false,
-    icon: 'user',
-    link: '/participantes/crear-participantes',
+    icon: 'users',
+    collapsed: true,
+    children: [
+      {
+        key: 'participants-list',
+        label: 'Participants List',
+        link: '/participants/list',
+        parentKey: 'participants-management',
+      },
+      {
+        key: 'participants-create',
+        label: 'Create Participant',
+        link: '/participants/create',
+        parentKey: 'participants-management',
+      },
+    ],
   },
   {
-    key: 'pages-participantes',
+    key: 'participants-documents',
     label: 'Genograma',
     link: '/forms/upload',
     icon: 'file',
   },
 
   {
-    key: 'pages-participantes',
+    key: 'participants-multimedia',
     label: 'Documentos (Multimedia, PDF, etc)',
     link: '/forms/upload',
     icon: 'file',

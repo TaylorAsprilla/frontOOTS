@@ -1,26 +1,24 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { TranslocoModule } from '@ngneat/transloco';
 import { UserInfoInterface } from 'src/app/core/interface/user.interface';
 
 @Component({
   selector: 'app-contact-member-info',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslocoModule],
   templateUrl: './member-info.component.html',
   styleUrls: ['./member-info.component.scss'],
 })
 export class MemberInfoComponent implements OnInit {
-  @Input() user: UserInfoInterface = {
-    primerNombre: '',
-    segundoNombre: '',
-    primerApellido: '',
-    segundoApellido: '',
+  @Input() user!: UserInfoInterface;
+
+  memberData = {
+    nombre: '',
     email: '',
-    celular: '',
-    foto: 'assets/images/users/avatar-1.jpg',
-    cargo: 'Sin cargo',
-    participantes: 0,
+    cargo: '',
+    participants: 0,
     casos: 0,
     proximasCitas: 0,
   };
@@ -33,7 +31,7 @@ export class MemberInfoComponent implements OnInit {
       ...this.user,
       foto: this.user.foto || 'assets/images/users/avatar-1.jpg',
       cargo: this.user.cargo || 'Sin cargo',
-      participantes: this.user.participantes || 0,
+      participants: this.user.participants || 0,
       casos: this.user.casos || 0,
       proximasCitas: this.user.proximasCitas || 0,
     };

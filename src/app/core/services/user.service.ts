@@ -21,22 +21,12 @@ export class UserService {
    * @returns Observable<User>
    */
   createUser(user: CreateUserRequest): Observable<UserModel> {
-    console.log('UserService.createUser - Sending request with data:', user);
-    console.log('UserService.createUser - API URL:', this.apiUrl);
-
     return this.http.post<UserBackendResponse>(this.apiUrl, user).pipe(
-      tap((response) => {
-        console.log('UserService.createUser - Raw response from API:', response);
-      }),
       map((response) => {
         // Use the factory method to create UserModel from backend response
         const userModel = UserModel.fromBackendResponse(response);
-        console.log('UserService.createUser - Mapped to UserModel:', userModel);
+
         return userModel;
-      }),
-      tap((userData) => {
-        console.log('UserService.createUser - Final processed user data:', userData);
-        // Don't show notification here, let the component handle it
       }),
       catchError((error) => this.handleError(error, 'Error al crear el usuario'))
     );
@@ -49,8 +39,6 @@ export class UserService {
    * @returns Observable<UserModel[]>
    */
   getUsers(page?: number, limit?: number): Observable<UserModel[]> {
-    console.log('UserService.getUsers - Fetching users from real backend');
-
     let params = new HttpParams();
 
     if (page !== undefined) {
@@ -61,22 +49,15 @@ export class UserService {
       params = params.set('limit', limit.toString());
     }
 
-    console.log('UserService.getUsers - API URL:', this.apiUrl);
-    console.log('UserService.getUsers - Params:', params.toString());
-
     return this.http.get<UserBackendResponse[]>(this.apiUrl, { params }).pipe(
-      tap((response) => {
-        console.log('UserService.getUsers - Raw response from API:', response);
-      }),
       map((response) => {
         // Transform backend response array to UserModel array
         if (!Array.isArray(response)) {
-          console.warn('UserService.getUsers - Response is not an array:', response);
           return [];
         }
 
         const users = response.map((userResponse) => UserModel.fromBackendResponse(userResponse));
-        console.log('UserService.getUsers - Mapped users:', users);
+
         return users;
       }),
       catchError((error) => this.handleError(error, 'Error al obtener los usuarios'))

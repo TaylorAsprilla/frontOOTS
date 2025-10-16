@@ -1,13 +1,7 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
-import { NotificationService } from '../../../core/services/notification.service';
-
-interface Notification {
-  message: string;
-  type: 'success' | 'error' | 'warning' | 'info';
-  duration?: number;
-}
+import { NotificationService, SimpleNotification } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-notification',
@@ -20,7 +14,7 @@ export class NotificationComponent implements OnInit, OnDestroy {
   private readonly notificationService = inject(NotificationService);
   private destroy$ = new Subject<void>();
 
-  notifications: (Notification & { id: number })[] = [];
+  notifications: (SimpleNotification & { id: number })[] = [];
   private notificationId = 0;
 
   ngOnInit(): void {
@@ -34,18 +28,17 @@ export class NotificationComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private addNotification(notification: Notification): void {
+  private addNotification(notification: SimpleNotification): void {
     const id = ++this.notificationId;
     const notificationWithId = { ...notification, id };
 
     this.notifications.push(notificationWithId);
 
-    // Auto-remove after duration
-    if (notification.duration && notification.duration > 0) {
-      setTimeout(() => {
-        this.removeNotificationById(id);
-      }, notification.duration);
-    }
+    // Auto-remove after duration (default 5 seconds if not specified)
+    const duration = notification.duration || 5000;
+    setTimeout(() => {
+      this.removeNotificationById(id);
+    }, duration);
   }
 
   removeNotification(index: number): void {

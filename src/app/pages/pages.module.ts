@@ -1,8 +1,7 @@
-import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
-import { PagesRoutingModule } from "./pages.routes";
-import { CrearParticipanteComponent } from "./participantes/crear-participante/crear-participante.component";
+import { PagesRoutingModule } from './pages.routes';
 
 @NgModule({
   declarations: [],

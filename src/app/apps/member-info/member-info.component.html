@@ -10,33 +10,33 @@
       <h4 class="mt-3">
         <a [routerLink]="['../profile']" [queryParams]="{ id: user.id }" class="text-dark">{{ nombreCompleto }}</a>
       </h4>
-      <div class="text-muted">{{ user.cargo || 'Sin cargo' }}</div>
+      <div class="text-muted">{{ user.cargo || ('user.noPosition' | transloco) }}</div>
 
       <div>
-        <a href="javascript:void(0)" class="text-pink">{{ user.email || 'Sin email' }}</a>
+        <a href="javascript:void(0)" class="text-pink">{{ user.email || ('user.noEmail' | transloco) }}</a>
       </div>
 
       <p class="btn btn-primary btn-sm waves-effect waves-light me-1 mt-3">
-        {{ user.celular || 'Sin teléfono' }}
+        {{ user.celular || ('user.noPhone' | transloco) }}
       </p>
 
       <div class="row mt-4">
         <div class="col-4">
           <div class="mt-3">
-            <h4>{{ user.participantes || 0 }}</h4>
-            <p class="mb-0 text-muted text-truncate">Participantes</p>
+            <h4>{{ user.participants || 0 }}</h4>
+            <p class="mb-0 text-muted text-truncate">{{ 'user.participants' | transloco }}</p>
           </div>
         </div>
         <div class="col-4">
           <div class="mt-3">
             <h4>{{ user.casos || 0 }}</h4>
-            <p class="mb-0 text-muted text-truncate">Casos</p>
+            <p class="mb-0 text-muted text-truncate">{{ 'user.cases' | transloco }}</p>
           </div>
         </div>
         <div class="col-4">
           <div class="mt-3">
             <h4>{{ user.proximasCitas || 0 }}</h4>
-            <p class="mb-0 text-muted text-truncate">Próximas Citas</p>
+            <p class="mb-0 text-muted text-truncate">{{ 'user.nextAppointments' | transloco }}</p>
           </div>
         </div>
       </div>

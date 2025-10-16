@@ -1,0 +1,110 @@
+<div class="container-fluid">
+  <!-- Page Title -->
+  <app-page-title [breadcrumbItems]="breadcrumbItems" [title]="'participants.detailTitle' | transloco">
+  </app-page-title>
+
+  <!-- Loading State -->
+  @if (isLoading) {
+  <div class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">{{ 'app.loading' | transloco }}</span>
+    </div>
+  </div>
+  }
+
+  <!-- Participant Details -->
+  @if (!isLoading && participant) {
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="card-title mb-0">
+              <i class="mdi mdi-account me-2 text-primary"></i>
+              {{ participant.personalData.firstName }} {{ participant.personalData.firstLastName }}
+            </h4>
+            <div>
+              <a [routerLink]="['/participants/edit', participant.id]" class="btn btn-primary me-2">
+                <i class="mdi mdi-pencil me-1"></i>
+                {{ 'app.edit' | transloco }}
+              </a>
+              <a [routerLink]="['/participants']" class="btn btn-secondary">
+                <i class="mdi mdi-arrow-left me-1"></i>
+                {{ 'app.back' | transloco }}
+              </a>
+            </div>
+          </div>
+
+          <!-- Personal Information -->
+          <div class="row">
+            <div class="col-md-6">
+              <h5 class="text-primary mb-3">{{ 'participants.personalInformation' | transloco }}</h5>
+              <table class="table table-borderless">
+                <tr>
+                  <td class="fw-bold">{{ 'participants.fullName' | transloco }}:</td>
+                  <td>
+                    {{ participant.personalData.firstName }} {{ participant.personalData.secondName || '' }}
+                    {{ participant.personalData.firstLastName }} {{ participant.personalData.secondLastName || '' }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">{{ 'participants.document' | transloco }}:</td>
+                  <td>{{ participant.personalData.documentTypeId }} {{ participant.personalData.documentNumber }}</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">{{ 'participants.email' | transloco }}:</td>
+                  <td>{{ participant.personalData.email || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">{{ 'participants.phone' | transloco }}:</td>
+                  <td>{{ participant.personalData.phoneNumber || '-' }}</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">{{ 'participants.birthDate' | transloco }}:</td>
+                  <td>{{ participant.personalData.birthDate | date : 'dd/MM/yyyy' }}</td>
+                </tr>
+              </table>
+            </div>
+            <div class="col-md-6">
+              <h5 class="text-primary mb-3">{{ 'participants.contactInformation' | transloco }}</h5>
+              <table class="table table-borderless">
+                <tr>
+                  <td class="fw-bold">{{ 'participants.address' | transloco }}:</td>
+                  <td>{{ participant.personalData.address }}</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">{{ 'participants.city' | transloco }}:</td>
+                  <td>{{ participant.personalData.city }}</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">{{ 'participants.gender' | transloco }}:</td>
+                  <td>{{ 'participants.' + participant.personalData.genderId | transloco }}</td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">{{ 'participants.maritalStatus' | transloco }}:</td>
+                  <td>{{ 'participants.' + participant.personalData.maritalStatusId | transloco }}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- Not Found State -->
+  @if (!isLoading && !participant) {
+  <div class="text-center py-5">
+    <div class="mb-3">
+      <i class="mdi mdi-account-remove display-4 text-muted"></i>
+    </div>
+    <h5 class="text-muted">{{ 'participants.notFound' | transloco }}</h5>
+    <p class="text-muted mb-4">{{ 'participants.notFoundMessage' | transloco }}</p>
+    <a [routerLink]="['/participants']" class="btn btn-primary">
+      <i class="mdi mdi-arrow-left me-1"></i>
+      {{ 'participants.backToList' | transloco }}
+    </a>
+  </div>
+  }
+</div>

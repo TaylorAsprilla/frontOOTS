@@ -81,7 +81,7 @@ export interface UserInfoInterface {
   celular?: string;
   foto?: string;
   cargo?: string;
-  participantes?: number;
+  participants?: number;
   casos?: number;
   proximasCitas?: number;
 }

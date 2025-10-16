@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { TranslocoModule } from '@ngneat/transloco';
 
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { UserService } from '../../../core/services/user.service';
@@ -13,7 +14,7 @@ import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 @Component({
   selector: 'app-user-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PageTitleComponent],
+  imports: [CommonModule, ReactiveFormsModule, PageTitleComponent, TranslocoModule],
   templateUrl: './user-create.component.html',
   styleUrls: ['./user-create.component.scss'],
 })
@@ -73,8 +74,6 @@ export class UserCreateComponent implements OnInit, OnDestroy {
       this.isSubmitting = true;
 
       const createUserRequest: CreateUserRequest = this.userForm.value;
-
-      console.log('Submitting user creation with data:', createUserRequest);
 
       this.userService
         .createUser(createUserRequest)

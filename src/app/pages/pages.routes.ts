@@ -20,8 +20,13 @@ const routes: Routes = [
     },
   },
   {
-    path: 'participantes',
-    loadChildren: () => import('./participantes/participantes.module').then((m) => m.ParticipantesModule),
+    path: 'participants',
+    title: 'Participants Management',
+    loadChildren: () => import('./participants/participants.routes').then((r) => r.PARTICIPANTS_ROUTES),
+    data: {
+      breadcrumb: 'Participants',
+      description: 'Comprehensive participants management system',
+    },
   },
   // --- Disabled (temporal) ---
   // { path: 'pages', loadChildren: () => import('./extra-pages/extra-pages.module').then(m => m.ExtraPagesModule) },

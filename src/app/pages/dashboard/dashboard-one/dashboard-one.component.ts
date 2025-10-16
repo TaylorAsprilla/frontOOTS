@@ -94,7 +94,7 @@ export class DashboardOneComponent implements OnInit {
       {
         id: 1,
         variant: 'primary',
-        description: 'Participantes',
+        description: 'dashboard.stats.participants',
         icon: 'fe-heart',
         stats: 120,
         options: {
@@ -105,7 +105,7 @@ export class DashboardOneComponent implements OnInit {
       {
         id: 2,
         variant: 'success',
-        description: 'Casos Abiertos',
+        description: 'dashboard.stats.openCases',
         icon: 'fe-user',
         stats: 127,
         options: {
@@ -115,7 +115,7 @@ export class DashboardOneComponent implements OnInit {
       {
         id: 3,
         variant: 'info',
-        description: 'Casos Cerrados',
+        description: 'dashboard.stats.closedCases',
         icon: 'fe-bar-chart-line',
         stats: 80,
         options: {
