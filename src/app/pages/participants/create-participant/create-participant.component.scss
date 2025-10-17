@@ -21,7 +21,7 @@
 
     &.active {
       background-color: var(--bs-primary);
-      color: white;
+      color: #00acc1;
       box-shadow: 0 2px 4px rgba(var(--bs-primary-rgb), 0.3);
     }
   }
@@ -276,4 +276,756 @@ h5.text-primary {
 .form-select:hover:not(:focus) {
   border-color: var(--bs-primary);
   background-color: rgba(var(--bs-primary-rgb), 0.02);
+}
+
+// Family composition specific styles
+.family-member-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: var(--bs-primary);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+}
+
+.family-member-header {
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+
+  h6 {
+    color: var(--bs-gray-700);
+    font-weight: 600;
+  }
+}
+
+.add-family-btn {
+  background: linear-gradient(135deg, var(--bs-primary) 0%, #0056b3 100%);
+  border: none;
+  border-radius: 25px;
+  padding: 8px 20px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(var(--bs-primary-rgb), 0.3);
+  }
+}
+
+.remove-family-btn {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: rotate(90deg);
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+  }
+}
+
+.empty-family-state {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 2px dashed #dee2e6;
+  border-radius: 15px;
+  padding: 2rem;
+
+  .display-4 {
+    color: var(--bs-gray-400);
+  }
+
+  p {
+    color: var(--bs-gray-600);
+    font-weight: 500;
+  }
+}
+
+// Intervention plan table styles
+.intervention-plan-table {
+  font-size: 0.9rem;
+
+  th {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 1px solid #dee2e6;
+    font-weight: 600;
+    color: var(--bs-gray-700);
+    text-align: center;
+    vertical-align: middle;
+    padding: 12px 8px;
+  }
+
+  td {
+    padding: 8px;
+    vertical-align: middle;
+    border: 1px solid #dee2e6;
+  }
+
+  .form-control-sm {
+    font-size: 0.85rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+
+    &:focus {
+      border-color: var(--bs-primary);
+      box-shadow: 0 0 0 0.1rem rgba(var(--bs-primary-rgb), 0.25);
+    }
+  }
+
+  textarea.form-control-sm {
+    resize: vertical;
+    min-height: 60px;
+  }
+}
+
+.intervention-row {
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba(var(--bs-primary-rgb), 0.02);
+  }
+}
+
+.add-intervention-btn {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  border: none;
+  border-radius: 25px;
+  padding: 8px 20px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+  }
+}
+
+.remove-intervention-btn {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: rotate(90deg);
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+  }
+}
+
+.empty-intervention-state {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 2px dashed #dee2e6;
+  border-radius: 15px;
+  padding: 2rem;
+  margin: 2rem 0;
+
+  .display-4 {
+    color: var(--bs-gray-400);
+  }
+
+  p {
+    color: var(--bs-gray-600);
+    font-weight: 500;
+  }
+}
+
+// Responsive table improvements
+@media (max-width: 992px) {
+  .intervention-plan-table {
+    font-size: 0.8rem;
+
+    th,
+    td {
+      padding: 6px 4px;
+    }
+
+    .form-control-sm {
+      font-size: 0.8rem;
+    }
+  }
+}
+
+/* ===== NUEVOS ESTILOS PARA CARDS ===== */
+
+/* Estilos para Cards del Plan de Intervención */
+.intervention-cards-container {
+  .intervention-plan-card {
+    .card {
+      border-radius: 15px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: none;
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+      }
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #007bff, #0056b3) !important;
+      padding: 18px 25px;
+      border-bottom: none;
+
+      h6 {
+        font-weight: 700;
+        font-size: 1.15rem;
+        letter-spacing: 0.5px;
+      }
+    }
+
+    .card-body {
+      padding: 30px;
+      background: linear-gradient(145deg, #ffffff, #f8f9fa);
+
+      .form-label {
+        font-size: 0.95rem;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        font-weight: 600;
+
+        i {
+          font-size: 1.2rem;
+          margin-right: 8px;
+        }
+      }
+
+      .form-control,
+      .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 12px 15px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+
+        &:focus {
+          border-color: #007bff;
+          box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.15);
+          transform: translateY(-2px);
+        }
+
+        &::placeholder {
+          color: #6c757d;
+          font-style: italic;
+        }
+      }
+
+      textarea.form-control {
+        resize: vertical;
+        min-height: 90px;
+        line-height: 1.5;
+      }
+    }
+  }
+
+  .remove-intervention-btn-card {
+    border-radius: 25px;
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.25) !important;
+      transform: scale(1.1);
+    }
+  }
+}
+
+/* Estilos para Cards de Notas de Progreso */
+.progress-notes-container {
+  .progress-note-card {
+    .card {
+      border-radius: 15px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: none;
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+      }
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #28a745, #20c997) !important;
+      padding: 18px 25px;
+      border-bottom: none;
+
+      h6 {
+        font-weight: 700;
+        font-size: 1.15rem;
+        letter-spacing: 0.5px;
+      }
+    }
+
+    .card-body {
+      padding: 30px;
+      background: linear-gradient(145deg, #ffffff, #f0fff4);
+
+      .form-label {
+        font-size: 0.95rem;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        font-weight: 600;
+
+        i {
+          font-size: 1.2rem;
+          margin-right: 8px;
+        }
+
+        &.text-primary i {
+          color: #007bff !important;
+        }
+        &.text-info i {
+          color: #17a2b8 !important;
+        }
+        &.text-warning i {
+          color: #ffc107 !important;
+        }
+        &.text-success i {
+          color: #28a745 !important;
+        }
+        &.text-secondary i {
+          color: #6c757d !important;
+        }
+        &.text-danger i {
+          color: #dc3545 !important;
+        }
+      }
+
+      .form-control,
+      .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 12px 15px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+
+        &:focus {
+          border-color: #28a745;
+          box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.15);
+          transform: translateY(-2px);
+        }
+
+        &::placeholder {
+          color: #6c757d;
+          font-style: italic;
+        }
+      }
+
+      textarea.form-control {
+        resize: vertical;
+        min-height: 90px;
+        line-height: 1.5;
+      }
+    }
+  }
+
+  .remove-note-btn {
+    border-radius: 25px;
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.25) !important;
+      transform: scale(1.1);
+    }
+  }
+}
+
+/* Botones principales mejorados */
+.btn-lg {
+  padding: 14px 28px;
+  font-size: 1.1rem;
+  border-radius: 30px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+
+  &.btn-primary {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    border: none;
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+
+    &:hover {
+      background: linear-gradient(135deg, #0056b3, #004085);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 123, 255, 0.4);
+    }
+  }
+
+  &.btn-success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border: none;
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+
+    &:hover {
+      background: linear-gradient(135deg, #20c997, #1e7e34);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(40, 167, 69, 0.4);
+    }
+  }
+}
+
+/* Estados vacíos mejorados */
+.empty-intervention-state,
+.empty-notes-state {
+  background: linear-gradient(135deg, #f8f9fa, #ffffff);
+  border-radius: 25px;
+  border: 3px dashed #ced4da;
+  padding: 50px 30px;
+  margin: 30px 0;
+  text-align: center;
+
+  .display-4 {
+    color: #6c757d;
+    margin-bottom: 20px;
+  }
+
+  p {
+    color: #6c757d;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 25px;
+  }
+}
+
+/* Animaciones mejoradas */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.intervention-plan-card,
+.progress-note-card {
+  animation: fadeInUp 0.6s ease;
+}
+
+.intervention-plan-card:nth-child(odd) {
+  animation: slideInLeft 0.6s ease;
+}
+
+/* Responsive mejorado */
+@media (max-width: 768px) {
+  .intervention-cards-container,
+  .progress-notes-container {
+    .card-body {
+      padding: 20px 15px;
+    }
+
+    .card-header {
+      padding: 15px 20px;
+
+      h6 {
+        font-size: 1rem;
+      }
+    }
+
+    .btn-lg {
+      padding: 12px 20px;
+      font-size: 1rem;
+    }
+
+    .form-label {
+      font-size: 0.9rem;
+
+      i {
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .empty-intervention-state,
+  .empty-notes-state {
+    padding: 30px 20px;
+    margin: 20px 0;
+
+    .display-4 {
+      font-size: 2rem;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .intervention-cards-container,
+  .progress-notes-container {
+    .card-body {
+      padding: 15px 10px;
+    }
+
+    .form-control,
+    .form-select {
+      padding: 10px 12px;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+/* ===== ESTILOS PARA NOTA DE CIERRE ===== */
+
+.closing-note-container {
+  .card {
+    border-radius: 15px;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .card-header {
+    background: linear-gradient(135deg, #ffc107, #ffca2c) !important;
+    padding: 20px 25px;
+    border-bottom: none;
+
+    h6 {
+      font-weight: 700;
+      font-size: 1.2rem;
+      letter-spacing: 0.5px;
+      color: #212529 !important;
+
+      i {
+        font-size: 1.3rem;
+        color: #6f4e37;
+      }
+    }
+  }
+
+  .card-body {
+    padding: 35px;
+    background: linear-gradient(145deg, #ffffff, #fffef7);
+
+    .form-label {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+
+      i {
+        font-size: 1.3rem;
+        margin-right: 10px;
+      }
+
+      &.text-danger i {
+        color: #dc3545 !important;
+      }
+      &.text-success i {
+        color: #28a745 !important;
+      }
+      &.text-info i {
+        color: #17a2b8 !important;
+      }
+      &.text-secondary i {
+        color: #6c757d !important;
+      }
+    }
+
+    .form-control {
+      border: 2px solid #f0f0f0;
+      border-radius: 12px;
+      padding: 15px 18px;
+      font-size: 1rem;
+      line-height: 1.6;
+      transition: all 0.4s ease;
+      background: #fafafa;
+
+      &:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.15);
+        transform: translateY(-2px);
+        background: #ffffff;
+      }
+
+      &::placeholder {
+        color: #888;
+        font-style: italic;
+        opacity: 0.8;
+      }
+
+      // Diferentes alturas para diferentes propósitos
+      &[rows='4'] {
+        min-height: 120px;
+      }
+
+      &[rows='5'] {
+        min-height: 140px;
+      }
+    }
+
+    .invalid-feedback {
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-top: 8px;
+    }
+  }
+}
+
+/* Botón de finalizar mejorado */
+.btn-success.btn-lg {
+  background: linear-gradient(135deg, #28a745, #34ce57);
+  border: none;
+  border-radius: 35px;
+  padding: 15px 35px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+  transition: all 0.4s ease;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #218838, #28a745);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(40, 167, 69, 0.5);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    background: linear-gradient(135deg, #6c757d, #858796);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+  }
+
+  i {
+    font-size: 1.2rem;
+    margin-right: 8px;
+  }
+}
+
+/* Alert mejorado para nota de cierre */
+.alert-warning {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  border: 2px solid #ffc107;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.2);
+
+  .alert-heading {
+    color: #856404;
+    font-weight: 700;
+
+    i {
+      color: #f0ad4e;
+      font-size: 1.2rem;
+    }
+  }
+
+  p {
+    color: #664d03;
+    margin-bottom: 0;
+    line-height: 1.5;
+  }
+}
+
+/* Animación específica para nota de cierre */
+.closing-note-container {
+  animation: fadeInUp 0.8s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive para nota de cierre */
+@media (max-width: 768px) {
+  .closing-note-container {
+    .card-body {
+      padding: 25px 20px;
+    }
+
+    .card-header {
+      padding: 15px 20px;
+
+      h6 {
+        font-size: 1.1rem;
+      }
+    }
+
+    .form-label {
+      font-size: 0.95rem;
+
+      i {
+        font-size: 1.2rem;
+      }
+    }
+
+    .form-control {
+      padding: 12px 15px;
+      font-size: 0.95rem;
+    }
+  }
+
+  .btn-success.btn-lg {
+    padding: 12px 25px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .closing-note-container {
+    .card-body {
+      padding: 20px 15px;
+    }
+
+    .form-control {
+      padding: 10px 12px;
+      font-size: 0.9rem;
+    }
+  }
+
+  .btn-success.btn-lg {
+    padding: 10px 20px;
+    font-size: 0.95rem;
+  }
 }

@@ -255,19 +255,6 @@
                           </div>
 
                           <div class="row mb-3">
-                            <label class="col-md-3 col-form-label" for="referralSource">Fuente Referido</label>
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                class="form-control"
-                                id="referralSource"
-                                name="referralSource"
-                                formControlName="referralSource"
-                              />
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
                             <label for="genderId" class="col-md-3 col-form-label obligatorio"> Género </label>
                             <div class="col-md-9">
                               <select
@@ -351,6 +338,7 @@
                                 </option>
                                 <option value="Suramericana">Suramericana</option>
                                 <option value="Sura">Sura</option>
+                                <option value="other">Otro</option>
                               </select>
                               <div class="invalid-feedback" *ngIf="hasFieldError('personalData.healthInsuranceId')">
                                 {{ getFieldError('personalData.healthInsuranceId') | transloco }}
@@ -358,24 +346,168 @@
                             </div>
                           </div>
 
+                          @if (participantForm.get('personalData.healthInsuranceId')?.value === 'other') {
                           <div class="row mb-3">
-                            <label for="housingTypeId" class="col-md-3 col-form-label obligatorio">
-                              Tipo de Vivienda
+                            <label class="col-md-3 col-form-label obligatorio" for="customHealthInsurance">
+                              Especifique la EPS
+                            </label>
+                            <div class="col-md-9">
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.customHealthInsurance')"
+                                id="customHealthInsurance"
+                                name="customHealthInsurance"
+                                formControlName="customHealthInsurance"
+                                placeholder="Ingrese el nombre de la EPS"
+                              />
+                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.customHealthInsurance')">
+                                {{ getFieldError('personalData.customHealthInsurance') | transloco }}
+                              </div>
+                            </div>
+                          </div>
+                          }
+
+                          <div class="row mb-3">
+                            <label class="col-md-3 col-form-label" for="referralSource">Fuente Referido</label>
+                            <div class="col-md-9">
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="referralSource"
+                                name="referralSource"
+                                formControlName="referralSource"
+                              />
+                            </div>
+                          </div>
+
+                          <!-- Contacto de Emergencia -->
+                          <h5 class="mt-4 mb-3 text-muted">
+                            <i class="mdi mdi-account-alert me-2"></i>Contacto de Emergencia
+                          </h5>
+
+                          <div class="row mb-3">
+                            <label class="col-md-3 col-form-label obligatorio" for="emergencyContactName">
+                              Nombre Completo
+                            </label>
+                            <div class="col-md-9">
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.emergencyContactName')"
+                                id="emergencyContactName"
+                                name="emergencyContactName"
+                                formControlName="emergencyContactName"
+                              />
+                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.emergencyContactName')">
+                                {{ getFieldError('personalData.emergencyContactName') | transloco }}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="row mb-3">
+                            <label class="col-md-3 col-form-label obligatorio" for="emergencyContactPhone"
+                              >Celular</label
+                            >
+                            <div class="col-md-9">
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.emergencyContactPhone')"
+                                id="emergencyContactPhone"
+                                name="emergencyContactPhone"
+                                formControlName="emergencyContactPhone"
+                              />
+                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.emergencyContactPhone')">
+                                {{ getFieldError('personalData.emergencyContactPhone') | transloco }}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="row mb-3">
+                            <label class="col-md-3 col-form-label obligatorio" for="emergencyContactEmail">Email</label>
+                            <div class="col-md-9">
+                              <input
+                                type="email"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.emergencyContactEmail')"
+                                id="emergencyContactEmail"
+                                name="emergencyContactEmail"
+                                formControlName="emergencyContactEmail"
+                              />
+                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.emergencyContactEmail')">
+                                {{ getFieldError('personalData.emergencyContactEmail') | transloco }}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="row mb-3">
+                            <label class="col-md-3 col-form-label obligatorio" for="emergencyContactAddress">
+                              Dirección
+                            </label>
+                            <div class="col-md-9">
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.emergencyContactAddress')"
+                                id="emergencyContactAddress"
+                                name="emergencyContactAddress"
+                                formControlName="emergencyContactAddress"
+                              />
+                              <div
+                                class="invalid-feedback"
+                                *ngIf="hasFieldError('personalData.emergencyContactAddress')"
+                              >
+                                {{ getFieldError('personalData.emergencyContactAddress') | transloco }}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="row mb-3">
+                            <label class="col-md-3 col-form-label obligatorio" for="emergencyContactCity">Ciudad</label>
+                            <div class="col-md-9">
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.emergencyContactCity')"
+                                id="emergencyContactCity"
+                                name="emergencyContactCity"
+                                formControlName="emergencyContactCity"
+                              />
+                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.emergencyContactCity')">
+                                {{ getFieldError('personalData.emergencyContactCity') | transloco }}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="row mb-3">
+                            <label class="col-md-3 col-form-label obligatorio" for="emergencyContactRelationship">
+                              Parentesco
                             </label>
                             <div class="col-md-9">
                               <select
                                 class="form-select"
-                                [class.is-invalid]="hasFieldError('personalData.housingTypeId')"
-                                id="housingTypeId"
-                                formControlName="housingTypeId"
+                                [class.is-invalid]="hasFieldError('personalData.emergencyContactRelationship')"
+                                id="emergencyContactRelationship"
+                                formControlName="emergencyContactRelationship"
                               >
-                                <option value="" disabled selected>Seleccione el Tipo de Vivienda</option>
-                                <option value="Propia">Propia</option>
-                                <option value="Arriendo">Arriendo</option>
-                                <option value="Familiar">Familiar</option>
+                                <option value="" disabled selected>Seleccione el parentesco</option>
+                                <option value="Padre">Padre</option>
+                                <option value="Madre">Madre</option>
+                                <option value="Hermano/a">Hermano/a</option>
+                                <option value="Hijo/a">Hijo/a</option>
+                                <option value="Esposo/a">Esposo/a</option>
+                                <option value="Tío/a">Tío/a</option>
+                                <option value="Abuelo/a">Abuelo/a</option>
+                                <option value="Primo/a">Primo/a</option>
+                                <option value="Amigo/a">Amigo/a</option>
+                                <option value="Otro">Otro</option>
                               </select>
-                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.housingTypeId')">
-                                {{ getFieldError('personalData.housingTypeId') | transloco }}
+                              <div
+                                class="invalid-feedback"
+                                *ngIf="hasFieldError('personalData.emergencyContactRelationship')"
+                              >
+                                {{ getFieldError('personalData.emergencyContactRelationship') | transloco }}
                               </div>
                             </div>
                           </div>
@@ -407,81 +539,154 @@
                         >
                         </ngb-progressbar>
                       </p>
-                      <div class="row" formGroupName="familyComposition">
+                      <div class="row" formArrayName="familyComposition">
                         <div class="col-12">
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label obligatorio" for="name"> Nombre</label>
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                id="name"
-                                name="name"
-                                class="form-control"
-                                [class.is-invalid]="hasFieldError('familyComposition.name')"
-                                formControlName="name"
-                              />
-                              <div class="invalid-feedback" *ngIf="hasFieldError('familyComposition.name')">
-                                {{ getFieldError('familyComposition.name') | transloco }}
+                          <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0"><i class="mdi mdi-account-group me-2"></i>Miembros de la Familia</h5>
+                            <button
+                              type="button"
+                              class="btn btn-primary btn-sm add-family-btn"
+                              (click)="addFamilyMember()"
+                            >
+                              <i class="mdi mdi-plus me-1"></i>Agregar Familiar
+                            </button>
+                          </div>
+
+                          <div
+                            *ngFor="let member of familyCompositionArray.controls; let i = index"
+                            [formGroupName]="i"
+                            class="family-member-card p-3 mb-3 position-relative"
+                          >
+                            <div class="family-member-header d-flex justify-content-between align-items-center mb-3">
+                              <h6 class="mb-0 text-muted"><i class="mdi mdi-account me-1"></i>Familiar {{ i + 1 }}</h6>
+                              <button
+                                *ngIf="familyCompositionArray.length > 1"
+                                type="button"
+                                class="btn btn-danger btn-sm remove-family-btn"
+                                (click)="removeFamilyMember(i)"
+                                title="Eliminar familiar"
+                              >
+                                <i class="mdi mdi-delete"></i>
+                              </button>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-3 col-form-label obligatorio" [for]="'name_' + i"> Nombre</label>
+                              <div class="col-md-9">
+                                <input
+                                  type="text"
+                                  [id]="'name_' + i"
+                                  [name]="'name_' + i"
+                                  class="form-control"
+                                  [class.is-invalid]="hasFieldError('familyComposition.' + i + '.name')"
+                                  formControlName="name"
+                                />
+                                <div class="invalid-feedback" *ngIf="hasFieldError('familyComposition.' + i + '.name')">
+                                  {{ getFieldError('familyComposition.' + i + '.name') | transloco }}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-3 col-form-label" [for]="'familyBirthDate_' + i">
+                                Fecha de Nacimiento</label
+                              >
+                              <div class="col-md-9">
+                                <input
+                                  type="date"
+                                  [id]="'familyBirthDate_' + i"
+                                  [name]="'familyBirthDate_' + i"
+                                  class="form-control"
+                                  formControlName="birthDate"
+                                />
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-3 col-form-label" [for]="'occupation_' + i">Ocupación</label>
+                              <div class="col-md-9">
+                                <input
+                                  type="text"
+                                  [id]="'occupation_' + i"
+                                  [name]="'occupation_' + i"
+                                  class="form-control"
+                                  formControlName="occupation"
+                                />
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label [for]="'relationshipId_' + i" class="col-md-3 col-form-label"> Parentesco </label>
+                              <div class="col-md-9">
+                                <select
+                                  class="form-select"
+                                  [id]="'relationshipId_' + i"
+                                  formControlName="relationshipId"
+                                >
+                                  <option value="" disabled selected>Seleccione el Parentesco</option>
+                                  <option value="Padre">Padre</option>
+                                  <option value="Madre">Madre</option>
+                                  <option value="Hermano">Hermano</option>
+                                  <option value="Hermana">Hermana</option>
+                                  <option value="Hijo">Hijo</option>
+                                  <option value="Hija">Hija</option>
+                                  <option value="Esposo">Esposo</option>
+                                  <option value="Esposa">Esposa</option>
+                                  <option value="Tio">Tío</option>
+                                  <option value="Tia">Tía</option>
+                                  <option value="Abuelo">Abuelo</option>
+                                  <option value="Abuela">Abuela</option>
+                                  <option value="Primo">Primo</option>
+                                  <option value="Prima">Prima</option>
+                                  <option value="Sobrino">Sobrino</option>
+                                  <option value="Sobrina">Sobrina</option>
+                                  <option value="Nieto">Nieto</option>
+                                  <option value="Nieta">Nieta</option>
+                                  <option value="Cuñado">Cuñado</option>
+                                  <option value="Cuñada">Cuñada</option>
+                                  <option value="Yerno">Yerno</option>
+                                  <option value="Nuera">Nuera</option>
+                                  <option value="Suegro">Suegro</option>
+                                  <option value="Suegra">Suegra</option>
+                                  <option value="Otro">Otro</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label [for]="'academicLevelId_' + i" class="col-md-3 col-form-label">
+                                Grado Académico
+                              </label>
+                              <div class="col-md-9">
+                                <select
+                                  class="form-select"
+                                  [id]="'academicLevelId_' + i"
+                                  formControlName="academicLevelId"
+                                >
+                                  <option value="" disabled selected>Seleccione el Grado Académico</option>
+                                  <option value="Sin Grado Académico">Sin Grado Académico</option>
+                                  <option value="Preescolar">Preescolar</option>
+                                  <option value="Primaria">Primaria</option>
+                                  <option value="Secundaria">Secundaria</option>
+                                  <option value="Técnico">Técnico</option>
+                                  <option value="Tecnólogo">Tecnólogo</option>
+                                  <option value="Pregrado">Pregrado</option>
+                                  <option value="Especialización">Especialización</option>
+                                  <option value="Maestria">Maestria</option>
+                                  <option value="Doctorado">Doctorado</option>
+                                  <option value="Postdoctorado">Postdoctorado</option>
+                                </select>
                               </div>
                             </div>
                           </div>
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label" for="familyBirthDate"> Fecha de Nacimiento</label>
-                            <div class="col-md-9">
-                              <input
-                                type="date"
-                                id="familyBirthDate"
-                                name="familyBirthDate"
-                                class="form-control"
-                                formControlName="birthDate"
-                              />
-                            </div>
-                          </div>
 
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label" for="occupation">Ocupación</label>
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                id="occupation"
-                                name="occupation"
-                                class="form-control"
-                                formControlName="occupation"
-                              />
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
-                            <label for="relationshipId" class="col-md-3 col-form-label"> Parentesco </label>
-                            <div class="col-md-9">
-                              <select class="form-select" id="relationshipId" formControlName="relationshipId">
-                                <option value="" disabled selected>Seleccione el Parentesco</option>
-                                <option value="Padre">Padre</option>
-                                <option value="Madre">Madre</option>
-                                <option value="Hermano">Hermano</option>
-                                <option value="Tio">Tio</option>
-                                <option value="Abuelo">Abuelo</option>
-                                <option value="Primo">Primo</option>
-                              </select>
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
-                            <label for="academicLevelId" class="col-md-3 col-form-label"> Grado Académico </label>
-                            <div class="col-md-9">
-                              <select class="form-select" id="academicLevelId" formControlName="academicLevelId">
-                                <option value="" disabled selected>Seleccione el Grado Académico</option>
-                                <option value="Sin Grado Académico">Sin Grado Académico</option>
-                                <option value="Preescolar">Preescolar</option>
-                                <option value="Primaria">Primaria</option>
-                                <option value="Técnico">Técnico</option>
-                                <option value="Tecnólogo">Tecnólogo</option>
-                                <option value="Pregrado">Pregrado</option>
-                                <option value="Especialización">Especialización</option>
-                                <option value="Maestria">Maestria</option>
-                                <option value="Doctorado">Doctorado</option>
-                                <option value="Postdoctorado">Postdoctorado</option>
-                              </select>
+                          <div *ngIf="familyCompositionArray.length === 0" class="empty-family-state text-center py-4">
+                            <div class="text-muted">
+                              <i class="mdi mdi-account-group-outline display-4"></i>
+                              <p class="mt-2">No hay miembros familiares agregados</p>
+                              <button type="button" class="btn btn-primary add-family-btn" (click)="addFamilyMember()">
+                                <i class="mdi mdi-plus me-1"></i>Agregar Primer Familiar
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -503,7 +708,7 @@
                   <li [ngbNavItem]="3">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-school me-1"></i>
-                      <span class="d-none d-sm-inline">Historial Académico</span>
+                      <span class="d-none d-sm-inline">Historial Bio – psicosocial</span>
                     </a>
                     <ng-template ngbNavContent>
                       <p>
@@ -578,6 +783,7 @@
                                 <option value="Pensiones">Pensiones</option>
                                 <option value="Giros">Giros</option>
                                 <option value="Negocio propio">Negocio propio</option>
+                                <option value="Otro">Otro</option>
                               </select>
                             </div>
                           </div>
@@ -588,13 +794,12 @@
                               Estimado mensual (en salarios mínimos)
                             </label>
                             <div class="col-md-9">
-                              <input
-                                type="text"
-                                class="form-control"
-                                id="incomeLevel"
-                                formControlName="incomeLevel"
-                                placeholder="Ej: Menos de 1 SMLV, 1 SMLV, Más de 1 SMLV"
-                              />
+                              <select class="form-select" id="incomeLevel" formControlName="incomeLevel">
+                                <option value="" disabled selected>Seleccione el estimado mensual</option>
+                                <option value="Menos de 1 SMLV">Menos de 1 SMLV</option>
+                                <option value="1 SMLV">1 SMLV</option>
+                                <option value="Más de 1 SMLV">Más de 1 SMLV</option>
+                              </select>
                             </div>
                           </div>
 
@@ -611,6 +816,32 @@
                                 rows="3"
                                 placeholder="Describa el historial ocupacional..."
                               ></textarea>
+                            </div>
+                          </div>
+
+                          <!-- Tipo de Vivienda -->
+                          <div class="row mb-3">
+                            <label for="housingTypeId" class="col-md-3 col-form-label obligatorio">
+                              Tipo de Vivienda
+                            </label>
+                            <div class="col-md-9">
+                              <select
+                                class="form-select"
+                                [class.is-invalid]="hasFieldError('bioPsychosocialHistory.housingTypeId')"
+                                id="housingTypeId"
+                                formControlName="housingTypeId"
+                              >
+                                <option value="" disabled selected>Seleccione el Tipo de Vivienda</option>
+                                <option value="Propia">Propia</option>
+                                <option value="Arriendo">Arriendo</option>
+                                <option value="Familiar">Familiar</option>
+                              </select>
+                              <div
+                                class="invalid-feedback"
+                                *ngIf="hasFieldError('bioPsychosocialHistory.housingTypeId')"
+                              >
+                                {{ getFieldError('bioPsychosocialHistory.housingTypeId') | transloco }}
+                              </div>
                             </div>
                           </div>
 
@@ -660,6 +891,12 @@
                       </p>
                       <div class="row" formGroupName="consultationReason">
                         <div class="col-12">
+                          <div class="mb-3">
+                            <label class="form-label text-muted">
+                              <i class="mdi mdi-information-outline me-1"></i>
+                              Motivo de la consulta según el participante
+                            </label>
+                          </div>
                           <div class="row mb-3">
                             <textarea
                               class="form-control"
@@ -985,7 +1222,7 @@
                               id="intervention"
                               formControlName="intervention"
                               rows="4"
-                              placeholder="Registre el plan a seguir aquí..."
+                              placeholder="Registre la acción tomada"
                             ></textarea>
                           </div>
                         </div>
@@ -1462,18 +1699,187 @@
                       <span class="d-none d-sm-inline">Plan de Intervención</span>
                     </a>
                     <ng-template ngbNavContent>
-                      <div class="row" formGroupName="interventionPlan">
+                      <div class="row" formArrayName="interventionPlan">
                         <div class="col-12">
-                          <div class="row mb-3">
-                            <label class="col-md-12 col-form-label">Plan de Intervención Detallado</label>
-                            <div class="col-md-12">
-                              <textarea
-                                class="form-control"
-                                formControlName="description"
-                                rows="10"
-                                placeholder="Describa detalladamente el plan de intervención, incluyendo objetivos, estrategias, actividades, recursos necesarios y cronograma..."
+                          <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="mb-0"><i class="mdi mdi-clipboard-check me-2"></i>Plan de Intervención</h5>
+                            <button
+                              type="button"
+                              class="btn btn-primary btn-sm add-intervention-btn"
+                              (click)="addInterventionPlanItem()"
+                            >
+                              <i class="mdi mdi-plus me-1"></i>Agregar Item
+                            </button>
+                          </div>
+
+                          <!-- Cards de Plan de Intervención -->
+                          <div class="intervention-cards-container">
+                            <div
+                              *ngFor="let item of interventionPlanArray.controls; let i = index"
+                              [formGroupName]="i"
+                              class="intervention-plan-card mb-4"
+                            >
+                              <div class="card shadow-sm border-0">
+                                <div
+                                  class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center"
+                                >
+                                  <h6 class="mb-0">
+                                    <i class="mdi mdi-target me-2"></i>Item {{ i + 1 }} - Plan de Intervención
+                                  </h6>
+                                  <button
+                                    *ngIf="interventionPlanArray.length > 1"
+                                    type="button"
+                                    class="btn btn-outline-light btn-sm remove-intervention-btn-card"
+                                    (click)="removeInterventionPlanItem(i)"
+                                    title="Eliminar item"
+                                  >
+                                    <i class="mdi mdi-delete"></i>
+                                  </button>
+                                </div>
+                                <div class="card-body">
+                                  <div class="row">
+                                    <!-- Meta -->
+                                    <div class="col-md-6 mb-3">
+                                      <label class="form-label fw-bold text-primary">
+                                        <i class="mdi mdi-bullseye me-1"></i>Meta
+                                      </label>
+                                      <textarea
+                                        class="form-control"
+                                        formControlName="goal"
+                                        rows="3"
+                                        [class.is-invalid]="hasFieldError('interventionPlan.' + i + '.goal')"
+                                        placeholder="Describa la meta específica que se desea alcanzar..."
+                                      ></textarea>
+                                      <div
+                                        class="invalid-feedback"
+                                        *ngIf="hasFieldError('interventionPlan.' + i + '.goal')"
+                                      >
+                                        {{ getFieldError('interventionPlan.' + i + '.goal') | transloco }}
+                                      </div>
+                                    </div>
+
+                                    <!-- Objetivos -->
+                                    <div class="col-md-6 mb-3">
+                                      <label class="form-label fw-bold text-success">
+                                        <i class="mdi mdi-checkbox-marked-circle me-1"></i>Objetivos
+                                      </label>
+                                      <textarea
+                                        class="form-control"
+                                        formControlName="objectives"
+                                        rows="3"
+                                        [class.is-invalid]="hasFieldError('interventionPlan.' + i + '.objectives')"
+                                        placeholder="Defina los objetivos específicos y medibles..."
+                                      ></textarea>
+                                      <div
+                                        class="invalid-feedback"
+                                        *ngIf="hasFieldError('interventionPlan.' + i + '.objectives')"
+                                      >
+                                        {{ getFieldError('interventionPlan.' + i + '.objectives') | transloco }}
+                                      </div>
+                                    </div>
+
+                                    <!-- Actividades o Técnicas -->
+                                    <div class="col-12 mb-3">
+                                      <label class="form-label fw-bold text-info">
+                                        <i class="mdi mdi-cog me-1"></i>Actividades o Técnicas
+                                      </label>
+                                      <textarea
+                                        class="form-control"
+                                        formControlName="activities"
+                                        rows="3"
+                                        [class.is-invalid]="hasFieldError('interventionPlan.' + i + '.activities')"
+                                        placeholder="Describa las actividades, técnicas o metodologías a implementar..."
+                                      ></textarea>
+                                      <div
+                                        class="invalid-feedback"
+                                        *ngIf="hasFieldError('interventionPlan.' + i + '.activities')"
+                                      >
+                                        {{ getFieldError('interventionPlan.' + i + '.activities') | transloco }}
+                                      </div>
+                                    </div>
+
+                                    <!-- Tiempo y Responsable -->
+                                    <div class="col-md-6 mb-3">
+                                      <label class="form-label fw-bold text-warning">
+                                        <i class="mdi mdi-clock-outline me-1"></i>Tiempo Estimado
+                                      </label>
+                                      <input
+                                        type="text"
+                                        class="form-control"
+                                        formControlName="timeframe"
+                                        [class.is-invalid]="hasFieldError('interventionPlan.' + i + '.timeframe')"
+                                        placeholder="Ej: 3 meses, 6 semanas, 1 año..."
+                                      />
+                                      <div
+                                        class="invalid-feedback"
+                                        *ngIf="hasFieldError('interventionPlan.' + i + '.timeframe')"
+                                      >
+                                        {{ getFieldError('interventionPlan.' + i + '.timeframe') | transloco }}
+                                      </div>
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                      <label class="form-label fw-bold text-secondary">
+                                        <i class="mdi mdi-account-tie me-1"></i>Persona Responsable
+                                      </label>
+                                      <input
+                                        type="text"
+                                        class="form-control"
+                                        formControlName="responsiblePerson"
+                                        [class.is-invalid]="
+                                          hasFieldError('interventionPlan.' + i + '.responsiblePerson')
+                                        "
+                                        placeholder="Nombre completo del responsable..."
+                                      />
+                                      <div
+                                        class="invalid-feedback"
+                                        *ngIf="hasFieldError('interventionPlan.' + i + '.responsiblePerson')"
+                                      >
+                                        {{ getFieldError('interventionPlan.' + i + '.responsiblePerson') | transloco }}
+                                      </div>
+                                    </div>
+
+                                    <!-- Criterio de Evaluación -->
+                                    <div class="col-12 mb-3">
+                                      <label class="form-label fw-bold text-danger">
+                                        <i class="mdi mdi-check-circle me-1"></i>Criterios de Evaluación
+                                      </label>
+                                      <textarea
+                                        class="form-control"
+                                        formControlName="evaluationCriteria"
+                                        rows="2"
+                                        [class.is-invalid]="
+                                          hasFieldError('interventionPlan.' + i + '.evaluationCriteria')
+                                        "
+                                        placeholder="Defina cómo se medirá el éxito o cumplimiento de este item..."
+                                      ></textarea>
+                                      <div
+                                        class="invalid-feedback"
+                                        *ngIf="hasFieldError('interventionPlan.' + i + '.evaluationCriteria')"
+                                      >
+                                        {{ getFieldError('interventionPlan.' + i + '.evaluationCriteria') | transloco }}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div
+                            *ngIf="interventionPlanArray.length === 0"
+                            class="empty-intervention-state text-center py-5"
+                          >
+                            <div class="text-muted">
+                              <i class="mdi mdi-clipboard-outline display-4"></i>
+                              <p class="mt-2">No hay items en el plan de intervención</p>
+                              <button
+                                type="button"
+                                class="btn btn-primary add-intervention-btn"
+                                (click)="addInterventionPlanItem()"
                               >
-                              </textarea>
+                                <i class="mdi mdi-plus me-1"></i>Agregar Primer Item
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -1498,107 +1904,204 @@
                       <span class="d-none d-sm-inline">Notas de Progreso</span>
                     </a>
                     <ng-template ngbNavContent>
-                      <div class="table-responsive">
-                        <table class="table table-bordered table-hover">
-                          <thead class="table-light">
-                            <tr>
-                              <th width="120">FECHA</th>
-                              <th width="100">HORA</th>
-                              <th>TIPO DE ABORDAJE</th>
-                              <th>PROCESO</th>
-                              <th>RESUMEN DE INTERVENCIÓN</th>
-                              <th>OBSERVACIONES</th>
-                              <th>ACUERDOS</th>
-                              <th width="80">ACCIONES</th>
-                            </tr>
-                          </thead>
-                          <tbody formArrayName="progressNotes">
-                            @for ( nota of progressNotes.controls; track nota; let i = $index) {
-                            <tr [formGroupName]="i" class="align-middle">
-                              <!-- Fecha -->
-                              <td>
-                                <input
-                                  type="date"
-                                  class="form-control"
-                                  formControlName="date"
-                                  [class.is-invalid]="
-                                    nota.get('fecha')?.invalid &&
-                                    (nota.get('fecha')?.dirty || nota.get('fecha')?.touched)
-                                  "
-                                />
-                                @if ( nota.get('fecha')?.invalid && (nota.get('fecha')?.dirty ||
-                                nota.get('fecha')?.touched) ) {
-                                <div class="invalid-feedback">La fecha es requerida</div>
-                                }
-                              </td>
-                              <!-- Hora -->
-                              <td>
-                                <input type="time" class="form-control" formControlName="time" />
-                              </td>
-                              <!-- Tipo de Abordaje -->
-                              <td>
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  formControlName="approachType"
-                                  [class.is-invalid]="
-                                    nota.get('tipoAbordaje')?.invalid &&
-                                    (nota.get('tipoAbordaje')?.dirty || nota.get('tipoAbordaje')?.touched)
-                                  "
-                                />
-                                @if ( nota.get('tipoAbordaje')?.invalid && (nota.get('tipoAbordaje')?.dirty ||
-                                nota.get('tipoAbordaje')?.touched) ) {
-                                <div class="invalid-feedback">El tipo de abordaje es requerido</div>
-                                }
-                              </td>
-                              <!-- Proceso -->
-                              <td>
-                                <input type="text" class="form-control" formControlName="process" />
-                              </td>
-                              <!-- Resumen -->
-                              <td>
-                                <textarea
-                                  class="form-control"
-                                  formControlName="summary"
-                                  rows="2"
-                                  [class.is-invalid]="
-                                    nota.get('resumen')?.invalid &&
-                                    (nota.get('resumen')?.dirty || nota.get('resumen')?.touched)
-                                  "
-                                ></textarea>
-                                @if ( nota.get('resumen')?.invalid && (nota.get('resumen')?.dirty ||
-                                nota.get('resumen')?.touched) ) {
-                                <div class="invalid-feedback">El resumen es requerido</div>
-                                }
-                              </td>
-                              <!-- Observaciones -->
-                              <td>
-                                <textarea class="form-control" formControlName="observations" rows="2"></textarea>
-                              </td>
-                              <!-- Acuerdos -->
-                              <td>
-                                <textarea class="form-control" formControlName="agreements" rows="2"></textarea>
-                              </td>
-                              <!-- Acciones -->
-                              <td class="text-center">
+                      <div class="mb-3">
+                        <div class="alert alert-info">
+                          <h6 class="alert-heading mb-2">
+                            <i class="mdi mdi-information me-1"></i>Información sobre Notas de Progreso
+                          </h6>
+                          <div class="row">
+                            <div class="col-md-6">
+                              <strong>Tipos de Abordaje:</strong>
+                              <ul class="mb-0 mt-1 small">
+                                <li><strong>CP:</strong> Consulta Presencial</li>
+                                <li><strong>E:</strong> E-mail</li>
+                                <li><strong>EC:</strong> Encuentro Casual</li>
+                                <li><strong>Ll:</strong> Llamada</li>
+                                <li><strong>TC:</strong> Tele Consulta</li>
+                                <li><strong>V:</strong> Virtual</li>
+                              </ul>
+                            </div>
+                            <div class="col-md-6">
+                              <strong>Procesos:</strong>
+                              <ul class="mb-2 mt-1 small">
+                                <li><strong>S:</strong> Seguimiento</li>
+                                <li><strong>C:</strong> Cierre</li>
+                                <li><strong>T:</strong> Transferencia</li>
+                                <li><strong>D:</strong> Derivación</li>
+                              </ul>
+                              <p class="mb-0 small">
+                                <strong>Acciones:</strong> El botón <span class="badge bg-danger">🗑️</span> permite
+                                <strong>eliminar</strong> la nota de progreso seleccionada.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Cards de Notas de Progreso -->
+                      <div class="progress-notes-container">
+                        <div class="d-flex justify-content-end mb-4">
+                          <button class="btn btn-primary btn-lg" (click)="addProgressNote()" title="Agregar nueva nota">
+                            <i class="mdi mdi-plus me-1"></i>Agregar Nota de Progreso
+                          </button>
+                        </div>
+
+                        <div formArrayName="progressNotes">
+                          <div
+                            *ngFor="let nota of progressNotes.controls; let i = index"
+                            [formGroupName]="i"
+                            class="progress-note-card mb-4"
+                          >
+                            <div class="card shadow-sm border-0">
+                              <div
+                                class="card-header bg-gradient-success text-white d-flex justify-content-between align-items-center"
+                              >
+                                <h6 class="mb-0">
+                                  <i class="mdi mdi-note-text me-2"></i>Nota de Progreso #{{ i + 1 }}
+                                </h6>
                                 <button
-                                  class="btn btn-danger btn-sm"
+                                  *ngIf="progressNotes.length > 1"
+                                  type="button"
+                                  class="btn btn-outline-light btn-sm remove-note-btn"
                                   (click)="removeProgressNote(i)"
-                                  [disabled]="progressNotes.length <= 1"
                                   title="Eliminar nota"
                                 >
                                   <i class="mdi mdi-delete"></i>
                                 </button>
-                              </td>
-                            </tr>
-                            }
-                          </tbody>
-                        </table>
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <!-- Fecha y Hora -->
+                                  <div class="col-md-3 mb-3">
+                                    <label class="form-label fw-bold text-primary">
+                                      <i class="mdi mdi-calendar me-1"></i>Fecha
+                                    </label>
+                                    <input
+                                      type="date"
+                                      class="form-control"
+                                      formControlName="date"
+                                      [class.is-invalid]="hasFieldError('progressNotes.' + i + '.date')"
+                                    />
+                                    <div class="invalid-feedback" *ngIf="hasFieldError('progressNotes.' + i + '.date')">
+                                      La fecha es requerida
+                                    </div>
+                                  </div>
 
-                        <div class="d-flex justify-content-end mt-2">
-                          <button class="btn btn-primary btn-sm" (click)="addProgressNote()" title="Agregar nueva nota">
-                            <i class="mdi mdi-plus"></i> Agregar Nota
-                          </button>
+                                  <div class="col-md-3 mb-3">
+                                    <label class="form-label fw-bold text-primary">
+                                      <i class="mdi mdi-clock me-1"></i>Hora
+                                    </label>
+                                    <input type="time" class="form-control" formControlName="time" />
+                                  </div>
+
+                                  <!-- Tipo de Abordaje -->
+                                  <div class="col-md-3 mb-3">
+                                    <label class="form-label fw-bold text-info">
+                                      <i class="mdi mdi-account-group me-1"></i>Tipo de Abordaje
+                                    </label>
+                                    <select
+                                      class="form-select"
+                                      formControlName="approachType"
+                                      [class.is-invalid]="hasFieldError('progressNotes.' + i + '.approachType')"
+                                    >
+                                      <option value="" disabled selected>Seleccione tipo</option>
+                                      <option value="CP">CP - Consulta Presencial</option>
+                                      <option value="E">E - E-mail</option>
+                                      <option value="EC">EC - Encuentro Casual</option>
+                                      <option value="Ll">Ll - Llamada</option>
+                                      <option value="TC">TC - Tele Consulta</option>
+                                      <option value="V">V - Virtual</option>
+                                    </select>
+                                    <div
+                                      class="invalid-feedback"
+                                      *ngIf="hasFieldError('progressNotes.' + i + '.approachType')"
+                                    >
+                                      El tipo de abordaje es requerido
+                                    </div>
+                                  </div>
+
+                                  <!-- Proceso -->
+                                  <div class="col-md-3 mb-3">
+                                    <label class="form-label fw-bold text-warning">
+                                      <i class="mdi mdi-cogs me-1"></i>Proceso
+                                    </label>
+                                    <select
+                                      class="form-select"
+                                      formControlName="process"
+                                      [class.is-invalid]="hasFieldError('progressNotes.' + i + '.process')"
+                                    >
+                                      <option value="" disabled selected>Seleccione proceso</option>
+                                      <option value="S">S - Seguimiento</option>
+                                      <option value="C">C - Cierre</option>
+                                      <option value="T">T - Transferencia</option>
+                                      <option value="D">D - Derivación</option>
+                                    </select>
+                                    <div
+                                      class="invalid-feedback"
+                                      *ngIf="hasFieldError('progressNotes.' + i + '.process')"
+                                    >
+                                      El proceso es requerido
+                                    </div>
+                                  </div>
+
+                                  <!-- Resumen de Intervención -->
+                                  <div class="col-12 mb-3">
+                                    <label class="form-label fw-bold text-success">
+                                      <i class="mdi mdi-file-document-edit me-1"></i>Resumen de Intervención
+                                    </label>
+                                    <textarea
+                                      class="form-control"
+                                      formControlName="summary"
+                                      rows="3"
+                                      [class.is-invalid]="hasFieldError('progressNotes.' + i + '.summary')"
+                                      placeholder="Describa detalladamente las actividades realizadas durante la intervención..."
+                                    ></textarea>
+                                    <div
+                                      class="invalid-feedback"
+                                      *ngIf="hasFieldError('progressNotes.' + i + '.summary')"
+                                    >
+                                      El resumen es requerido
+                                    </div>
+                                  </div>
+
+                                  <!-- Observaciones y Acuerdos -->
+                                  <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-secondary">
+                                      <i class="mdi mdi-eye me-1"></i>Observaciones
+                                    </label>
+                                    <textarea
+                                      class="form-control"
+                                      formControlName="observations"
+                                      rows="3"
+                                      placeholder="Registre observaciones adicionales, comportamientos destacados o situaciones relevantes..."
+                                    ></textarea>
+                                  </div>
+
+                                  <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-danger">
+                                      <i class="mdi mdi-handshake me-1"></i>Acuerdos
+                                    </label>
+                                    <textarea
+                                      class="form-control"
+                                      formControlName="agreements"
+                                      rows="3"
+                                      placeholder="Documente los acuerdos establecidos, compromisos asumidos y próximos pasos..."
+                                    ></textarea>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Estado vacío -->
+                        <div *ngIf="progressNotes.length === 0" class="empty-notes-state text-center py-5">
+                          <div class="text-muted">
+                            <i class="mdi mdi-note-outline display-4"></i>
+                            <p class="mt-2">No hay notas de progreso registradas</p>
+                            <button type="button" class="btn btn-success" (click)="addProgressNote()">
+                              <i class="mdi mdi-plus me-1"></i>Agregar Primera Nota
+                            </button>
+                          </div>
                         </div>
                       </div>
                       <!-- Botones de navegación -->
@@ -1629,9 +2132,97 @@
                       <span class="d-none d-sm-inline">Nota de Cierre</span>
                     </a>
                     <ng-template ngbNavContent>
-                      <div class="row" formGroupName="closingNote">
-                        <div class="col-12">
-                          <textarea class="form-control" formControlName="observations" rows="10"></textarea>
+                      <div class="mb-3">
+                        <div class="alert alert-warning">
+                          <h6 class="alert-heading mb-2">
+                            <i class="mdi mdi-information me-1"></i>Información sobre Nota de Cierre
+                          </h6>
+                          <p class="mb-0 small">
+                            Complete todos los campos para documentar adecuadamente el cierre del proceso de
+                            intervención con el participante. Esta información es fundamental para el seguimiento y
+                            evaluación del programa.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div formGroupName="closingNote" class="closing-note-container">
+                        <div class="card shadow-sm border-0">
+                          <div class="card-header bg-gradient-warning text-dark">
+                            <h6 class="mb-0 fw-bold">
+                              <i class="mdi mdi-bookmark-check me-2"></i>Documento de Cierre - Información Final
+                            </h6>
+                          </div>
+                          <div class="card-body">
+                            <div class="row">
+                              <!-- Motivo de Cierre -->
+                              <div class="col-12 mb-4">
+                                <label class="form-label fw-bold text-danger">
+                                  <i class="mdi mdi-help-circle me-1"></i>Motivo de Cierre
+                                </label>
+                                <textarea
+                                  class="form-control"
+                                  formControlName="closureReason"
+                                  rows="4"
+                                  [class.is-invalid]="hasFieldError('closingNote.closureReason')"
+                                  placeholder="Describa detalladamente las razones que motivaron el cierre del proceso de intervención (finalización exitosa, abandono, transferencia, etc.)..."
+                                ></textarea>
+                                <div class="invalid-feedback" *ngIf="hasFieldError('closingNote.closureReason')">
+                                  {{ getFieldError('closingNote.closureReason') | transloco }}
+                                </div>
+                              </div>
+
+                              <!-- Logros Alcanzados -->
+                              <div class="col-12 mb-4">
+                                <label class="form-label fw-bold text-success">
+                                  <i class="mdi mdi-trophy me-1"></i>Logros Alcanzados
+                                </label>
+                                <textarea
+                                  class="form-control"
+                                  formControlName="achievements"
+                                  rows="5"
+                                  [class.is-invalid]="hasFieldError('closingNote.achievements')"
+                                  placeholder="Enumere y describa los principales logros, objetivos cumplidos, competencias desarrolladas y cambios positivos observados durante el proceso..."
+                                ></textarea>
+                                <div class="invalid-feedback" *ngIf="hasFieldError('closingNote.achievements')">
+                                  {{ getFieldError('closingNote.achievements') | transloco }}
+                                </div>
+                              </div>
+
+                              <!-- Recomendaciones -->
+                              <div class="col-12 mb-4">
+                                <label class="form-label fw-bold text-info">
+                                  <i class="mdi mdi-lightbulb me-1"></i>Recomendaciones
+                                </label>
+                                <textarea
+                                  class="form-control"
+                                  formControlName="recommendations"
+                                  rows="5"
+                                  [class.is-invalid]="hasFieldError('closingNote.recommendations')"
+                                  placeholder="Proporcione recomendaciones para el futuro del participante, sugerencias de seguimiento, recursos adicionales o acciones recomendadas..."
+                                ></textarea>
+                                <div class="invalid-feedback" *ngIf="hasFieldError('closingNote.recommendations')">
+                                  {{ getFieldError('closingNote.recommendations') | transloco }}
+                                </div>
+                              </div>
+
+                              <!-- Observaciones Generales -->
+                              <div class="col-12 mb-3">
+                                <label class="form-label fw-bold text-secondary">
+                                  <i class="mdi mdi-note-text me-1"></i>Observaciones Generales
+                                </label>
+                                <textarea
+                                  class="form-control"
+                                  formControlName="observations"
+                                  rows="4"
+                                  [class.is-invalid]="hasFieldError('closingNote.observations')"
+                                  placeholder="Incluya cualquier observación adicional, comentarios relevantes o información complementaria sobre el proceso..."
+                                ></textarea>
+                                <div class="invalid-feedback" *ngIf="hasFieldError('closingNote.observations')">
+                                  {{ getFieldError('closingNote.observations') | transloco }}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
 
@@ -1641,8 +2232,8 @@
                             <button class="btn btn-secondary" (click)="goToPreviousStep()">Anterior</button>
                           </li>
                           <li class="next list-inline-item float-end">
-                            <button type="submit" class="btn btn-primary" [disabled]="participantForm.invalid">
-                              Finalizar y Guardar
+                            <button type="submit" class="btn btn-success btn-lg" [disabled]="participantForm.invalid">
+                              <i class="mdi mdi-check-circle me-1"></i>Finalizar y Guardar
                             </button>
                           </li>
                         </div>

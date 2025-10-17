@@ -58,7 +58,16 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
       birthDate: 'participants.validation.birthDateRequired',
       emergencyContactName: 'participants.validation.emergencyContactNameRequired',
       emergencyContactPhone: 'participants.validation.emergencyContactPhoneRequired',
+      emergencyContactEmail: 'participants.validation.emergencyContactEmailRequired',
+      emergencyContactAddress: 'participants.validation.emergencyContactAddressRequired',
+      emergencyContactCity: 'participants.validation.emergencyContactCityRequired',
       emergencyContactRelationship: 'participants.validation.emergencyContactRelationshipRequired',
+      goal: 'participants.validation.goalRequired',
+      objectives: 'participants.validation.objectivesRequired',
+      activities: 'participants.validation.activitiesRequired',
+      timeframe: 'participants.validation.timeframeRequired',
+      responsiblePerson: 'participants.validation.responsiblePersonRequired',
+      evaluationCriteria: 'participants.validation.evaluationCriteriaRequired',
     },
   };
 
@@ -96,20 +105,16 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         maritalStatusId: ['', Validators.required],
         healthInsuranceId: ['', Validators.required],
         customHealthInsurance: [''],
-        housingTypeId: ['', Validators.required],
         // Emergency Contact fields
         emergencyContactName: ['', Validators.required],
         emergencyContactPhone: ['', [Validators.required, Validators.pattern(/^(\+57)?[0-9]{10}$/)]],
+        emergencyContactEmail: ['', [Validators.required, Validators.email]],
+        emergencyContactAddress: ['', Validators.required],
+        emergencyContactCity: ['', Validators.required],
         emergencyContactRelationship: ['', Validators.required],
       }),
 
-      familyComposition: this.formBuilder.group({
-        name: ['', Validators.required],
-        birthDate: [''],
-        occupation: [''],
-        relationshipId: [''],
-        academicLevelId: [''],
-      }),
+      familyComposition: this.formBuilder.array([this.createFamilyMemberForm()]),
 
       consultationReason: this.formBuilder.group({
         reason: [''],
@@ -141,7 +146,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         incomeLevel: [''], // "Menos de 1 SMLV", "1 SMLV", "Más de 1 SMLV"
         occupationalHistory: [''],
         housing: [''],
-        housingTypeId: [''], // Moved from personalData
+        housingTypeId: ['', Validators.required], // Moved from personalData
       }),
 
       physicalHealthHistory: this.formBuilder.group({
@@ -170,10 +175,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         problemAnalysis: [''], // "Indique el enfoque teórico desde el cual abordará el proceso de ayuda"
       }),
 
-      interventionPlan: this.formBuilder.group({
-        description: [''],
-        // Add intervention plan table fields here as needed
-      }),
+      interventionPlan: this.formBuilder.array([this.createInterventionPlanItem()]),
 
       progressNotes: this.formBuilder.array([this.createEmptyProgressNote()]),
 
@@ -647,5 +649,78 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
       { value: 'oneSMLV', label: 'participants.incomeLevel.oneSMLV' },
       { value: 'moreThanOne', label: 'participants.incomeLevel.moreThanOne' },
     ];
+  }
+
+  /**
+   * Create a new family member form
+   */
+  createFamilyMemberForm(): FormGroup {
+    return this.formBuilder.group({
+      name: ['', Validators.required],
+      birthDate: [''],
+      occupation: [''],
+      relationshipId: [''],
+      academicLevelId: [''],
+    });
+  }
+
+  /**
+   * Get family composition FormArray
+   */
+  get familyCompositionArray(): FormArray {
+    return this.participantForm.get('familyComposition') as FormArray;
+  }
+
+  /**
+   * Add new family member
+   */
+  addFamilyMember(): void {
+    this.familyCompositionArray.push(this.createFamilyMemberForm());
+  }
+
+  /**
+   * Remove family member at specific index
+   */
+  removeFamilyMember(index: number): void {
+    if (this.familyCompositionArray.length > 1) {
+      this.familyCompositionArray.removeAt(index);
+    }
+  }
+
+  /**
+   * Create a new intervention plan item
+   */
+  createInterventionPlanItem(): FormGroup {
+    return this.formBuilder.group({
+      goal: ['', Validators.required], // Meta
+      objectives: ['', Validators.required], // Objetivos
+      activities: ['', Validators.required], // Actividades o técnicas
+      timeframe: ['', Validators.required], // Tiempo
+      responsiblePerson: ['', Validators.required], // Persona responsable
+      evaluationCriteria: ['', Validators.required], // Criterio de evaluación
+    });
+  }
+
+  /**
+   * Get intervention plan FormArray
+   */
+  get interventionPlanArray(): FormArray {
+    return this.participantForm.get('interventionPlan') as FormArray;
+  }
+
+  /**
+   * Add new intervention plan item
+   */
+  addInterventionPlanItem(): void {
+    this.interventionPlanArray.push(this.createInterventionPlanItem());
+  }
+
+  /**
+   * Remove intervention plan item at specific index
+   */
+  removeInterventionPlanItem(index: number): void {
+    if (this.interventionPlanArray.length > 1) {
+      this.interventionPlanArray.removeAt(index);
+    }
   }
 }
