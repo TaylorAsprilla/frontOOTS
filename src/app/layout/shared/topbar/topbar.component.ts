@@ -208,22 +208,22 @@ export class TopbarComponent implements OnInit {
   _fetchProfileOptions(): void {
     this.profileOptions = [
       {
-        label: 'Mi Cuenta',
+        label: 'navigation.myAccount',
         icon: 'fe-user',
         redirectTo: '/apps/contacts/profile',
       },
       {
-        label: 'Configuración',
+        label: 'navigation.settings',
         icon: 'fe-settings',
         redirectTo: '/dashboard/dashboard-1', // Temporary redirect until settings page is ready
       },
       {
-        label: 'Cambiar Contraseña',
+        label: 'auth.changePassword',
         icon: 'fe-lock',
         redirectTo: '/auth/lock-screen',
       },
       {
-        label: 'Cerrar Sesión',
+        label: 'navigation.logout',
         icon: 'fe-log-out',
         redirectTo: '/auth/logout',
       },

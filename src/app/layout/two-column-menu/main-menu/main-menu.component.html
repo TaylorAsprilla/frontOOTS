@@ -3,7 +3,7 @@
     @for (menu of menuItems; track menu; let i = $index) {
     <div class="twocolumn-menu-item" [id]="menu.key" [class.d-block]="openMenuItems.includes(menu.key!)">
       <div class="title-box">
-        <h5 class="menu-title">{{ menu.label }}</h5>
+        <h5 class="menu-title">{{ menu.label | transloco }}</h5>
         <ul class="nav flex-column">
           @for (menuItem of menu.children; track menuItem) {
           <!-- menu item without any child -->
@@ -57,7 +57,7 @@
       @if (menu.badge) {
       <span class="badge bg-{{ menu.badge.variant }} rounded-pill float-end">{{ menu.badge.text }}</span>
       }
-      <span>{{ menu.label }}</span>
+      <span>{{ menu.label | transloco }}</span>
       @if (!menu.badge) {
       <span class="menu-arrow"></span>
       }
@@ -109,6 +109,6 @@
     @if (menu.badge) {
     <span class="badge bg-{{ menu.badge.variant }}  float-end">{{ menu.badge.text }}</span>
     }
-    <span>{{ menu.label }}</span>
+    <span>{{ menu.label | transloco }}</span>
   </a>
 </ng-template>

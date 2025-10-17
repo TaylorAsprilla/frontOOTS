@@ -159,7 +159,7 @@
           @for (option of profileOptions; track option) {
           <a class="dropdown-item notify-item" [routerLink]="option.redirectTo" ngbDropdownItem>
             <i class="{{ option.icon }} me-1"></i>
-            <span>{{ option.label }}</span>
+            <span>{{ option.label | transloco }}</span>
           </a>
           }
         </div>

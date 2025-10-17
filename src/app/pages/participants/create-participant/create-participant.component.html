@@ -31,13 +31,13 @@
                   <li [ngbNavItem]="1">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-account-circle me-1"></i>
-                      <span class="d-none d-sm-inline">Datos Personales</span>
+                      <span class="d-none d-sm-inline">{{ 'participants.personalData' | transloco }}</span>
                     </a>
                     <ng-template ngbNavContent>
                       <p>
                         <ngb-progressbar
                           type="success"
-                          [value]="16.6"
+                          [value]="7.14"
                           [striped]="true"
                           [animated]="true"
                           class="mb-3"
@@ -47,7 +47,9 @@
                       <div class="row" formGroupName="personalData">
                         <div class="col-12">
                           <div class="row mb-3">
-                            <label class="col-md-3 col-form-label obligatorio" for="firstName"> Primer Nombre </label>
+                            <label class="col-md-3 col-form-label obligatorio" for="firstName">
+                              {{ 'participants.firstName' | transloco }}
+                            </label>
                             <div class="col-md-9">
                               <input
                                 type="text"
@@ -525,13 +527,13 @@
                   <li [ngbNavItem]="2">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-face-profile me-1"></i>
-                      <span class="d-none d-sm-inline">Composición Familiar</span>
+                      <span class="d-none d-sm-inline">{{ 'participants.familyComposition' | transloco }}</span>
                     </a>
                     <ng-template ngbNavContent>
                       <p>
                         <ngb-progressbar
                           type="success"
-                          [value]="33.3"
+                          [value]="14.29"
                           [striped]="true"
                           [animated]="true"
                           class="mb-3"
@@ -708,13 +710,13 @@
                   <li [ngbNavItem]="3">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-school me-1"></i>
-                      <span class="d-none d-sm-inline">Historial Bio – psicosocial</span>
+                      <span class="d-none d-sm-inline">{{ 'participants.bioHistory' | transloco }}</span>
                     </a>
                     <ng-template ngbNavContent>
                       <p>
                         <ngb-progressbar
                           type="success"
-                          [value]="100"
+                          [value]="21.43"
                           [striped]="true"
                           [animated]="true"
                           class="mb-3"
@@ -881,7 +883,7 @@
                       <p>
                         <ngb-progressbar
                           type="success"
-                          [value]="49.3"
+                          [value]="28.57"
                           [striped]="true"
                           [animated]="true"
                           class="mb-3"
@@ -937,7 +939,7 @@
                       <p>
                         <ngb-progressbar
                           type="success"
-                          [value]="66"
+                          [value]="35.71"
                           [striped]="true"
                           [animated]="true"
                           class="mb-3"
@@ -1206,7 +1208,7 @@
                       <p>
                         <ngb-progressbar
                           type="success"
-                          [value]="83"
+                          [value]="42.86"
                           [striped]="true"
                           [animated]="true"
                           class="mb-3"
@@ -1256,7 +1258,7 @@
                       <p>
                         <ngb-progressbar
                           type="success"
-                          [value]="100"
+                          [value]="50"
                           [striped]="true"
                           [animated]="true"
                           class="mb-3"
@@ -1354,6 +1356,16 @@
                       <span class="d-none d-sm-inline">Historial Salud Física</span>
                     </a>
                     <ng-template ngbNavContent>
+                      <p>
+                        <ngb-progressbar
+                          type="success"
+                          [value]="57.14"
+                          [striped]="true"
+                          [animated]="true"
+                          class="mb-3"
+                          height="7px"
+                        ></ngb-progressbar>
+                      </p>
                       <!-- Contenido similar al anterior pero para salud física -->
                       <div class="row" formGroupName="physicalHealthHistory">
                         <div class="col-12">
@@ -1467,8 +1479,8 @@
                     <ng-template ngbNavContent>
                       <p>
                         <ngb-progressbar
-                          type="info"
-                          [value]="100"
+                          type="success"
+                          [value]="64.29"
                           [striped]="true"
                           [animated]="true"
                           class="mb-3"
@@ -1605,6 +1617,16 @@
                       <span class="d-none d-sm-inline">Ponderación</span>
                     </a>
                     <ng-template ngbNavContent>
+                      <p>
+                        <ngb-progressbar
+                          type="success"
+                          [value]="71.43"
+                          [striped]="true"
+                          [animated]="true"
+                          class="mb-3"
+                          height="7px"
+                        ></ngb-progressbar>
+                      </p>
                       <div class="row" formGroupName="assessment">
                         <div class="col-12">
                           <div class="row mb-3">
@@ -1696,19 +1718,32 @@
                   <li [ngbNavItem]="11">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-clipboard-check me-1"></i>
-                      <span class="d-none d-sm-inline">Plan de Intervención</span>
+                      <span class="d-none d-sm-inline">{{ 'participants.interventionPlan' | transloco }}</span>
                     </a>
                     <ng-template ngbNavContent>
+                      <p>
+                        <ngb-progressbar
+                          type="success"
+                          [value]="78.57"
+                          [striped]="true"
+                          [animated]="true"
+                          class="mb-3"
+                          height="7px"
+                        ></ngb-progressbar>
+                      </p>
                       <div class="row" formArrayName="interventionPlan">
                         <div class="col-12">
                           <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h5 class="mb-0"><i class="mdi mdi-clipboard-check me-2"></i>Plan de Intervención</h5>
+                            <h5 class="mb-0">
+                              <i class="mdi mdi-clipboard-check me-2"></i
+                              >{{ 'participants.interventionPlan' | transloco }}
+                            </h5>
                             <button
                               type="button"
                               class="btn btn-primary btn-sm add-intervention-btn"
                               (click)="addInterventionPlanItem()"
                             >
-                              <i class="mdi mdi-plus me-1"></i>Agregar Item
+                              <i class="mdi mdi-plus me-1"></i>{{ 'participants.addInterventionItem' | transloco }}
                             </button>
                           </div>
 
@@ -1724,7 +1759,9 @@
                                   class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center"
                                 >
                                   <h6 class="mb-0">
-                                    <i class="mdi mdi-target me-2"></i>Item {{ i + 1 }} - Plan de Intervención
+                                    <i class="mdi mdi-target me-2"></i
+                                    >{{ 'participants.interventionItem' | transloco }} {{ i + 1 }} -
+                                    {{ 'participants.interventionPlan' | transloco }}
                                   </h6>
                                   <button
                                     *ngIf="interventionPlanArray.length > 1"
@@ -1741,7 +1778,7 @@
                                     <!-- Meta -->
                                     <div class="col-md-6 mb-3">
                                       <label class="form-label fw-bold text-primary">
-                                        <i class="mdi mdi-bullseye me-1"></i>Meta
+                                        <i class="mdi mdi-bullseye me-1"></i>{{ 'participants.goal' | transloco }}
                                       </label>
                                       <textarea
                                         class="form-control"
@@ -1761,7 +1798,8 @@
                                     <!-- Objetivos -->
                                     <div class="col-md-6 mb-3">
                                       <label class="form-label fw-bold text-success">
-                                        <i class="mdi mdi-checkbox-marked-circle me-1"></i>Objetivos
+                                        <i class="mdi mdi-checkbox-marked-circle me-1"></i
+                                        >{{ 'participants.objectives' | transloco }}
                                       </label>
                                       <textarea
                                         class="form-control"
@@ -1781,7 +1819,7 @@
                                     <!-- Actividades o Técnicas -->
                                     <div class="col-12 mb-3">
                                       <label class="form-label fw-bold text-info">
-                                        <i class="mdi mdi-cog me-1"></i>Actividades o Técnicas
+                                        <i class="mdi mdi-cog me-1"></i>{{ 'participants.activities' | transloco }}
                                       </label>
                                       <textarea
                                         class="form-control"
@@ -1801,7 +1839,8 @@
                                     <!-- Tiempo y Responsable -->
                                     <div class="col-md-6 mb-3">
                                       <label class="form-label fw-bold text-warning">
-                                        <i class="mdi mdi-clock-outline me-1"></i>Tiempo Estimado
+                                        <i class="mdi mdi-clock-outline me-1"></i
+                                        >{{ 'participants.timeframe' | transloco }}
                                       </label>
                                       <input
                                         type="text"
@@ -1820,7 +1859,8 @@
 
                                     <div class="col-md-6 mb-3">
                                       <label class="form-label fw-bold text-secondary">
-                                        <i class="mdi mdi-account-tie me-1"></i>Persona Responsable
+                                        <i class="mdi mdi-account-tie me-1"></i
+                                        >{{ 'participants.responsiblePerson' | transloco }}
                                       </label>
                                       <input
                                         type="text"
@@ -1842,7 +1882,8 @@
                                     <!-- Criterio de Evaluación -->
                                     <div class="col-12 mb-3">
                                       <label class="form-label fw-bold text-danger">
-                                        <i class="mdi mdi-check-circle me-1"></i>Criterios de Evaluación
+                                        <i class="mdi mdi-check-circle me-1"></i
+                                        >{{ 'participants.evaluationCriteria' | transloco }}
                                       </label>
                                       <textarea
                                         class="form-control"
@@ -1872,13 +1913,14 @@
                           >
                             <div class="text-muted">
                               <i class="mdi mdi-clipboard-outline display-4"></i>
-                              <p class="mt-2">No hay items en el plan de intervención</p>
+                              <p class="mt-2">{{ 'participants.noInterventionItems' | transloco }}</p>
                               <button
                                 type="button"
                                 class="btn btn-primary add-intervention-btn"
                                 (click)="addInterventionPlanItem()"
                               >
-                                <i class="mdi mdi-plus me-1"></i>Agregar Primer Item
+                                <i class="mdi mdi-plus me-1"></i
+                                >{{ 'participants.addFirstInterventionItem' | transloco }}
                               </button>
                             </div>
                           </div>
@@ -1901,33 +1943,43 @@
                   <li [ngbNavItem]="12">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-note-text me-1"></i>
-                      <span class="d-none d-sm-inline">Notas de Progreso</span>
+                      <span class="d-none d-sm-inline">{{ 'participants.progressNotes' | transloco }}</span>
                     </a>
                     <ng-template ngbNavContent>
+                      <p>
+                        <ngb-progressbar
+                          type="success"
+                          [value]="85.71"
+                          [striped]="true"
+                          [animated]="true"
+                          class="mb-3"
+                          height="7px"
+                        ></ngb-progressbar>
+                      </p>
                       <div class="mb-3">
                         <div class="alert alert-info">
                           <h6 class="alert-heading mb-2">
-                            <i class="mdi mdi-information me-1"></i>Información sobre Notas de Progreso
+                            <i class="mdi mdi-information me-1"></i>{{ 'participants.progressNotesInfo' | transloco }}
                           </h6>
                           <div class="row">
                             <div class="col-md-6">
-                              <strong>Tipos de Abordaje:</strong>
+                              <strong>{{ 'participants.approachTypes' | transloco }}:</strong>
                               <ul class="mb-0 mt-1 small">
-                                <li><strong>CP:</strong> Consulta Presencial</li>
-                                <li><strong>E:</strong> E-mail</li>
-                                <li><strong>EC:</strong> Encuentro Casual</li>
-                                <li><strong>Ll:</strong> Llamada</li>
-                                <li><strong>TC:</strong> Tele Consulta</li>
-                                <li><strong>V:</strong> Virtual</li>
+                                <li><strong>CP:</strong> {{ 'participants.approachTypeCodes.CP' | transloco }}</li>
+                                <li><strong>E:</strong> {{ 'participants.approachTypeCodes.E' | transloco }}</li>
+                                <li><strong>EC:</strong> {{ 'participants.approachTypeCodes.EC' | transloco }}</li>
+                                <li><strong>Ll:</strong> {{ 'participants.approachTypeCodes.Ll' | transloco }}</li>
+                                <li><strong>TC:</strong> {{ 'participants.approachTypeCodes.TC' | transloco }}</li>
+                                <li><strong>V:</strong> {{ 'participants.approachTypeCodes.V' | transloco }}</li>
                               </ul>
                             </div>
                             <div class="col-md-6">
-                              <strong>Procesos:</strong>
+                              <strong>{{ 'participants.processes' | transloco }}:</strong>
                               <ul class="mb-2 mt-1 small">
-                                <li><strong>S:</strong> Seguimiento</li>
-                                <li><strong>C:</strong> Cierre</li>
-                                <li><strong>T:</strong> Transferencia</li>
-                                <li><strong>D:</strong> Derivación</li>
+                                <li><strong>S:</strong> {{ 'participants.processCodes.S' | transloco }}</li>
+                                <li><strong>C:</strong> {{ 'participants.processCodes.C' | transloco }}</li>
+                                <li><strong>T:</strong> {{ 'participants.processCodes.T' | transloco }}</li>
+                                <li><strong>D:</strong> {{ 'participants.processCodes.D' | transloco }}</li>
                               </ul>
                               <p class="mb-0 small">
                                 <strong>Acciones:</strong> El botón <span class="badge bg-danger">🗑️</span> permite
@@ -1941,7 +1993,7 @@
                       <div class="progress-notes-container">
                         <div class="d-flex justify-content-end mb-4">
                           <button class="btn btn-primary btn-lg" (click)="addProgressNote()" title="Agregar nueva nota">
-                            <i class="mdi mdi-plus me-1"></i>Agregar Nota de Progreso
+                            <i class="mdi mdi-plus me-1"></i>{{ 'participants.addProgressNote' | transloco }}
                           </button>
                         </div>
 
@@ -1956,7 +2008,8 @@
                                 class="card-header bg-gradient-success text-white d-flex justify-content-between align-items-center"
                               >
                                 <h6 class="mb-0">
-                                  <i class="mdi mdi-note-text me-2"></i>Nota de Progreso #{{ i + 1 }}
+                                  <i class="mdi mdi-note-text me-2"></i
+                                  >{{ 'participants.progressNote' | transloco }} #{{ i + 1 }}
                                 </h6>
                                 <button
                                   *ngIf="progressNotes.length > 1"
@@ -1973,7 +2026,7 @@
                                   <!-- Fecha y Hora -->
                                   <div class="col-md-3 mb-3">
                                     <label class="form-label fw-bold text-primary">
-                                      <i class="mdi mdi-calendar me-1"></i>Fecha
+                                      <i class="mdi mdi-calendar me-1"></i>{{ 'participants.date' | transloco }}
                                     </label>
                                     <input
                                       type="date"
@@ -1988,7 +2041,7 @@
 
                                   <div class="col-md-3 mb-3">
                                     <label class="form-label fw-bold text-primary">
-                                      <i class="mdi mdi-clock me-1"></i>Hora
+                                      <i class="mdi mdi-clock me-1"></i>{{ 'participants.time' | transloco }}
                                     </label>
                                     <input type="time" class="form-control" formControlName="time" />
                                   </div>
@@ -1996,7 +2049,8 @@
                                   <!-- Tipo de Abordaje -->
                                   <div class="col-md-3 mb-3">
                                     <label class="form-label fw-bold text-info">
-                                      <i class="mdi mdi-account-group me-1"></i>Tipo de Abordaje
+                                      <i class="mdi mdi-account-group me-1"></i
+                                      >{{ 'participants.approachType' | transloco }}
                                     </label>
                                     <select
                                       class="form-select"
@@ -2004,12 +2058,24 @@
                                       [class.is-invalid]="hasFieldError('progressNotes.' + i + '.approachType')"
                                     >
                                       <option value="" disabled selected>Seleccione tipo</option>
-                                      <option value="CP">CP - Consulta Presencial</option>
-                                      <option value="E">E - E-mail</option>
-                                      <option value="EC">EC - Encuentro Casual</option>
-                                      <option value="Ll">Ll - Llamada</option>
-                                      <option value="TC">TC - Tele Consulta</option>
-                                      <option value="V">V - Virtual</option>
+                                      <option value="CP">
+                                        CP - {{ 'participants.approachTypeCodes.CP' | transloco }}
+                                      </option>
+                                      <option value="E">
+                                        E - {{ 'participants.approachTypeCodes.E' | transloco }}
+                                      </option>
+                                      <option value="EC">
+                                        EC - {{ 'participants.approachTypeCodes.EC' | transloco }}
+                                      </option>
+                                      <option value="Ll">
+                                        Ll - {{ 'participants.approachTypeCodes.Ll' | transloco }}
+                                      </option>
+                                      <option value="TC">
+                                        TC - {{ 'participants.approachTypeCodes.TC' | transloco }}
+                                      </option>
+                                      <option value="V">
+                                        V - {{ 'participants.approachTypeCodes.V' | transloco }}
+                                      </option>
                                     </select>
                                     <div
                                       class="invalid-feedback"
@@ -2022,7 +2088,7 @@
                                   <!-- Proceso -->
                                   <div class="col-md-3 mb-3">
                                     <label class="form-label fw-bold text-warning">
-                                      <i class="mdi mdi-cogs me-1"></i>Proceso
+                                      <i class="mdi mdi-cogs me-1"></i>{{ 'participants.process' | transloco }}
                                     </label>
                                     <select
                                       class="form-select"
@@ -2030,10 +2096,10 @@
                                       [class.is-invalid]="hasFieldError('progressNotes.' + i + '.process')"
                                     >
                                       <option value="" disabled selected>Seleccione proceso</option>
-                                      <option value="S">S - Seguimiento</option>
-                                      <option value="C">C - Cierre</option>
-                                      <option value="T">T - Transferencia</option>
-                                      <option value="D">D - Derivación</option>
+                                      <option value="S">S - {{ 'participants.processCodes.S' | transloco }}</option>
+                                      <option value="C">C - {{ 'participants.processCodes.C' | transloco }}</option>
+                                      <option value="T">T - {{ 'participants.processCodes.T' | transloco }}</option>
+                                      <option value="D">D - {{ 'participants.processCodes.D' | transloco }}</option>
                                     </select>
                                     <div
                                       class="invalid-feedback"
@@ -2046,7 +2112,8 @@
                                   <!-- Resumen de Intervención -->
                                   <div class="col-12 mb-3">
                                     <label class="form-label fw-bold text-success">
-                                      <i class="mdi mdi-file-document-edit me-1"></i>Resumen de Intervención
+                                      <i class="mdi mdi-file-document-edit me-1"></i
+                                      >{{ 'participants.summary' | transloco }}
                                     </label>
                                     <textarea
                                       class="form-control"
@@ -2066,7 +2133,7 @@
                                   <!-- Observaciones y Acuerdos -->
                                   <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold text-secondary">
-                                      <i class="mdi mdi-eye me-1"></i>Observaciones
+                                      <i class="mdi mdi-eye me-1"></i>{{ 'participants.observations' | transloco }}
                                     </label>
                                     <textarea
                                       class="form-control"
@@ -2078,7 +2145,7 @@
 
                                   <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold text-danger">
-                                      <i class="mdi mdi-handshake me-1"></i>Acuerdos
+                                      <i class="mdi mdi-handshake me-1"></i>{{ 'participants.agreements' | transloco }}
                                     </label>
                                     <textarea
                                       class="form-control"
@@ -2097,9 +2164,9 @@
                         <div *ngIf="progressNotes.length === 0" class="empty-notes-state text-center py-5">
                           <div class="text-muted">
                             <i class="mdi mdi-note-outline display-4"></i>
-                            <p class="mt-2">No hay notas de progreso registradas</p>
+                            <p class="mt-2">{{ 'participants.noProgressNotes' | transloco }}</p>
                             <button type="button" class="btn btn-success" (click)="addProgressNote()">
-                              <i class="mdi mdi-plus me-1"></i>Agregar Primera Nota
+                              <i class="mdi mdi-plus me-1"></i>{{ 'participants.addFirstProgressNote' | transloco }}
                             </button>
                           </div>
                         </div>
@@ -2115,6 +2182,16 @@
                       <span class="d-none d-sm-inline">Referidos</span>
                     </a>
                     <ng-template ngbNavContent>
+                      <p>
+                        <ngb-progressbar
+                          type="success"
+                          [value]="92.86"
+                          [striped]="true"
+                          [animated]="true"
+                          class="mb-3"
+                          height="7px"
+                        ></ngb-progressbar>
+                      </p>
                       <div class="row" formGroupName="referrals">
                         <div class="col-12">
                           <label>V. MENCIONAR Y JUSTIFICAR LOS REFERIDOS QUE SE REALIZARÁN</label>
@@ -2129,18 +2206,26 @@
                   <li [ngbNavItem]="14">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-bookmark-check me-1"></i>
-                      <span class="d-none d-sm-inline">Nota de Cierre</span>
+                      <span class="d-none d-sm-inline">{{ 'participants.closingNote' | transloco }}</span>
                     </a>
                     <ng-template ngbNavContent>
+                      <p>
+                        <ngb-progressbar
+                          type="success"
+                          [value]="100"
+                          [striped]="true"
+                          [animated]="true"
+                          class="mb-3"
+                          height="7px"
+                        ></ngb-progressbar>
+                      </p>
                       <div class="mb-3">
                         <div class="alert alert-warning">
                           <h6 class="alert-heading mb-2">
-                            <i class="mdi mdi-information me-1"></i>Información sobre Nota de Cierre
+                            <i class="mdi mdi-information me-1"></i>{{ 'participants.closingNoteInfo' | transloco }}
                           </h6>
                           <p class="mb-0 small">
-                            Complete todos los campos para documentar adecuadamente el cierre del proceso de
-                            intervención con el participante. Esta información es fundamental para el seguimiento y
-                            evaluación del programa.
+                            {{ 'participants.closingNoteDescription' | transloco }}
                           </p>
                         </div>
                       </div>
@@ -2157,7 +2242,7 @@
                               <!-- Motivo de Cierre -->
                               <div class="col-12 mb-4">
                                 <label class="form-label fw-bold text-danger">
-                                  <i class="mdi mdi-help-circle me-1"></i>Motivo de Cierre
+                                  <i class="mdi mdi-help-circle me-1"></i>{{ 'participants.closureReason' | transloco }}
                                 </label>
                                 <textarea
                                   class="form-control"
@@ -2174,7 +2259,7 @@
                               <!-- Logros Alcanzados -->
                               <div class="col-12 mb-4">
                                 <label class="form-label fw-bold text-success">
-                                  <i class="mdi mdi-trophy me-1"></i>Logros Alcanzados
+                                  <i class="mdi mdi-trophy me-1"></i>{{ 'participants.achievements' | transloco }}
                                 </label>
                                 <textarea
                                   class="form-control"
@@ -2191,7 +2276,7 @@
                               <!-- Recomendaciones -->
                               <div class="col-12 mb-4">
                                 <label class="form-label fw-bold text-info">
-                                  <i class="mdi mdi-lightbulb me-1"></i>Recomendaciones
+                                  <i class="mdi mdi-lightbulb me-1"></i>{{ 'participants.recommendations' | transloco }}
                                 </label>
                                 <textarea
                                   class="form-control"
@@ -2208,7 +2293,8 @@
                               <!-- Observaciones Generales -->
                               <div class="col-12 mb-3">
                                 <label class="form-label fw-bold text-secondary">
-                                  <i class="mdi mdi-note-text me-1"></i>Observaciones Generales
+                                  <i class="mdi mdi-note-text me-1"></i
+                                  >{{ 'participants.generalObservations' | transloco }}
                                 </label>
                                 <textarea
                                   class="form-control"
@@ -2233,7 +2319,7 @@
                           </li>
                           <li class="next list-inline-item float-end">
                             <button type="submit" class="btn btn-success btn-lg" [disabled]="participantForm.invalid">
-                              <i class="mdi mdi-check-circle me-1"></i>Finalizar y Guardar
+                              <i class="mdi mdi-check-circle me-1"></i>{{ 'participants.finalizeAndSave' | transloco }}
                             </button>
                           </li>
                         </div>

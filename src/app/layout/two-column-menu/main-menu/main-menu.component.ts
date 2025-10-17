@@ -5,12 +5,13 @@ import { MenuItem } from '../../shared/models/menu.model';
 import { SimplebarAngularModule } from 'simplebar-angular';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { TranslocoModule } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-main-menu',
   templateUrl: './main-menu.component.html',
   styleUrls: ['./main-menu.component.scss'],
-  imports: [SimplebarAngularModule, CommonModule, NgbCollapseModule, RouterModule],
+  imports: [SimplebarAngularModule, CommonModule, NgbCollapseModule, RouterModule, TranslocoModule],
   standalone: true,
 })
 export class MainMenuComponent implements OnInit {

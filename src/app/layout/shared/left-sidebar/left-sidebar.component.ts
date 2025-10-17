@@ -10,12 +10,13 @@ import feather from 'feather-icons';
 import { CommonModule } from '@angular/common';
 import { SimplebarAngularModule } from 'simplebar-angular';
 import { ClickOutsideModule } from 'ng-click-outside';
+import { TranslocoModule } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-left-sidebar',
   templateUrl: './left-sidebar.component.html',
   styleUrls: ['./left-sidebar.component.scss'],
-  imports: [CommonModule, RouterModule, NgbCollapse, SimplebarAngularModule, ClickOutsideModule],
+  imports: [CommonModule, RouterModule, NgbCollapse, SimplebarAngularModule, ClickOutsideModule, TranslocoModule],
   standalone: true,
 })
 export class LeftSidebarComponent implements OnInit, AfterViewInit {

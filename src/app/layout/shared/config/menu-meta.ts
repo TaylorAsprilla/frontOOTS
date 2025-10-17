@@ -5,49 +5,49 @@ const MENU_ITEMS: MenuItem[] = [
   { key: 'navigation', label: 'Navigation', isTitle: true },
   {
     key: 'dashboards',
-    label: 'Inicio',
+    label: 'navigation.dashboard',
     isTitle: false,
     icon: 'airplay',
     collapsed: false,
     link: '/dashboard-1',
   },
 
-  { key: 'administrador', label: 'User Management', isTitle: true },
+  { key: 'administrador', label: 'navigation.administrator', isTitle: true },
 
   {
     key: 'user-management',
-    label: 'User Management',
+    label: 'navigation.userManagement',
     isTitle: false,
     icon: 'users',
     collapsed: true,
     children: [
       {
         key: 'users-list',
-        label: 'Users List',
+        label: 'navigation.usersList',
         link: '/users/list',
         parentKey: 'user-management',
       },
       {
         key: 'users-create',
-        label: 'Create User',
+        label: 'navigation.createUser',
         link: '/users/create',
         parentKey: 'user-management',
       },
       {
         key: 'users-details',
-        label: 'User Details',
+        label: 'navigation.userDetails',
         link: '/users/details',
         parentKey: 'user-management',
       },
       {
         key: 'users-settings',
-        label: 'Settings',
+        label: 'navigation.settings',
         link: '/users/settings',
         parentKey: 'user-management',
       },
       {
         key: 'users-reports',
-        label: 'Reports',
+        label: 'navigation.reports',
         link: '/users/reports',
         parentKey: 'user-management',
       },
@@ -60,24 +60,24 @@ const MENU_ITEMS: MenuItem[] = [
     ],
   },
 
-  { key: 'participants', label: 'Participants', isTitle: true },
+  { key: 'participants', label: 'navigation.participants', isTitle: true },
 
   {
     key: 'participants-management',
-    label: 'Participants',
+    label: 'navigation.participants',
     isTitle: false,
     icon: 'users',
     collapsed: true,
     children: [
       {
         key: 'participants-list',
-        label: 'Participants List',
+        label: 'navigation.participantsList',
         link: '/participants/list',
         parentKey: 'participants-management',
       },
       {
         key: 'participants-create',
-        label: 'Create Participant',
+        label: 'navigation.createParticipant',
         link: '/participants/create',
         parentKey: 'participants-management',
       },
@@ -85,29 +85,29 @@ const MENU_ITEMS: MenuItem[] = [
   },
   {
     key: 'participants-documents',
-    label: 'Genograma',
+    label: 'navigation.genogram',
     link: '/forms/upload',
     icon: 'file',
   },
 
   {
     key: 'participants-multimedia',
-    label: 'Documentos (Multimedia, PDF, etc)',
+    label: 'navigation.documents',
     link: '/forms/upload',
     icon: 'file',
   },
 
-  { key: 'apps', label: 'Citas', isTitle: true },
+  { key: 'apps', label: 'navigation.appointments', isTitle: true },
   {
     key: 'apps-calendar',
-    label: 'Agenda',
+    label: 'navigation.agenda',
     isTitle: false,
     icon: 'calendar',
     link: '/apps/calendar',
   },
   {
     key: 'apps-tasks',
-    label: 'Tareas',
+    label: 'navigation.tasks',
     isTitle: false,
     icon: 'clipboard',
     collapsed: true,
@@ -126,7 +126,7 @@ const MENU_ITEMS: MenuItem[] = [
       // },
       {
         key: 'task-kanban',
-        label: 'Lista de tareas',
+        label: 'navigation.tasksList',
         link: '/apps/tasks/kanban',
         parentKey: 'apps-tasks',
       },
