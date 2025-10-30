@@ -8,8 +8,8 @@ describe('RecentFilesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RecentFilesComponent ]
-    })
+    imports: [RecentFilesComponent]
+})
     .compileComponents();
   });
 

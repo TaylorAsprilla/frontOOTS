@@ -1,25 +1,36 @@
 <div id="wrapper">
-    <!-- topbar -->
-    <app-topbar (settingsButtonClicked)="onSettingsButtonClicked()" (mobileMenuButtonClicked)="onToggleMobileMenu()"
-        layoutType="vertical"></app-topbar>
+  <!-- topbar -->
+  <app-topbar
+    (settingsButtonClicked)="onSettingsButtonClicked()"
+    (mobileMenuButtonClicked)="onToggleMobileMenu()"
+    layoutType="vertical"
+  ></app-topbar>
 
-    <!-- left side bar-->
-    <app-left-sidebar [includeUserProfile]="showSidebarUserInfo">
-    </app-left-sidebar>
+  <!-- left side bar-->
+  <app-left-sidebar [includeUserProfile]="showSidebarUserInfo"> </app-left-sidebar>
 
-    <div class="content-page">
-        <div class="content">
-            <!-- content -->
-            <div class="container-fluid" *ngIf="reRender">
-                <router-outlet></router-outlet>
-            </div>
-        </div>
-        <!-- footer -->
-        <app-footer></app-footer>
+  <div class="content-page">
+    <div class="content">
+      <!-- content -->
+      @if (reRender) {
+      <div class="container-fluid">
+        <router-outlet></router-outlet>
+      </div>
+      }
     </div>
+    <!-- footer -->
+    <app-footer></app-footer>
+  </div>
 </div>
 <!-- right sidebar -->
-<app-right-sidebar layoutType="vertical" [layoutColor]="layoutColor" [layoutWidth]="layoutWidth"
-    [menuPosition]="menuPosition" [leftSidebarTheme]="leftSidebarTheme" [leftSidebarType]="leftSidebarType"
-    [topbarTheme]="topbarTheme" [showSidebarUserInfo]="showSidebarUserInfo">
+<app-right-sidebar
+  layoutType="vertical"
+  [layoutColor]="layoutColor"
+  [layoutWidth]="layoutWidth"
+  [menuPosition]="menuPosition"
+  [leftSidebarTheme]="leftSidebarTheme"
+  [leftSidebarType]="leftSidebarType"
+  [topbarTheme]="topbarTheme"
+  [showSidebarUserInfo]="showSidebarUserInfo"
+>
 </app-right-sidebar>

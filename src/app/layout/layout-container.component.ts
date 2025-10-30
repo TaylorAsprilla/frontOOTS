@@ -1,32 +1,72 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
+
+// RouterOutlet not used directly here; child layouts host router-outlet.
 import { environment } from 'src/environments/environment.prod';
-import { EventService } from '../core/service/event.service';
-import { LAYOUT_DETACHED, LAYOUT_HORIZONTAL, LAYOUT_TWO_COLUMN_MENU, LAYOUT_VERTICAL, LAYOUT_WIDTH_BOXED, LEFT_SIDEBAR_TYPE_CONDENSED, LEFT_SIDEBAR_TYPE_DEFAULT } from './shared/config/layout.model';
+import { EventService } from '../core/services/event.service';
+import {
+  LAYOUT_DETACHED,
+  LAYOUT_HORIZONTAL,
+  LAYOUT_TWO_COLUMN_MENU,
+  LAYOUT_VERTICAL,
+  LAYOUT_WIDTH_BOXED,
+  LEFT_SIDEBAR_TYPE_CONDENSED,
+  LEFT_SIDEBAR_TYPE_DEFAULT,
+} from './shared/config/layout.model';
 import { getLayoutConfig } from './shared/helper/utils';
 import { LayoutConfig } from './shared/models/layout-config.model';
+import { TwoColumnMenuLayoutComponent } from './two-column-menu/layout/layout.component';
+import { DetachedLayoutComponent } from './detached/layout/layout.component';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { NgbCollapseModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { SimplebarAngularModule } from 'simplebar-angular';
+import { ClickOutsideModule } from 'ng-click-outside';
+import { HorizontalLayoutComponent } from './horizontal/layout/layout.component';
+import { VerticalLayoutComponent } from './vertical/layout/layout.component';
 
 @Component({
   selector: 'app-layout-container',
   templateUrl: './layout-container.component.html',
-  styleUrls: ['./layout-container.component.scss']
+  styleUrls: ['./layout-container.component.scss'],
+  standalone: true,
+  imports: [
+    TwoColumnMenuLayoutComponent,
+    DetachedLayoutComponent,
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    NgbDropdownModule,
+    NgbCollapseModule,
+    SimplebarAngularModule,
+    ClickOutsideModule,
+    HorizontalLayoutComponent,
+    VerticalLayoutComponent,
+  ],
 })
 export class LayoutContainerComponent implements OnInit, AfterViewInit {
-
   // layout related config
   layoutType!: string;
   layoutColor!: string;
   layoutConfig!: LayoutConfig;
   layoutWidth!: string;
-  configuredDemo: string = "default";
+  configuredDemo: string = 'default';
 
-  constructor (private eventService: EventService) { }
+  constructor(private eventService: EventService) {}
 
   ngOnInit(): void {
     // default settings
     this.configuredDemo = environment.demo;
 
     // tslint:disable-next-line: max-line-length
-    this.layoutType = this.configuredDemo === 'creative' ? LAYOUT_HORIZONTAL : (this.configuredDemo === 'modern' ? LAYOUT_DETACHED : (this.configuredDemo === 'saas' ? LAYOUT_TWO_COLUMN_MENU : LAYOUT_VERTICAL));
+    this.layoutType =
+      this.configuredDemo === 'creative'
+        ? LAYOUT_HORIZONTAL
+        : this.configuredDemo === 'modern'
+        ? LAYOUT_DETACHED
+        : this.configuredDemo === 'saas'
+        ? LAYOUT_TWO_COLUMN_MENU
+        : LAYOUT_VERTICAL;
     this.setLayoutConfig();
 
     // listen to event and change the layout configuarations
@@ -52,9 +92,7 @@ export class LayoutContainerComponent implements OnInit, AfterViewInit {
       }, 20);
     });
 
-
     this.updateDimensions();
-
   }
 
   ngAfterViewInit(): void {
@@ -71,14 +109,13 @@ export class LayoutContainerComponent implements OnInit, AfterViewInit {
   }
 
   /**
- * changes left sidebar type based on screen dimensions
- */
+   * changes left sidebar type based on screen dimensions
+   */
   updateDimensions(): void {
     if (this.layoutType !== LAYOUT_TWO_COLUMN_MENU) {
       if (window.innerWidth >= 768 && window.innerWidth <= 1028) {
         this.eventService.broadcast('changeLeftSidebarType', LEFT_SIDEBAR_TYPE_CONDENSED);
-      }
-      else if (window.innerWidth > 1028) {
+      } else if (window.innerWidth > 1028) {
         this.eventService.broadcast('changeLeftSidebarType', LEFT_SIDEBAR_TYPE_DEFAULT);
       }
     }
@@ -111,7 +148,4 @@ export class LayoutContainerComponent implements OnInit, AfterViewInit {
   isTwoColumnMenuLayoutRequested() {
     return this.layoutType === LAYOUT_TWO_COLUMN_MENU;
   }
-
-
-
 }

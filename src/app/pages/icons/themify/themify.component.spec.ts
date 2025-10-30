@@ -8,8 +8,8 @@ describe('ThemifyComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ThemifyComponent ]
-    })
+    imports: [ThemifyComponent]
+})
     .compileComponents();
   });
 

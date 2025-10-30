@@ -1,14 +1,18 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { SimplebarAngularModule } from 'simplebar-angular';
 import { ToDoItem } from './todo.model';
 
 @Component({
   selector: 'app-widget-todo',
+  standalone: true,
+  imports: [CommonModule, FormsModule, NgbDropdownModule, SimplebarAngularModule],
   templateUrl: './todo.component.html',
-  styleUrls: ['./todo.component.scss']
+  styleUrls: ['./todo.component.scss'],
 })
-
 export class TodoComponent implements OnInit {
-
   @Input() toDoItems: ToDoItem[] = [];
   @Input() height: number = 0;
   @Input() archivable: boolean = false;
@@ -21,10 +25,9 @@ export class TodoComponent implements OnInit {
 
   @ViewChild('addTodo', { static: true }) addTodo!: any;
 
-  constructor () { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   /**
    * changes status of todo item
@@ -57,6 +60,6 @@ export class TodoComponent implements OnInit {
    * Returns the remaining todos
    */
   getInprogressTodoCount(): number {
-    return this.toDoItems.filter((todoItem: ToDoItem) => todoItem.completed === false).length
+    return this.toDoItems.filter((todoItem: ToDoItem) => todoItem.completed === false).length;
   }
 }

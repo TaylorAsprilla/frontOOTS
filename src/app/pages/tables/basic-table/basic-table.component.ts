@@ -1,31 +1,35 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
 import { PersonDetails } from './basic.model';
 import { PERSONLIST } from './data';
 
 @Component({
   selector: 'app-basic-table',
+  standalone: true,
+  imports: [CommonModule, PageTitleComponent],
   templateUrl: './basic-table.component.html',
-  styleUrls: ['./basic-table.component.scss']
+  styleUrls: ['./basic-table.component.scss'],
 })
 export class BasicTableComponent implements OnInit {
-
   pageTitle: BreadcrumbItem[] = [];
   personData: PersonDetails[] = [];
 
-  constructor () { }
+  constructor() {}
 
   ngOnInit(): void {
-    this.pageTitle = [{ label: 'Tables', path: '/' }, { label: 'Basic Tables', path: '/', active: true }];
+    this.pageTitle = [
+      { label: 'Tables', path: '/' },
+      { label: 'Basic Tables', path: '/', active: true },
+    ];
     this._fetchData();
-
   }
 
   /**
-  * fetches data
-  */
+   * fetches data
+   */
   _fetchData(): void {
     this.personData = PERSONLIST;
   }
-
 }

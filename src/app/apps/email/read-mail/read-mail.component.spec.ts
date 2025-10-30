@@ -8,8 +8,8 @@ describe('ReadMailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ReadMailComponent ]
-    })
+    imports: [ReadMailComponent]
+})
     .compileComponents();
   });
 

@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
+import { AdvancedTableComponent } from 'src/app/shared/advanced-table/advanced-table.component';
 import { Column } from 'src/app/shared/advanced-table/advanced-table.component';
 import { SortEvent } from 'src/app/shared/advanced-table/sortable.directive';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
@@ -7,20 +10,24 @@ import { tableData } from './data';
 
 @Component({
   selector: 'app-advance-table',
+  standalone: true,
+  imports: [CommonModule, PageTitleComponent, AdvancedTableComponent],
   templateUrl: './advance.component.html',
-  styleUrls: ['./advance.component.scss']
+  styleUrls: ['./advance.component.scss'],
 })
 export class AdvanceComponent implements OnInit {
-
   pageTitle: BreadcrumbItem[] = [];
   records: AdvancedTable[] = [];
   columns: Column[] = [];
   pageSizeOptions: number[] = [10, 25, 50, 100];
 
-  constructor () { }
+  constructor() {}
 
   ngOnInit(): void {
-    this.pageTitle = [{ label: 'Tables', path: '/' }, { label: 'Advanced Tables', path: '/', active: true }];
+    this.pageTitle = [
+      { label: 'Tables', path: '/' },
+      { label: 'Advanced Tables', path: '/', active: true },
+    ];
     this._fetchData();
     this.initTableCofig();
   }
@@ -53,7 +60,7 @@ export class AdvanceComponent implements OnInit {
         name: 'office',
         label: 'Office',
         formatter: (record: AdvancedTable) => record.office,
-        width: 180
+        width: 180,
       },
       {
         name: 'age',
@@ -69,8 +76,7 @@ export class AdvanceComponent implements OnInit {
         name: 'salary',
         label: 'Salary',
         formatter: (record: AdvancedTable) => record.salary,
-
-      }
+      },
     ];
   }
 
@@ -95,34 +101,33 @@ export class AdvanceComponent implements OnInit {
   }
 
   /**
- * Match table data with search input
- * @param row Table row
- * @param term Search the value
- */
+   * Match table data with search input
+   * @param row Table row
+   * @param term Search the value
+   */
   matches(row: AdvancedTable, term: string) {
-    return row.name.toLowerCase().includes(term)
-      || row.position.toLowerCase().includes(term)
-      || row.office.toLowerCase().includes(term)
-      || String(row.age).includes(term)
-      || row.date.toLowerCase().includes(term)
-      || row.salary.toLowerCase().includes(term);
+    return (
+      row.name.toLowerCase().includes(term) ||
+      row.position.toLowerCase().includes(term) ||
+      row.office.toLowerCase().includes(term) ||
+      String(row.age).includes(term) ||
+      row.date.toLowerCase().includes(term) ||
+      row.salary.toLowerCase().includes(term)
+    );
   }
 
   /**
    * Search Method
-  */
+   */
   searchData(searchTerm: string): void {
     if (searchTerm === '') {
       this._fetchData();
-    }
-    else {
+    } else {
       let updatedData = tableData;
 
       //  filter
-      updatedData = updatedData.filter(record => this.matches(record, searchTerm));
+      updatedData = updatedData.filter((record) => this.matches(record, searchTerm));
       this.records = updatedData;
     }
-
   }
-
 }

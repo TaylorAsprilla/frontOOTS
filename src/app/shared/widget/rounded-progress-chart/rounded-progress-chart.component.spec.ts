@@ -8,8 +8,8 @@ describe('RoundedProgressChartComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RoundedProgressChartComponent ]
-    })
+    imports: [RoundedProgressChartComponent]
+})
     .compileComponents();
   });
 

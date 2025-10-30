@@ -8,8 +8,8 @@ describe('ProgressComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProgressComponent ]
-    })
+    imports: [ProgressComponent]
+})
     .compileComponents();
   });
 

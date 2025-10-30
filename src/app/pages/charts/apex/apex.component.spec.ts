@@ -8,8 +8,8 @@ describe('ApexComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ApexComponent ]
-    })
+    imports: [ApexComponent]
+})
     .compileComponents();
   });
 

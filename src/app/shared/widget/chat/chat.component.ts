@@ -1,23 +1,27 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { SimplebarAngularModule } from 'simplebar-angular';
 import { ChatMessage } from './chat.model';
 
 @Component({
   selector: 'app-widget-chat',
+  standalone: true,
+  imports: [CommonModule, FormsModule, NgbDropdownModule, SimplebarAngularModule],
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.scss']
+  styleUrls: ['./chat.component.scss'],
 })
 export class ChatComponent implements OnInit {
-
   @Input() chatMessages: ChatMessage[] = [];
-  newMessage: string = "";
+  newMessage: string = '';
   submitted: boolean = false;
 
   //reference to chat form
   @ViewChild('chatForm', { static: true }) chatForm!: any;
-  constructor () { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   /**
    * adds new message to chat messages
@@ -30,11 +34,11 @@ export class ChatComponent implements OnInit {
         id: this.chatMessages.length + 1,
         sender: {
           name: 'Dominic',
-          avatar: 'assets/images/users/user-1.jpg'
+          avatar: 'assets/images/users/user-1.jpg',
         },
-        time: today.getHours() + ":" + today.getMinutes(),
-        message: this.newMessage
-      }
+        time: today.getHours() + ':' + today.getMinutes(),
+        message: this.newMessage,
+      };
 
       this.chatMessages.push(newChatMessage);
 
@@ -42,5 +46,4 @@ export class ChatComponent implements OnInit {
       this.submitted = false;
     }
   }
-
 }

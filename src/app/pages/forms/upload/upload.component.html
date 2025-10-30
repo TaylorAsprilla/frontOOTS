@@ -15,7 +15,7 @@
           <select
             class="form-select"
             aria-label="Seleccionar nombre y apellido"
-          >
+            >
             <!-- Opciones del select con nombres y apellidos colombianos -->
             <option value="juana-gonzalez">Juana González</option>
             <option value="pedro-rodriguez">Pedro Rodríguez</option>
@@ -36,7 +36,7 @@
             class="dropzone"
             style="height: auto !important"
             accept="image/jpeg,image/jpg,image/png,image/gif"
-          >
+            >
             <ngx-dropzone-label>
               <i class="h1 text-muted dripicons-cloud-upload"></i>
               <h3>Suelte los archivos aquí o haga clic para cargarlos.</h3>
@@ -49,47 +49,49 @@
           <!-- Preview -->
           <div class="dropzone-previews mt-3" id="file-previews">
             <!-- file preview template -->
-            <div id="uploadPreviewTemplate" *ngFor="let f of files">
-              <div class="card mt-1 mb-0 shadow-none border">
-                <div class="p-2">
-                  <div class="row align-items-center">
-                    <div class="col-auto">
-                      <img
-                        class="avatar-sm rounded bg-light"
-                        [alt]="f.name"
-                        [src]="getPreviewUrl(f)"
-                      />
-                    </div>
-                    <div class="col ps-0">
-                      <a
-                        href="javascript:void(0);"
-                        class="text-muted fw-bold"
-                        >{{ f.name }}</a
-                      >
-                      <p class="mb-0">{{ getSize(f) }}</p>
-                    </div>
-                    <div class="col-auto">
-                      <!-- Button -->
-                      <a
-                        href="javascript:void(0)"
-                        class="btn btn-link btn-lg text-muted"
-                        (click)="onRemove($event)"
-                      >
-                        <i class="dripicons-cross"></i>
-                      </a>
+            @for (f of files; track f) {
+              <div id="uploadPreviewTemplate">
+                <div class="card mt-1 mb-0 shadow-none border">
+                  <div class="p-2">
+                    <div class="row align-items-center">
+                      <div class="col-auto">
+                        <img
+                          class="avatar-sm rounded bg-light"
+                          [alt]="f.name"
+                          [src]="getPreviewUrl(f)"
+                          />
+                      </div>
+                      <div class="col ps-0">
+                        <a
+                          href="javascript:void(0);"
+                          class="text-muted fw-bold"
+                          >{{ f.name }}</a
+                          >
+                          <p class="mb-0">{{ getSize(f) }}</p>
+                        </div>
+                        <div class="col-auto">
+                          <!-- Button -->
+                          <a
+                            href="javascript:void(0)"
+                            class="btn btn-link btn-lg text-muted"
+                            (click)="onRemove($event)"
+                            >
+                            <i class="dripicons-cross"></i>
+                          </a>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              }
+              <!-- end file preview template -->
             </div>
-            <!-- end file preview template -->
-          </div>
-        </form>
+          </form>
+        </div>
+        <!-- end card-body -->
       </div>
-      <!-- end card-body -->
+      <!-- end card-->
     </div>
-    <!-- end card-->
+    <!-- end col-->
   </div>
-  <!-- end col-->
-</div>
-<!-- end row -->
+  <!-- end row -->

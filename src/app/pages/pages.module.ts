@@ -1,11 +1,10 @@
-import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-
-import { PagesRoutingModule } from "./pages-routing.module";
-import { CrearParticipanteComponent } from "./participantes/crear-participante/crear-participante.component";
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { PagesRoutingModule } from './pages.routes';
 
 @NgModule({
   declarations: [],
-  imports: [CommonModule, PagesRoutingModule],
+  imports: [CommonModule, PagesRoutingModule, RouterModule],
 })
 export class PagesModule {}

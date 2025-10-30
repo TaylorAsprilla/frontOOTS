@@ -1,15 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { UiRoutingModule } from './ui-routing.module';
-
-
 @NgModule({
-  declarations: [
-  ],
-  imports: [
-    CommonModule,
-    UiRoutingModule
-  ]
+  declarations: [],
+  imports: [CommonModule],
 })
-export class UiModule { }
+export class UiModule {}

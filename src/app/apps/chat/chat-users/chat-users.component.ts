@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AuthenticationService } from 'src/app/core/service/auth.service';
+import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { ChatGroup } from 'src/app/shared/widget/chat-group/chat-group.model';
 import { ChatUser } from '../chat.model';
 import { USERS } from '../data';
@@ -7,10 +7,9 @@ import { USERS } from '../data';
 @Component({
   selector: 'app-chat-users',
   templateUrl: './chat-users.component.html',
-  styleUrls: ['./chat-users.component.scss']
+  styleUrls: ['./chat-users.component.scss'],
 })
 export class ChatUsersComponent implements OnInit {
-
   loggedInUser: any = {};
   userList: ChatUser[] = [];
   @Input() selectedUser!: ChatUser;
@@ -19,20 +18,22 @@ export class ChatUsersComponent implements OnInit {
   //On selecting new user
   @Output() selectUser: EventEmitter<ChatUser> = new EventEmitter();
 
-  constructor (private authService: AuthenticationService) { }
+  constructor(private authService: AuthenticationService) {}
 
   ngOnInit(): void {
     this.loggedInUser = this.authService.currentUser();
-    this.chatGroups = [{
-      id: 1,
-      groupName: 'App Development',
-      variant: 'success'
-    },
-    {
-      id: 2,
-      groupName: 'Office Work',
-      variant: 'warning'
-    }];
+    this.chatGroups = [
+      {
+        id: 1,
+        groupName: 'App Development',
+        variant: 'success',
+      },
+      {
+        id: 2,
+        groupName: 'Office Work',
+        variant: 'warning',
+      },
+    ];
 
     // Get users for chat
     this._fetchUsers();
@@ -53,5 +54,4 @@ export class ChatUsersComponent implements OnInit {
     this.selectedUser = user;
     this.selectUser.emit(this.selectedUser);
   }
-
 }

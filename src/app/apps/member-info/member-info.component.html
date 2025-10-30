@@ -1,48 +1,47 @@
 <div class="text-center card">
   <div class="card-body">
     <div class="pt-2 pb-2">
-      <img
-        [src]="usuario.foto"
-        class="rounded-circle img-thumbnail avatar-xl"
-        [alt]="usuario.primerNombre"
-      />
+      <img [src]="user.foto || 'assets/images/users/hombre-1.jpg'" class="rounded-circle img-thumbnail avatar-xl"
+        [alt]="user.primerNombre || 'Usuario'" />
 
-      <h4 class="mt-3">
-        <a
-          [routerLink]="['../profile']"
-          [queryParams]="{ id: usuario.id }"
-          class="text-dark"
-          >{{ usuario.primerNombre }} {{ usuario.segundoNombre }}
-          {{ usuario.primerApellido }} {{ usuario.segundoApellido }}</a
-        >
+
+      <h4 class="mt-3 mb-1">
+        <span class="text-dark fw-bold">{{ nombreCompleto }}</span>
       </h4>
-      <div class="text-muted">{{ usuario.cargo }}</div>
+      <button type="button" class="btn btn-link p-0 m-0" style="vertical-align: middle;" (click)="onInfoClick($event)"
+        title="Ver detalles">
+        <i class="mdi mdi-information-outline mdi-24px text-primary"></i>
+      </button>
+      <div class="text-muted">
+        <span>{{ user.cargo || ('user.noPosition' | transloco) }}</span>
+        <span *ngIf="user.ciudad" class="ms-2"><i class="mdi mdi-map-marker"></i> {{ user.ciudad }}</span>
+      </div>
 
       <div>
-        <a href="javascript:void(0)" class="text-pink">{{ usuario.email }}</a>
+        <a href="javascript:void(0)" class="text-pink">{{ user.email || ('user.noEmail' | transloco) }}</a>
       </div>
 
       <p class="btn btn-primary btn-sm waves-effect waves-light me-1 mt-3">
-        {{ usuario.celular }}
+        {{ user.celular || ('user.noPhone' | transloco) }}
       </p>
 
       <div class="row mt-4">
         <div class="col-4">
           <div class="mt-3">
-            <h4>25</h4>
-            <p class="mb-0 text-muted text-truncate">Participantes</p>
+            <h4>{{ user.participants || 0 }}</h4>
+            <p class="mb-0 text-muted text-truncate">{{ 'user.participants' | transloco }}</p>
           </div>
         </div>
         <div class="col-4">
           <div class="mt-3">
-            <h4>50</h4>
-            <p class="mb-0 text-muted text-truncate">Casos</p>
+            <h4>{{ user.casos || 0 }}</h4>
+            <p class="mb-0 text-muted text-truncate">{{ 'user.cases' | transloco }}</p>
           </div>
         </div>
         <div class="col-4">
           <div class="mt-3">
-            <h4>5</h4>
-            <p class="mb-0 text-muted text-truncate">Proximas Citas</p>
+            <h4>{{ user.proximasCitas || 0 }}</h4>
+            <p class="mb-0 text-muted text-truncate">{{ 'user.nextAppointments' | transloco }}</p>
           </div>
         </div>
       </div>

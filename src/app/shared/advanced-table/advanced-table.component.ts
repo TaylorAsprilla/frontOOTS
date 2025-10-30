@@ -1,8 +1,24 @@
-import { AfterContentInit, AfterViewChecked, AfterViewInit, Component, ComponentFactoryResolver, EventEmitter, Input, OnInit, Output, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
+import {
+  AfterContentInit,
+  AfterViewChecked,
+  AfterViewInit,
+  Component,
+  ComponentFactoryResolver,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AdvancedTableServices } from './advanced-table-service.service';
 import { NgbSortableHeaderDirective, SortEvent } from './sortable.directive';
-
 
 export interface Column {
   name: string;
@@ -10,19 +26,17 @@ export interface Column {
   formatter: (a: any) => any | string;
   sort?: boolean;
   width?: number;
-
 }
-
 
 @Component({
   selector: 'app-advanced-table',
+  standalone: true,
+  imports: [CommonModule, FormsModule, NgbPaginationModule, NgbSortableHeaderDirective],
   templateUrl: './advanced-table.component.html',
   styleUrls: ['./advanced-table.component.scss'],
-  providers: [AdvancedTableServices]
+  providers: [AdvancedTableServices],
 })
 export class AdvancedTableComponent implements OnInit, AfterViewChecked {
-
-
   @Input() pagination: boolean = false;
   @Input() isSearchable: boolean = false;
   @Input() isSortable: boolean = false;
@@ -36,21 +50,21 @@ export class AdvancedTableComponent implements OnInit, AfterViewChecked {
   selectAll: boolean = false;
   isSelected: boolean[] = [];
 
-
   @Output() search = new EventEmitter<string>();
   @Output() sort = new EventEmitter<SortEvent>();
   @Output() handleTableLoad = new EventEmitter<any>();
 
-
   @ViewChildren(NgbSortableHeaderDirective) headers!: QueryList<NgbSortableHeaderDirective>;
   @ViewChildren('advancedTable') advancedTable!: any;
 
-  constructor (public service: AdvancedTableServices, private sanitizer: DomSanitizer, private componentFactoryResolver: ComponentFactoryResolver) {
-  }
+  constructor(
+    public service: AdvancedTableServices,
+    private sanitizer: DomSanitizer,
+    private componentFactoryResolver: ComponentFactoryResolver
+  ) {}
 
   ngAfterViewChecked(): void {
     this.handleTableLoad.emit();
-
   }
 
   ngOnInit(): void {
@@ -71,9 +85,8 @@ export class AdvancedTableComponent implements OnInit, AfterViewChecked {
     this.service.totalRecords = this.tableData.length;
     if (this.service.totalRecords === 0) {
       this.service.startIndex = 0;
-    }
-    else {
-      this.service.startIndex = ((this.service.page - 1) * this.service.pageSize) + 1;
+    } else {
+      this.service.startIndex = (this.service.page - 1) * this.service.pageSize + 1;
     }
     this.service.endIndex = Number((this.service.page - 1) * this.service.pageSize + this.service.pageSize);
     if (this.service.endIndex > this.service.totalRecords) {
@@ -81,15 +94,12 @@ export class AdvancedTableComponent implements OnInit, AfterViewChecked {
     }
   }
 
-
   /**
    * Search Method
-  */
+   */
   searchData(): void {
     this.search.emit(this.service.searchTerm);
-
   }
-
 
   /**
    * sorts column
@@ -97,7 +107,7 @@ export class AdvancedTableComponent implements OnInit, AfterViewChecked {
    */
   onSort({ column, direction }: SortEvent): void {
     // resetting other headers
-    this.headers.forEach(header => {
+    this.headers.forEach((header) => {
       if (header.sortable !== column) {
         header.direction = '';
       }
@@ -115,18 +125,17 @@ export class AdvancedTableComponent implements OnInit, AfterViewChecked {
    * @param data data of column
    */
   callFormatter(column: Column, data: any): any {
-    return (column.formatter(data));
+    return column.formatter(data);
   }
 
   /**
    * @returns intermediate status of selectAll checkbox
    */
   checkIntermediate(): boolean {
-    let selectedRowCount = this.isSelected.filter(x => x === true).length;
+    let selectedRowCount = this.isSelected.filter((x) => x === true).length;
     if (!this.selectAll && selectedRowCount > 0 && selectedRowCount < this.tableData.length) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
@@ -141,8 +150,7 @@ export class AdvancedTableComponent implements OnInit, AfterViewChecked {
       for (let i = 0; i < this.tableData.length; i++) {
         this.isSelected[i] = true;
       }
-    }
-    else {
+    } else {
       for (let i = 0; i < this.tableData.length; i++) {
         this.isSelected[i] = false;
       }
@@ -155,11 +163,6 @@ export class AdvancedTableComponent implements OnInit, AfterViewChecked {
    */
   selectRow(index: number): void {
     this.isSelected[index] = !this.isSelected[index];
-    this.selectAll = (this.isSelected.filter(x => x === true).length === this.tableData.length);
+    this.selectAll = this.isSelected.filter((x) => x === true).length === this.tableData.length;
   }
-
-
-
-
 }
-

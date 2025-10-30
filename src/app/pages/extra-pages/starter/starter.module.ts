@@ -1,18 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PageTitleModule } from 'src/app/shared/page-title/page-title.module';
+
 import { StarterRoutingModule } from './starter-routing.module';
 import { StarterComponent } from './starter.component';
 
 
 @NgModule({
-  declarations: [
-    StarterComponent
-  ],
-  imports: [
+    imports: [
     CommonModule,
-    PageTitleModule,
-    StarterRoutingModule
-  ]
+    StarterRoutingModule,
+    StarterComponent
+]
 })
 export class StarterModule { }

@@ -2,18 +2,21 @@ import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { POSTS } from '../shared/data';
 import { Comment, Post } from '../shared/social-feed.model';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-social-feeds',
   templateUrl: './feed.component.html',
-  styleUrls: ['./feed.component.scss']
+  styleUrls: ['./feed.component.scss'],
+  imports: [CommonModule, RouterModule, NgbDropdownModule],
+  standalone: true,
 })
 export class FeedComponent implements OnInit {
-
-
   socialFeeds: Post[] = [];
 
-  constructor (private sanitizer: DomSanitizer) { }
+  constructor(private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
     // get social feed data
@@ -21,7 +24,7 @@ export class FeedComponent implements OnInit {
   }
 
   /**
-   *  fetches social feed 
+   *  fetches social feed
    */
   _fetchData(): void {
     this.socialFeeds = POSTS;
@@ -32,7 +35,7 @@ export class FeedComponent implements OnInit {
    * @param content string
    */
   getRenderedPostContent(content: string) {
-    if (content.includes("iframe")) {
+    if (content.includes('iframe')) {
       return this.sanitizer.bypassSecurityTrustHtml(content);
     }
     return this.sanitizer.sanitize(1, content);
@@ -53,5 +56,4 @@ export class FeedComponent implements OnInit {
   toggleLikeOnComment(comment: Comment) {
     comment.isLiked = !comment.isLiked;
   }
-
 }

@@ -1,12 +1,16 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { NgApexchartsModule } from 'ng-apexcharts';
+import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-ui-portlet-card',
+  standalone: true,
+  imports: [CommonModule, NgApexchartsModule, NgbCollapseModule],
   templateUrl: './portlet-card.component.html',
-  styleUrls: ['./portlet-card.component.scss']
+  styleUrls: ['./portlet-card.component.scss'],
 })
 export class PortletCardComponent implements OnInit {
-
   @Input() cardTitle: string = '';
   @Input() cardTitleClass?: string;
   @Input() cardClasses: string = '';
@@ -14,10 +18,9 @@ export class PortletCardComponent implements OnInit {
   isClosed: boolean = false;
   refreshRequsted: boolean = false;
 
-  constructor () { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   /**
    * close portlet card
@@ -35,5 +38,4 @@ export class PortletCardComponent implements OnInit {
       this.refreshRequsted = false;
     }, 1000);
   }
-
 }

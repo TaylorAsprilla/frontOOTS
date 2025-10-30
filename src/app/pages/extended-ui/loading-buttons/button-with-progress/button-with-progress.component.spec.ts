@@ -8,8 +8,8 @@ describe('ButtonWithProgressComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ButtonWithProgressComponent ]
-    })
+    imports: [ButtonWithProgressComponent]
+})
     .compileComponents();
   });
 

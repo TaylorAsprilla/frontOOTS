@@ -1,4 +1,20 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { NgApexchartsModule } from 'ng-apexcharts';
+import { RoundedProgressChartComponent } from 'src/app/shared/widget/rounded-progress-chart/rounded-progress-chart.component';
+import { ChartStatisticsComponent } from 'src/app/shared/widget/chart-statistics/chart-statistics.component';
+import { NgbTooltipModule, NgbDropdownModule, NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
+import { PortletCardComponent } from 'src/app/shared/ui/portlet-card/portlet-card.component';
+import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
+import { StatisticsCardComponent } from 'src/app/shared/widget/statistics-card/statistics-card.component';
+import { StatisticsCard2Component } from 'src/app/shared/widget/statistics-card2/statistics-card2.component';
+import { StatisticsCard3Component } from 'src/app/shared/widget/statistics-card3/statistics-card3.component';
+import { StatisticsWidgetComponent } from 'src/app/shared/widget/statistics-widget/statistics-widget.component';
+import { UserCardComponent } from 'src/app/shared/widget/user-card/user-card.component';
+import { InboxComponent } from 'src/app/shared/widget/inbox/inbox.component';
+import { ChatComponent } from 'src/app/shared/widget/chat/chat.component';
+import { TodoComponent } from 'src/app/shared/widget/todo/todo.component';
+import { ChartCardComponent } from 'src/app/shared/widget/chart-card/chart-card.component';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
 import { ChartStatistics } from 'src/app/shared/widget/chart-statistics/chart-statistics.model';
 import { ChatMessage } from 'src/app/shared/widget/chat/chat.model';
@@ -17,11 +33,31 @@ import { STATISCTICSCARD1, STATISTICSCARD2, STATISTICSCARD3, STATISTICSWIDGETS, 
 
 @Component({
   selector: 'app-widgets',
+  standalone: true,
+  imports: [
+    CommonModule,
+    NgApexchartsModule,
+    PageTitleComponent,
+    RoundedProgressChartComponent,
+    ChartStatisticsComponent,
+    PortletCardComponent,
+    StatisticsCardComponent,
+    StatisticsCard2Component,
+    StatisticsCard3Component,
+    StatisticsWidgetComponent,
+    UserCardComponent,
+    InboxComponent,
+    ChatComponent,
+    TodoComponent,
+    ChartCardComponent,
+    NgbTooltipModule,
+    NgbDropdownModule,
+    NgbProgressbarModule,
+  ],
   templateUrl: './widgets.component.html',
-  styleUrls: ['./widgets.component.scss']
+  styleUrls: ['./widgets.component.scss'],
 })
 export class WidgetsComponent implements OnInit {
-
   pageTitle: BreadcrumbItem[] = [];
   statisticsCard1: StatisticsCard1[] = [];
   statisticsCard2: StatisticsCard2[] = [];
@@ -41,12 +77,13 @@ export class WidgetsComponent implements OnInit {
   incomeChartStatistics: ChartStatistics[] = [];
   userChartStatistics: ChartStatistics[] = [];
 
-
-
-  constructor () { }
+  constructor() {}
 
   ngOnInit(): void {
-    this.pageTitle = [{ label: 'Components', path: '/' }, { label: 'Widgets', path: '/', active: true }];
+    this.pageTitle = [
+      { label: 'Components', path: '/' },
+      { label: 'Widgets', path: '/', active: true },
+    ];
     this._fetchData();
     this._fetchMessage();
     this._fetchChatMessage();
@@ -66,8 +103,8 @@ export class WidgetsComponent implements OnInit {
   }
 
   /**
- * fetch inbox messages
- */
+   * fetch inbox messages
+   */
   _fetchMessage(): void {
     this.inboxMessages = INBOXMESSAGES;
   }
@@ -86,15 +123,13 @@ export class WidgetsComponent implements OnInit {
     this.todoList = TODOLIST;
   }
 
-
   /**
    * initialize charts
    */
   initCharts(): void {
     this._fetchChartStatistics();
 
-    this.salesChart =
-    {
+    this.salesChart = {
       series: [
         {
           type: 'area',
@@ -108,7 +143,7 @@ export class WidgetsComponent implements OnInit {
       chart: {
         type: 'line',
         height: 240,
-        width: "100%",
+        width: '100%',
         toolbar: {
           show: false,
         },
@@ -156,7 +191,7 @@ export class WidgetsComponent implements OnInit {
           show: false,
         },
       },
-    }
+    };
 
     this.incomeChart = {
       series: [{ data: [3, 6, 7, 8, 6, 4, 7, 10, 12, 7, 4, 9, 12, 13, 11, 12] }],
@@ -201,7 +236,7 @@ export class WidgetsComponent implements OnInit {
           show: false,
         },
       },
-    }
+    };
 
     this.usersChart = {
       series: [20, 40, 30, 10],
@@ -234,13 +269,10 @@ export class WidgetsComponent implements OnInit {
           show: false,
         },
       },
-    }
+    };
 
     this.barChart = {
-      series: [
-        { data: [5, 9, 5, 7, 5, 9, 2, 3, 2, 7, 5, 9, 5, 7] },
-        { data: [3, 6, 9, 3, 2, 7, 1, 5, 9, 2, 3, 6, 9] },
-      ],
+      series: [{ data: [5, 9, 5, 7, 5, 9, 2, 3, 2, 7, 5, 9, 5, 7] }, { data: [3, 6, 9, 3, 2, 7, 1, 5, 9, 2, 3, 6, 9] }],
       chart: {
         type: 'bar',
         height: 55,
@@ -267,17 +299,15 @@ export class WidgetsComponent implements OnInit {
       },
       tooltip: {
         enabled: false,
-      }
-    }
+      },
+    };
 
     this.lineChart = {
-      series: [
-        { data: [5, 3, 9, 6, 5, 9, 7, 3, 5, 2], },
-      ],
+      series: [{ data: [5, 3, 9, 6, 5, 9, 7, 3, 5, 2] }],
       chart: {
         type: 'line',
         height: 50,
-        width: "100%",
+        width: '100%',
         toolbar: {
           show: false,
         },
@@ -308,18 +338,15 @@ export class WidgetsComponent implements OnInit {
       },
       tooltip: {
         enabled: false,
-      }
-
-    }
+      },
+    };
 
     this.areaChart = {
-      series: [
-        { data: [3, 5, 2, 9, 7, 2, 5, 3, 9, 6, 5, 9, 7], },
-      ],
+      series: [{ data: [3, 5, 2, 9, 7, 2, 5, 3, 9, 6, 5, 9, 7] }],
       chart: {
         type: 'area',
         height: 50,
-        width: "100%",
+        width: '100%',
         toolbar: {
           show: false,
         },
@@ -353,91 +380,92 @@ export class WidgetsComponent implements OnInit {
       },
       tooltip: {
         enabled: false,
-      }
-
-    }
-
-
+      },
+    };
   }
 
   /**
    * fetches chart statistics data
    */
   _fetchChartStatistics(): void {
-    this.salesChartStatistics = [{
-      title: 'Target',
-      stats: '$7.8k',
-      icon: 'fe-arrow-down',
-      variant: 'danger'
-    },
-    {
-      title: 'Last week',
-      stats: '$1.4k',
-      icon: 'fe-arrow-up',
-      variant: 'success'
-    },
-    {
-      title: 'Last Month',
-      stats: '$9.8k',
-      icon: 'fe-arrow-down',
-      variant: 'danger'
-    }];
+    this.salesChartStatistics = [
+      {
+        title: 'Target',
+        stats: '$7.8k',
+        icon: 'fe-arrow-down',
+        variant: 'danger',
+      },
+      {
+        title: 'Last week',
+        stats: '$1.4k',
+        icon: 'fe-arrow-up',
+        variant: 'success',
+      },
+      {
+        title: 'Last Month',
+        stats: '$9.8k',
+        icon: 'fe-arrow-down',
+        variant: 'danger',
+      },
+    ];
 
-    this.incomeChartStatistics = [{
-      title: 'Target',
-      stats: '641',
-      icon: 'fe-arrow-up',
-      variant: 'success'
-    },
-    {
-      title: 'Last week',
-      stats: '234',
-      icon: 'fe-arrow-down',
-      variant: 'danger'
-    },
-    {
-      title: 'Last Month',
-      stats: '3201',
-      icon: 'fe-arrow-up',
-      variant: 'success'
-    }];
+    this.incomeChartStatistics = [
+      {
+        title: 'Target',
+        stats: '641',
+        icon: 'fe-arrow-up',
+        variant: 'success',
+      },
+      {
+        title: 'Last week',
+        stats: '234',
+        icon: 'fe-arrow-down',
+        variant: 'danger',
+      },
+      {
+        title: 'Last Month',
+        stats: '3201',
+        icon: 'fe-arrow-up',
+        variant: 'success',
+      },
+    ];
 
-    this.userChartStatistics = [{
-      title: 'Target',
-      stats: '18k',
-      icon: 'fe-arrow-down',
-      variant: 'danger'
-    },
-    {
-      title: 'Last week',
-      stats: '3.25k',
-      icon: 'fe-arrow-up',
-      variant: 'success'
-    },
-    {
-      title: 'Last Month',
-      stats: '28k',
-      icon: 'fe-arrow-down',
-      variant: 'danger'
-    }]
+    this.userChartStatistics = [
+      {
+        title: 'Target',
+        stats: '18k',
+        icon: 'fe-arrow-down',
+        variant: 'danger',
+      },
+      {
+        title: 'Last week',
+        stats: '3.25k',
+        icon: 'fe-arrow-up',
+        variant: 'success',
+      },
+      {
+        title: 'Last Month',
+        stats: '28k',
+        icon: 'fe-arrow-down',
+        variant: 'danger',
+      },
+    ];
   }
 
-
   /**
-* adds new task in todo list
-* @param newTask task to be added in list
-*/
+   * adds new task in todo list
+   * @param newTask task to be added in list
+   */
   addTask(newTask: string): void {
     const newTaskItem: ToDoItem = {
       id: this.todoList.length + 1,
       text: newTask,
-      completed: false
-    }
+      completed: false,
+    };
     let todoItems = [newTaskItem, ...this.todoList];
     this.todoList = todoItems;
     // this.todoList.push(newTaskItem);
   }
-
 
   /**
    * Archives the todos

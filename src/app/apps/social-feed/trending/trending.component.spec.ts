@@ -8,8 +8,8 @@ describe('TrendingComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TrendingComponent ]
-    })
+    imports: [TrendingComponent]
+})
     .compileComponents();
   });
 

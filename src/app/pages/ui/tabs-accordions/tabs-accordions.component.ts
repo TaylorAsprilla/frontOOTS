@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
+import { CommonModule } from '@angular/common';
+import { NgbNavChangeEvent, NgbNavModule, NgbAccordionModule, NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
+import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
 
 @Component({
   selector: 'app-ui-tabs-accordions',
+  standalone: true,
+  imports: [CommonModule, PageTitleComponent, NgbNavModule, NgbAccordionModule, NgbCollapseModule],
   templateUrl: './tabs-accordions.component.html',
-  styleUrls: ['./tabs-accordions.component.scss']
+  styleUrls: ['./tabs-accordions.component.scss'],
 })
 export class TabsAccordionsComponent implements OnInit {
-
   pageTitle: BreadcrumbItem[] = [];
   tabs1: number = 1;
   tabs2: number = 2;
@@ -25,10 +28,13 @@ export class TabsAccordionsComponent implements OnInit {
   isCollapsed: boolean = false;
   horizontalCollapse: boolean = true;
 
-  constructor () { }
+  constructor() {}
 
   ngOnInit(): void {
-    this.pageTitle = [{ label: 'Base UI', path: '/' }, { label: 'Tabs & Accordions', path: '/', active: true }];
+    this.pageTitle = [
+      { label: 'Base UI', path: '/' },
+      { label: 'Tabs & Accordions', path: '/', active: true },
+    ];
     this.counter = this.dynamicTabs.length + 1;
   }
 
@@ -61,5 +67,4 @@ export class TabsAccordionsComponent implements OnInit {
     this.dynamicTabs.push(this.counter++);
     event.preventDefault();
   }
-
 }

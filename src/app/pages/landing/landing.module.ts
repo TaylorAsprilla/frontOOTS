@@ -13,13 +13,17 @@ import { TestimonialComponent } from './testimonial/testimonial.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
 import { FooterComponent } from './footer/footer.component';
 import { LayoutDemoComponent } from './layout-demo/layout-demo.component';
-import { WidgetModule } from 'src/app/shared/widget/widget.module';
+
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
-  declarations: [
+    imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    NgbCollapseModule,
+    LandingRoutingModule,
     LandingComponent,
     NavbarComponent,
     HeroComponent,
@@ -31,13 +35,6 @@ import { ReactiveFormsModule } from '@angular/forms';
     ContactUsComponent,
     FooterComponent,
     LayoutDemoComponent
-  ],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    NgbCollapseModule,
-    WidgetModule,
-    LandingRoutingModule
-  ]
+]
 })
 export class LandingModule { }

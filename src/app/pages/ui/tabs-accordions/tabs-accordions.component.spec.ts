@@ -8,8 +8,8 @@ describe('TabsAccordionsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TabsAccordionsComponent ]
-    })
+    imports: [TabsAccordionsComponent]
+})
     .compileComponents();
   });
 

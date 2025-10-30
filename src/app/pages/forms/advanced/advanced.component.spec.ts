@@ -8,8 +8,8 @@ describe('AdvancedComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AdvancedComponent ]
-    })
+    imports: [AdvancedComponent]
+})
     .compileComponents();
   });
 

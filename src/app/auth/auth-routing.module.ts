@@ -1,48 +1,31 @@
-import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
-import { ConfirmMailComponent } from "./account/confirm-mail/confirm-mail.component";
-import { LockScreenComponent } from "./account/lock-screen/lock-screen.component";
-import { LoginComponent } from "./account/login/login.component";
-import { LogoutComponent } from "./account/logout/logout.component";
-import { RecoverPasswordComponent } from "./account/recover-password/recover-password.component";
-import { RegisterComponent } from "./account/register/register.component";
-import { SigninSignupComponent } from "./account/signin-signup/signin-signup.component";
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { ConfirmMailComponent } from './account/confirm-mail/confirm-mail.component';
+
+import { LoginComponent } from './account/login/login.component';
+import { LogoutComponent } from './account/logout/logout.component';
+import { RecoverPasswordComponent } from './account/recover-password/recover-password.component';
 
 const routes: Routes = [
   {
-    path: "login",
+    path: 'login',
     component: LoginComponent,
-    pathMatch: "full",
+    pathMatch: 'full',
   },
   {
-    path: "register",
-    component: RegisterComponent,
-    pathMatch: "full",
-  },
-  {
-    path: "confirm",
+    path: 'confirm',
     component: ConfirmMailComponent,
-    pathMatch: "full",
+    pathMatch: 'full',
   },
   {
-    path: "reset-password",
+    path: 'reset-password',
     component: RecoverPasswordComponent,
-    pathMatch: "full",
+    pathMatch: 'full',
   },
   {
-    path: "logout",
+    path: 'logout',
     component: LogoutComponent,
-    pathMatch: "full",
-  },
-  {
-    path: "lock-screen",
-    component: LockScreenComponent,
-    pathMatch: "full",
-  },
-  {
-    path: "signin-signup",
-    component: SigninSignupComponent,
-    pathMatch: "full",
+    pathMatch: 'full',
   },
 ];
 

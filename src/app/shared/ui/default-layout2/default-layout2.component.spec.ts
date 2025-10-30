@@ -8,8 +8,8 @@ describe('DefaultLayout2Component', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DefaultLayout2Component ]
-    })
+    imports: [DefaultLayout2Component]
+})
     .compileComponents();
   });
 

@@ -8,8 +8,8 @@ describe('FileManagerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FileManagerComponent ]
-    })
+    imports: [FileManagerComponent]
+})
     .compileComponents();
   });
 

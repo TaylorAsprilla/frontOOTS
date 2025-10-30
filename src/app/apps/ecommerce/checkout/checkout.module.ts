@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Select2Module } from 'ng-select2-component';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
-import { PageTitleModule } from 'src/app/shared/page-title/page-title.module';
+
 
 import { CheckoutRoutingModule } from './checkout-routing.module';
 import { CheckoutComponent } from './checkout.component';
@@ -24,8 +24,7 @@ import { ShippingComponent } from './shipping/shipping.component';
     CommonModule,
     NgbNavModule,
     Select2Module,
-    PageTitleModule,
     CheckoutRoutingModule
-  ]
+]
 })
 export class CheckoutModule { }

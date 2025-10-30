@@ -1,18 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PageTitleModule } from 'src/app/shared/page-title/page-title.module';
+
 import { BasicTableRoutingModule } from './basic-table-routing.module';
 import { BasicTableComponent } from './basic-table.component';
 
 
 @NgModule({
-  declarations: [
-    BasicTableComponent
-  ],
-  imports: [
+    imports: [
     CommonModule,
-    PageTitleModule,
-    BasicTableRoutingModule
-  ]
+    BasicTableRoutingModule,
+    BasicTableComponent
+]
 })
 export class BasicTableModule { }

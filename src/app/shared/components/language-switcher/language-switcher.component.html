@@ -1,0 +1,35 @@
+<div class="language-switcher" [attr.aria-label]="'navigation.language_switcher' | transloco">
+  <div class="language-flags">
+    <!-- Bandera España -->
+    <span
+      class="flag-option"
+      [class.active]="languageService.isLanguageActive('es')"
+      [class.inactive]="!languageService.isLanguageActive('es')"
+      [attr.aria-label]="'navigation.switch_to' | transloco : { language: 'Español' }"
+      [attr.role]="'button'"
+      [attr.tabindex]="0"
+      (click)="switchToLanguage('es')"
+      (keydown.enter)="switchToLanguage('es')"
+      (keydown.space)="switchToLanguage('es')"
+      title="Español"
+    >
+      <span class="flag-emoji">🇪🇸</span>
+    </span>
+
+    <!-- Bandera Reino Unido -->
+    <span
+      class="flag-option"
+      [class.active]="languageService.isLanguageActive('en')"
+      [class.inactive]="!languageService.isLanguageActive('en')"
+      [attr.aria-label]="'navigation.switch_to' | transloco : { language: 'English' }"
+      [attr.role]="'button'"
+      [attr.tabindex]="0"
+      (click)="switchToLanguage('en')"
+      (keydown.enter)="switchToLanguage('en')"
+      (keydown.space)="switchToLanguage('en')"
+      title="English"
+    >
+      <span class="flag-emoji">🇬🇧</span>
+    </span>
+  </div>
+</div>

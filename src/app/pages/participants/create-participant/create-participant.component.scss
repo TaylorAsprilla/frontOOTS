@@ -1,0 +1,188 @@
+// Optimized Create Participant Component Styles
+
+.form-wizard-header {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--bs-border-color);
+
+  .nav-link {
+    border: none !important;
+    color: var(--bs-text-muted);
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: var(--bs-gray-100);
+      color: var(--bs-primary);
+    }
+
+    &.active {
+      background-color: var(--bs-primary);
+      color: #00acc1;
+    }
+  }
+}
+
+.step-content {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-control,
+.form-select {
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+
+  &:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.15);
+  }
+
+  &.is-invalid:focus {
+    border-color: var(--bs-danger);
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-danger-rgb), 0.15);
+  }
+}
+
+.card {
+  border-radius: 1rem;
+
+  .card-body {
+    background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+  }
+}
+
+.btn {
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+}
+
+// Family member styling
+.family-member-card {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: var(--bs-primary);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.add-family-btn,
+.add-intervention-btn {
+  border-radius: 25px;
+  padding: 8px 20px;
+  font-weight: 500;
+}
+
+.remove-family-btn,
+.remove-intervention-btn {
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: rotate(90deg);
+  }
+}
+
+.empty-family-state,
+.empty-intervention-state,
+.empty-notes-state {
+  background: #f8f9fa;
+  border: 2px dashed #dee2e6;
+  border-radius: 15px;
+  padding: 2rem;
+}
+
+// Intervention and progress notes cards
+.intervention-plan-card,
+.progress-note-card,
+.closing-note-container {
+  .card {
+    border-radius: 15px;
+    border: none;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+    }
+  }
+
+  .card-header {
+    padding: 18px 25px;
+    border-bottom: none;
+
+    h6 {
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+  }
+
+  .card-body {
+    padding: 30px;
+
+    .form-control,
+    .form-select {
+      border-radius: 10px;
+      padding: 12px 15px;
+      transition: all 0.3s ease;
+
+      &:focus {
+        transform: translateY(-2px);
+      }
+    }
+  }
+}
+
+.intervention-plan-card .card-header {
+  background: linear-gradient(135deg, #007bff, #0056b3) !important;
+}
+
+.progress-note-card .card-header {
+  background: linear-gradient(135deg, #28a745, #20c997) !important;
+}
+
+.closing-note-container .card-header {
+  background: linear-gradient(135deg, #ffc107, #ffca2c) !important;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .form-wizard-header .nav-link {
+    padding: 1rem 0.5rem;
+    font-size: 0.875rem;
+
+    span {
+      display: none !important;
+    }
+  }
+
+  .card-body {
+    padding: 1.5rem !important;
+  }
+
+  .intervention-plan-card,
+  .progress-note-card,
+  .closing-note-container {
+    .card-body {
+      padding: 20px 15px;
+    }
+  }
+}

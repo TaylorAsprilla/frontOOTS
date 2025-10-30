@@ -1,19 +1,32 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Column } from 'src/app/shared/advanced-table/advanced-table.component';
+import { Column, AdvancedTableComponent } from 'src/app/shared/advanced-table/advanced-table.component';
 import { SortEvent } from 'src/app/shared/advanced-table/sortable.directive';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
 import { TICKETSLIST } from '../shared/data';
 import { TicketItem } from '../shared/tickets.model';
+import { StatisticsCard4Component } from 'src/app/shared/widget/statistics-card4/statistics-card4.component';
+import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-tickets-list',
   templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss']
+  styleUrls: ['./list.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    PageTitleComponent,
+    StatisticsCard4Component,
+    AdvancedTableComponent,
+  ],
 })
 export class ListComponent implements OnInit {
-
   pageTitle: BreadcrumbItem[] = [];
   columns: Column[] = [];
   pageSizeOptions: number[] = [5, 10, 20];
@@ -21,10 +34,13 @@ export class ListComponent implements OnInit {
 
   @ViewChild('advancedTable') advancedTable: any;
 
-  constructor (private router: Router, private route: ActivatedRoute, private sanitizer: DomSanitizer) { }
+  constructor(private router: Router, private route: ActivatedRoute, private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
-    this.pageTitle = [{ label: 'Tickets', path: '/' }, { label: 'Ticket List', path: '/', active: true }];
+    this.pageTitle = [
+      { label: 'Tickets', path: '/' },
+      { label: 'Ticket List', path: '/', active: true },
+    ];
     this._fetchData();
     this.initAdvancedTableData();
   }
@@ -37,75 +53,75 @@ export class ListComponent implements OnInit {
   }
 
   /**
- * initialize advance table columns
- */
+   * initialize advance table columns
+   */
   initAdvancedTableData(): void {
     this.columns = [
       {
         name: 'id',
         label: 'ID',
-        formatter: this.ticketIdFormatter.bind(this)
+        formatter: this.ticketIdFormatter.bind(this),
       },
       {
         name: 'requested_by',
         label: 'Requested By',
-        formatter: this.ticketRequestedFormatter.bind(this)
+        formatter: this.ticketRequestedFormatter.bind(this),
       },
       {
         name: 'subject',
         label: 'Subject',
-        formatter: (ticket: TicketItem) => ticket.subject
+        formatter: (ticket: TicketItem) => ticket.subject,
       },
       {
         name: 'assignee',
         label: 'Assignee',
         formatter: this.ticketAssigneeFormatter.bind(this),
-        sort: false
+        sort: false,
       },
       {
         name: 'priority',
         label: 'Priority',
-        formatter: this.ticketPriorityFormatter.bind(this)
+        formatter: this.ticketPriorityFormatter.bind(this),
       },
       {
         name: 'status',
         label: 'Status',
-        formatter: this.ticketStatusFormatter.bind(this)
+        formatter: this.ticketStatusFormatter.bind(this),
       },
       {
         name: 'created_date',
         label: 'Created Date',
-        formatter: (ticket: TicketItem) => ticket.created_date
+        formatter: (ticket: TicketItem) => ticket.created_date,
       },
       {
         name: 'due_date',
         label: 'Due Date',
-        formatter: (ticket: TicketItem) => ticket.due_date
+        formatter: (ticket: TicketItem) => ticket.due_date,
       },
       {
         name: 'Action',
         label: 'Action',
         width: 75,
         formatter: this.customerActionFormatter.bind(this),
-        sort: false
-      }]
+        sort: false,
+      },
+    ];
   }
 
   /**
- *  handles operations that need to be performed after loading table
- */
+   *  handles operations that need to be performed after loading table
+   */
   handleTableLoad(event: any): void {
     document.querySelectorAll('.ticket').forEach((e) => {
-      e.addEventListener("click", () => {
-        this.router.navigate(['../details'], { relativeTo: this.route, queryParams: { id: e.id } })
+      e.addEventListener('click', () => {
+        this.router.navigate(['../details'], { relativeTo: this.route, queryParams: { id: e.id } });
       });
-    })
+    });
   }
-
 
   //formats id cell
   ticketIdFormatter(ticket: TicketItem): any {
-    return this.sanitizer.bypassSecurityTrustHtml(`<b>${ticket.id}</b>`)
+    return this.sanitizer.bypassSecurityTrustHtml(`<b>${ticket.id}</b>`);
   }
 
   // formats requested by cell
@@ -129,37 +145,22 @@ export class ListComponent implements OnInit {
 
   // formats ticket priority
   ticketPriorityFormatter(ticket: TicketItem): any {
-    if (ticket.priority == "Low") {
-      return this.sanitizer.bypassSecurityTrustHtml(
-        ` <span class="badge bg-soft-secondary text-secondary">Low</span>`
-      );
+    if (ticket.priority == 'Low') {
+      return this.sanitizer.bypassSecurityTrustHtml(` <span class="badge bg-soft-secondary text-secondary">Low</span>`);
+    } else if (ticket.priority == 'Medium') {
+      return this.sanitizer.bypassSecurityTrustHtml(` <span class="badge bg-soft-warning text-warning">Medium</span>`);
+    } else {
+      return this.sanitizer.bypassSecurityTrustHtml(` <span class="badge bg-soft-danger text-danger">High</span>`);
     }
-    else if (ticket.priority == 'Medium') {
-      return this.sanitizer.bypassSecurityTrustHtml(
-        ` <span class="badge bg-soft-warning text-warning">Medium</span>`
-      );
-    }
-    else {
-      return this.sanitizer.bypassSecurityTrustHtml(
-        ` <span class="badge bg-soft-danger text-danger">High</span>`
-      );
-    }
-
   }
 
   // formats ticket status
   ticketStatusFormatter(ticket: TicketItem): any {
-    if (ticket.status == "Open") {
-      return this.sanitizer.bypassSecurityTrustHtml(
-        `<span class="badge bg-success">Open</span>`
-      );
+    if (ticket.status == 'Open') {
+      return this.sanitizer.bypassSecurityTrustHtml(`<span class="badge bg-success">Open</span>`);
+    } else {
+      return this.sanitizer.bypassSecurityTrustHtml(`<span class="badge  bg-secondary text-light">Closed</span>`);
     }
-    else {
-      return this.sanitizer.bypassSecurityTrustHtml(
-        `<span class="badge  bg-secondary text-light">Closed</span>`
-      );
-    }
-
   }
 
   // action cell formatter
@@ -178,8 +179,8 @@ export class ListComponent implements OnInit {
   }
 
   /**
- * compares two cell value
- */
+   * compares two cell value
+   */
   compare(v1: any, v2: any): number {
     return v1 < v2 ? -1 : v1 > v2 ? 1 : 0;
   }
@@ -196,8 +197,7 @@ export class ListComponent implements OnInit {
         let res: any;
         if (event.column === 'requested_by') {
           res = this.compare(a['requested_by']['name'], b['requested_by']['name']);
-        }
-        else {
+        } else {
           res = this.compare(a[event.column], b[event.column]);
         }
 
@@ -207,17 +207,19 @@ export class ListComponent implements OnInit {
   }
 
   /**
- * Match table data with search input
- * @param row Table row
- * @param term Search the value
- */
+   * Match table data with search input
+   * @param row Table row
+   * @param term Search the value
+   */
   matches(row: TicketItem, term: string) {
-    return row.requested_by.name?.toLowerCase().includes(term)
-      || row.subject?.toLowerCase().includes(term)
-      || row.priority?.toLowerCase().includes(term)
-      || row.created_date?.toLowerCase().includes(term)
-      || row.due_date?.toLowerCase().includes(term)
-      || row.status?.toLocaleLowerCase().includes(term);
+    return (
+      row.requested_by.name?.toLowerCase().includes(term) ||
+      row.subject?.toLowerCase().includes(term) ||
+      row.priority?.toLowerCase().includes(term) ||
+      row.created_date?.toLowerCase().includes(term) ||
+      row.due_date?.toLowerCase().includes(term) ||
+      row.status?.toLocaleLowerCase().includes(term)
+    );
   }
 
   /**
@@ -226,14 +228,11 @@ export class ListComponent implements OnInit {
   searchData(searchTerm: string): void {
     if (searchTerm === '') {
       this._fetchData();
-    }
-    else {
+    } else {
       let updatedData = TICKETSLIST;
       //  filter
-      updatedData = updatedData.filter(ticket => this.matches(ticket, searchTerm));
+      updatedData = updatedData.filter((ticket) => this.matches(ticket, searchTerm));
       this.ticketList = updatedData;
     }
-
   }
-
 }

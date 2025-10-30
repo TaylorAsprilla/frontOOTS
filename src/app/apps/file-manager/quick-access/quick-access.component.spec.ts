@@ -8,8 +8,8 @@ describe('QuickAccessComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ QuickAccessComponent ]
-    })
+    imports: [QuickAccessComponent]
+})
     .compileComponents();
   });
 

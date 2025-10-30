@@ -1,29 +1,32 @@
 import { Component, Input, OnInit, SimpleChange } from '@angular/core';
-import { EventService } from 'src/app/core/service/event.service';
+import { EventService } from 'src/app/core/services/event.service';
 import { changeBodyAttribute, getLayoutConfig } from '../../shared/helper/utils';
+import { RightSidebarComponent } from '../../shared/right-sidebar/right-sidebar.component';
+import { FooterComponent } from '../../shared/footer/footer.component';
+import { RouterOutlet } from '@angular/router';
+import { LeftSidebarComponent } from '../../shared/left-sidebar/left-sidebar.component';
+import { TopbarComponent } from '../../shared/topbar/topbar.component';
 
 @Component({
   selector: 'app-vertical-layout',
   templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.scss']
+  styleUrls: ['./layout.component.scss'],
+  imports: [RightSidebarComponent, FooterComponent, RouterOutlet, LeftSidebarComponent, TopbarComponent],
+  standalone: true,
 })
 export class VerticalLayoutComponent implements OnInit {
-
   @Input() layoutWidth: string = '';
-  @Input() layoutColor: string = "";
-  menuPosition: string = "";
-  leftSidebarTheme: string = "";
-  leftSidebarType: string = "";
-  topbarTheme: string = "";
+  @Input() layoutColor: string = '';
+  menuPosition: string = '';
+  leftSidebarTheme: string = '';
+  leftSidebarType: string = '';
+  topbarTheme: string = '';
   showSidebarUserInfo: boolean = false;
   reRender: boolean = true;
 
-  constructor (
-    private eventService: EventService
-  ) { }
+  constructor(private eventService: EventService) {}
 
   ngOnInit(): void {
-
     let config = getLayoutConfig('vertical');
     this.menuPosition = config.menuPosition;
     this.leftSidebarTheme = config.leftSidebarTheme;
@@ -55,12 +58,12 @@ export class VerticalLayoutComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    changeBodyAttribute('data-layout-mode', '', 'remove')
+    changeBodyAttribute('data-layout-mode', '', 'remove');
   }
 
   /**
- * changes layout configurations 
- */
+   * changes layout configurations
+   */
   ngOnChanges(changes: SimpleChange) {
     this._setRerender();
     this.changeLayoutConfig();
@@ -78,11 +81,11 @@ export class VerticalLayoutComponent implements OnInit {
     setTimeout(() => {
       this.reRender = true;
     }, 20);
-  }
+  };
 
   /**
- * changes layout related options
- */
+   * changes layout related options
+   */
   changeLayoutConfig(): void {
     // light vs dark mode
     changeBodyAttribute('data-layout-color', this.layoutColor);
@@ -103,11 +106,9 @@ export class VerticalLayoutComponent implements OnInit {
     changeBodyAttribute('data-topbar-color', this.topbarTheme);
   }
 
-
-
   /**
-  * on settings button clicked from topbar
-  */
+   * on settings button clicked from topbar
+   */
   onSettingsButtonClicked() {
     this.eventService.broadcast('showRightSideBar');
   }
@@ -118,6 +119,4 @@ export class VerticalLayoutComponent implements OnInit {
   onToggleMobileMenu() {
     document.body.classList.toggle('sidebar-enable');
   }
-
-
 }

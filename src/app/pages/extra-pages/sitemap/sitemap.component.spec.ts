@@ -8,8 +8,8 @@ describe('SitemapComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SitemapComponent ]
-    })
+    imports: [SitemapComponent]
+})
     .compileComponents();
   });
 

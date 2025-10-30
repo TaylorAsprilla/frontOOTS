@@ -1,18 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UiModule } from 'src/app/shared/ui/ui.module';
+
 import { Error500RoutingModule } from './error500-routing.module';
 import { Error500Component } from './error500.component';
 
 
 @NgModule({
-  declarations: [
-    Error500Component
-  ],
-  imports: [
+    imports: [
     CommonModule,
-    UiModule,
-    Error500RoutingModule
-  ]
+    Error500RoutingModule,
+    Error500Component
+]
 })
 export class Error500Module { }

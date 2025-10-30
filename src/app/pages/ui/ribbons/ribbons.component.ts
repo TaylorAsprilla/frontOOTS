@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
 import { Variant } from '../shared/ui.model';
 
@@ -9,67 +11,68 @@ interface RibbonItem extends Variant {
 
 @Component({
   selector: 'app-ui-ribbons',
+  standalone: true,
+  imports: [CommonModule, PageTitleComponent],
   templateUrl: './ribbons.component.html',
-  styleUrls: ['./ribbons.component.scss']
+  styleUrls: ['./ribbons.component.scss'],
 })
 export class RibbonsComponent implements OnInit {
-
   pageTitle: BreadcrumbItem[] = [];
   ribbonVariants: RibbonItem[] = [];
 
-  constructor () { }
+  constructor() {}
 
   ngOnInit(): void {
-    this.pageTitle = [{ label: 'Base UI', path: '/' }, { label: 'Ribbons', path: '/', active: true }];
+    this.pageTitle = [
+      { label: 'Base UI', path: '/' },
+      { label: 'Ribbons', path: '/', active: true },
+    ];
     this.ribbonVariants = [
       {
         name: 'Blue',
         color: 'blue',
-        direction: 'left'
+        direction: 'left',
       },
       {
         name: 'Primary',
         color: 'primary',
-        direction: 'right'
+        direction: 'right',
       },
       {
         name: 'Success',
         color: 'success',
-        direction: 'right'
+        direction: 'right',
       },
       {
         name: 'Info',
         color: 'info',
-        direction: 'left'
+        direction: 'left',
       },
       {
         name: 'Warning',
         color: 'warning',
-        direction: 'right'
+        direction: 'right',
       },
       {
         name: 'Danger',
         color: 'danger',
-        direction: 'right'
+        direction: 'right',
       },
       {
         name: 'Pink',
         color: 'pink',
-        direction: 'left'
+        direction: 'left',
       },
       {
         name: 'Secondary',
         color: 'secondary',
-        direction: 'right'
+        direction: 'right',
       },
       {
         name: 'Dark',
         color: 'dark',
-        direction: 'right'
+        direction: 'right',
       },
-
     ];
   }
-
-
 }

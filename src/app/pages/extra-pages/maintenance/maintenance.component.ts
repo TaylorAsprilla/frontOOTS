@@ -1,17 +1,17 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { MaintenanceQuestion } from './maintenance.model';
+import { DefaultLayoutComponent } from 'src/app/shared/ui/default-layout/default-layout.component';
 
 @Component({
   selector: 'app-maintenance',
   templateUrl: './maintenance.component.html',
-  styleUrls: ['./maintenance.component.scss']
+  styleUrls: ['./maintenance.component.scss'],
+  imports: [DefaultLayoutComponent],
 })
 export class MaintenanceComponent implements OnInit, AfterViewInit {
-
   maintenanceQueries: MaintenanceQuestion[] = [];
 
-  constructor () {
-  }
+  constructor() {}
 
   ngOnInit(): void {
     this.maintenanceQueries = [
@@ -36,5 +36,4 @@ export class MaintenanceComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     document.body.classList.remove('authentication-bg-pattern');
   }
-
 }

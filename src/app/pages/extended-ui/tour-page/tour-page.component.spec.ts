@@ -8,8 +8,8 @@ describe('TourPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TourPageComponent ]
-    })
+    imports: [TourPageComponent]
+})
     .compileComponents();
   });
 

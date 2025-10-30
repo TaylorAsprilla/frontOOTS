@@ -35,7 +35,7 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": ["src/favicon.ico", "src/assets", "src/.htaccess"],
             "styles": ["src/assets/scss/Default.scss"],
             "scripts": []
           },
@@ -44,22 +44,57 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "1.5mb",
-                  "maximumError": "2.5mb"
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
                 }
               ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
                 }
+              ]
+            },
+            "production-subfolder": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
               ],
-              "outputHashing": "all"
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "baseHref": "/oots-colombia/",
+              "deployUrl": "/oots-colombia/",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
             },
             "es": {
               "localize": ["es"]
@@ -82,16 +117,16 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "oots-colombia:build:production"
+              "buildTarget": "oots-colombia:build:production"
             },
             "development": {
-              "browserTarget": "oots-colombia:build:development"
+              "buildTarget": "oots-colombia:build:development"
             },
             "es": {
-              "browserTarget": "oots-colombia:build:es"
+              "buildTarget": "oots-colombia:build:es"
             },
             "en": {
-              "browserTarget": "oots-colombia:build:en"
+              "buildTarget": "oots-colombia:build:en"
             }
           },
           "defaultConfiguration": "development"
@@ -99,7 +134,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "oots-colombia:build"
+            "buildTarget": "oots-colombia:build"
           }
         },
         "test": {
@@ -117,6 +152,5 @@
         }
       }
     }
-  },
-  "defaultProject": "oots-colombia"
+  }
 }

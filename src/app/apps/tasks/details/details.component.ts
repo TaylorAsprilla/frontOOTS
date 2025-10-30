@@ -3,24 +3,32 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
 import { TODAYTASKS } from '../shared/data';
 import { ListTaskItem } from '../shared/tasks.model';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
+import { NgxDropzoneModule } from 'ngx-dropzone';
 
 @Component({
   selector: 'app-task-details',
   templateUrl: './details.component.html',
-  styleUrls: ['./details.component.scss']
+  styleUrls: ['./details.component.scss'],
+  imports: [CommonModule, RouterModule, NgbDropdownModule, PageTitleComponent, NgxDropzoneModule],
+  standalone: true,
 })
 export class DetailsComponent implements OnInit {
-
   pageTitle: BreadcrumbItem[] = [];
 
   selectedTask!: ListTaskItem;
   files: File[] = [];
 
-  constructor (private sanitizer: DomSanitizer) { }
-
+  constructor(private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
-    this.pageTitle = [{ label: 'Tasks', path: '/' }, { label: 'Task Detail', path: '/', active: true }];
+    this.pageTitle = [
+      { label: 'Tasks', path: '/' },
+      { label: 'Task Detail', path: '/', active: true },
+    ];
     this.selectedTask = TODAYTASKS[0];
   }
 
@@ -41,8 +49,8 @@ export class DetailsComponent implements OnInit {
   }
 
   /**
-  * Formats the size
-  */
+   * Formats the size
+   */
   getSize(f: File) {
     const bytes = f.size;
     if (bytes === 0) {
@@ -54,9 +62,7 @@ export class DetailsComponent implements OnInit {
 
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-
   }
-
 
   /**
    * Returns the preview url
@@ -64,6 +70,4 @@ export class DetailsComponent implements OnInit {
   getPreviewUrl(f: File) {
     return this.sanitizer.bypassSecurityTrustResourceUrl(encodeURI(URL.createObjectURL(f)));
   }
-
-
 }

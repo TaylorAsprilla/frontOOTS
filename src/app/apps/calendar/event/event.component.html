@@ -15,7 +15,7 @@
       id="form-event"
       (ngSubmit)="eventForm.submitted && saveEvent()"
       #eventForm="ngForm"
-    >
+      >
       <div class="row">
         <div class="col-12">
           <div class="mb-3">
@@ -35,18 +35,19 @@
                   title.invalid &&
                   (title.dirty || title.touched)
               }"
-            />
+              />
 
-            <div
-              *ngIf="
-                eventForm.submitted &&
-                title.invalid &&
-                (title.dirty || title.touched)
-              "
-              class="invalid-feedback"
-            >
-              La descripción es requerida
-            </div>
+            @if (
+              eventForm.submitted &&
+              title.invalid &&
+              (title.dirty || title.touched)
+              ) {
+              <div
+                class="invalid-feedback"
+                >
+                La descripción es requerida
+              </div>
+            }
           </div>
         </div>
         <div class="col-12">
@@ -65,43 +66,45 @@
                   category.invalid &&
                   (category.dirty || category.touched)
               }"
-            >
+              >
               <option value="bg-danger" selected>Participante</option>
               <option value="bg-success">Reunión</option>
               <option value="bg-primary">Seguimiento</option>
               <option value="bg-info">Documentación</option>
             </select>
-            <div
-              *ngIf="
-                eventForm.submitted &&
-                category.invalid &&
-                (category.dirty || category.touched)
-              "
-              class="invalid-feedback"
-            >
-              Seleccione la categoría
-            </div>
+            @if (
+              eventForm.submitted &&
+              category.invalid &&
+              (category.dirty || category.touched)
+              ) {
+              <div
+                class="invalid-feedback"
+                >
+                Seleccione la categoría
+              </div>
+            }
           </div>
         </div>
       </div>
       <div class="row mt-2">
         <div class="col-md-6 col-4">
-          <button
-            type="button"
-            class="btn btn-danger"
-            *ngIf="modelTitle === 'Edit Event'"
-            (click)="deleteEvent()"
-            id="btn-delete-event"
-          >
-            Eliminar
-          </button>
+          @if (modelTitle === 'Edit Event') {
+            <button
+              type="button"
+              class="btn btn-danger"
+              (click)="deleteEvent()"
+              id="btn-delete-event"
+              >
+              Eliminar
+            </button>
+          }
         </div>
         <div class="col-md-6 col-8 text-end">
           <button
             type="button"
             class="btn btn-light me-1"
             (click)="modal.dismiss('')"
-          >
+            >
             Cerrar
           </button>
           <button
@@ -109,7 +112,7 @@
             class="btn btn-success"
             id="btn-save-event"
             [disabled]="!eventForm.form.valid"
-          >
+            >
             Guardar
           </button>
         </div>

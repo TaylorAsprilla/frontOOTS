@@ -8,8 +8,8 @@ describe('DripiconsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DripiconsComponent ]
-    })
+    imports: [DripiconsComponent]
+})
     .compileComponents();
   });
 

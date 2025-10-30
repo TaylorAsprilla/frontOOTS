@@ -8,8 +8,8 @@ describe('TooltipsPopoversComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TooltipsPopoversComponent ]
-    })
+    imports: [TooltipsPopoversComponent]
+})
     .compileComponents();
   });
 
