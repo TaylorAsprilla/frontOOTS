@@ -10,15 +10,17 @@ import {
   ParticipantStatus,
 } from '../interfaces/participant.interface';
 import { NotificationService } from './notification.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ParticipantService {
+  url = environment.apiUrl;
+
   private readonly http = inject(HttpClient);
   private readonly notificationService = inject(NotificationService);
-
-  private readonly apiUrl = '/api/participants'; // Base API URL
+  private readonly apiUrl = `${this.url}/participants`; // Base API URL
 
   // State management
   private participantsSubject = new BehaviorSubject<Participant[]>([]);

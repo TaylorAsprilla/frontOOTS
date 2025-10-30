@@ -12,7 +12,7 @@ import {
   ValidateTokenResponse,
   AuthenticatedUserComplete,
 } from '../interfaces/auth.interface';
-import { TokenStorageService } from '../services/token-storage.service';
+import { TokenStorageService } from './token-storage.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })

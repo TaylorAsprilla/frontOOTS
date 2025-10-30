@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from 'src/app/core/models/auth.models';
-import { AuthenticationService } from 'src/app/core/service/auth.service';
+import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
 import { CommonModule } from '@angular/common';
 import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';

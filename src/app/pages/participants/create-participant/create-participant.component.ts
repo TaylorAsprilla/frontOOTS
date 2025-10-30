@@ -1,25 +1,26 @@
-import { Component, OnInit, inject, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  ReactiveFormsModule,
   FormBuilder,
   FormGroup,
   FormArray,
   Validators,
+  ReactiveFormsModule,
+  ValidatorFn,
   AbstractControl,
   ValidationErrors,
-  ValidatorFn,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbNavModule, NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule } from '@ngneat/transloco';
 import { Subject, takeUntil } from 'rxjs';
-
 import { ParticipantService } from '../../../core/services/participant.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
-import { ParticipantFormData, ProgressNote, ValidationMessages } from '../../../core/interfaces/participant.interface';
+import { ParticipantFormData, ValidationMessages } from '../../../core/interfaces/participant.interface';
+import { CaseService } from '../../../core/services/case.service';
+import { TokenStorageService } from '../../../core/services/token-storage.service';
 
 @Component({
   selector: 'app-create-participant',
@@ -29,6 +30,9 @@ import { ParticipantFormData, ProgressNote, ValidationMessages } from '../../../
   styleUrls: ['./create-participant.component.scss'],
 })
 export class CreateParticipantComponent implements OnInit, OnDestroy {
+  private readonly caseService = inject(CaseService);
+  private readonly tokenStorageService = inject(TokenStorageService);
+  participantId: number | null = null;
   private readonly formBuilder = inject(FormBuilder);
   private readonly participantService = inject(ParticipantService);
   private readonly notificationService = inject(NotificationService);
@@ -107,7 +111,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         customHealthInsurance: [''],
         // Emergency Contact fields
         emergencyContactName: ['', Validators.required],
-        emergencyContactPhone: ['', [Validators.required, Validators.pattern(/^(\+57)?[0-9]{10}$/)]],
+        emergencyContactPhone: ['', [Validators.required]],
         emergencyContactEmail: ['', [Validators.required, Validators.email]],
         emergencyContactAddress: ['', Validators.required],
         emergencyContactCity: ['', Validators.required],
@@ -484,13 +488,54 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   /**
    * Submit the form
    */
+
   onSubmit(): void {
     if (this.participantForm.valid && !this.isSubmitting) {
-      this.confirmSubmission();
+      // Si estamos en el paso 3 (bioPsychosocialHistory), crear el participante
+      if (this.activeWizardStep === 3) {
+        this.createParticipantAndContinue();
+      } else {
+        this.confirmSubmission();
+      }
     } else {
       this.markFormGroupTouched(this.participantForm);
       this.notificationService.showWarning('participants.validation.completeRequired');
     }
+  }
+
+  /**
+   * Crea el participante al finalizar el paso 3 y continúa el wizard
+   */
+  private createParticipantAndContinue(): void {
+    this.isSubmitting = true;
+    const formData = this.participantForm.value as ParticipantFormData;
+    this.participantService
+      .createParticipant(formData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.isSubmitting = false;
+          this.notificationService.showSuccess('participants.createSuccess');
+          // Guardar el ID del participante creado para usarlo en los siguientes pasos
+          if (response && response.data && response.data.id) {
+            this.participantId = Number(response.data.id);
+            // Llamar a submitCase automáticamente tras crear participante
+            const token = this.tokenStorageService.getToken();
+            if (token) {
+              this.submitCase(token);
+            } else {
+              this.notificationService.showError('No se encontró el token de autenticación.');
+            }
+          }
+          // Avanzar al siguiente paso del wizard
+          this.goToNextStep();
+        },
+        error: (error) => {
+          this.isSubmitting = false;
+          console.error('Error creating participant:', error);
+          this.notificationService.showError('participants.createError');
+        },
+      });
   }
 
   /**
@@ -531,6 +576,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   /**
    * Reset form to initial state
    */
+
   resetForm(): void {
     this.notificationService.showConfirmation('participants.confirmReset').then((result) => {
       if (result.isConfirmed) {
@@ -539,6 +585,46 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         this.initializeForm();
       }
     });
+  }
+
+  /**
+   * Enviar caso al backend usando el participantId y los datos del formulario
+   */
+  private submitCase(token: string): void {
+    if (!this.participantId) {
+      this.notificationService.showError('No se ha creado el participante.');
+      return;
+    }
+    // Construir el payload para el caso
+    const casePayload: any = {
+      participantId: this.participantId,
+      consultationReason: this.participantForm.get('consultationReason.reason')?.value,
+      identifiedSituations: this.participantForm.get('identifiedSituations.situations')?.value,
+      intervention: this.participantForm.get('intervention.intervention')?.value,
+      followUpPlan: this.participantForm.get('followUpPlan.plan')?.value,
+      physicalHealthHistory: this.participantForm.get('physicalHealthHistory')?.value,
+      mentalHealthHistory: this.participantForm.get('mentalHealthHistory')?.value,
+      ponderacion: this.participantForm.get('assessment')?.value,
+      interventionPlans: this.participantForm.get('interventionPlan')?.value,
+      progressNotes: this.participantForm.get('progressNotes')?.value,
+      referrals: this.participantForm.get('referrals.description')?.value,
+      closingNote: this.participantForm.get('closingNote')?.value,
+    };
+    this.isSubmitting = true;
+    this.caseService
+      .createCase(casePayload, token)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.isSubmitting = false;
+          this.notificationService.showSuccess('Caso creado correctamente');
+          // Puedes navegar o mostrar info aquí
+        },
+        error: (error) => {
+          this.isSubmitting = false;
+          this.notificationService.showError('Error al crear el caso');
+        },
+      });
   }
 
   /**

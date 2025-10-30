@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthenticationService } from 'src/app/core/service/auth.service';
+import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DefaultLayoutComponent } from 'src/app/shared/ui/default-layout/default-layout.component';

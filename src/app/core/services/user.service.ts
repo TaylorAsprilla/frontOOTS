@@ -5,12 +5,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { UserModel, UserBackendResponse } from '../models/user.model';
 import { NotificationService } from './notification.service';
-import {
-  ApiResponse,
-  CreateUserRequest,
-  PaginatedUsersResponse,
-  UpdateUserRequest,
-} from '../interfaces/user.interface';
+import { ApiResponse, PaginatedUsersResponse, UpdateUserRequest } from '../interfaces/user.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +22,7 @@ export class UserService {
    */
   registerUser(user: any): Observable<UserModel> {
     // El endpoint espera todos los campos requeridos por el backend
-    return this.http.post<any>('http://localhost:3000/api/v1/auth/register', user).pipe(
+    return this.http.post<any>(`${this.apiUrl}/auth/register`, user).pipe(
       map((response) => {
         // El usuario viene en response.data.user
         if (response && response.data && response.data.user) {

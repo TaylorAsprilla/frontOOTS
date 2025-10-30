@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { first } from 'rxjs/operators';
-import { AuthenticationService } from 'src/app/core/service/auth.service';
+import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { DefaultLayoutComponent } from 'src/app/shared/ui/default-layout/default-layout.component';
 import { PreloaderComponent } from 'src/app/shared/widget/preloader/preloader.component';
 import { NgbAlert } from '@ng-bootstrap/ng-bootstrap';

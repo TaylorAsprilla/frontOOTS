@@ -11,14 +11,6 @@ export const PARTICIPANTS_ROUTES: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'test',
-    loadComponent: () => import('./test-form.component').then((m) => m.TestFormComponent),
-    title: 'Test Form',
-    data: {
-      breadcrumb: 'Test Form',
-    },
-  },
-  {
     path: 'list',
     loadComponent: () =>
       import('./participant-list/participant-list.component').then((m) => m.ParticipantListComponent),

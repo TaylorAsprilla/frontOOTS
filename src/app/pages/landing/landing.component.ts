@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { AuthenticationService } from 'src/app/core/service/auth.service';
+import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { FeaturesComponent } from './features/features.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { HeroComponent } from './hero/hero.component';
