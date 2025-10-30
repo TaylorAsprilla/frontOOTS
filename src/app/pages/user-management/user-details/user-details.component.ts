@@ -6,7 +6,7 @@ import { NgbPaginationModule, NgbModal, NgbModalRef, NgbModalModule } from '@ng-
 import { TranslocoModule } from '@ngneat/transloco';
 import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
 import { MemberInfoComponent } from 'src/app/apps/member-info/member-info.component';
-import { UserInfoInterface } from 'src/app/core/interface/user.interface';
+import { UserInfoInterface } from 'src/app/core/interfaces/user.interface';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
 import { UserService } from 'src/app/core/services/user.service';
 import { NotificationService } from 'src/app/core/services/notification.service';

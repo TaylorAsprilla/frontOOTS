@@ -2,7 +2,7 @@ import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
-import { UserInfoInterface } from 'src/app/core/interface/user.interface';
+import { UserInfoInterface } from 'src/app/core/interfaces/user.interface';
 
 @Component({
   selector: 'app-contact-member-info',

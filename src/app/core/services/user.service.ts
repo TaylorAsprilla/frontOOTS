@@ -5,7 +5,12 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { UserModel, UserBackendResponse } from '../models/user.model';
 import { NotificationService } from './notification.service';
-import { ApiResponse, CreateUserRequest, PaginatedUsersResponse, UpdateUserRequest } from '../interface/user.interface';
+import {
+  ApiResponse,
+  CreateUserRequest,
+  PaginatedUsersResponse,
+  UpdateUserRequest,
+} from '../interfaces/user.interface';
 
 @Injectable({
   providedIn: 'root',
