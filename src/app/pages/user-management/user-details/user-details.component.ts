@@ -1,7 +1,9 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { RouterModule } from '@angular/router';
+import { NgbPaginationModule, NgbModal, NgbModalRef, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { TranslocoModule } from '@ngneat/transloco';
 import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
 import { MemberInfoComponent } from 'src/app/apps/member-info/member-info.component';
 import { UserInfoInterface } from 'src/app/core/interface/user.interface';
@@ -14,11 +16,40 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-user-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgbPaginationModule, PageTitleComponent, MemberInfoComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    NgbPaginationModule,
+    NgbModalModule,
+    TranslocoModule,
+    PageTitleComponent,
+    MemberInfoComponent,
+  ],
   templateUrl: './user-details.component.html',
   styleUrls: ['./user-details.component.scss'],
 })
 export class UserDetailsComponent implements OnInit, OnDestroy {
+  private readonly modalService = inject(NgbModal);
+  modalRef: NgbModalRef | null = null;
+  selectedUser: UserInfoInterface | null = null;
+  @ViewChild('userDetailsModal', { static: false }) userDetailsModal: any;
+  // Open modal with user info
+  openUserModal(user: UserInfoInterface): void {
+    console.log('Ingresa');
+    this.selectedUser = user;
+    setTimeout(() => {
+      this.modalRef = this.modalService.open(this.userDetailsModal, { centered: true });
+    });
+  }
+
+  closeUserModal(): void {
+    if (this.modalRef) {
+      this.modalRef.close();
+      this.modalRef = null;
+    }
+    this.selectedUser = null;
+  }
   // Inyección de dependencias usando inject()
   private readonly userService = inject(UserService);
   private readonly notificationService = inject(NotificationService);
@@ -112,7 +143,11 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       email: user.email,
       celular: user.phoneNumber,
       foto: this.getGenericAvatar(index),
-      cargo: this.generateRandomPosition(), // Cargo aleatorio por ahora
+      cargo: user.position || 'Sin cargo',
+      ciudad: user.city || '',
+      documentNumber: user.documentNumber,
+      birthDate: user.birthDate instanceof Date ? user.birthDate.toISOString().substring(0, 10) : user.birthDate || '',
+      address: user.address || '',
       participants: Math.floor(Math.random() * 50) + 1, // Estadísticas simuladas
       casos: Math.floor(Math.random() * 25) + 1,
       proximasCitas: Math.floor(Math.random() * 10) + 1,

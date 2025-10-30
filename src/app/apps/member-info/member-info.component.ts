@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -13,6 +13,7 @@ import { UserInfoInterface } from 'src/app/core/interface/user.interface';
 })
 export class MemberInfoComponent implements OnInit {
   @Input() user!: UserInfoInterface;
+  @Output() infoClick = new EventEmitter<UserInfoInterface>();
 
   memberData = {
     nombre: '',
@@ -31,6 +32,7 @@ export class MemberInfoComponent implements OnInit {
       ...this.user,
       foto: this.user.foto || 'assets/images/users/avatar-1.jpg',
       cargo: this.user.cargo || 'Sin cargo',
+      ciudad: this.user.ciudad || '',
       participants: this.user.participants || 0,
       casos: this.user.casos || 0,
       proximasCitas: this.user.proximasCitas || 0,
@@ -44,5 +46,10 @@ export class MemberInfoComponent implements OnInit {
     const nombre = `${this.user.primerNombre || ''} ${this.user.segundoNombre || ''}`.trim();
     const apellido = `${this.user.primerApellido || ''} ${this.user.segundoApellido || ''}`.trim();
     return `${nombre} ${apellido}`.trim() || 'Usuario sin nombre';
+  }
+
+  onInfoClick(event: Event) {
+    event.preventDefault();
+    this.infoClick.emit(this.user);
   }
 }

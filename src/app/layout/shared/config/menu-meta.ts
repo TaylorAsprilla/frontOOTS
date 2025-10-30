@@ -22,12 +22,6 @@ const MENU_ITEMS: MenuItem[] = [
     collapsed: true,
     children: [
       {
-        key: 'users-list',
-        label: 'navigation.usersList',
-        link: '/users/list',
-        parentKey: 'user-management',
-      },
-      {
         key: 'users-create',
         label: 'navigation.createUser',
         link: '/users/create',
@@ -37,24 +31,6 @@ const MENU_ITEMS: MenuItem[] = [
         key: 'users-details',
         label: 'navigation.userDetails',
         link: '/users/details',
-        parentKey: 'user-management',
-      },
-      {
-        key: 'users-settings',
-        label: 'navigation.settings',
-        link: '/users/settings',
-        parentKey: 'user-management',
-      },
-      {
-        key: 'users-reports',
-        label: 'navigation.reports',
-        link: '/users/reports',
-        parentKey: 'user-management',
-      },
-      {
-        key: 'users-bulk',
-        label: 'Bulk Actions',
-        link: '/users/bulk-actions',
         parentKey: 'user-management',
       },
     ],

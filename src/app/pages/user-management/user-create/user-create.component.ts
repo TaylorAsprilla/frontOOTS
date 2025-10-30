@@ -8,7 +8,6 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { UserService } from '../../../core/services/user.service';
 import { NotificationService } from '../../../core/services/notification.service';
-import { CreateUserRequest, UserModel } from '../../../core/models/user.model';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 
 @Component({
@@ -55,12 +54,15 @@ export class UserCreateComponent implements OnInit, OnDestroy {
       firstLastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       secondLastName: ['', [Validators.maxLength(50)]],
       email: ['', [Validators.required, Validators.email]],
-      phoneNumber: ['', [Validators.required, Validators.pattern(/^(\+57)?[3][0-9]{9}$/)]],
+      phoneNumber: ['', [Validators.required, Validators.maxLength(20)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       documentNumber: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(15)]],
       address: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]],
       city: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       birthDate: ['', [Validators.required]],
+      position: ['', [Validators.required, Validators.maxLength(100)]],
+      organization: ['', [Validators.required, Validators.maxLength(100)]],
+      documentTypeId: [1, [Validators.required]],
     });
   }
 
@@ -69,64 +71,50 @@ export class UserCreateComponent implements OnInit, OnDestroy {
     return !!(field && field.invalid && (field.dirty || field.touched));
   }
 
+  generateRandomPassword(length: number = 10): string {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=';
+    let password = '';
+    for (let i = 0; i < length; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return password;
+  }
+
+  onGeneratePassword(): void {
+    const password = this.generateRandomPassword();
+    this.userForm.get('password')?.setValue(password);
+    this.userForm.get('password')?.markAsDirty();
+  }
+
   onSubmit(): void {
     if (this.userForm.valid) {
       this.isSubmitting = true;
-
-      const createUserRequest: CreateUserRequest = this.userForm.value;
-
+      const registerRequest = this.userForm.value;
       this.userService
-        .createUser(createUserRequest)
+        .registerUser(registerRequest)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: (user: UserModel) => {
+          next: (user: any) => {
+            this.notificationService
+              .showSuccess('Usuario registrado exitosamente', {
+                title: '¡Éxito!',
+                text: `${user.firstName} ${user.firstLastName} ha sido registrado correctamente.`,
+                timer: 2000,
+              })
+              .then(() => {
+                this.router.navigate(['/users/details']);
+              });
             this.isSubmitting = false;
-
-            if (user && user.firstName && user.firstLastName) {
-              this.notificationService
-                .showSuccess(`Usuario creado exitosamente`, {
-                  title: '¡Éxito!',
-                  text: `${user.firstName} ${user.firstLastName} ha sido registrado correctamente.`,
-                  timer: 3000,
-                })
-                .then(() => {
-                  this.router.navigate(['/users/list']);
-                });
-            } else {
-              console.warn('User creation returned incomplete user data:', user);
-              this.notificationService
-                .showSuccess('Usuario creado exitosamente', {
-                  timer: 2000,
-                })
-                .then(() => {
-                  this.router.navigate(['/users/list']);
-                });
-            }
           },
           error: (error) => {
+            console.log('Error', error);
             this.isSubmitting = false;
-
-            // Manejo específico de errores con SweetAlert2
-            let errorTitle = 'Error al crear usuario';
-            let errorMessage = 'Ha ocurrido un error inesperado. Por favor, intenta nuevamente.';
-
-            if (error.status === 400) {
-              errorTitle = 'Datos inválidos';
-              errorMessage = 'Por favor verifica que todos los campos estén correctamente diligenciados.';
-            } else if (error.status === 409) {
-              errorTitle = 'Usuario ya existe';
-              errorMessage = 'Ya existe un usuario registrado con este email o número de documento.';
-            } else if (error.status === 500) {
-              errorTitle = 'Error del servidor';
-              errorMessage = 'Error interno del servidor. Por favor, intenta más tarde.';
-            } else if (error.status === 0) {
-              errorTitle = 'Sin conexión';
-              errorMessage = 'No se pudo conectar al servidor. Verifica tu conexión a internet.';
-            }
+            let errorTitle = 'Error al registrar usuario';
+            let errorMessage = error;
 
             this.notificationService.showError(errorMessage, {
               title: errorTitle,
-              timer: 0, // No auto-close for errors
+              timer: 0,
               showConfirmButton: true,
             });
           },

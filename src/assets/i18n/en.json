@@ -12,6 +12,7 @@
     "error": "Error",
     "success": "Success",
     "cancel": "Cancel",
+    "close": "Close",
     "save": "Save",
     "edit": "Edit",
     "delete": "Delete",
@@ -99,7 +100,17 @@
     "city": "City",
     "birthDate": "Birth Date",
     "position": "Position",
+    "organization": "Organization",
+    "phoneNumber": "Phone Number",
     "photo": "Photo",
+    "fullName": "Full Name",
+    "personalInformation": "Personal Information",
+    "contactInformation": "Contact Information",
+    "professionalInformation": "Professional Information",
+    "systemInformation": "System Information",
+    "createdAt": "Created At",
+    "updatedAt": "Last Updated",
+    "loadingUserDetails": "Loading user details",
     "participants": "Participants",
     "cases": "Cases",
     "appointments": "Appointments",
@@ -407,6 +418,27 @@
     }
   },
   "auth": {
-    "changePassword": "Change Password"
+    "changePassword": "Change Password",
+    "login": {
+      "title": "Sign In",
+      "subtitle": "Enter your email address and password to access the admin panel.",
+      "email": "Email Address",
+      "emailPlaceholder": "Enter your email",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "rememberMe": "Remember Me",
+      "forgotPassword": "Forgot your password?",
+      "signIn": "Sign In",
+      "errors": {
+        "emailRequired": "Email is required.",
+        "emailInvalid": "Must be a valid email address.",
+        "passwordRequired": "Password is required.",
+        "passwordMinLength": "Password length must be greater than 3.",
+        "invalidCredentials": "Invalid credentials. Please check your email and password.",
+        "serverError": "Server error. Please try again later.",
+        "connectionError": "Could not connect to server. Check your connection.",
+        "unknownError": "Login error. Please try again."
+      }
+    }
   }
 }

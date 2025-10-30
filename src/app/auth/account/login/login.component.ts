@@ -7,12 +7,21 @@ import { AuthenticationService } from 'src/app/core/service/auth.service';
 import { DefaultLayoutComponent } from 'src/app/shared/ui/default-layout/default-layout.component';
 import { PreloaderComponent } from 'src/app/shared/widget/preloader/preloader.component';
 import { NgbAlert } from '@ng-bootstrap/ng-bootstrap';
+import { TranslocoModule } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-auth-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  imports: [CommonModule, DefaultLayoutComponent, RouterModule, PreloaderComponent, NgbAlert, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    DefaultLayoutComponent,
+    RouterModule,
+    PreloaderComponent,
+    NgbAlert,
+    ReactiveFormsModule,
+    TranslocoModule,
+  ],
 })
 export class LoginComponent implements OnInit {
   loading: boolean = false;
@@ -33,8 +42,8 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
-      email: ['oficinadeorientacion@congregacionmitacol.org', [Validators.required, Validators.email]],
-      password: ['test', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
     });
 
     // reset login status
@@ -56,20 +65,26 @@ export class LoginComponent implements OnInit {
    */
   onSubmit(): void {
     this.formSubmitted = true;
+    this.error = '';
+
     if (this.loginForm.valid) {
       this.loading = true;
+
       this.authenticationService
         .login(this.formValues.email?.value, this.formValues.password?.value)
         .pipe(first())
-        .subscribe(
-          (data: any) => {
+        .subscribe({
+          next: (authenticatedUser) => {
+            console.log('Login successful:', authenticatedUser);
+            // Navegar al dashboard o a la URL de retorno
             this.router.navigate([this.returnUrl]);
           },
-          (error: any) => {
-            this.error = error;
+          error: (errorMessage: string) => {
+            console.error('Login failed:', errorMessage);
+            this.error = errorMessage;
             this.loading = false;
-          }
-        );
+          },
+        });
     }
   }
 }

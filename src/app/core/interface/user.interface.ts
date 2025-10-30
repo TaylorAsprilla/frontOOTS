@@ -1,6 +1,7 @@
 import { UserModel } from '../models/user.model';
 
 export interface UserInterface {
+  id?: number; // ID del usuario para acciones
   firstName: string;
   secondName?: string;
   firstLastName: string;
@@ -81,6 +82,10 @@ export interface UserInfoInterface {
   celular?: string;
   foto?: string;
   cargo?: string;
+  ciudad?: string;
+  documentNumber?: string;
+  birthDate?: string;
+  address?: string;
   participants?: number;
   casos?: number;
   proximasCitas?: number;

@@ -12,6 +12,7 @@
     "error": "Error",
     "success": "Éxito",
     "cancel": "Cancelar",
+    "close": "Cerrar",
     "save": "Guardar",
     "edit": "Editar",
     "delete": "Eliminar",
@@ -99,9 +100,19 @@
     "city": "Ciudad",
     "birthDate": "Fecha de Nacimiento",
     "position": "Cargo",
+    "organization": "Organización",
+    "phoneNumber": "Número de Teléfono",
     "photo": "Foto",
     "password": "Contraseña",
     "confirmPassword": "Confirmar Contraseña",
+    "fullName": "Nombre Completo",
+    "personalInformation": "Información Personal",
+    "contactInformation": "Información de Contacto",
+    "professionalInformation": "Información Profesional",
+    "systemInformation": "Información del Sistema",
+    "createdAt": "Fecha de Creación",
+    "updatedAt": "Última Actualización",
+    "loadingUserDetails": "Cargando detalles del usuario",
     "participants": "Participantes",
     "cases": "Casos",
     "appointments": "Citas",
@@ -407,6 +418,27 @@
     }
   },
   "auth": {
-    "changePassword": "Cambiar Contraseña"
+    "changePassword": "Cambiar Contraseña",
+    "login": {
+      "title": "Iniciar Sesión",
+      "subtitle": "Ingrese su dirección de correo electrónico y contraseña para acceder al panel de administración.",
+      "email": "Correo Electrónico",
+      "emailPlaceholder": "Ingrese su correo electrónico",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Ingrese su contraseña",
+      "rememberMe": "Recordar",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "signIn": "Iniciar Sesión",
+      "errors": {
+        "emailRequired": "El correo electrónico es obligatorio.",
+        "emailInvalid": "Debe ser una dirección de correo electrónico válida.",
+        "passwordRequired": "La contraseña es obligatoria.",
+        "passwordMinLength": "La longitud de la contraseña debe ser mayor que 3.",
+        "invalidCredentials": "Credenciales inválidas. Verifique su email y contraseña.",
+        "serverError": "Error en el servidor. Por favor, intente más tarde.",
+        "connectionError": "No se pudo conectar con el servidor. Verifique su conexión.",
+        "unknownError": "Error al iniciar sesión. Por favor, intente nuevamente."
+      }
+    }
   }
 }

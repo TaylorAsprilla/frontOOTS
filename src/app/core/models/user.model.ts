@@ -4,12 +4,15 @@
 export interface UserBackendResponse {
   id: number;
   firstName: string;
-  secondName?: string;
+  secondName?: string | null;
   firstLastName: string;
-  secondLastName?: string;
+  secondLastName?: string | null;
   phoneNumber: string;
   email: string;
+  position?: string | null; // Cargo del usuario
+  organization?: string | null; // Organización del usuario
   documentNumber: string;
+  documentTypeId?: number;
   address: string;
   city: string;
   birthDate: string; // ISO string from backend
@@ -32,7 +35,10 @@ export class UserModel {
     public phoneNumber: string,
     public email: string,
     public password: string,
+    public position: string, // Cargo/posición
+    public organization: string, // Organización
     public documentNumber: string,
+    public documentTypeId: number,
     public address: string,
     public city: string,
     public birthDate: Date,
@@ -54,7 +60,10 @@ export class UserModel {
       response.phoneNumber,
       response.email,
       '', // password no viene en la respuesta
+      response.position || '', // Cargo/posición
+      response.organization || '', // Organización
       response.documentNumber,
+      response.documentTypeId || 1,
       response.address,
       response.city,
       new Date(response.birthDate),

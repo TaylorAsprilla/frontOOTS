@@ -16,19 +16,23 @@ export class UserService {
   private readonly apiUrl = `${environment.apiUrl}/users`;
 
   /**
-   * Crea un nuevo usuario
-   * @param user - Datos del usuario a crear
-   * @returns Observable<User>
+   * Registra un nuevo usuario usando el endpoint de autenticación
+   * @param user - Datos del usuario a registrar
+   * @returns Observable<UserModel>
    */
-  createUser(user: CreateUserRequest): Observable<UserModel> {
-    return this.http.post<UserBackendResponse>(this.apiUrl, user).pipe(
+  registerUser(user: any): Observable<UserModel> {
+    // El endpoint espera todos los campos requeridos por el backend
+    return this.http.post<any>('http://localhost:3000/api/v1/auth/register', user).pipe(
       map((response) => {
-        // Use the factory method to create UserModel from backend response
-        const userModel = UserModel.fromBackendResponse(response);
-
-        return userModel;
+        // El usuario viene en response.data.user
+        if (response && response.data && response.data.user) {
+          // Si tienes un método para transformar a UserModel, úsalo aquí
+          // return UserModel.fromBackendResponse(response.data.user);
+          return response.data.user;
+        }
+        throw new Error('Respuesta inesperada del backend');
       }),
-      catchError((error) => this.handleError(error, 'Error al crear el usuario'))
+      catchError((error) => this.handleError(error, 'Error al registrar el usuario'))
     );
   }
 
@@ -49,16 +53,32 @@ export class UserService {
       params = params.set('limit', limit.toString());
     }
 
-    return this.http.get<UserBackendResponse[]>(this.apiUrl, { params }).pipe(
+    // Interface para la respuesta del backend que incluye data, statusCode, message, etc.
+    interface GetUsersResponse {
+      data: UserBackendResponse[];
+      statusCode: number;
+      message: string;
+      timestamp: string;
+      path: string;
+    }
+
+    return this.http.get<GetUsersResponse>(this.apiUrl, { params }).pipe(
       map((response) => {
-        // Transform backend response array to UserModel array
-        if (!Array.isArray(response)) {
+        // Extraer el array de usuarios del campo 'data'
+        const usersData = response.data;
+
+        if (!Array.isArray(usersData)) {
+          console.warn('Backend response data is not an array:', usersData);
           return [];
         }
 
-        const users = response.map((userResponse) => UserModel.fromBackendResponse(userResponse));
+        // Transform backend response array to UserModel array
+        const users = usersData.map((userResponse) => UserModel.fromBackendResponse(userResponse));
 
         return users;
+      }),
+      tap((users) => {
+        console.log(`Successfully loaded ${users.length} users from backend`);
       }),
       catchError((error) => this.handleError(error, 'Error al obtener los usuarios'))
     );
@@ -80,13 +100,29 @@ export class UserService {
   }
 
   /**
-   * Obtiene un usuario por su ID
+   * Obtiene un usuario por su ID desde el backend
    * @param id - ID del usuario
-   * @returns Observable<User>
+   * @returns Observable<UserModel>
    */
   getUserById(id: number): Observable<UserModel> {
-    return this.http.get<ApiResponse<UserModel>>(`${this.apiUrl}/${id}`).pipe(
-      map((response) => response.data),
+    // Interface para la respuesta del backend con estructura estándar
+    interface GetUserByIdResponse {
+      data: UserBackendResponse;
+      statusCode: number;
+      message: string;
+      timestamp: string;
+      path: string;
+    }
+
+    return this.http.get<GetUserByIdResponse>(`${this.apiUrl}/${id}`).pipe(
+      map((response) => {
+        // Transformar la respuesta del backend a UserModel
+        const userModel = UserModel.fromBackendResponse(response.data);
+        return userModel;
+      }),
+      tap((user) => {
+        console.log(`Successfully loaded user #${id}:`, user.getFullName());
+      }),
       catchError((error) => this.handleError(error, 'Error al obtener el usuario'))
     );
   }

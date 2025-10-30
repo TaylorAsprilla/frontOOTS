@@ -11,15 +11,6 @@ export const USER_MANAGEMENT_ROUTES: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'list',
-    title: 'Users List',
-    loadComponent: () => import('./users/users.component').then((c) => c.UsersComponent),
-    data: {
-      breadcrumb: 'Users',
-      description: 'Manage and view all users in the system',
-    },
-  },
-  {
     path: 'details',
     title: 'User Details',
     loadComponent: () => import('./user-details/user-details.component').then((c) => c.UserDetailsComponent),

@@ -10,16 +10,9 @@
             <form class="d-flex flex-wrap align-items-center">
               <label for="search-input" class="visually-hidden">Buscar</label>
               <div class="me-3">
-                <input
-                  type="search"
-                  class="form-control my-1 my-md-0"
-                  id="search-input"
-                  name="search"
-                  placeholder="Search users..."
-                  [(ngModel)]="searchTerm"
-                  (ngModelChange)="searchData($event)"
-                  [disabled]="loading"
-                />
+                <input type="search" class="form-control my-1 my-md-0" id="search-input" name="search"
+                  placeholder="Search users..." [(ngModel)]="searchTerm" (ngModelChange)="searchData($event)"
+                  [disabled]="loading" />
               </div>
               <div class="text-muted small">
                 <span *ngIf="!loading">{{ totalUsers }} users found</span>
@@ -29,15 +22,17 @@
           </div>
 
           <div class="col-md-4 text-end">
-            <button
-              class="btn btn-outline-primary"
-              (click)="refreshUsers()"
-              [disabled]="loading"
-              title="Refresh users from backend"
-            >
-              <i class="mdi" [ngClass]="loading ? 'mdi-loading mdi-spin' : 'mdi-refresh'"></i>
-              <span class="ms-1">{{ loading ? 'Loading...' : 'Refresh' }}</span>
-            </button>
+            <div class="btn-group" role="group">
+              <button class="btn btn-outline-primary" (click)="refreshUsers()" [disabled]="loading"
+                title="Refresh users from backend">
+                <i class="mdi" [ngClass]="loading ? 'mdi-loading mdi-spin' : 'mdi-refresh'"></i>
+                <span class="ms-1">{{ loading ? 'Loading...' : 'Refresh' }}</span>
+              </button>
+              <a class="btn btn-success ms-2" [routerLink]="['/users/create']" title="Agregar usuario">
+                <i class="mdi mdi-account-plus"></i>
+                <span class="ms-1 d-none d-md-inline">Agregar usuario</span>
+              </a>
+            </div>
           </div>
         </div>
         <!-- end row -->
@@ -50,7 +45,8 @@
 <!-- end row -->
 
 <!-- Loading State -->
-<div *ngIf="loading" class="row">
+@if (loading) {
+<div class="row">
   <div class="col-12">
     <div class="text-center py-5">
       <div class="spinner-border text-primary" role="status">
@@ -60,9 +56,11 @@
     </div>
   </div>
 </div>
+}
 
 <!-- Error State -->
-<div *ngIf="error && !loading" class="row">
+@if (error && !loading) {
+<div class="row">
   <div class="col-12">
     <div class="alert alert-danger" role="alert">
       <i class="mdi mdi-alert-circle me-2"></i>
@@ -73,11 +71,14 @@
     </div>
   </div>
 </div>
+}
 
 <!-- Users Grid -->
-<div *ngIf="!loading && !error" class="row">
+@if (!loading && !error) {
+<div class="row">
   <!-- Empty State -->
-  <div *ngIf="listaDeUsuarios.length === 0" class="col-12">
+  @if (listaDeUsuarios.length === 0) {
+  <div class="col-12">
     <div class="text-center py-5">
       <i class="mdi mdi-account-search mdi-48px text-muted"></i>
       <h4 class="mt-3 text-muted">No users found</h4>
@@ -90,36 +91,145 @@
       </button>
     </div>
   </div>
+  }
 
   <!-- Users Cards -->
   @for (usuario of listaDeUsuarios; track usuario.id) {
   <div class="col-xl-3 col-lg-4 col-md-6">
-    <app-contact-member-info [user]="usuario"></app-contact-member-info>
+    <app-contact-member-info [user]="usuario" (infoClick)="openUserModal($event)"></app-contact-member-info>
   </div>
   }
+  <!-- User Details Modal -->
+  <ng-template #userDetailsModal let-modal>
+    <div class="modal-header bg-primary text-white">
+      <h5 class="modal-title text-white">
+        <i class="mdi mdi-account-details me-2"></i>
+        {{ 'user.userInformation' | transloco }}
+      </h5>
+      <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeUserModal()"></button>
+    </div>
+    <div class="modal-body">
+      <div *ngIf="selectedUser" class="user-details">
+        <div class="text-center mb-4">
+          <div class="user-avatar-wrapper mb-3">
+            <div class="avatar-xl mx-auto">
+              <img [src]="selectedUser.foto || 'assets/images/users/avatar-1.jpg'" alt="User Avatar"
+                class="rounded-circle img-thumbnail" style="width: 120px; height: 120px; object-fit: cover;"
+                onerror="this.src='assets/images/users/avatar-1.jpg'" />
+            </div>
+          </div>
+          <h4 class="mb-1 fw-bold">{{ selectedUser.primerNombre }} {{ selectedUser.segundoNombre }} {{
+            selectedUser.primerApellido }} {{ selectedUser.segundoApellido }}</h4>
+          <div class="mb-2">
+            <span class="d-block h2 fw-bold text-primary" style="font-size:1rem;">
+              <i class="mdi mdi-briefcase me-2"></i>{{ selectedUser.cargo }}
+            </span>
+          </div>
+          <p class="text-muted mb-2">
+            <i class="mdi mdi-email-outline me-1"></i>
+            {{ selectedUser.email }}
+          </p>
+          <div class="d-flex justify-content-center gap-2 mb-3">
+            <span class="badge bg-info-subtle text-info">
+              <i class="mdi mdi-map-marker me-1"></i>
+              {{ selectedUser.ciudad }}
+            </span>
+          </div>
+        </div>
+        <div class="card border-0 shadow-sm mb-3">
+          <div class="card-header bg-light">
+            <h6 class="mb-0 fw-semibold">
+              <i class="mdi mdi-map-marker me-2 text-primary"></i>
+              {{ 'user.personalInformation' | transloco }}
+
+            </h6>
+          </div>
+          <div class="card-body">
+            <div class="info-item">
+              <label class="text-muted d-block mb-1">
+                <i class="mdi mdi-home me-1"></i>
+                {{ 'user.address' | transloco }}
+              </label>
+              <h6 class="mb-0">{{ selectedUser.address || '-' }}</h6>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="info-item">
+                  <label class="text-muted d-block mb-1">
+                    <i class="mdi mdi-card-account-details me-1"></i>
+                    {{ 'user.documentNumber' | transloco }}
+                  </label>
+                  <h6 class="mb-0">{{ selectedUser.documentNumber || '-' }}</h6>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="info-item">
+                  <label class="text-muted d-block mb-1">
+                    <i class="mdi mdi-calendar me-1"></i>
+                    {{ 'user.birthDate' | transloco }}
+                  </label>
+                  <h6 class="mb-0">{{ selectedUser.birthDate || '-' }}</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card border-0 shadow-sm mb-3">
+          <div class="card-header bg-light">
+            <h6 class="mb-0 fw-semibold">
+              <i class="mdi mdi-phone me-2 text-primary"></i>
+              {{ 'user.contactInformation' | transloco }}
+            </h6>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="info-item">
+                  <label class="text-muted d-block mb-1">
+                    <i class="mdi mdi-cellphone me-1"></i>
+                    {{ 'user.phoneNumber' | transloco }}
+                  </label>
+                  <h6 class="mb-0">{{ selectedUser.celular || '-' }}</h6>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="info-item">
+                  <label class="text-muted d-block mb-1">
+                    <i class="mdi mdi-email me-1"></i>
+                    {{ 'user.email' | transloco }}
+                  </label>
+                  <h6 class="mb-0">{{ selectedUser.email || '-' }}</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </ng-template>
   <!-- end col -->
 </div>
+}
+
 <!-- end row -->
 
 <!-- Pagination -->
-<div *ngIf="!loading && !error && totalUsers > pageSize" class="row">
+@if (!loading && !error && totalUsers > pageSize) {
+<div class="row">
   <div class="col-12">
     <div class="d-flex justify-content-between align-items-center">
       <div class="text-muted">
         Showing {{ (page - 1) * pageSize + 1 }} to {{ getMin(page * pageSize, totalUsers) }} of {{ totalUsers }} users
       </div>
-      <ngb-pagination
-        [collectionSize]="totalUsers"
-        [pageSize]="pageSize"
-        [(page)]="page"
-        (pageChange)="onPageChange($event)"
-        [maxSize]="5"
-        [rotate]="true"
-        [boundaryLinks]="true"
-        class="pagination-rounded"
-      >
+      <ngb-pagination [collectionSize]="totalUsers" [pageSize]="pageSize" [(page)]="page"
+        (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+        class="pagination-rounded">
       </ngb-pagination>
     </div>
   </div>
 </div>
+}
 <!-- end row -->
