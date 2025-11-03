@@ -10,6 +10,10 @@ export const CONFIGURATION_ROUTES: Routes = [
     loadChildren: () => import('./approach-types/approach-type.routes').then((m) => m.APPROACH_TYPE_ROUTES),
   },
   {
+    path: 'document-types',
+    loadChildren: () => import('./document-types/document-type.routes').then((m) => m.DOCUMENT_TYPE_ROUTES),
+  },
+  {
     path: '',
     redirectTo: 'academic-level',
     pathMatch: 'full',

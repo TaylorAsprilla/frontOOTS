@@ -124,6 +124,13 @@ const MENU_ITEMS: MenuItem[] = [
     icon: 'target',
     link: '/configuration/approach-types',
   },
+  {
+    key: 'configuration-document-types',
+    label: 'documentType.title',
+    isTitle: false,
+    icon: 'file-text',
+    link: '/configuration/document-types',
+  },
   // {
   //   key: "apps-chat",
   //   label: "Chat",

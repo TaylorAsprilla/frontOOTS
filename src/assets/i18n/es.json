@@ -522,6 +522,38 @@
       "descriptionMaxLength": "La descripción no puede exceder 500 caracteres"
     }
   },
+  "documentType": {
+    "title": "Tipos de Documento",
+    "createNew": "Crear Tipo de Documento",
+    "create": "Crear Tipo de Documento",
+    "createTitle": "Crear Nuevo Tipo de Documento",
+    "edit": "Editar Tipo de Documento",
+    "editTitle": "Editar Tipo de Documento",
+    "delete": "Eliminar Tipo de Documento",
+    "view": "Ver Tipo de Documento",
+    "list": "Lista de Tipos de Documento",
+    "searchPlaceholder": "Buscar tipos de documento...",
+    "filterAll": "Todos los Estados",
+    "filterActive": "Activos",
+    "filterInactive": "Inactivos",
+    "clearFilters": "Limpiar Filtros",
+    "noResults": "No se encontraron tipos de documento",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "id": "ID",
+    "name": "Nombre",
+    "status": "Estado",
+    "actions": "Acciones",
+    "isActive": "Estado Activo",
+    "namePlaceholder": "Ej: Cédula de Ciudadanía, Pasaporte...",
+    "showing": "Mostrando",
+    "of": "de",
+    "validation": {
+      "nameRequired": "El nombre es requerido",
+      "nameMinLength": "El nombre debe tener al menos 2 caracteres",
+      "nameMaxLength": "El nombre no puede exceder 100 caracteres"
+    }
+  },
   "common": {
     "loading": "Cargando...",
     "save": "Guardar",

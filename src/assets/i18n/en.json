@@ -522,6 +522,38 @@
       "descriptionMaxLength": "Description cannot exceed 500 characters"
     }
   },
+  "documentType": {
+    "title": "Document Types",
+    "createNew": "Create Document Type",
+    "create": "Create Document Type",
+    "createTitle": "Create New Document Type",
+    "edit": "Edit Document Type",
+    "editTitle": "Edit Document Type",
+    "delete": "Delete Document Type",
+    "view": "View Document Type",
+    "list": "Document Types List",
+    "searchPlaceholder": "Search document types...",
+    "filterAll": "All Statuses",
+    "filterActive": "Active",
+    "filterInactive": "Inactive",
+    "clearFilters": "Clear Filters",
+    "noResults": "No document types found",
+    "active": "Active",
+    "inactive": "Inactive",
+    "id": "ID",
+    "name": "Name",
+    "status": "Status",
+    "actions": "Actions",
+    "isActive": "Active Status",
+    "namePlaceholder": "E.g: ID Card, Passport...",
+    "showing": "Showing",
+    "of": "of",
+    "validation": {
+      "nameRequired": "Name is required",
+      "nameMinLength": "Name must be at least 2 characters",
+      "nameMaxLength": "Name cannot exceed 100 characters"
+    }
+  },
   "common": {
     "loading": "Loading...",
     "save": "Save",
