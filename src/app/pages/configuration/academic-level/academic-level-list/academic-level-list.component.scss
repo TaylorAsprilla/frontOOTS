@@ -1,0 +1,60 @@
+.search-box {
+  position: relative;
+}
+
+.search-box .search-icon {
+  position: absolute;
+  right: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  font-size: 16px;
+}
+
+.search-box input {
+  padding-right: 40px;
+}
+
+// Badge status styling
+.badge {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.35rem 0.65rem;
+}
+
+// Table responsive adjustments
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+// Button adjustments
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+// Empty state
+.text-muted i {
+  opacity: 0.5;
+}
+
+// Sortable columns
+.sortable {
+  user-select: none;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  i {
+    font-size: 0.75rem;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+
+  &:hover i {
+    opacity: 1;
+  }
+}

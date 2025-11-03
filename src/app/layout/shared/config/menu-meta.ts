@@ -108,6 +108,22 @@ const MENU_ITEMS: MenuItem[] = [
       },
     ],
   },
+
+  { key: 'configuration', label: 'configuration.title', isTitle: true },
+  {
+    key: 'configuration-academic-level',
+    label: 'academicLevel.title',
+    isTitle: false,
+    icon: 'award',
+    link: '/configuration/academic-level',
+  },
+  {
+    key: 'configuration-approach-types',
+    label: 'approachType.title',
+    isTitle: false,
+    icon: 'target',
+    link: '/configuration/approach-types',
+  },
   // {
   //   key: "apps-chat",
   //   label: "Chat",

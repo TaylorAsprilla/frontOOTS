@@ -18,6 +18,10 @@ export const routes: Routes = [
         path: 'apps',
         loadChildren: () => import('./apps/apps.module').then((m) => m.AppsModule),
       },
+      {
+        path: 'configuration',
+        loadChildren: () => import('./pages/configuration/configuration.routes').then((m) => m.CONFIGURATION_ROUTES),
+      },
     ],
   },
   {
