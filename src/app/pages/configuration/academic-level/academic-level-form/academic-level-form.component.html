@@ -1,0 +1,100 @@
+<!-- Page Title -->
+<app-page-title [breadcrumbItems]="breadcrumbItems"
+    [title]="(isEditMode ? 'academicLevel.edit' : 'academicLevel.create') | transloco"></app-page-title>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- Loading spinner -->
+                <div *ngIf="isLoading" class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">{{ 'common.loading' | transloco }}</span>
+                    </div>
+                </div>
+
+                <!-- Formulario -->
+                <form *ngIf="!isLoading" [formGroup]="academicLevelForm" (ngSubmit)="onSubmit()">
+                    <div class="row">
+                        <!-- Nombre del nivel académico -->
+                        <div class="col-lg-6 col-md-12 mb-3">
+                            <label for="name" class="form-label">
+                                {{ 'academicLevel.fields.name' | transloco }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" id="name" formControlName="name" class="form-control"
+                                [class.is-invalid]="hasFieldError('name')"
+                                [placeholder]="'academicLevel.namePlaceholder' | transloco" />
+                            <div *ngIf="hasFieldError('name')" class="invalid-feedback">
+                                {{ getFieldError('name') | transloco }}
+                            </div>
+                            <small class="form-text text-muted">
+                                {{ 'academicLevel.nameHelp' | transloco }}
+                            </small>
+                        </div>
+
+                        <!-- Estado activo/inactivo -->
+                        <div class="col-lg-6 col-md-12 mb-3">
+                            <label for="isActive" class="form-label">
+                                {{ 'academicLevel.fields.status' | transloco }}
+                            </label>
+                            <div class="form-check form-switch">
+                                <input type="checkbox" id="isActive" formControlName="isActive" class="form-check-input"
+                                    role="switch" />
+                                <label class="form-check-label" for="isActive">
+                                    {{ (academicLevelForm.get('isActive')?.value ? 'academicLevel.active' :
+                                    'academicLevel.inactive') | transloco }}
+                                </label>
+                            </div>
+                            <small class="form-text text-muted">
+                                {{ 'academicLevel.statusHelp' | transloco }}
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-end gap-2">
+                                <button type="button" class="btn btn-secondary" (click)="cancel()"
+                                    [disabled]="isSubmitting">
+                                    <i class="fas fa-times me-1"></i>
+                                    {{ 'common.cancel' | transloco }}
+                                </button>
+
+                                <button *ngIf="!isEditMode" type="button" class="btn btn-outline-primary"
+                                    (click)="resetForm()" [disabled]="isSubmitting">
+                                    <i class="fas fa-redo me-1"></i>
+                                    {{ 'common.reset' | transloco }}
+                                </button>
+
+                                <button type="submit" class="btn btn-primary"
+                                    [disabled]="isSubmitting || academicLevelForm.invalid">
+                                    <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-1"
+                                        role="status"></span>
+                                    <i *ngIf="!isSubmitting" class="fas fa-save me-1"></i>
+                                    {{ (isEditMode ? 'common.update' : 'common.save') | transloco }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Información adicional card -->
+        <div class="card mt-3" *ngIf="!isLoading">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-info-circle me-2"></i>
+                    {{ 'academicLevel.infoTitle' | transloco }}
+                </h5>
+                <ul class="mb-0">
+                    <li>{{ 'academicLevel.info1' | transloco }}</li>
+                    <li>{{ 'academicLevel.info2' | transloco }}</li>
+                    <li>{{ 'academicLevel.info3' | transloco }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

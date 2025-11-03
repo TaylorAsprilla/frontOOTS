@@ -1,0 +1,133 @@
+<!-- Page Title -->
+<app-page-title [breadcrumbItems]="breadcrumbItems" [title]="'academicLevel.title' | transloco"></app-page-title>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- Header con búsqueda y botones -->
+                <div class="row mb-3">
+                    <div class="col-lg-4">
+                        <div class="search-box">
+                            <input type="text" class="form-control"
+                                [placeholder]="'academicLevel.searchPlaceholder' | transloco" [(ngModel)]="searchTerm"
+                                (ngModelChange)="onSearchChange($event)" />
+                            <i class="fas fa-search search-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <select class="form-select" [(ngModel)]="filterStatusValue"
+                            (ngModelChange)="onFilterActiveChange($event)">
+                            <option value="all">{{ 'academicLevel.filterAll' | transloco }}</option>
+                            <option value="true">{{ 'academicLevel.filterActive' | transloco }}</option>
+                            <option value="false">{{ 'academicLevel.filterInactive' | transloco }}</option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-4 text-end">
+                        <button type="button" class="btn btn-secondary me-2" (click)="clearFilters()">
+                            <i class="fas fa-sync-alt me-1"></i>
+                            {{ 'academicLevel.clearFilters' | transloco }}
+                        </button>
+                        <button type="button" class="btn btn-primary" (click)="createAcademicLevel()">
+                            <i class="fas fa-plus me-1"></i>
+                            {{ 'academicLevel.create' | transloco }}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Loading spinner -->
+                <div *ngIf="isLoading" class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">{{ 'common.loading' | transloco }}</span>
+                    </div>
+                </div>
+
+                <!-- Tabla de niveles académicos -->
+                <div *ngIf="!isLoading" class="table-responsive">
+                    <table class="table table-hover table-striped align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="sortable" (click)="onSortChange('id')" style="cursor: pointer;">
+                                    {{ 'academicLevel.fields.id' | transloco }}
+                                    <i [class]="getSortIcon('id')" class="ms-1"></i>
+                                </th>
+                                <th class="sortable" (click)="onSortChange('name')" style="cursor: pointer;">
+                                    {{ 'academicLevel.fields.name' | transloco }}
+                                    <i [class]="getSortIcon('name')" class="ms-1"></i>
+                                </th>
+                                <th>{{ 'academicLevel.fields.status' | transloco }}</th>
+                                <th class="text-end">{{ 'common.actions' | transloco }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let level of academicLevels">
+                                <td>{{ level.id }}</td>
+                                <td>{{ level.name }}</td>
+                                <td>
+                                    <span *ngIf="level.isActive" class="badge bg-success-subtle text-success">
+                                        <i class="fas fa-check-circle me-1"></i>
+                                        {{ 'academicLevel.active' | transloco }}
+                                    </span>
+                                    <span *ngIf="!level.isActive" class="badge bg-danger-subtle text-danger">
+                                        <i class="fas fa-times-circle me-1"></i>
+                                        {{ 'academicLevel.inactive' | transloco }}
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <button type="button" class="btn btn-sm btn-soft-info me-1"
+                                        [ngbTooltip]="'academicLevel.edit' | transloco"
+                                        (click)="editAcademicLevel(level.id)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+
+                                    <button type="button" class="btn btn-sm me-1"
+                                        [class.btn-soft-warning]="level.isActive"
+                                        [class.btn-soft-success]="!level.isActive"
+                                        [ngbTooltip]="(level.isActive ? 'academicLevel.deactivate' : 'academicLevel.activate') | transloco"
+                                        (click)="toggleActiveStatus(level)">
+                                        <i [class.fas]="true" [class.fa-eye-slash]="level.isActive"
+                                            [class.fa-eye]="!level.isActive"></i>
+                                    </button>
+
+                                    <button type="button" class="btn btn-sm btn-soft-danger"
+                                        [ngbTooltip]="'academicLevel.delete' | transloco"
+                                        (click)="deleteAcademicLevel(level)">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- Empty state -->
+                            <tr *ngIf="academicLevels.length === 0">
+                                <td colspan="4" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="fas fa-folder-open fs-1 d-block mb-2"></i>
+                                        <p class="mb-0">{{ 'academicLevel.noData' | transloco }}</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginación -->
+                <div *ngIf="!isLoading && totalItems > pageSize" class="row mt-3">
+                    <div class="col-lg-12">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="text-muted">
+                                {{ 'common.showing' | transloco }} {{ (currentPage - 1) * pageSize + 1 }} -
+                                {{ currentPage * pageSize > totalItems ? totalItems : currentPage * pageSize }} {{
+                                'common.of' | transloco }} {{ totalItems }}
+                            </div>
+                            <ngb-pagination [(page)]="currentPage" [pageSize]="pageSize" [collectionSize]="totalItems"
+                                [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                (pageChange)="onPageChange($event)"></ngb-pagination>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
