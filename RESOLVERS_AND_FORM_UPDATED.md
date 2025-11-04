@@ -9,32 +9,44 @@ Se han creado 6 resolvers y actualizado el formulario de participantes para usar
 ## 📋 Resolvers Creados
 
 ### 1. marital-status.resolver.ts
+
 **Ubicación:** `src/app/pages/participants/marital-status.resolver.ts`
+
 - ✅ Filtra estados civiles activos de la API
 - ✅ Retorna `Observable<MaritalStatus[]>`
 
 ### 2. health-insurance.resolver.ts
+
 **Ubicación:** `src/app/pages/participants/health-insurance.resolver.ts`
+
 - ✅ Filtra EPS activas de la API
 - ✅ Retorna `Observable<HealthInsurance[]>`
 
 ### 3. family-relationship.resolver.ts
+
 **Ubicación:** `src/app/pages/participants/family-relationship.resolver.ts`
+
 - ✅ Filtra parentescos activos de la API
 - ✅ Retorna `Observable<FamilyRelationship[]>`
 
 ### 4. income-source.resolver.ts
+
 **Ubicación:** `src/app/pages/participants/income-source.resolver.ts`
+
 - ✅ Filtra fuentes de ingresos activas de la API
 - ✅ Retorna `Observable<IncomeSource[]>`
 
 ### 5. income-level.resolver.ts
+
 **Ubicación:** `src/app/pages/participants/income-level.resolver.ts`
+
 - ✅ Filtra niveles de ingresos activos de la API
 - ✅ Retorna `Observable<IncomeLevel[]>`
 
 ### 6. housing-type.resolver.ts
+
 **Ubicación:** `src/app/pages/participants/housing-type.resolver.ts`
+
 - ✅ Filtra tipos de vivienda activos de la API
 - ✅ Retorna `Observable<HousingType[]>`
 
@@ -43,7 +55,9 @@ Se han creado 6 resolvers y actualizado el formulario de participantes para usar
 ## 🔧 Archivos Modificados
 
 ### 1. participants.routes.ts
+
 **Cambios:**
+
 - ✅ Importados los 6 nuevos resolvers
 - ✅ Agregados a las rutas `create` y `edit/:id`
 - ✅ Disponibles como: `maritalStatuses`, `healthInsurances`, `familyRelationships`, `incomeSources`, `incomeLevels`, `housingTypes`
@@ -62,27 +76,33 @@ resolve: {
 ```
 
 ### 2. create-participant.component.ts
+
 **Cambios:**
+
 - ✅ Importados 6 interfaces: `MaritalStatus`, `HealthInsurance`, `FamilyRelationship`, `IncomeSource`, `IncomeLevel`, `HousingType`
 - ✅ Agregadas 6 propiedades para almacenar los datos
 - ✅ Creados 6 métodos `load*FromResolver()` para cargar datos de los resolvers
 - ✅ Llamadas a los métodos en `ngOnInit()`
 
 **Métodos agregados:**
+
 ```typescript
-loadMaritalStatusesFromResolver()
-loadHealthInsurancesFromResolver()
-loadFamilyRelationshipsFromResolver()
-loadIncomeSourcesFromResolver()
-loadIncomeLevelsFromResolver()
-loadHousingTypesFromResolver()
+loadMaritalStatusesFromResolver();
+loadHealthInsurancesFromResolver();
+loadFamilyRelationshipsFromResolver();
+loadIncomeSourcesFromResolver();
+loadIncomeLevelsFromResolver();
+loadHousingTypesFromResolver();
 ```
 
 ### 3. create-participant.component.html
+
 **Cambios realizados:**
 
 #### ✅ Estado Civil (maritalStatusId)
+
 **Antes:** Lista hardcodeada de 6 opciones
+
 ```html
 <option value="Casado">Casado</option>
 <option value="Divorciado">Divorciado</option>
@@ -90,14 +110,17 @@ loadHousingTypesFromResolver()
 ```
 
 **Después:** Datos dinámicos de API
+
 ```html
 @for (maritalStatus of maritalStatuses; track maritalStatus.id) {
-  <option [value]="maritalStatus.id">{{ maritalStatus.name }}</option>
+<option [value]="maritalStatus.id">{{ maritalStatus.name }}</option>
 }
 ```
 
 #### ✅ EPS (healthInsuranceId)
+
 **Antes:** Lista hardcodeada de 27 opciones
+
 ```html
 <option value="Asmet Salud">Asmet Salud</option>
 <option value="Cafesalud">Cafesalud</option>
@@ -105,15 +128,18 @@ loadHousingTypesFromResolver()
 ```
 
 **Después:** Datos dinámicos de API + opción "Otro"
+
 ```html
 @for (healthInsurance of healthInsurances; track healthInsurance.id) {
-  <option [value]="healthInsurance.id">{{ healthInsurance.name }}</option>
+<option [value]="healthInsurance.id">{{ healthInsurance.name }}</option>
 }
 <option value="other">Otro</option>
 ```
 
 #### ✅ Parentesco (relationshipId) - Composición Familiar
+
 **Antes:** Lista hardcodeada de 24 opciones
+
 ```html
 <option value="Padre">Padre</option>
 <option value="Madre">Madre</option>
@@ -121,14 +147,17 @@ loadHousingTypesFromResolver()
 ```
 
 **Después:** Datos dinámicos de API
+
 ```html
 @for (relationship of familyRelationships; track relationship.id) {
-  <option [value]="relationship.id">{{ relationship.name }}</option>
+<option [value]="relationship.id">{{ relationship.name }}</option>
 }
 ```
 
 #### ✅ Fuente de Ingresos (incomeSource)
+
 **Antes:** Lista hardcodeada de 7 opciones
+
 ```html
 <option value="Sueldo">Sueldo</option>
 <option value="Rentas">Rentas</option>
@@ -136,14 +165,17 @@ loadHousingTypesFromResolver()
 ```
 
 **Después:** Datos dinámicos de API
+
 ```html
 @for (incomeSource of incomeSources; track incomeSource.id) {
-  <option [value]="incomeSource.id">{{ incomeSource.name }}</option>
+<option [value]="incomeSource.id">{{ incomeSource.name }}</option>
 }
 ```
 
 #### ✅ Nivel de Ingresos (incomeLevel)
+
 **Antes:** Lista hardcodeada de 3 opciones
+
 ```html
 <option value="Menos de 1 SMLV">Menos de 1 SMLV</option>
 <option value="1 SMLV">1 SMLV</option>
@@ -151,14 +183,17 @@ loadHousingTypesFromResolver()
 ```
 
 **Después:** Datos dinámicos de API
+
 ```html
 @for (incomeLevel of incomeLevels; track incomeLevel.id) {
-  <option [value]="incomeLevel.id">{{ incomeLevel.name }}</option>
+<option [value]="incomeLevel.id">{{ incomeLevel.name }}</option>
 }
 ```
 
 #### ✅ Tipo de Vivienda (housingTypeId)
+
 **Antes:** Lista hardcodeada de 3 opciones
+
 ```html
 <option value="Propia">Propia</option>
 <option value="Arriendo">Arriendo</option>
@@ -166,9 +201,10 @@ loadHousingTypesFromResolver()
 ```
 
 **Después:** Datos dinámicos de API
+
 ```html
 @for (housingType of housingTypes; track housingType.id) {
-  <option [value]="housingType.id">{{ housingType.name }}</option>
+<option [value]="housingType.id">{{ housingType.name }}</option>
 }
 ```
 
@@ -177,7 +213,9 @@ loadHousingTypesFromResolver()
 ## 🔧 Correcciones Realizadas
 
 ### Servicios
+
 Corregidos los nombres de métodos en los servicios (eliminado "ees", "es", etc.):
+
 - ❌ `getHealthInsurancees()` → ✅ `getHealthInsurances()`
 - ❌ `getFamilyRelationshipes()` → ✅ `getFamilyRelationships()`
 - ❌ `getIncomeSourcees()` → ✅ `getIncomeSources()`
@@ -185,7 +223,9 @@ Corregidos los nombres de métodos en los servicios (eliminado "ees", "es", etc.
 - ❌ `getHousingTypees()` → ✅ `getHousingTypes()`
 
 ### Componentes List
+
 Corregidos los nombres de variables en todos los componentes list:
+
 - Variables: `healthInsurances`, `familyRelationships`, `incomeSources`, `incomeLevels`, `housingTypes`
 - Arrays filtrados y paginados actualizados
 - Templates HTML actualizados
@@ -194,15 +234,15 @@ Corregidos los nombres de variables en todos los componentes list:
 
 ## 📊 Resumen Estadístico
 
-| Categoría | Cantidad |
-|-----------|----------|
-| Resolvers Creados | 6 |
-| Servicios Corregidos | 5 |
-| Componentes TypeScript Modificados | 7+ |
-| Templates HTML Modificados | 7+ |
-| Selects Actualizados | 6 |
-| Opciones Hardcodeadas Eliminadas | ~80 |
-| Líneas de Código Agregadas | ~150 |
+| Categoría                          | Cantidad |
+| ---------------------------------- | -------- |
+| Resolvers Creados                  | 6        |
+| Servicios Corregidos               | 5        |
+| Componentes TypeScript Modificados | 7+       |
+| Templates HTML Modificados         | 7+       |
+| Selects Actualizados               | 6        |
+| Opciones Hardcodeadas Eliminadas   | ~80      |
+| Líneas de Código Agregadas         | ~150     |
 
 ---
 
@@ -222,16 +262,19 @@ Corregidos los nombres de variables en todos los componentes list:
 ### Flujo de Datos:
 
 1. **Usuario navega a crear/editar participante**
+
    ```
    /participants/create o /participants/edit/:id
    ```
 
 2. **Resolvers se ejecutan automáticamente**
+
    - Llaman a las APIs de configuración
    - Filtran solo elementos activos (`isActive: true`)
    - Pasan los datos al componente
 
 3. **Componente recibe los datos**
+
    ```typescript
    loadMaritalStatusesFromResolver() {
      this.maritalStatuses = this.route.snapshot.data['maritalStatuses'];
@@ -239,9 +282,10 @@ Corregidos los nombres de variables en todos los componentes list:
    ```
 
 4. **Template renderiza opciones dinámicamente**
+
    ```html
    @for (maritalStatus of maritalStatuses; track maritalStatus.id) {
-     <option [value]="maritalStatus.id">{{ maritalStatus.name }}</option>
+   <option [value]="maritalStatus.id">{{ maritalStatus.name }}</option>
    }
    ```
 
@@ -254,27 +298,32 @@ Corregidos los nombres de variables en todos los componentes list:
 ## 🧪 Pruebas Recomendadas
 
 ### 1. Verificar Carga de Datos
+
 - [ ] Navegar a `/participants/create`
 - [ ] Verificar que todos los selects se llenan con datos
 - [ ] Verificar que aparecen solo elementos activos
 
 ### 2. Verificar Creación
+
 - [ ] Llenar formulario completo
 - [ ] Seleccionar opciones de todos los catálogos
 - [ ] Guardar y verificar que se guarden los IDs correctos
 
 ### 3. Verificar Edición
+
 - [ ] Editar un participante existente
 - [ ] Verificar que los valores se precargan correctamente
 - [ ] Modificar y guardar
 
 ### 4. Verificar Integración con Configuración
+
 - [ ] Ir a módulo de configuración (ej: Estado Civil)
 - [ ] Crear un nuevo estado civil activo
 - [ ] Volver al formulario de participantes
 - [ ] Verificar que aparece la nueva opción
 
 ### 5. Verificar Filtrado
+
 - [ ] Desactivar un elemento en configuración
 - [ ] Recargar formulario de participantes
 - [ ] Verificar que no aparece la opción desactivada
@@ -294,13 +343,16 @@ Corregidos los nombres de variables en todos los componentes list:
 ## 🎯 Próximos Pasos Sugeridos
 
 1. ✅ **Migración de Datos (si aplica)**
+
    - Convertir strings existentes a IDs de las tablas de configuración
 
 2. ✅ **Agregar Más Catálogos**
+
    - Grado Académico (academicLevel) - ya existe el módulo
    - Cualquier otro campo que tenga valores predefinidos
 
 3. ✅ **Optimización**
+
    - Considerar cachear los catálogos si no cambian frecuentemente
    - Implementar refresh automático si se modifican desde otra sesión
 

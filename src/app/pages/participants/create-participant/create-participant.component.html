@@ -238,7 +238,7 @@
                                 formControlName="maritalStatusId">
                                 <option value="" disabled selected>Seleccione el estado civil</option>
                                 @for (maritalStatus of maritalStatuses; track maritalStatus.id) {
-                                  <option [value]="maritalStatus.id">{{ maritalStatus.name }}</option>
+                                <option [value]="maritalStatus.id">{{ maritalStatus.name }}</option>
                                 }
                               </select>
                               @if (hasFieldError('personalData.maritalStatusId')) {
@@ -257,7 +257,7 @@
                                 id="healthInsuranceId" formControlName="healthInsuranceId">
                                 <option value="" disabled selected>Seleccione la EPS</option>
                                 @for (healthInsurance of healthInsurances; track healthInsurance.id) {
-                                  <option [value]="healthInsurance.id">{{ healthInsurance.name }}</option>
+                                <option [value]="healthInsurance.id">{{ healthInsurance.name }}</option>
                                 }
                                 <option value="other">Otro</option>
                               </select>
@@ -490,7 +490,7 @@
                                   formControlName="relationshipId">
                                   <option value="" disabled selected>Seleccione el Parentesco</option>
                                   @for (relationship of familyRelationships; track relationship.id) {
-                                    <option [value]="relationship.id">{{ relationship.name }}</option>
+                                  <option [value]="relationship.id">{{ relationship.name }}</option>
                                   }
                                 </select>
                               </div>
@@ -611,7 +611,7 @@
                               <select class="form-select" id="incomeSource" formControlName="incomeSource">
                                 <option value="" disabled selected>Seleccione fuente de ingresos</option>
                                 @for (incomeSource of incomeSources; track incomeSource.id) {
-                                  <option [value]="incomeSource.id">{{ incomeSource.name }}</option>
+                                <option [value]="incomeSource.id">{{ incomeSource.name }}</option>
                                 }
                               </select>
                             </div>
@@ -626,7 +626,7 @@
                               <select class="form-select" id="incomeLevel" formControlName="incomeLevel">
                                 <option value="" disabled selected>Seleccione el estimado mensual</option>
                                 @for (incomeLevel of incomeLevels; track incomeLevel.id) {
-                                  <option [value]="incomeLevel.id">{{ incomeLevel.name }}</option>
+                                <option [value]="incomeLevel.id">{{ incomeLevel.name }}</option>
                                 }
                               </select>
                             </div>
@@ -655,7 +655,7 @@
                                 id="housingTypeId" formControlName="housingTypeId">
                                 <option value="" disabled selected>Seleccione el Tipo de Vivienda</option>
                                 @for (housingType of housingTypes; track housingType.id) {
-                                  <option [value]="housingType.id">{{ housingType.name }}</option>
+                                <option [value]="housingType.id">{{ housingType.name }}</option>
                                 }
                               </select>
                               @if (hasFieldError('bioPsychosocialHistory.housingTypeId')) {
