@@ -27,7 +27,7 @@ export class HousingTypeService {
     });
   }
 
-  getHousingTypees(): Observable<HousingTypeListResponse> {
+  getHousingTypes(): Observable<HousingTypeListResponse> {
     return this.http.get<HousingTypeListResponse>(this.apiUrl, {
       headers: this.getHeaders(),
     });

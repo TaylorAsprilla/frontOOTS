@@ -23,6 +23,12 @@ import { CaseService } from '../../../core/services/case.service';
 import { TokenStorageService } from '../../../core/services/token-storage.service';
 import { DocumentType } from '../../configuration/document-types/document-type.interface';
 import { Gender } from '../../configuration/genders/gender.interface';
+import { MaritalStatus } from '../../configuration/marital-status/marital-status.interface';
+import { HealthInsurance } from '../../configuration/health-insurance/health-insurance.interface';
+import { FamilyRelationship } from '../../configuration/family-relationship/family-relationship.interface';
+import { IncomeSource } from '../../configuration/income-source/income-source.interface';
+import { IncomeLevel } from '../../configuration/income-level/income-level.interface';
+import { HousingType } from '../../configuration/housing-type/housing-type.interface';
 
 @Component({
   selector: 'app-create-participant',
@@ -53,6 +59,24 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
 
   // Genders from resolver
   genders: Gender[] = [];
+
+  // Marital Statuses from resolver
+  maritalStatuses: MaritalStatus[] = [];
+
+  // Health Insurances from resolver
+  healthInsurances: HealthInsurance[] = [];
+
+  // Family Relationships from resolver
+  familyRelationships: FamilyRelationship[] = [];
+
+  // Income Sources from resolver
+  incomeSources: IncomeSource[] = [];
+
+  // Income Levels from resolver
+  incomeLevels: IncomeLevel[] = [];
+
+  // Housing Types from resolver
+  housingTypes: HousingType[] = [];
 
   // Breadcrumb configuration
   breadcrumbItems: BreadcrumbItem[] = [
@@ -87,6 +111,12 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadDocumentTypesFromResolver();
     this.loadGendersFromResolver();
+    this.loadMaritalStatusesFromResolver();
+    this.loadHealthInsurancesFromResolver();
+    this.loadFamilyRelationshipsFromResolver();
+    this.loadIncomeSourcesFromResolver();
+    this.loadIncomeLevelsFromResolver();
+    this.loadHousingTypesFromResolver();
     this.initializeForm();
     this.setupFormSubscriptions();
     this.isLoading = false;
@@ -117,6 +147,90 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     } else {
       console.warn('No genders found in resolver data');
       this.genders = [];
+    }
+  }
+
+  /**
+   * Load marital statuses from route resolver
+   */
+  private loadMaritalStatusesFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['maritalStatuses'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.maritalStatuses = resolvedData;
+      console.log('Marital statuses loaded from resolver:', this.maritalStatuses);
+    } else {
+      console.warn('No marital statuses found in resolver data');
+      this.maritalStatuses = [];
+    }
+  }
+
+  /**
+   * Load health insurances from route resolver
+   */
+  private loadHealthInsurancesFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['healthInsurances'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.healthInsurances = resolvedData;
+      console.log('Health insurances loaded from resolver:', this.healthInsurances);
+    } else {
+      console.warn('No health insurances found in resolver data');
+      this.healthInsurances = [];
+    }
+  }
+
+  /**
+   * Load family relationships from route resolver
+   */
+  private loadFamilyRelationshipsFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['familyRelationships'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.familyRelationships = resolvedData;
+      console.log('Family relationships loaded from resolver:', this.familyRelationships);
+    } else {
+      console.warn('No family relationships found in resolver data');
+      this.familyRelationships = [];
+    }
+  }
+
+  /**
+   * Load income sources from route resolver
+   */
+  private loadIncomeSourcesFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['incomeSources'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.incomeSources = resolvedData;
+      console.log('Income sources loaded from resolver:', this.incomeSources);
+    } else {
+      console.warn('No income sources found in resolver data');
+      this.incomeSources = [];
+    }
+  }
+
+  /**
+   * Load income levels from route resolver
+   */
+  private loadIncomeLevelsFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['incomeLevels'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.incomeLevels = resolvedData;
+      console.log('Income levels loaded from resolver:', this.incomeLevels);
+    } else {
+      console.warn('No income levels found in resolver data');
+      this.incomeLevels = [];
+    }
+  }
+
+  /**
+   * Load housing types from route resolver
+   */
+  private loadHousingTypesFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['housingTypes'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.housingTypes = resolvedData;
+      console.log('Housing types loaded from resolver:', this.housingTypes);
+    } else {
+      console.warn('No housing types found in resolver data');
+      this.housingTypes = [];
     }
   }
 

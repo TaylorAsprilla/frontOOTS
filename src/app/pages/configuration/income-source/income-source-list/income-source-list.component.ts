@@ -22,7 +22,7 @@ export class IncomeSourceListComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly destroy$ = new Subject<void>();
 
-  incomeSourcees: IncomeSource[] = [];
+  incomeSources: IncomeSource[] = [];
   filteredIncomeSourcees: IncomeSource[] = [];
   paginatedIncomeSourcees: IncomeSource[] = [];
   isLoading = false;
@@ -59,11 +59,11 @@ export class IncomeSourceListComponent implements OnInit, OnDestroy {
   loadIncomeSourcees(): void {
     this.isLoading = true;
     this.incomeSourceService
-      .getIncomeSourcees()
+      .getIncomeSources()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.incomeSourcees = response.data;
+          this.incomeSources = response.data;
           this.applyFilters();
           this.isLoading = false;
         },
@@ -75,7 +75,7 @@ export class IncomeSourceListComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(): void {
-    let filtered = [...this.incomeSourcees];
+    let filtered = [...this.incomeSources];
 
     const searchTerm = this.searchControl.value?.toLowerCase() || '';
     if (searchTerm) {

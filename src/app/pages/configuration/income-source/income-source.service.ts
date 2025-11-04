@@ -27,7 +27,7 @@ export class IncomeSourceService {
     });
   }
 
-  getIncomeSourcees(): Observable<IncomeSourceListResponse> {
+  getIncomeSources(): Observable<IncomeSourceListResponse> {
     return this.http.get<IncomeSourceListResponse>(this.apiUrl, {
       headers: this.getHeaders(),
     });

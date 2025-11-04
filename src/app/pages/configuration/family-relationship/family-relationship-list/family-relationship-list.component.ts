@@ -22,7 +22,7 @@ export class FamilyRelationshipListComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly destroy$ = new Subject<void>();
 
-  familyRelationshipes: FamilyRelationship[] = [];
+  familyRelationships: FamilyRelationship[] = [];
   filteredFamilyRelationshipes: FamilyRelationship[] = [];
   paginatedFamilyRelationshipes: FamilyRelationship[] = [];
   isLoading = false;
@@ -59,11 +59,11 @@ export class FamilyRelationshipListComponent implements OnInit, OnDestroy {
   loadFamilyRelationshipes(): void {
     this.isLoading = true;
     this.familyRelationshipService
-      .getFamilyRelationshipes()
+      .getFamilyRelationships()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.familyRelationshipes = response.data;
+          this.familyRelationships = response.data;
           this.applyFilters();
           this.isLoading = false;
         },
@@ -75,7 +75,7 @@ export class FamilyRelationshipListComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(): void {
-    let filtered = [...this.familyRelationshipes];
+    let filtered = [...this.familyRelationships];
 
     const searchTerm = this.searchControl.value?.toLowerCase() || '';
     if (searchTerm) {

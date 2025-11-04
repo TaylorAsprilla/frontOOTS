@@ -22,7 +22,7 @@ export class IncomeLevelListComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly destroy$ = new Subject<void>();
 
-  incomeLeveles: IncomeLevel[] = [];
+  incomeLevels: IncomeLevel[] = [];
   filteredIncomeLeveles: IncomeLevel[] = [];
   paginatedIncomeLeveles: IncomeLevel[] = [];
   isLoading = false;
@@ -59,11 +59,11 @@ export class IncomeLevelListComponent implements OnInit, OnDestroy {
   loadIncomeLeveles(): void {
     this.isLoading = true;
     this.incomeLevelService
-      .getIncomeLeveles()
+      .getIncomeLevels()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.incomeLeveles = response.data;
+          this.incomeLevels = response.data;
           this.applyFilters();
           this.isLoading = false;
         },
@@ -75,7 +75,7 @@ export class IncomeLevelListComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(): void {
-    let filtered = [...this.incomeLeveles];
+    let filtered = [...this.incomeLevels];
 
     const searchTerm = this.searchControl.value?.toLowerCase() || '';
     if (searchTerm) {

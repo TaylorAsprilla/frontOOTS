@@ -22,7 +22,7 @@ export class HousingTypeListComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly destroy$ = new Subject<void>();
 
-  housingTypees: HousingType[] = [];
+  housingTypes: HousingType[] = [];
   filteredHousingTypees: HousingType[] = [];
   paginatedHousingTypees: HousingType[] = [];
   isLoading = false;
@@ -59,11 +59,11 @@ export class HousingTypeListComponent implements OnInit, OnDestroy {
   loadHousingTypees(): void {
     this.isLoading = true;
     this.housingTypeService
-      .getHousingTypees()
+      .getHousingTypes()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.housingTypees = response.data;
+          this.housingTypes = response.data;
           this.applyFilters();
           this.isLoading = false;
         },
@@ -75,7 +75,7 @@ export class HousingTypeListComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(): void {
-    let filtered = [...this.housingTypees];
+    let filtered = [...this.housingTypes];
 
     const searchTerm = this.searchControl.value?.toLowerCase() || '';
     if (searchTerm) {

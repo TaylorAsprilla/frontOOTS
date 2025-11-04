@@ -22,7 +22,7 @@ export class HealthInsuranceListComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly destroy$ = new Subject<void>();
 
-  healthInsurancees: HealthInsurance[] = [];
+  healthInsurances: HealthInsurance[] = [];
   filteredHealthInsurancees: HealthInsurance[] = [];
   paginatedHealthInsurancees: HealthInsurance[] = [];
   isLoading = false;
@@ -59,11 +59,11 @@ export class HealthInsuranceListComponent implements OnInit, OnDestroy {
   loadHealthInsurancees(): void {
     this.isLoading = true;
     this.healthInsuranceService
-      .getHealthInsurancees()
+      .getHealthInsurances()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.healthInsurancees = response.data;
+          this.healthInsurances = response.data;
           this.applyFilters();
           this.isLoading = false;
         },
@@ -75,7 +75,7 @@ export class HealthInsuranceListComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(): void {
-    let filtered = [...this.healthInsurancees];
+    let filtered = [...this.healthInsurances];
 
     const searchTerm = this.searchControl.value?.toLowerCase() || '';
     if (searchTerm) {

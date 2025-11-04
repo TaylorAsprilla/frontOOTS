@@ -237,12 +237,9 @@
                                 [class.is-invalid]="hasFieldError('personalData.maritalStatusId')" id="maritalStatusId"
                                 formControlName="maritalStatusId">
                                 <option value="" disabled selected>Seleccione el estado civil</option>
-                                <option value="Casado">Casado</option>
-                                <option value="Divorciado">Divorciado</option>
-                                <option value="Separado">Separado</option>
-                                <option value="Soltero">Soltero</option>
-                                <option value="Unión Libre">Unión Libre</option>
-                                <option value="Viudo">Viudo</option>
+                                @for (maritalStatus of maritalStatuses; track maritalStatus.id) {
+                                  <option [value]="maritalStatus.id">{{ maritalStatus.name }}</option>
+                                }
                               </select>
                               @if (hasFieldError('personalData.maritalStatusId')) {
                               <div class="invalid-feedback">
@@ -259,35 +256,9 @@
                                 [class.is-invalid]="hasFieldError('personalData.healthInsuranceId')"
                                 id="healthInsuranceId" formControlName="healthInsuranceId">
                                 <option value="" disabled selected>Seleccione la EPS</option>
-                                <option value="Asmet Salud">Asmet Salud</option>
-                                <option value="Asociación Indígena del Cauca">Asociación Indígena del Cauca</option>
-                                <option value="Cafesalud">Cafesalud</option>
-                                <option value="Capital Salud">Capital Salud</option>
-                                <option value="Comfachocó">Comfachocó</option>
-                                <option value="Comfamiliar">Comfamiliar</option>
-                                <option value="Comfandi">Comfandi</option>
-                                <option value="Comfenalco">Comfenalco</option>
-                                <option value="Compensar">Compensar</option>
-                                <option value="Coosalud">Coosalud</option>
-                                <option value="Cruz blanca">Cruz blanca</option>
-                                <option value="Emssanar">Emssanar</option>
-                                <option value="EPS Sanitas">EPS Sanitas</option>
-                                <option value="Famisanar">Famisanar</option>
-                                <option value="Ferrocarriles">Ferrocarriles</option>
-                                <option value="Fomag (magisterio)">Fomag (magisterio)</option>
-                                <option value="Mallamas">Mallamas</option>
-                                <option value="Mutual SER">Mutual SER</option>
-                                <option value="Nueva EPS">Nueva EPS</option>
-                                <option value="Pijaos Salud">Pijaos Salud</option>
-                                <option value="Policía Nacional">Policía Nacional</option>
-                                <option value="Salud Bolívar">Salud Bolívar</option>
-                                <option value="Salud Total">Salud Total</option>
-                                <option value="Savia Salud">Savia Salud</option>
-                                <option value="Servicio Occidental de Salud EPS SOS">
-                                  Servicio Occidental de Salud EPS SOS
-                                </option>
-                                <option value="Suramericana">Suramericana</option>
-                                <option value="Sura">Sura</option>
+                                @for (healthInsurance of healthInsurances; track healthInsurance.id) {
+                                  <option [value]="healthInsurance.id">{{ healthInsurance.name }}</option>
+                                }
                                 <option value="other">Otro</option>
                               </select>
                               @if (hasFieldError('personalData.healthInsuranceId')) {
@@ -518,31 +489,9 @@
                                 <select class="form-select" [id]="'relationshipId_' + i"
                                   formControlName="relationshipId">
                                   <option value="" disabled selected>Seleccione el Parentesco</option>
-                                  <option value="Padre">Padre</option>
-                                  <option value="Madre">Madre</option>
-                                  <option value="Hermano">Hermano</option>
-                                  <option value="Hermana">Hermana</option>
-                                  <option value="Hijo">Hijo</option>
-                                  <option value="Hija">Hija</option>
-                                  <option value="Esposo">Esposo</option>
-                                  <option value="Esposa">Esposa</option>
-                                  <option value="Tio">Tío</option>
-                                  <option value="Tia">Tía</option>
-                                  <option value="Abuelo">Abuelo</option>
-                                  <option value="Abuela">Abuela</option>
-                                  <option value="Primo">Primo</option>
-                                  <option value="Prima">Prima</option>
-                                  <option value="Sobrino">Sobrino</option>
-                                  <option value="Sobrina">Sobrina</option>
-                                  <option value="Nieto">Nieto</option>
-                                  <option value="Nieta">Nieta</option>
-                                  <option value="Cuñado">Cuñado</option>
-                                  <option value="Cuñada">Cuñada</option>
-                                  <option value="Yerno">Yerno</option>
-                                  <option value="Nuera">Nuera</option>
-                                  <option value="Suegro">Suegro</option>
-                                  <option value="Suegra">Suegra</option>
-                                  <option value="Otro">Otro</option>
+                                  @for (relationship of familyRelationships; track relationship.id) {
+                                    <option [value]="relationship.id">{{ relationship.name }}</option>
+                                  }
                                 </select>
                               </div>
                             </div>
@@ -661,13 +610,9 @@
                             <div class="col-md-9">
                               <select class="form-select" id="incomeSource" formControlName="incomeSource">
                                 <option value="" disabled selected>Seleccione fuente de ingresos</option>
-                                <option value="Sueldo">Sueldo</option>
-                                <option value="Rentas">Rentas</option>
-                                <option value="Seguro">Seguro</option>
-                                <option value="Pensiones">Pensiones</option>
-                                <option value="Giros">Giros</option>
-                                <option value="Negocio propio">Negocio propio</option>
-                                <option value="Otro">Otro</option>
+                                @for (incomeSource of incomeSources; track incomeSource.id) {
+                                  <option [value]="incomeSource.id">{{ incomeSource.name }}</option>
+                                }
                               </select>
                             </div>
                           </div>
@@ -680,9 +625,9 @@
                             <div class="col-md-9">
                               <select class="form-select" id="incomeLevel" formControlName="incomeLevel">
                                 <option value="" disabled selected>Seleccione el estimado mensual</option>
-                                <option value="Menos de 1 SMLV">Menos de 1 SMLV</option>
-                                <option value="1 SMLV">1 SMLV</option>
-                                <option value="Más de 1 SMLV">Más de 1 SMLV</option>
+                                @for (incomeLevel of incomeLevels; track incomeLevel.id) {
+                                  <option [value]="incomeLevel.id">{{ incomeLevel.name }}</option>
+                                }
                               </select>
                             </div>
                           </div>
@@ -709,9 +654,9 @@
                                 [class.is-invalid]="hasFieldError('bioPsychosocialHistory.housingTypeId')"
                                 id="housingTypeId" formControlName="housingTypeId">
                                 <option value="" disabled selected>Seleccione el Tipo de Vivienda</option>
-                                <option value="Propia">Propia</option>
-                                <option value="Arriendo">Arriendo</option>
-                                <option value="Familiar">Familiar</option>
+                                @for (housingType of housingTypes; track housingType.id) {
+                                  <option [value]="housingType.id">{{ housingType.name }}</option>
+                                }
                               </select>
                               @if (hasFieldError('bioPsychosocialHistory.housingTypeId')) {
                               <div class="invalid-feedback">

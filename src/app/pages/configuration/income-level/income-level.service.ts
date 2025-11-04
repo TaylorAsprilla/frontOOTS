@@ -27,7 +27,7 @@ export class IncomeLevelService {
     });
   }
 
-  getIncomeLeveles(): Observable<IncomeLevelListResponse> {
+  getIncomeLevels(): Observable<IncomeLevelListResponse> {
     return this.http.get<IncomeLevelListResponse>(this.apiUrl, {
       headers: this.getHeaders(),
     });

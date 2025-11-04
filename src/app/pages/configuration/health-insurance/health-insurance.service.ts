@@ -27,7 +27,7 @@ export class HealthInsuranceService {
     });
   }
 
-  getHealthInsurancees(): Observable<HealthInsuranceListResponse> {
+  getHealthInsurances(): Observable<HealthInsuranceListResponse> {
     return this.http.get<HealthInsuranceListResponse>(this.apiUrl, {
       headers: this.getHeaders(),
     });

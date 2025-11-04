@@ -27,7 +27,7 @@ export class FamilyRelationshipService {
     });
   }
 
-  getFamilyRelationshipes(): Observable<FamilyRelationshipListResponse> {
+  getFamilyRelationships(): Observable<FamilyRelationshipListResponse> {
     return this.http.get<FamilyRelationshipListResponse>(this.apiUrl, {
       headers: this.getHeaders(),
     });
