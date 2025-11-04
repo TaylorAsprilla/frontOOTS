@@ -27,6 +27,15 @@ const routes: Routes = [
       description: 'Comprehensive participants management system',
     },
   },
+  {
+    path: 'cases',
+    title: 'Cases Management',
+    loadChildren: () => import('./cases/cases.routes').then((r) => r.CASES_ROUTES),
+    data: {
+      breadcrumb: 'Cases',
+      description: 'Comprehensive cases management system',
+    },
+  },
   // --- Disabled (temporal) ---
   // { path: 'pages', loadChildren: () => import('./extra-pages/extra-pages.module').then(m => m.ExtraPagesModule) },
   // { path: 'charts', loadChildren: () => import('./charts/charts.module').then(m => m.ChartsModule) },

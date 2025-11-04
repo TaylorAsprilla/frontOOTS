@@ -73,6 +73,24 @@ const MENU_ITEMS: MenuItem[] = [
     icon: 'file',
   },
 
+  { key: 'cases', label: 'navigation.cases', isTitle: true },
+
+  {
+    key: 'cases-management',
+    label: 'navigation.cases',
+    isTitle: false,
+    icon: 'folder',
+    collapsed: true,
+    children: [
+      {
+        key: 'cases-list',
+        label: 'navigation.casesList',
+        link: '/cases/list',
+        parentKey: 'cases-management',
+      },
+    ],
+  },
+
   { key: 'apps', label: 'navigation.appointments', isTitle: true },
   {
     key: 'apps-calendar',

@@ -240,10 +240,14 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Initialize the reactive form with all sections
+   * Initialize the reactive form with 3 main sections:
+   * 1. Personal Data (Datos Personales)
+   * 2. Family Composition (Composición Familiar)
+   * 3. Biopsychosocial History (Historial BioPsicosocial)
    */
   private initializeForm(): void {
     this.participantForm = this.formBuilder.group({
+      // Step 1: Personal Data
       personalData: this.formBuilder.group({
         firstName: ['', [Validators.required, Validators.maxLength(50)]],
         secondName: ['', Validators.maxLength(50)],
@@ -271,80 +275,20 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         emergencyContactRelationship: ['', Validators.required],
       }),
 
+      // Step 2: Family Composition
       familyComposition: this.formBuilder.array([this.createFamilyMemberForm()]),
 
-      consultationReason: this.formBuilder.group({
-        reason: [''],
-        participantReason: [''], // "según el participante"
-      }),
-
-      identifiedSituations: this.formBuilder.group({
-        situations: [''],
-      }),
-
-      intervention: this.formBuilder.group({
-        intervention: [''],
-        actionTaken: [''], // "Registre la acción tomada"
-      }),
-
-      followUpPlan: this.formBuilder.group({
-        plan: [''],
-        scheduleNextAppointment: [false],
-        nextAppointmentDate: [''],
-        nextAppointmentTime: [''],
-      }),
-
+      // Step 3: Biopsychosocial History
       bioPsychosocialHistory: this.formBuilder.group({
-        schooling: [''],
-        completedGrade: [''],
-        institution: [''],
-        profession: [''],
-        incomeSource: [''],
-        incomeLevel: [''], // "Menos de 1 SMLV", "1 SMLV", "Más de 1 SMLV"
-        occupationalHistory: [''],
-        housing: [''],
-        housingTypeId: ['', Validators.required], // Moved from personalData
-      }),
-
-      physicalHealthHistory: this.formBuilder.group({
-        physicalConditions: [''], // "¿Tiene usted un diagnóstico de salud física? ¿Cuál?"
-        receivingTreatment: [''],
-        treatmentDetails: [''],
-        paternalFamilyHistory: [''], // "Antecedentes familiares de salud física"
-        maternalFamilyHistory: [''], // "Antecedentes familiares de salud física"
-        physicalHealthObservations: [''],
-      }),
-
-      mentalHealthHistory: this.formBuilder.group({
-        mentalConditions: [''], // "¿Tiene usted un diagnóstico de salud mental? ¿Cuál?"
-        receivingMentalTreatment: [''],
-        mentalTreatmentDetails: [''],
-        paternalMentalHistory: [''], // "Antecedentes familiares de salud mental"
-        maternalMentalHistory: [''], // "Antecedentes familiares de salud mental"
-        mentalHealthObservations: [''],
-      }),
-
-      assessment: this.formBuilder.group({
-        consultationReason: [''],
-        weighting: [''], // "Describa la situación identificada"
-        concurrentFactors: [''], // "Describa las condiciones favorables que identifica"
-        criticalFactors: [''], // "Describa condiciones que no favorecen el proceso de ayuda"
-        problemAnalysis: [''], // "Indique el enfoque teórico desde el cual abordará el proceso de ayuda"
-      }),
-
-      interventionPlan: this.formBuilder.array([this.createInterventionPlanItem()]),
-
-      progressNotes: this.formBuilder.array([this.createEmptyProgressNote()]),
-
-      referrals: this.formBuilder.group({
-        description: [''],
-      }),
-
-      closingNote: this.formBuilder.group({
-        observations: [''],
-        closureReason: [''], // Motivo de cierre
-        achievements: [''], // Logros alcanzados
-        recommendations: [''], // Recomendaciones
+        academicLevelId: ['', Validators.required],
+        completedGrade: ['', Validators.required],
+        institution: ['', Validators.required],
+        profession: ['', Validators.required],
+        incomeSourceId: ['', Validators.required],
+        incomeLevelId: ['', Validators.required],
+        occupationalHistory: ['', Validators.required],
+        housingTypeId: ['', Validators.required],
+        housing: ['', Validators.required],
       }),
     });
 
@@ -643,50 +587,133 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
    */
 
   onSubmit(): void {
+    // Validar que todos los pasos estén completos
+    const personalDataValid = this.participantForm.get('personalData')?.valid;
+    const familyCompositionValid = this.participantForm.get('familyComposition')?.valid;
+    const bioHistoryValid = this.participantForm.get('bioPsychosocialHistory')?.valid;
+
+    if (!personalDataValid || !familyCompositionValid || !bioHistoryValid) {
+      this.markFormGroupTouched(this.participantForm);
+      this.notificationService.showWarning('Por favor complete todos los campos requeridos');
+      return;
+    }
+
     if (this.participantForm.valid && !this.isSubmitting) {
-      // Si estamos en el paso 3 (bioPsychosocialHistory), crear el participante
+      // Si estamos en el paso 3, crear el participante
       if (this.activeWizardStep === 3) {
-        this.createParticipantAndContinue();
-      } else {
         this.confirmSubmission();
+      } else {
+        // En otros pasos, solo avanzar
+        this.goToNextStep();
       }
     } else {
       this.markFormGroupTouched(this.participantForm);
-      this.notificationService.showWarning('participants.validation.completeRequired');
+      this.notificationService.showWarning('Por favor complete todos los campos requeridos');
     }
   }
 
   /**
-   * Crea el participante al finalizar el paso 3 y continúa el wizard
+   * Map form data to API DTO
+   */
+  private mapFormDataToDto(): any {
+    const formValue = this.participantForm.value;
+    const personalData = formValue.personalData;
+    const bioHistory = formValue.bioPsychosocialHistory;
+
+    // Get current user ID
+    const currentUser = this.tokenStorageService.getUser();
+    const registeredById = currentUser?.id || 1;
+
+    // Map emergency contacts
+    const emergencyContacts = [
+      {
+        name: personalData.emergencyContactName,
+        phone: personalData.emergencyContactPhone,
+        email: personalData.emergencyContactEmail,
+        address: personalData.emergencyContactAddress,
+        city: personalData.emergencyContactCity,
+        relationshipId: Number(personalData.emergencyContactRelationship),
+      },
+    ];
+
+    // Map family members
+    const familyMembers = formValue.familyComposition.map((member: any) => ({
+      name: member.name,
+      birthDate: member.birthDate,
+      occupation: member.occupation,
+      familyRelationshipId: Number(member.relationship),
+      academicLevelId: Number(member.academicLevel),
+    }));
+
+    // Map biopsychosocial history
+    const bioPsychosocialHistory = {
+      academicLevelId: Number(bioHistory.academicLevelId),
+      completedGrade: bioHistory.completedGrade,
+      institution: bioHistory.institution,
+      profession: bioHistory.profession,
+      incomeLevelId: Number(bioHistory.incomeLevelId),
+      incomeSourceId: Number(bioHistory.incomeSourceId),
+      occupationalHistory: bioHistory.occupationalHistory,
+      housingTypeId: Number(bioHistory.housingTypeId),
+      housing: bioHistory.housing,
+    };
+
+    // Build the complete DTO
+    const dto = {
+      firstName: personalData.firstName,
+      secondName: personalData.secondName || undefined,
+      firstLastName: personalData.firstLastName,
+      secondLastName: personalData.secondLastName || undefined,
+      phoneNumber: personalData.phoneNumber,
+      email: personalData.email,
+      documentTypeId: Number(personalData.documentTypeId),
+      documentNumber: personalData.documentNumber,
+      address: personalData.address,
+      city: personalData.city,
+      birthDate: personalData.birthDate,
+      religiousAffiliation: personalData.religiousAffiliation || undefined,
+      genderId: Number(personalData.genderId),
+      maritalStatusId: Number(personalData.maritalStatusId),
+      healthInsuranceId: Number(personalData.healthInsuranceId),
+      customHealthInsurance: personalData.customHealthInsurance || undefined,
+      referralSource: personalData.referralSource || undefined,
+      registeredById,
+      emergencyContacts,
+      familyMembers,
+      bioPsychosocialHistory,
+    };
+
+    return dto;
+  }
+
+  /**
+   * Crea el participante al finalizar el paso 3
    */
   private createParticipantAndContinue(): void {
     this.isSubmitting = true;
-    const formData = this.participantForm.value as ParticipantFormData;
+    const dto = this.mapFormDataToDto();
+
     this.participantService
-      .createParticipant(formData)
+      .createParticipant(dto)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           this.isSubmitting = false;
-          this.notificationService.showSuccess('participants.createSuccess');
-          // Guardar el ID del participante creado para usarlo en los siguientes pasos
+          this.notificationService.showSuccess('Participante creado exitosamente');
+
+          // Guardar el ID del participante creado
           if (response && response.data && response.data.id) {
             this.participantId = Number(response.data.id);
-            // Llamar a submitCase automáticamente tras crear participante
-            const token = this.tokenStorageService.getToken();
-            if (token) {
-              this.submitCase(token);
-            } else {
-              this.notificationService.showError('No se encontró el token de autenticación.');
-            }
           }
-          // Avanzar al siguiente paso del wizard
-          this.goToNextStep();
+
+          // Navegar a la lista de participantes
+          this.router.navigate(['/participants']);
         },
         error: (error) => {
           this.isSubmitting = false;
           console.error('Error creating participant:', error);
-          this.notificationService.showError('participants.createError');
+          const errorMessage = error.error?.message || 'Error al crear el participante';
+          this.notificationService.showError(errorMessage);
         },
       });
   }
@@ -706,24 +733,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
    * Submit form data to the service
    */
   private submitForm(): void {
-    this.isSubmitting = true;
-    const formData = this.participantForm.value as ParticipantFormData;
-
-    this.participantService
-      .createParticipant(formData)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          this.isSubmitting = false;
-          this.notificationService.showSuccess('participants.createSuccess');
-          this.router.navigate(['/participants']);
-        },
-        error: (error) => {
-          this.isSubmitting = false;
-          console.error('Error creating participant:', error);
-          this.notificationService.showError('participants.createError');
-        },
-      });
+    this.createParticipantAndContinue();
   }
 
   /**
@@ -743,7 +753,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   /**
    * Enviar caso al backend usando el participantId y los datos del formulario
    */
-  private submitCase(token: string): void {
+  private submitCase(): void {
     if (!this.participantId) {
       this.notificationService.showError('No se ha creado el participante.');
       return;
@@ -765,7 +775,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     };
     this.isSubmitting = true;
     this.caseService
-      .createCase(casePayload, token)
+      .createCase(casePayload)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -799,7 +809,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
    * Get progress percentage for current step
    */
   getProgressPercentage(): number {
-    const totalSteps = 14; // Total number of wizard steps
+    const totalSteps = 3; // Total number of wizard steps
     return (this.activeWizardStep / totalSteps) * 100;
   }
 

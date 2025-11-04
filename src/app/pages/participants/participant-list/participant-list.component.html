@@ -29,12 +29,8 @@
             <div class="col-md-6">
               <form [formGroup]="searchForm">
                 <div class="input-group">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="searchTerm"
-                    [placeholder]="'participants.searchPlaceholder' | transloco"
-                  />
+                  <input type="text" class="form-control" formControlName="searchTerm"
+                    [placeholder]="'participants.searchPlaceholder' | transloco" />
                   <button class="btn btn-outline-secondary" type="button" (click)="clearSearch()">
                     <i class="mdi mdi-close"></i>
                   </button>
@@ -50,11 +46,8 @@
                   </button>
                   <div ngbDropdownMenu aria-labelledby="statusFilter">
                     @for (option of statusOptions; track option.value) {
-                    <button
-                      ngbDropdownItem
-                      (click)="onStatusFilterChange(option.value)"
-                      [class.active]="statusFilter === option.value"
-                    >
+                    <button ngbDropdownItem (click)="onStatusFilterChange(option.value)"
+                      [class.active]="statusFilter === option.value">
                       {{ option.label | transloco }}
                     </button>
                     }
@@ -95,8 +88,7 @@
                   <td>
                     <div class="d-flex align-items-center">
                       <div
-                        class="avatar-sm bg-primary rounded-circle d-flex align-items-center justify-content-center me-2"
-                      >
+                        class="avatar-sm bg-primary rounded-circle d-flex align-items-center justify-content-center me-2">
                         <span class="text-white fw-bold">
                           {{ participant.personalData.firstName.charAt(0)
                           }}{{ participant.personalData.firstLastName.charAt(0) }}
@@ -143,11 +135,8 @@
                   </td>
                   <td class="text-center">
                     <div class="btn-group" ngbDropdown>
-                      <button
-                        class="btn btn-sm btn-outline-secondary dropdown-toggle"
-                        ngbDropdownToggle
-                        [attr.aria-label]="'participants.actions' | transloco"
-                      >
+                      <button class="btn btn-sm btn-outline-secondary dropdown-toggle" ngbDropdownToggle
+                        [attr.aria-label]="'participants.actions' | transloco">
                         <i class="mdi mdi-dots-horizontal"></i>
                       </button>
                       <div ngbDropdownMenu>
@@ -158,6 +147,11 @@
                         <a ngbDropdownItem [routerLink]="['/participants/edit', participant.id]">
                           <i class="mdi mdi-pencil me-2"></i>
                           {{ 'app.edit' | transloco }}
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a ngbDropdownItem [routerLink]="['/cases/create', participant.id]" class="text-success">
+                          <i class="mdi mdi-file-document-plus me-2"></i>
+                          {{ 'cases.addCase' | transloco }}
                         </a>
                         <div class="dropdown-divider"></div>
                         <button ngbDropdownItem class="text-danger" (click)="deleteParticipant(participant)">
@@ -185,15 +179,8 @@
                 {{ 'participants.participants' | transloco }}
               </small>
             </div>
-            <ngb-pagination
-              [(page)]="currentPage"
-              [pageSize]="pageSize"
-              [collectionSize]="totalItems"
-              [maxSize]="5"
-              [rotate]="true"
-              [boundaryLinks]="true"
-              (pageChange)="onPageChange($event)"
-            >
+            <ngb-pagination [(page)]="currentPage" [pageSize]="pageSize" [collectionSize]="totalItems" [maxSize]="5"
+              [rotate]="true" [boundaryLinks]="true" (pageChange)="onPageChange($event)">
             </ngb-pagination>
           </div>
           } }
