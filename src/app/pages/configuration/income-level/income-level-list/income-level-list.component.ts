@@ -8,12 +8,11 @@ import Swal from 'sweetalert2';
 import { IncomeLevelService } from '../income-level.service';
 import { IncomeLevel } from '../income-level.interface';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { PageTitleComponent } from '../../../../shared/page-title/page-title.component';
 
 @Component({
   selector: 'app-income-level-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, NgbPaginationModule, NgbTooltipModule, PageTitleComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, NgbPaginationModule, NgbTooltipModule],
   templateUrl: './income-level-list.component.html',
   styleUrl: './income-level-list.component.scss',
 })

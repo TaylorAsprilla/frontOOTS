@@ -8,12 +8,11 @@ import Swal from 'sweetalert2';
 import { FamilyRelationshipService } from '../family-relationship.service';
 import { FamilyRelationship } from '../family-relationship.interface';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { PageTitleComponent } from '../../../../shared/page-title/page-title.component';
 
 @Component({
   selector: 'app-family-relationship-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, NgbPaginationModule, NgbTooltipModule, PageTitleComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, NgbPaginationModule, NgbTooltipModule],
   templateUrl: './family-relationship-list.component.html',
   styleUrl: './family-relationship-list.component.scss',
 })

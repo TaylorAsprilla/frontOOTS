@@ -8,12 +8,11 @@ import Swal from 'sweetalert2';
 import { HousingTypeService } from '../housing-type.service';
 import { HousingType } from '../housing-type.interface';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { PageTitleComponent } from '../../../../shared/page-title/page-title.component';
 
 @Component({
   selector: 'app-housing-type-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, NgbPaginationModule, NgbTooltipModule, PageTitleComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, NgbPaginationModule, NgbTooltipModule],
   templateUrl: './housing-type-list.component.html',
   styleUrl: './housing-type-list.component.scss',
 })

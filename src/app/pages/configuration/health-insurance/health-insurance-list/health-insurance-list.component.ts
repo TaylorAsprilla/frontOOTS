@@ -8,12 +8,11 @@ import Swal from 'sweetalert2';
 import { HealthInsuranceService } from '../health-insurance.service';
 import { HealthInsurance } from '../health-insurance.interface';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { PageTitleComponent } from '../../../../shared/page-title/page-title.component';
 
 @Component({
   selector: 'app-health-insurance-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, NgbPaginationModule, NgbTooltipModule, PageTitleComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, NgbPaginationModule, NgbTooltipModule],
   templateUrl: './health-insurance-list.component.html',
   styleUrl: './health-insurance-list.component.scss',
 })

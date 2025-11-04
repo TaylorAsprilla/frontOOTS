@@ -8,12 +8,11 @@ import Swal from 'sweetalert2';
 import { IncomeSourceService } from '../income-source.service';
 import { IncomeSource } from '../income-source.interface';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { PageTitleComponent } from '../../../../shared/page-title/page-title.component';
 
 @Component({
   selector: 'app-income-source-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, NgbPaginationModule, NgbTooltipModule, PageTitleComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, NgbPaginationModule, NgbTooltipModule],
   templateUrl: './income-source-list.component.html',
   styleUrl: './income-source-list.component.scss',
 })
