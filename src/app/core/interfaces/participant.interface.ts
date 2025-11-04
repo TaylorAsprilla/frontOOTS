@@ -109,24 +109,28 @@ export interface ClosingNote {
 }
 
 export interface Participant {
-  id?: string;
-  personalData: PersonalData;
-  familyComposition?: FamilyComposition;
-  consultationReason?: ConsultationReason;
-  identifiedSituations?: IdentifiedSituations;
-  intervention?: Intervention;
-  followUpPlan?: FollowUpPlan;
-  academicHistory?: AcademicHistory;
-  physicalHealthHistory?: PhysicalHealthHistory;
-  mentalHealthHistory?: MentalHealthHistory;
-  assessment?: Assessment;
-  interventionPlan?: InterventionPlan;
-  progressNotes?: ProgressNote[];
-  referrals?: Referrals;
-  closingNote?: ClosingNote;
-  createdAt?: Date;
-  updatedAt?: Date;
-  createdBy?: string;
+  id: number;
+  firstName: string;
+  secondName?: string;
+  firstLastName: string;
+  secondLastName?: string;
+  phoneNumber: string;
+  email: string;
+  documentTypeId: number;
+  documentNumber: string;
+  address: string;
+  city: string;
+  birthDate: string;
+  religiousAffiliation?: string;
+  genderId: number;
+  maritalStatusId: number;
+  healthInsuranceId: number;
+  customHealthInsurance?: string;
+  referralSource?: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+  registeredById: number;
   status?: ParticipantStatus;
 }
 
@@ -183,13 +187,15 @@ export interface ParticipantResponse {
 }
 
 export interface ParticipantListResponse {
-  success: boolean;
-  data: Participant[];
-  pagination?: {
+  data: {
+    data: Participant[];
+    total: number;
     page: number;
     limit: number;
-    total: number;
     totalPages: number;
   };
-  message?: string;
+  statusCode: number;
+  message: string;
+  timestamp: string;
+  path: string;
 }

@@ -67,7 +67,7 @@ export class ParticipantService {
 
     return this.http.get<ParticipantListResponse>(`${this.apiUrl}${params}`).pipe(
       map((response) => {
-        this.participantsSubject.next(response.data);
+        this.participantsSubject.next(response.data.data);
         this.loadingSubject.next(false);
         return response;
       }),
@@ -82,7 +82,7 @@ export class ParticipantService {
   /**
    * Get participant by ID
    */
-  getParticipantById(id: string): Observable<ParticipantResponse> {
+  getParticipantById(id: number | string): Observable<ParticipantResponse> {
     this.loadingSubject.next(true);
 
     return this.http.get<ParticipantResponse>(`${this.apiUrl}/${id}`).pipe(
@@ -131,7 +131,10 @@ export class ParticipantService {
   /**
    * Update existing participant
    */
-  updateParticipant(id: string, participantData: Partial<ParticipantFormData>): Observable<ParticipantResponse> {
+  updateParticipant(
+    id: number | string,
+    participantData: Partial<ParticipantFormData>
+  ): Observable<ParticipantResponse> {
     this.loadingSubject.next(true);
 
     return this.http.put<ParticipantResponse>(`${this.apiUrl}/${id}`, participantData).pipe(
@@ -141,7 +144,7 @@ export class ParticipantService {
 
         // Update local state
         const currentParticipants = this.participantsSubject.value;
-        const updatedParticipants = currentParticipants.map((p) => (p.id === id ? response.data : p));
+        const updatedParticipants = currentParticipants.map((p) => (p.id === Number(id) ? response.data : p));
         this.participantsSubject.next(updatedParticipants);
 
         return response;
@@ -157,7 +160,7 @@ export class ParticipantService {
   /**
    * Delete participant
    */
-  deleteParticipant(id: string): Observable<{ success: boolean; message?: string }> {
+  deleteParticipant(id: number): Observable<{ success: boolean; message?: string }> {
     this.loadingSubject.next(true);
 
     return this.http.delete<{ success: boolean; message?: string }>(`${this.apiUrl}/${id}`).pipe(

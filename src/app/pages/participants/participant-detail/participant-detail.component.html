@@ -21,7 +21,7 @@
           <div class="d-flex justify-content-between align-items-center mb-4">
             <h4 class="card-title mb-0">
               <i class="mdi mdi-account me-2 text-primary"></i>
-              {{ participant.personalData.firstName }} {{ participant.personalData.firstLastName }}
+              {{ participant.firstName }} {{ participant.firstLastName }}
             </h4>
             <div>
               <a [routerLink]="['/participants/edit', participant.id]" class="btn btn-primary me-2">
@@ -43,25 +43,25 @@
                 <tr>
                   <td class="fw-bold">{{ 'participants.fullName' | transloco }}:</td>
                   <td>
-                    {{ participant.personalData.firstName }} {{ participant.personalData.secondName || '' }}
-                    {{ participant.personalData.firstLastName }} {{ participant.personalData.secondLastName || '' }}
+                    {{ participant.firstName }} {{ participant.secondName || '' }}
+                    {{ participant.firstLastName }} {{ participant.secondLastName || '' }}
                   </td>
                 </tr>
                 <tr>
                   <td class="fw-bold">{{ 'participants.document' | transloco }}:</td>
-                  <td>{{ participant.personalData.documentTypeId }} {{ participant.personalData.documentNumber }}</td>
+                  <td>{{ participant.documentTypeId }} {{ participant.documentNumber }}</td>
                 </tr>
                 <tr>
                   <td class="fw-bold">{{ 'participants.email' | transloco }}:</td>
-                  <td>{{ participant.personalData.email || '-' }}</td>
+                  <td>{{ participant.email || '-' }}</td>
                 </tr>
                 <tr>
                   <td class="fw-bold">{{ 'participants.phone' | transloco }}:</td>
-                  <td>{{ participant.personalData.phoneNumber || '-' }}</td>
+                  <td>{{ participant.phoneNumber || '-' }}</td>
                 </tr>
                 <tr>
                   <td class="fw-bold">{{ 'participants.birthDate' | transloco }}:</td>
-                  <td>{{ participant.personalData.birthDate | date : 'dd/MM/yyyy' }}</td>
+                  <td>{{ participant.birthDate | date : 'dd/MM/yyyy' }}</td>
                 </tr>
               </table>
             </div>
@@ -70,19 +70,19 @@
               <table class="table table-borderless">
                 <tr>
                   <td class="fw-bold">{{ 'participants.address' | transloco }}:</td>
-                  <td>{{ participant.personalData.address }}</td>
+                  <td>{{ participant.address }}</td>
                 </tr>
                 <tr>
                   <td class="fw-bold">{{ 'participants.city' | transloco }}:</td>
-                  <td>{{ participant.personalData.city }}</td>
+                  <td>{{ participant.city }}</td>
                 </tr>
                 <tr>
                   <td class="fw-bold">{{ 'participants.gender' | transloco }}:</td>
-                  <td>{{ 'participants.' + participant.personalData.genderId | transloco }}</td>
+                  <td>{{ 'participants.' + participant.genderId | transloco }}</td>
                 </tr>
                 <tr>
                   <td class="fw-bold">{{ 'participants.maritalStatus' | transloco }}:</td>
-                  <td>{{ 'participants.' + participant.personalData.maritalStatusId | transloco }}</td>
+                  <td>{{ 'participants.' + participant.maritalStatusId | transloco }}</td>
                 </tr>
               </table>
             </div>

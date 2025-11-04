@@ -36,7 +36,7 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": ["src/favicon.ico", "src/assets", "src/.htaccess"],
-            "styles": ["src/assets/scss/Default.scss"],
+            "styles": ["src/assets/scss/Default.scss", "node_modules/intl-tel-input/build/css/intlTelInput.css"],
             "scripts": []
           },
           "configurations": {

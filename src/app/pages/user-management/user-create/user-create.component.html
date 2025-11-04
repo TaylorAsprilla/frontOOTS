@@ -59,10 +59,15 @@
             <!-- Phone Number -->
             <div class="col-md-6 mb-3">
               <label for="phoneNumber" class="form-label">{{ 'user.phone' | transloco }} *</label>
-              <input type="tel" class="form-control" id="phoneNumber" formControlName="phoneNumber"
-                [placeholder]="'user.enterPhoneNumber' | transloco"
-                [class.is-invalid]="isFieldInvalid('phoneNumber')" />
-              <div class="invalid-feedback" *ngIf="isFieldInvalid('phoneNumber')">
+              <ngx-intl-tel-input [cssClass]="'form-control'"
+                [preferredCountries]="[CountryISO.Colombia, CountryISO.UnitedStates]" [enableAutoCountrySelect]="true"
+                [enablePlaceholder]="true" [searchCountryFlag]="true"
+                [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]" [selectFirstCountry]="false"
+                [selectedCountryISO]="CountryISO.Colombia" [maxLength]="15" [phoneValidation]="true"
+                [separateDialCode]="true" [numberFormat]="PhoneNumberFormat.National" formControlName="phoneNumber"
+                id="phoneNumber">
+              </ngx-intl-tel-input>
+              <div class="invalid-feedback d-block" *ngIf="isFieldInvalid('phoneNumber')">
                 {{ 'user.validPhoneRequired' | transloco }}
               </div>
             </div>

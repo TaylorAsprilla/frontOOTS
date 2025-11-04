@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule } from '@ngneat/transloco';
+import { NgxIntlTelInputModule, SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { UserService } from '../../../core/services/user.service';
@@ -13,7 +14,7 @@ import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 @Component({
   selector: 'app-user-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PageTitleComponent, TranslocoModule],
+  imports: [CommonModule, ReactiveFormsModule, PageTitleComponent, TranslocoModule, NgxIntlTelInputModule],
   templateUrl: './user-create.component.html',
   styleUrls: ['./user-create.component.scss'],
 })
@@ -28,6 +29,11 @@ export class UserCreateComponent implements OnInit, OnDestroy {
   pageTitle: BreadcrumbItem[] = [];
   userForm!: FormGroup;
   isSubmitting = false;
+
+  // Expose enums for template
+  SearchCountryField = SearchCountryField;
+  CountryISO = CountryISO;
+  PhoneNumberFormat = PhoneNumberFormat;
 
   ngOnInit(): void {
     this.setupPageTitle();

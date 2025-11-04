@@ -14,6 +14,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { NgbNavModule, NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule } from '@ngneat/transloco';
 import { Subject, takeUntil } from 'rxjs';
+import { NgxIntlTelInputModule, SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 import { ParticipantService } from '../../../core/services/participant.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
@@ -29,11 +30,20 @@ import { FamilyRelationship } from '../../configuration/family-relationship/fami
 import { IncomeSource } from '../../configuration/income-source/income-source.interface';
 import { IncomeLevel } from '../../configuration/income-level/income-level.interface';
 import { HousingType } from '../../configuration/housing-type/housing-type.interface';
+import { AcademicLevel } from '../../../core/interfaces/academic-level.interface';
 
 @Component({
   selector: 'app-create-participant',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgbNavModule, NgbProgressbarModule, TranslocoModule, PageTitleComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    NgbNavModule,
+    NgbProgressbarModule,
+    TranslocoModule,
+    PageTitleComponent,
+    NgxIntlTelInputModule,
+  ],
   templateUrl: './create-participant.component.html',
   styleUrls: ['./create-participant.component.scss'],
 })
@@ -78,6 +88,14 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   // Housing Types from resolver
   housingTypes: HousingType[] = [];
 
+  // Academic Levels from resolver
+  academicLevels: AcademicLevel[] = [];
+
+  // Expose enums for template
+  SearchCountryField = SearchCountryField;
+  CountryISO = CountryISO;
+  PhoneNumberFormat = PhoneNumberFormat;
+
   // Breadcrumb configuration
   breadcrumbItems: BreadcrumbItem[] = [
     { label: 'participants.title', active: false },
@@ -117,6 +135,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     this.loadIncomeSourcesFromResolver();
     this.loadIncomeLevelsFromResolver();
     this.loadHousingTypesFromResolver();
+    this.loadAcademicLevelsFromResolver();
     this.initializeForm();
     this.setupFormSubscriptions();
     this.isLoading = false;
@@ -234,6 +253,20 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Load academic levels from route resolver
+   */
+  private loadAcademicLevelsFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['academicLevels'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.academicLevels = resolvedData;
+      console.log('Academic levels loaded from resolver:', this.academicLevels);
+    } else {
+      console.warn('No academic levels found in resolver data');
+      this.academicLevels = [];
+    }
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
@@ -253,7 +286,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         secondName: ['', Validators.maxLength(50)],
         firstLastName: ['', [Validators.required, Validators.maxLength(50)]],
         secondLastName: ['', Validators.maxLength(50)],
-        phoneNumber: ['', [Validators.required, Validators.pattern(/^(\+57)?[0-9]{10}$/)]],
+        phoneNumber: ['', [Validators.required]],
         email: ['', [Validators.required, Validators.email]],
         documentTypeId: ['', Validators.required],
         documentNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{6,12}$/)]],
@@ -268,7 +301,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         customHealthInsurance: [''],
         // Emergency Contact fields
         emergencyContactName: ['', Validators.required],
-        emergencyContactPhone: ['', [Validators.required]],
+        emergencyContactPhone: ['', Validators.required],
         emergencyContactEmail: ['', [Validators.required, Validators.email]],
         emergencyContactAddress: ['', Validators.required],
         emergencyContactCity: ['', Validators.required],
@@ -560,6 +593,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
 
       if (errors['required']) return 'participants.validation.required';
       if (errors['email']) return 'participants.validation.invalidEmail';
+      if (errors['validatePhoneNumber']) return 'participants.validation.invalidPhoneFormat';
       if (errors['pattern']) {
         if (fieldPath.includes('phoneNumber') || fieldPath.includes('Phone')) {
           return 'participants.validation.invalidPhoneFormat';
@@ -628,11 +662,16 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     const emergencyContacts = [
       {
         name: personalData.emergencyContactName,
-        phone: personalData.emergencyContactPhone,
+        phone:
+          personalData.emergencyContactPhone?.e164Number ||
+          personalData.emergencyContactPhone?.internationalNumber ||
+          personalData.emergencyContactPhone,
         email: personalData.emergencyContactEmail,
         address: personalData.emergencyContactAddress,
         city: personalData.emergencyContactCity,
-        relationshipId: Number(personalData.emergencyContactRelationship),
+        relationshipId: personalData.emergencyContactRelationship
+          ? Number(personalData.emergencyContactRelationship)
+          : null,
       },
     ];
 
@@ -641,20 +680,20 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
       name: member.name,
       birthDate: member.birthDate,
       occupation: member.occupation,
-      familyRelationshipId: Number(member.relationship),
-      academicLevelId: Number(member.academicLevel),
+      familyRelationshipId: member.relationshipId ? Number(member.relationshipId) : null,
+      academicLevelId: member.academicLevelId ? Number(member.academicLevelId) : null,
     }));
 
     // Map biopsychosocial history
     const bioPsychosocialHistory = {
-      academicLevelId: Number(bioHistory.academicLevelId),
+      academicLevelId: bioHistory.academicLevelId ? Number(bioHistory.academicLevelId) : null,
       completedGrade: bioHistory.completedGrade,
       institution: bioHistory.institution,
       profession: bioHistory.profession,
-      incomeLevelId: Number(bioHistory.incomeLevelId),
-      incomeSourceId: Number(bioHistory.incomeSourceId),
+      incomeLevelId: bioHistory.incomeLevelId ? Number(bioHistory.incomeLevelId) : null,
+      incomeSourceId: bioHistory.incomeSourceId ? Number(bioHistory.incomeSourceId) : null,
       occupationalHistory: bioHistory.occupationalHistory,
-      housingTypeId: Number(bioHistory.housingTypeId),
+      housingTypeId: bioHistory.housingTypeId ? Number(bioHistory.housingTypeId) : null,
       housing: bioHistory.housing,
     };
 
@@ -664,17 +703,20 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
       secondName: personalData.secondName || undefined,
       firstLastName: personalData.firstLastName,
       secondLastName: personalData.secondLastName || undefined,
-      phoneNumber: personalData.phoneNumber,
+      phoneNumber:
+        personalData.phoneNumber?.e164Number ||
+        personalData.phoneNumber?.internationalNumber ||
+        personalData.phoneNumber,
       email: personalData.email,
-      documentTypeId: Number(personalData.documentTypeId),
+      documentTypeId: personalData.documentTypeId ? Number(personalData.documentTypeId) : null,
       documentNumber: personalData.documentNumber,
       address: personalData.address,
       city: personalData.city,
       birthDate: personalData.birthDate,
       religiousAffiliation: personalData.religiousAffiliation || undefined,
-      genderId: Number(personalData.genderId),
-      maritalStatusId: Number(personalData.maritalStatusId),
-      healthInsuranceId: Number(personalData.healthInsuranceId),
+      genderId: personalData.genderId ? Number(personalData.genderId) : null,
+      maritalStatusId: personalData.maritalStatusId ? Number(personalData.maritalStatusId) : null,
+      healthInsuranceId: personalData.healthInsuranceId ? Number(personalData.healthInsuranceId) : null,
       customHealthInsurance: personalData.customHealthInsurance || undefined,
       referralSource: personalData.referralSource || undefined,
       registeredById,
