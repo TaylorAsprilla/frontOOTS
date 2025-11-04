@@ -554,6 +554,41 @@
       "nameMaxLength": "Name cannot exceed 100 characters"
     }
   },
+  "gender": {
+    "title": "Genders",
+    "createNew": "Create Gender",
+    "create": "Create Gender",
+    "createTitle": "Create New Gender",
+    "edit": "Edit Gender",
+    "editTitle": "Edit Gender",
+    "delete": "Delete Gender",
+    "view": "View Gender",
+    "list": "Genders List",
+    "searchPlaceholder": "Search genders...",
+    "filterAll": "All Statuses",
+    "filterActive": "Active",
+    "filterInactive": "Inactive",
+    "clearFilters": "Clear Filters",
+    "noResults": "No genders found",
+    "active": "Active",
+    "inactive": "Inactive",
+    "id": "ID",
+    "name": "Name",
+    "status": "Status",
+    "actions": "Actions",
+    "isActive": "Active Status",
+    "namePlaceholder": "E.g: Male, Female, Non-binary...",
+    "showing": "Showing",
+    "of": "of",
+    "errors": {
+      "required": "Field is required"
+    },
+    "validation": {
+      "nameRequired": "Name is required",
+      "nameMinLength": "Name must be at least 2 characters",
+      "nameMaxLength": "Name cannot exceed 100 characters"
+    }
+  },
   "common": {
     "loading": "Loading...",
     "save": "Save",

@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { documentTypesResolver } from './resolvers/document-types.resolver';
+import { genderResolver } from './gender.resolver';
 
 /**
  * Participants module routes configuration
@@ -27,6 +29,10 @@ export const PARTICIPANTS_ROUTES: Routes = [
     data: {
       breadcrumb: 'participants.create',
     },
+    resolve: {
+      documentTypes: documentTypesResolver,
+      genders: genderResolver,
+    },
   },
   {
     path: 'edit/:id',
@@ -36,6 +42,10 @@ export const PARTICIPANTS_ROUTES: Routes = [
     data: {
       breadcrumb: 'participants.edit',
       mode: 'edit',
+    },
+    resolve: {
+      documentTypes: documentTypesResolver,
+      genders: genderResolver,
     },
   },
   {

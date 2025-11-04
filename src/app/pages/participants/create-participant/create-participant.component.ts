@@ -10,7 +10,7 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { NgbNavModule, NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule } from '@ngneat/transloco';
 import { Subject, takeUntil } from 'rxjs';
@@ -21,6 +21,8 @@ import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { ParticipantFormData, ValidationMessages } from '../../../core/interfaces/participant.interface';
 import { CaseService } from '../../../core/services/case.service';
 import { TokenStorageService } from '../../../core/services/token-storage.service';
+import { DocumentType } from '../../configuration/document-types/document-type.interface';
+import { Gender } from '../../configuration/genders/gender.interface';
 
 @Component({
   selector: 'app-create-participant',
@@ -32,6 +34,7 @@ import { TokenStorageService } from '../../../core/services/token-storage.servic
 export class CreateParticipantComponent implements OnInit, OnDestroy {
   private readonly caseService = inject(CaseService);
   private readonly tokenStorageService = inject(TokenStorageService);
+  private readonly route = inject(ActivatedRoute);
   participantId: number | null = null;
   private readonly formBuilder = inject(FormBuilder);
   private readonly participantService = inject(ParticipantService);
@@ -44,6 +47,12 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   activeWizardStep: number = 1;
   isLoading = false;
   isSubmitting = false;
+
+  // Document Types from resolver
+  documentTypes: DocumentType[] = [];
+
+  // Genders from resolver
+  genders: Gender[] = [];
 
   // Breadcrumb configuration
   breadcrumbItems: BreadcrumbItem[] = [
@@ -76,9 +85,39 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   };
 
   ngOnInit(): void {
+    this.loadDocumentTypesFromResolver();
+    this.loadGendersFromResolver();
     this.initializeForm();
     this.setupFormSubscriptions();
     this.isLoading = false;
+  }
+
+  /**
+   * Load document types from route resolver
+   */
+  private loadDocumentTypesFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['documentTypes'];
+    if (resolvedData && resolvedData.statusCode === 200) {
+      this.documentTypes = resolvedData.data;
+      console.log('Document types loaded from resolver:', this.documentTypes);
+    } else {
+      console.warn('No document types found in resolver data');
+      this.documentTypes = [];
+    }
+  }
+
+  /**
+   * Load genders from route resolver
+   */
+  private loadGendersFromResolver(): void {
+    const resolvedGenders = this.route.snapshot.data['genders'];
+    if (resolvedGenders && Array.isArray(resolvedGenders)) {
+      this.genders = resolvedGenders;
+      console.log('Genders loaded from resolver:', this.genders);
+    } else {
+      console.warn('No genders found in resolver data');
+      this.genders = [];
+    }
   }
 
   ngOnDestroy(): void {
