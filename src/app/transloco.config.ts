@@ -60,9 +60,9 @@ export const translocoAppConfig = translocoConfig({
     useFallbackTranslation: true,
     logMissingKey: true, // Log para ver qué traducciones faltan
   },
-  // Flatten the translation object
+  // Flatten disabled to test if this is the issue
   flatten: {
-    aot: !isDevMode(),
+    aot: false, // Desactivado temporalmente para debug
   },
 });
 
