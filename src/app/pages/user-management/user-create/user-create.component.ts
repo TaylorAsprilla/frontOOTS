@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule } from '@ngneat/transloco';
 import { NgxIntlTelInputModule, SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
-
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { UserService } from '../../../core/services/user.service';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -38,6 +37,7 @@ export class UserCreateComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.setupPageTitle();
     this.initializeForm();
+    this.setupDocumentValidation();
   }
 
   ngOnDestroy(): void {
@@ -67,7 +67,7 @@ export class UserCreateComponent implements OnInit, OnDestroy {
       city: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       birthDate: ['', [Validators.required]],
       position: ['', [Validators.required, Validators.maxLength(100)]],
-      organization: ['', [Validators.required, Validators.maxLength(100)]],
+      headquarters: ['', [Validators.required, Validators.maxLength(100)]],
       documentTypeId: [1, [Validators.required]],
     });
   }
@@ -95,7 +95,26 @@ export class UserCreateComponent implements OnInit, OnDestroy {
   onSubmit(): void {
     if (this.userForm.valid) {
       this.isSubmitting = true;
-      const registerRequest = this.userForm.value;
+
+      // Mapear los datos del formulario al formato esperado por el backend
+      const formValue = this.userForm.value;
+      const registerRequest = {
+        firstName: formValue.firstName?.trim(),
+        secondName: formValue.secondName?.trim() || null,
+        firstLastName: formValue.firstLastName?.trim(),
+        secondLastName: formValue.secondLastName?.trim() || null,
+        email: formValue.email?.trim().toLowerCase(),
+        phoneNumber: formValue.phoneNumber?.internationalNumber,
+        password: formValue.password,
+        documentNumber: formValue.documentNumber?.trim(),
+        documentTypeId: formValue.documentTypeId,
+        address: formValue.address?.trim(),
+        city: formValue.city?.trim(),
+        birthDate: formValue.birthDate,
+        position: formValue.position?.trim(),
+        headquarters: formValue.headquarters?.trim(),
+      };
+
       this.userService
         .registerUser(registerRequest)
         .pipe(takeUntil(this.destroy$))
@@ -113,10 +132,17 @@ export class UserCreateComponent implements OnInit, OnDestroy {
             this.isSubmitting = false;
           },
           error: (error) => {
-            console.log('Error', error);
+            console.log('Error al registrar usuario:', error);
             this.isSubmitting = false;
             let errorTitle = 'Error al registrar usuario';
-            let errorMessage = error;
+            let errorMessage = 'Ocurrió un error al intentar registrar el usuario. Por favor intente nuevamente.';
+
+            // Extraer mensaje de error del backend si está disponible
+            if (error?.error?.message) {
+              errorMessage = error.error.message;
+            } else if (error?.message) {
+              errorMessage = error.message;
+            }
 
             this.notificationService.showError(errorMessage, {
               title: errorTitle,
@@ -158,5 +184,64 @@ export class UserCreateComponent implements OnInit, OnDestroy {
       const control = this.userForm.get(key);
       control?.markAsTouched();
     });
+  }
+
+  /**
+   * Setup document validation to check for duplicates
+   */
+  private setupDocumentValidation(): void {
+    const documentControl = this.userForm.get('documentNumber');
+    if (documentControl) {
+      documentControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
+        if (value && value.length >= 6) {
+          this.checkDocumentExists(value);
+        }
+      });
+    }
+  }
+
+  /**
+   * Check if document number already exists
+   */
+  private checkDocumentExists(documentNumber: string): void {
+    this.userService
+      .checkDocumentExists(documentNumber)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (exists) => {
+          const documentControl = this.userForm.get('documentNumber');
+          if (documentControl) {
+            if (exists) {
+              documentControl.setErrors({ documentExists: true });
+            } else if (documentControl.hasError('documentExists')) {
+              // Remove only documentExists error if document is now available
+              const errors = { ...documentControl.errors };
+              delete errors['documentExists'];
+              documentControl.setErrors(Object.keys(errors).length ? errors : null);
+            }
+          }
+        },
+        error: (error) => {
+          console.error('Error checking document existence:', error);
+        },
+      });
+  }
+
+  /**
+   * Get error message for a specific field
+   */
+  getFieldError(fieldName: string): string {
+    const control = this.userForm.get(fieldName);
+    if (control && control.errors && control.touched) {
+      const errors = control.errors;
+
+      if (errors['required']) return 'user.validation.required';
+      if (errors['email']) return 'user.validation.invalidEmail';
+      if (errors['minlength']) return 'user.validation.minLength';
+      if (errors['maxlength']) return 'user.validation.maxLength';
+      if (errors['documentExists']) return 'user.validation.documentExists';
+    }
+
+    return '';
   }
 }

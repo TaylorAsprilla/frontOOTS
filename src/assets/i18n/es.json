@@ -171,7 +171,14 @@
     "addressRequired": "La dirección es requerida (5-200 caracteres)",
     "cityRequired": "La ciudad es requerida (2-50 caracteres)",
     "validBirthDateRequired": "Por favor ingresa una fecha de nacimiento válida",
-    "required": "requerido"
+    "required": "requerido",
+    "validation": {
+      "required": "Este campo es requerido",
+      "invalidEmail": "Por favor ingresa un correo electrónico válido",
+      "minLength": "El valor ingresado es muy corto",
+      "maxLength": "El valor ingresado es muy largo",
+      "documentExists": "Este número de documento ya está registrado en el sistema"
+    }
   },
   "states": {
     "loading": "Cargando...",

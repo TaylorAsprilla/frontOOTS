@@ -14,6 +14,7 @@ export class UserService {
   private readonly http = inject(HttpClient);
   private readonly notificationService = inject(NotificationService);
   private readonly apiUrl = `${environment.apiUrl}/users`;
+  private readonly apiUrlRegister = `${environment.apiUrl}`;
 
   /**
    * Registra un nuevo usuario usando el endpoint de autenticación
@@ -22,7 +23,7 @@ export class UserService {
    */
   registerUser(user: any): Observable<UserModel> {
     // El endpoint espera todos los campos requeridos por el backend
-    return this.http.post<any>(`${this.apiUrl}/auth/register`, user).pipe(
+    return this.http.post<any>(`${this.apiUrlRegister}/auth/register`, user).pipe(
       map((response) => {
         // El usuario viene en response.data.user
         if (response && response.data && response.data.user) {

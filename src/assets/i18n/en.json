@@ -169,7 +169,14 @@
     "addressRequired": "Address is required (5-200 characters)",
     "cityRequired": "City is required (2-50 characters)",
     "validBirthDateRequired": "Please enter a valid birth date",
-    "required": "required"
+    "required": "required",
+    "validation": {
+      "required": "This field is required",
+      "invalidEmail": "Please enter a valid email address",
+      "minLength": "The value entered is too short",
+      "maxLength": "The value entered is too long",
+      "documentExists": "This document number is already registered in the system"
+    }
   },
   "states": {
     "loading": "Loading...",
