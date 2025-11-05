@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, isDevMode } from '@angular/core';
 import { Translation, translocoConfig, TranslocoLoader, TranslocoModule } from '@ngneat/transloco';
 import { Observable } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 
 /**
  * HTTP Loader para cargar traducciones desde assets/i18n/
@@ -20,7 +21,26 @@ export class TranslocoHttpLoaderService implements TranslocoLoader {
     // Log para debugging (se puede remover después)
     console.log('🌐 Loading translation:', { lang, baseHref, normalizedBaseHref, path });
 
-    return this.http.get<Translation>(path);
+    return this.http
+      .get<Translation>(path, {
+        // Forzar que Angular trate la respuesta como JSON
+        responseType: 'json',
+      })
+      .pipe(
+        // Agregar tap para ver qué se está cargando
+        tap((translation) => {
+          console.log('✅ Translation loaded:', {
+            lang,
+            keys: Object.keys(translation || {}).length,
+            hasAuth: 'auth' in (translation || {}),
+            sample: translation ? JSON.stringify(translation).substring(0, 200) : 'null',
+          });
+        }),
+        catchError((error) => {
+          console.error('❌ Translation loading failed:', { lang, path, error });
+          throw error;
+        })
+      );
   }
 }
 
