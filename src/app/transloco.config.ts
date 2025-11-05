@@ -13,7 +13,13 @@ export class TranslocoHttpLoaderService implements TranslocoLoader {
   getTranslation(lang: string): Observable<Translation> {
     // Usar ruta absoluta basada en el baseHref del documento
     const baseHref = document.querySelector('base')?.getAttribute('href') || '/';
-    const path = `${baseHref}assets/i18n/${lang}.json`;
+    // Asegurarse de que la ruta termine correctamente
+    const normalizedBaseHref = baseHref.endsWith('/') ? baseHref : `${baseHref}/`;
+    const path = `${normalizedBaseHref}assets/i18n/${lang}.json`;
+
+    // Log para debugging (se puede remover después)
+    console.log('🌐 Loading translation:', { lang, baseHref, normalizedBaseHref, path });
+
     return this.http.get<Translation>(path);
   }
 }
@@ -26,12 +32,13 @@ export const translocoAppConfig = translocoConfig({
   defaultLang: 'es',
   // Re-render when language changes
   reRenderOnLangChange: true,
-  // Remove missing translation handler in production
-  prodMode: !isDevMode(),
-  // Enable missing translation handler only in development
+  // Keep prodMode false to see errors in production during testing
+  prodMode: false, // Cambiado temporalmente para debug
+  // Enable missing translation handler
   missingHandler: {
     // Use the key as a fallback
     useFallbackTranslation: true,
+    logMissingKey: true, // Log para ver qué traducciones faltan
   },
   // Flatten the translation object
   flatten: {
