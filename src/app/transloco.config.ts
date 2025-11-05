@@ -11,7 +11,10 @@ export class TranslocoHttpLoaderService implements TranslocoLoader {
   private http = inject(HttpClient);
 
   getTranslation(lang: string): Observable<Translation> {
-    return this.http.get<Translation>(`./assets/i18n/${lang}.json`);
+    // Usar ruta absoluta basada en el baseHref del documento
+    const baseHref = document.querySelector('base')?.getAttribute('href') || '/';
+    const path = `${baseHref}assets/i18n/${lang}.json`;
+    return this.http.get<Translation>(path);
   }
 }
 
