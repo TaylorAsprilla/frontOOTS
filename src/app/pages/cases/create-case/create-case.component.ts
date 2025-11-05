@@ -9,6 +9,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { CaseService } from '../../../core/services/case.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { TokenStorageService } from '../../../core/services/token-storage.service';
+import { IdentifiedSituationService, IdentifiedSituation } from '../../../core/services/identified-situation.service';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import {
@@ -37,6 +38,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   private readonly caseService = inject(CaseService);
   private readonly notificationService = inject(NotificationService);
   private readonly tokenStorageService = inject(TokenStorageService);
+  private readonly identifiedSituationService = inject(IdentifiedSituationService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly destroy$ = new Subject<void>();
@@ -47,6 +49,9 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   participantId!: number;
   caseId?: number;
   isEditMode = false;
+
+  // Data
+  identifiedSituations: IdentifiedSituation[] = [];
 
   // Breadcrumb
   breadcrumbItems: BreadcrumbItem[] = [];
@@ -63,6 +68,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
       this.setupBreadcrumb();
       this.initializeForm();
+      this.loadIdentifiedSituations();
 
       if (this.isEditMode && this.caseId) {
         this.loadCase();
@@ -253,6 +259,46 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
           this.router.navigate(['/participants']);
         },
       });
+  }
+
+  private loadIdentifiedSituations(): void {
+    this.identifiedSituationService
+      .getActive()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (situations) => {
+          this.identifiedSituations = situations;
+        },
+        error: (error) => {
+          console.error('Error loading identified situations:', error);
+          this.notificationService.showError('Error al cargar las situaciones identificadas');
+        },
+      });
+  }
+
+  onSituationChange(event: Event, situationId: number): void {
+    const checkbox = event.target as HTMLInputElement;
+    const situationsControl = this.caseForm.get('identifiedSituations.situations');
+    const situations: number[] = situationsControl?.value || [];
+
+    if (checkbox.checked) {
+      if (!situations.includes(situationId)) {
+        situations.push(situationId);
+      }
+    } else {
+      const index = situations.indexOf(situationId);
+      if (index > -1) {
+        situations.splice(index, 1);
+      }
+    }
+
+    situationsControl?.setValue(situations);
+    situationsControl?.markAsTouched();
+  }
+
+  isSituationSelected(situationId: number): boolean {
+    const situations = this.caseForm.get('identifiedSituations.situations')?.value || [];
+    return situations.includes(situationId);
   }
 
   // Navigation methods

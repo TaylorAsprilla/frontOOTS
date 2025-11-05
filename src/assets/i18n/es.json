@@ -794,6 +794,39 @@
       "nameMaxLength": "El nombre no puede exceder 100 caracteres"
     }
   },
+  "identifiedSituation": {
+    "title": "Situaciones Identificadas",
+    "createNew": "Crear Situación Identificada",
+    "create": "Crear Situación",
+    "createTitle": "Crear Nueva Situación Identificada",
+    "edit": "Editar Situación",
+    "editTitle": "Editar Situación Identificada",
+    "delete": "Eliminar Situación",
+    "view": "Ver Situación",
+    "list": "Lista de Situaciones Identificadas",
+    "searchPlaceholder": "Buscar situaciones...",
+    "filterAll": "Todos los Estados",
+    "filterActive": "Activos",
+    "filterInactive": "Inactivos",
+    "clearFilters": "Limpiar Filtros",
+    "noResults": "No se encontraron situaciones identificadas",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "id": "ID",
+    "name": "Nombre",
+    "status": "Estado",
+    "actions": "Acciones",
+    "isActive": "Estado Activo",
+    "namePlaceholder": "Ej: Depresión, Violencia en el hogar, Problemas familiares...",
+    "nameHelp": "Describa brevemente la situación identificada",
+    "showing": "Mostrando",
+    "of": "de",
+    "validation": {
+      "nameRequired": "El nombre es requerido",
+      "nameMinLength": "El nombre debe tener al menos 3 caracteres",
+      "nameMaxLength": "El nombre no puede exceder 200 caracteres"
+    }
+  },
   "cases": {
     "title": "Casos",
     "list": "Lista de Casos",

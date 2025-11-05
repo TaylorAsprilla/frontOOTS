@@ -600,6 +600,39 @@
       "nameMaxLength": "Name cannot exceed 100 characters"
     }
   },
+  "identifiedSituation": {
+    "title": "Identified Situations",
+    "createNew": "Create Identified Situation",
+    "create": "Create Situation",
+    "createTitle": "Create New Identified Situation",
+    "edit": "Edit Situation",
+    "editTitle": "Edit Identified Situation",
+    "delete": "Delete Situation",
+    "view": "View Situation",
+    "list": "Identified Situations List",
+    "searchPlaceholder": "Search situations...",
+    "filterAll": "All Statuses",
+    "filterActive": "Active",
+    "filterInactive": "Inactive",
+    "clearFilters": "Clear Filters",
+    "noResults": "No identified situations found",
+    "active": "Active",
+    "inactive": "Inactive",
+    "id": "ID",
+    "name": "Name",
+    "status": "Status",
+    "actions": "Actions",
+    "isActive": "Active Status",
+    "namePlaceholder": "E.g: Depression, Domestic violence, Family problems...",
+    "nameHelp": "Briefly describe the identified situation",
+    "showing": "Showing",
+    "of": "of",
+    "validation": {
+      "nameRequired": "Name is required",
+      "nameMinLength": "Name must be at least 3 characters",
+      "nameMaxLength": "Name cannot exceed 200 characters"
+    }
+  },
   "common": {
     "loading": "Loading...",
     "save": "Save",

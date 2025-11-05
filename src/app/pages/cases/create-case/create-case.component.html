@@ -66,6 +66,42 @@
                                                     [animated]="true" class="mb-3" height="7px"></ngb-progressbar>
                                             </p>
                                             <div formGroupName="identifiedSituations">
+                                                <!-- Checkbox list of identified situations -->
+                                                <div class="row mb-3">
+                                                    <label class="col-md-12 col-form-label obligatorio">Seleccione las
+                                                        situaciones identificadas</label>
+                                                    <div class="col-md-12">
+                                                        @if (identifiedSituations.length > 0) {
+                                                        <div class="row">
+                                                            @for (situation of identifiedSituations; track situation.id)
+                                                            {
+                                                            <div class="col-md-6 col-lg-4 mb-2">
+                                                                <div class="form-check">
+                                                                    <input type="checkbox" class="form-check-input"
+                                                                        [id]="'situation-' + situation.id"
+                                                                        [value]="situation.id"
+                                                                        [checked]="isSituationSelected(situation.id)"
+                                                                        (change)="onSituationChange($event, situation.id)">
+                                                                    <label class="form-check-label"
+                                                                        [for]="'situation-' + situation.id">
+                                                                        {{ situation.name }}
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            }
+                                                        </div>
+                                                        } @else {
+                                                        <div class="text-muted">Cargando situaciones...</div>
+                                                        }
+                                                        @if (hasFieldError('identifiedSituations.situations')) {
+                                                        <div class="invalid-feedback d-block">
+                                                            <i class="mdi mdi-alert-circle-outline me-1"></i>
+                                                            {{ getFieldError('identifiedSituations.situations') }}
+                                                        </div>
+                                                        }
+                                                    </div>
+                                                </div>
+
                                                 <div class="row mb-3">
                                                     <label
                                                         class="col-md-3 col-form-label obligatorio">Descripción</label>

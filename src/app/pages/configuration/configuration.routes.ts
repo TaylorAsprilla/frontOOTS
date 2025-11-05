@@ -31,6 +31,11 @@ export const CONFIGURATION_ROUTES: Routes = [
     loadChildren: () => import('./housing-type/housing-type.routes').then((m) => m.HOUSING_TYPE_ROUTES),
   },
   {
+    path: 'identified-situations',
+    loadChildren: () =>
+      import('./identified-situations/identified-situation.routes').then((m) => m.IDENTIFIED_SITUATION_ROUTES),
+  },
+  {
     path: 'income-level',
     loadChildren: () => import('./income-level/income-level.routes').then((m) => m.INCOME_LEVEL_ROUTES),
   },
