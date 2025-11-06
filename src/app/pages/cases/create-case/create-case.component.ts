@@ -106,105 +106,54 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
       // Step 3: Intervention
       intervention: this.formBuilder.group({
-        type: ['', Validators.required],
-        description: ['', Validators.required],
-        startDate: ['', Validators.required],
-        objectives: this.formBuilder.array([]),
-        methodology: [''],
+        action: ['', Validators.required],
       }),
 
       // Step 4: Follow-up Plan
       followUpPlan: this.formBuilder.group({
-        scheduleNextAppointment: [false],
-        nextAppointmentDate: [''],
-        nextAppointmentTime: [''],
-        frequency: [''],
-        duration: [''],
-        goals: this.formBuilder.array([]),
-        observations: [''],
+        processCompleted: [false],
+        servicesCoordinated: [false],
+        servicesAgency: [''],
+        referralMade: [false],
+        referralDetails: [''],
+        appointmentScheduled: [false],
+        appointmentDate: [''],
+        appointmentTime: [''],
+        others: [''],
       }),
 
       // Step 5: Physical Health History
       physicalHealthHistory: this.formBuilder.group({
-        hasChronicDiseases: [false],
-        chronicDiseases: this.formBuilder.array([]),
-        takingMedications: [false],
-        medications: this.formBuilder.array([]),
-        hasAllergies: [false],
-        allergies: this.formBuilder.array([]),
-        hasDisabilities: [false],
-        disabilities: this.formBuilder.array([]),
-        recentSurgeries: [''],
-        currentTreatments: [''],
-        observations: [''],
+        conditions: this.formBuilder.array([]),
       }),
 
       // Step 6: Mental Health History
       mentalHealthHistory: this.formBuilder.group({
-        hasPreviousTreatment: [false],
-        previousTreatmentDetails: [''],
-        hasPsychiatricDiagnosis: [false],
-        psychiatricDiagnoses: this.formBuilder.array([]),
-        takingPsychiatricMedication: [false],
-        psychiatricMedications: this.formBuilder.array([]),
-        hasSubstanceUse: [false],
-        substances: this.formBuilder.array([]),
-        hasSuicidalThoughts: [false],
-        suicidalThoughtsDetails: [''],
-        hasViolenceHistory: [false],
-        violenceDetails: [''],
-        familyMentalHealthHistory: [''],
-        observations: [''],
+        conditions: this.formBuilder.array([]),
       }),
 
       // Step 7: Assessment (Ponderación)
       assessment: this.formBuilder.group({
-        cognitiveFunction: this.formBuilder.group({
-          rating: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
-          observations: ['', Validators.required],
-        }),
-        emotionalState: this.formBuilder.group({
-          rating: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
-          observations: ['', Validators.required],
-        }),
-        socialFunctioning: this.formBuilder.group({
-          rating: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
-          observations: ['', Validators.required],
-        }),
-        familyDynamics: this.formBuilder.group({
-          rating: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
-          observations: ['', Validators.required],
-        }),
-        copingSkills: this.formBuilder.group({
-          rating: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
-          observations: ['', Validators.required],
-        }),
-        riskFactors: this.formBuilder.group({
-          suicideRisk: ['none', Validators.required],
-          violenceRisk: ['none', Validators.required],
-          selfHarmRisk: ['none', Validators.required],
-          otherRisks: this.formBuilder.array([]),
-        }),
-        protectiveFactors: this.formBuilder.array([]),
-        clinicalImpression: ['', Validators.required],
-        diagnosticHypothesis: this.formBuilder.array([]),
+        generalDescription: ['', Validators.required],
+        concurrentFactors: ['', Validators.required],
+        criticalFactors: ['', Validators.required],
+        theoreticalFramework: ['', Validators.required],
       }),
 
       // Step 8: Intervention Plan
       interventionPlan: this.formBuilder.group({
-        objectives: this.formBuilder.array([]),
-        strategies: this.formBuilder.array([]),
-        techniques: this.formBuilder.array([]),
-        expectedDuration: ['', Validators.required],
-        evaluationCriteria: this.formBuilder.array([]),
-        contingencyPlan: [''],
+        interventions: this.formBuilder.array([]),
       }),
 
       // Step 9: Progress Notes
-      progressNotes: this.formBuilder.array([]),
+      progressNotes: this.formBuilder.group({
+        notes: this.formBuilder.array([]),
+      }),
 
-      // Step 10: Referrals
-      referrals: this.formBuilder.array([]),
+      // Step 10: Referrals (Referidos)
+      referrals: this.formBuilder.group({
+        referralsJustification: ['', Validators.required],
+      }),
 
       // Step 11: Closing Note (optional, for closing cases)
       closingNote: this.formBuilder.group({
@@ -299,6 +248,92 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   isSituationSelected(situationId: number): boolean {
     const situations = this.caseForm.get('identifiedSituations.situations')?.value || [];
     return situations.includes(situationId);
+  }
+
+  // Physical Health Conditions methods
+  get physicalConditions(): FormArray {
+    return this.caseForm.get('physicalHealthHistory.conditions') as FormArray;
+  }
+
+  addPhysicalCondition(): void {
+    const conditionGroup = this.formBuilder.group({
+      condition: [''],
+      receivingTreatment: [false],
+      treatmentDetails: [''],
+      paternalFamilyHistory: [''],
+      maternalFamilyHistory: [''],
+      observations: [''],
+    });
+    this.physicalConditions.push(conditionGroup);
+  }
+
+  removePhysicalCondition(index: number): void {
+    this.physicalConditions.removeAt(index);
+  }
+
+  // Mental Health Conditions methods
+  get mentalConditions(): FormArray {
+    return this.caseForm.get('mentalHealthHistory.conditions') as FormArray;
+  }
+
+  addMentalCondition(): void {
+    const conditionGroup = this.formBuilder.group({
+      condition: [''],
+      receivingTreatment: [false],
+      treatmentDetails: [''],
+      paternalFamilyHistory: [''],
+      maternalFamilyHistory: [''],
+      observations: [''],
+    });
+    this.mentalConditions.push(conditionGroup);
+  }
+
+  removeMentalCondition(index: number): void {
+    this.mentalConditions.removeAt(index);
+  }
+
+  // Step 8: Intervention Plan methods
+  get interventions(): FormArray {
+    return this.caseForm.get('interventionPlan.interventions') as FormArray;
+  }
+
+  addIntervention(): void {
+    const interventionGroup = this.formBuilder.group({
+      goals: [''],
+      objectives: [''],
+      activities: [''],
+      timeframe: [''],
+      responsiblePerson: [''],
+      evaluationCriteria: ['Observación subjetiva y objetiva del profesional.'],
+      progressNotes: [''],
+    });
+    this.interventions.push(interventionGroup);
+  }
+
+  removeIntervention(index: number): void {
+    this.interventions.removeAt(index);
+  }
+
+  // Step 9: Progress Notes methods
+  get progressNotesArray(): FormArray {
+    return this.caseForm.get('progressNotes.notes') as FormArray;
+  }
+
+  addProgressNote(): void {
+    const noteGroup = this.formBuilder.group({
+      date: [''],
+      time: [''],
+      approachType: [''],
+      process: [''],
+      interventionSummary: [''],
+      observations: [''],
+      agreements: [''],
+    });
+    this.progressNotesArray.push(noteGroup);
+  }
+
+  removeProgressNote(index: number): void {
+    this.progressNotesArray.removeAt(index);
   }
 
   // Navigation methods
@@ -416,8 +451,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       mentalHealthHistory: formValue.mentalHealthHistory,
       assessment: formValue.assessment,
       interventionPlan: formValue.interventionPlan,
-      progressNotes: formValue.progressNotes || [],
-      referrals: formValue.referrals || [],
+      referrals: formValue.referrals,
     };
   }
 

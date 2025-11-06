@@ -15,8 +15,12 @@
   transition: all 0.3s ease;
 }
 
+.nav-pills .nav-link:hover {
+  color: #00acc1;
+}
+
 .nav-pills .nav-link.active {
-  background-color: var(--bs-primary);
+  background-color: #00acc1;
   color: white;
 }
 
