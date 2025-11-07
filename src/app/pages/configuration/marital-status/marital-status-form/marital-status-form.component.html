@@ -1,0 +1,51 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">{{ isEditMode ? 'Editar' : 'Crear' }} Estado Civil</h4>
+
+                    @if (isLoading) {
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status"></div>
+                    </div>
+                    }
+
+                    @if (!isLoading) {
+                    <form [formGroup]="maritalStatusForm" (ngSubmit)="onSubmit()">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nombre <span class="text-danger">*</span></label>
+                            <input type="text" id="name" class="form-control" formControlName="name"
+                                [class.is-invalid]="hasFieldError('name')"
+                                placeholder="Ej: Soltero, Casado, Divorciado..." />
+                            @if (hasFieldError('name')) {
+                            <div class="invalid-feedback">{{ getFieldError('name') }}</div>
+                            }
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input type="checkbox" id="isActive" class="form-check-input"
+                                    formControlName="isActive" />
+                                <label for="isActive" class="form-check-label">Activo</label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+                                @if (isSubmitting) {
+                                <span class="spinner-border spinner-border-sm me-1"></span>
+                                }
+                                {{ isEditMode ? 'Actualizar' : 'Crear' }}
+                            </button>
+                            <button type="button" class="btn btn-secondary" routerLink="/configuration/marital-status">
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

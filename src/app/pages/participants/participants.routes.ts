@@ -1,4 +1,13 @@
 import { Routes } from '@angular/router';
+import { documentTypesResolver } from '../../core/resolvers/document-types.resolver';
+import { genderResolver } from '../../core/resolvers/gender.resolver';
+import { maritalStatusResolver } from '../../core/resolvers/marital-status.resolver';
+import { healthInsuranceResolver } from '../../core/resolvers/health-insurance.resolver';
+import { familyRelationshipResolver } from '../../core/resolvers/family-relationship.resolver';
+import { incomeSourceResolver } from '../../core/resolvers/income-source.resolver';
+import { incomeLevelResolver } from '../../core/resolvers/income-level.resolver';
+import { housingTypeResolver } from '../../core/resolvers/housing-type.resolver';
+import { academicLevelResolver } from '../../core/resolvers/academic-level.resolver';
 
 /**
  * Participants module routes configuration
@@ -27,6 +36,17 @@ export const PARTICIPANTS_ROUTES: Routes = [
     data: {
       breadcrumb: 'participants.create',
     },
+    resolve: {
+      documentTypes: documentTypesResolver,
+      genders: genderResolver,
+      maritalStatuses: maritalStatusResolver,
+      healthInsurances: healthInsuranceResolver,
+      familyRelationships: familyRelationshipResolver,
+      incomeSources: incomeSourceResolver,
+      incomeLevels: incomeLevelResolver,
+      housingTypes: housingTypeResolver,
+      academicLevels: academicLevelResolver,
+    },
   },
   {
     path: 'edit/:id',
@@ -36,6 +56,17 @@ export const PARTICIPANTS_ROUTES: Routes = [
     data: {
       breadcrumb: 'participants.edit',
       mode: 'edit',
+    },
+    resolve: {
+      documentTypes: documentTypesResolver,
+      genders: genderResolver,
+      maritalStatuses: maritalStatusResolver,
+      healthInsurances: healthInsuranceResolver,
+      familyRelationships: familyRelationshipResolver,
+      incomeSources: incomeSourceResolver,
+      incomeLevels: incomeLevelResolver,
+      housingTypes: housingTypeResolver,
+      academicLevels: academicLevelResolver,
     },
   },
   {

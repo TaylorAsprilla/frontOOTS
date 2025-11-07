@@ -2,7 +2,7 @@ import { Component, OnInit, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
-import { NgbPaginationModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPaginationModule, NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule } from '@ngneat/transloco';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 
@@ -21,6 +21,7 @@ import { Participant, ParticipantStatus } from '../../../core/interfaces/partici
     ReactiveFormsModule,
     NgbPaginationModule,
     NgbDropdownModule,
+    NgbTooltipModule,
     TranslocoModule,
     PageTitleComponent,
   ],
@@ -104,10 +105,12 @@ export class ParticipantListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.participants = response.data;
-          this.filteredParticipants = response.data;
-          this.totalItems = response.pagination?.total || 0;
+          this.participants = response.data.data;
+          this.filteredParticipants = response.data.data;
+          this.totalItems = response.data.total || 0;
           this.isLoading = false;
+
+          console.log('Participantes', response);
         },
         error: (error) => {
           console.error('Error loading participants:', error);
@@ -130,7 +133,7 @@ export class ParticipantListComponent implements OnInit, OnDestroy {
   deleteParticipant(participant: Participant): void {
     if (!participant.id) return;
 
-    const participantName = `${participant.personalData.firstName} ${participant.personalData.firstLastName}`;
+    const participantName = `${participant.firstName} ${participant.firstLastName}`;
 
     this.notificationService.showDeleteConfirmation(participantName).then((result) => {
       if (result.isConfirmed && participant.id) {

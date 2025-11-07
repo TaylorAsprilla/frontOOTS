@@ -73,6 +73,24 @@ const MENU_ITEMS: MenuItem[] = [
     icon: 'file',
   },
 
+  { key: 'cases', label: 'navigation.cases', isTitle: true },
+
+  {
+    key: 'cases-management',
+    label: 'navigation.cases',
+    isTitle: false,
+    icon: 'folder',
+    collapsed: true,
+    children: [
+      {
+        key: 'cases-list',
+        label: 'navigation.casesList',
+        link: '/cases/list',
+        parentKey: 'cases-management',
+      },
+    ],
+  },
+
   { key: 'apps', label: 'navigation.appointments', isTitle: true },
   {
     key: 'apps-calendar',
@@ -111,18 +129,79 @@ const MENU_ITEMS: MenuItem[] = [
 
   { key: 'configuration', label: 'configuration.title', isTitle: true },
   {
-    key: 'configuration-academic-level',
-    label: 'academicLevel.title',
+    key: 'configuration-management',
+    label: 'configuration.title',
     isTitle: false,
-    icon: 'award',
-    link: '/configuration/academic-level',
-  },
-  {
-    key: 'configuration-approach-types',
-    label: 'approachType.title',
-    isTitle: false,
-    icon: 'target',
-    link: '/configuration/approach-types',
+    icon: 'settings',
+    collapsed: true,
+    children: [
+      {
+        key: 'configuration-academic-level',
+        label: 'academicLevel.title',
+        link: '/configuration/academic-level',
+        parentKey: 'configuration-management',
+      },
+      {
+        key: 'configuration-approach-types',
+        label: 'approachType.title',
+        link: '/configuration/approach-types',
+        parentKey: 'configuration-management',
+      },
+      {
+        key: 'configuration-document-types',
+        label: 'documentType.title',
+        link: '/configuration/document-types',
+        parentKey: 'configuration-management',
+      },
+      {
+        key: 'configuration-family-relationship',
+        label: 'familyRelationship.title',
+        link: '/configuration/family-relationship',
+        parentKey: 'configuration-management',
+      },
+      {
+        key: 'configuration-genders',
+        label: 'gender.title',
+        link: '/configuration/genders',
+        parentKey: 'configuration-management',
+      },
+      {
+        key: 'configuration-health-insurance',
+        label: 'healthInsurance.title',
+        link: '/configuration/health-insurance',
+        parentKey: 'configuration-management',
+      },
+      {
+        key: 'configuration-housing-type',
+        label: 'housingType.title',
+        link: '/configuration/housing-type',
+        parentKey: 'configuration-management',
+      },
+      {
+        key: 'configuration-identified-situations',
+        label: 'identifiedSituation.title',
+        link: '/configuration/identified-situations',
+        parentKey: 'configuration-management',
+      },
+      {
+        key: 'configuration-income-level',
+        label: 'incomeLevel.title',
+        link: '/configuration/income-level',
+        parentKey: 'configuration-management',
+      },
+      {
+        key: 'configuration-income-source',
+        label: 'incomeSource.title',
+        link: '/configuration/income-source',
+        parentKey: 'configuration-management',
+      },
+      {
+        key: 'configuration-marital-status',
+        label: 'maritalStatus.title',
+        link: '/configuration/marital-status',
+        parentKey: 'configuration-management',
+      },
+    ],
   },
   // {
   //   key: "apps-chat",

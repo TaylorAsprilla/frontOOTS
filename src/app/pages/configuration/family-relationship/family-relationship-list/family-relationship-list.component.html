@@ -1,0 +1,114 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="card-title mb-0">Parentescos</h4>
+            <button class="btn btn-primary" routerLink="create">
+              <i class="mdi mdi-plus me-1"></i>Nuevo Parentesco
+            </button>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <input
+                type="text"
+                class="form-control"
+                [formControl]="searchControl"
+                placeholder="Buscar parentescos..."
+              />
+            </div>
+            <div class="col-md-6">
+              <select class="form-select" (change)="onStatusFilterChange($any($event.target).value)">
+                <option value="all">Todos</option>
+                <option value="active">Activos</option>
+                <option value="inactive">Inactivos</option>
+              </select>
+            </div>
+          </div>
+
+          @if (isLoading) {
+          <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+          </div>
+          }
+
+          @if (!isLoading && paginatedFamilyRelationshipes.length > 0) {
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th (click)="onSortChange('name')" style="cursor: pointer">
+                    Nombre
+                    @if (sortColumn === 'name') {
+                    <i class="mdi" [class.mdi-arrow-up]="sortDirection === 'asc'" [class.mdi-arrow-down]="sortDirection === 'desc'"></i>
+                    }
+                  </th>
+                  <th (click)="onSortChange('isActive')" style="cursor: pointer">
+                    Estado
+                    @if (sortColumn === 'isActive') {
+                    <i class="mdi" [class.mdi-arrow-up]="sortDirection === 'asc'" [class.mdi-arrow-down]="sortDirection === 'desc'"></i>
+                    }
+                  </th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (familyRelationship of paginatedFamilyRelationshipes; track familyRelationship.id) {
+                <tr>
+                  <td>{{ familyRelationship.name }}</td>
+                  <td>
+                    <span class="badge" [class.bg-success]="familyRelationship.isActive" [class.bg-danger]="!familyRelationship.isActive">
+                      {{ familyRelationship.isActive ? 'Activo' : 'Inactivo' }}
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      class="btn btn-sm btn-info me-1"
+                      [routerLink]="['edit', familyRelationship.id]"
+                      ngbTooltip="Editar"
+                    >
+                      <i class="mdi mdi-pencil"></i>
+                    </button>
+                    <button
+                      class="btn btn-sm btn-danger"
+                      (click)="deleteFamilyRelationship(familyRelationship)"
+                      ngbTooltip="Eliminar"
+                    >
+                      <i class="mdi mdi-delete"></i>
+                    </button>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <div>Mostrando {{ paginatedFamilyRelationshipes.length }} de {{ totalItems }} registros</div>
+            <ngb-pagination
+              [(page)]="currentPage"
+              [pageSize]="pageSize"
+              [collectionSize]="totalItems"
+              (pageChange)="onPageChange($event)"
+              [maxSize]="5"
+              [rotate]="true"
+              [boundaryLinks]="true"
+            ></ngb-pagination>
+          </div>
+          }
+
+          @if (!isLoading && paginatedFamilyRelationshipes.length === 0) {
+          <div class="text-center py-5">
+            <i class="mdi mdi-hospital display-1 text-muted"></i>
+            <p class="text-muted mt-2">No se encontraron parentescos</p>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

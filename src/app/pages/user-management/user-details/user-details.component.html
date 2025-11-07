@@ -15,8 +15,12 @@
                   [disabled]="loading" />
               </div>
               <div class="text-muted small">
-                <span *ngIf="!loading">{{ totalUsers }} users found</span>
-                <span *ngIf="loading">Searching...</span>
+                @if (!loading) {
+                <span>{{ totalUsers }} users found</span>
+                }
+                @if (loading) {
+                <span>Searching...</span>
+                }
               </div>
             </form>
           </div>
@@ -83,12 +87,18 @@
       <i class="mdi mdi-account-search mdi-48px text-muted"></i>
       <h4 class="mt-3 text-muted">No users found</h4>
       <p class="text-muted">
-        <span *ngIf="searchTerm">No users match your search criteria.</span>
-        <span *ngIf="!searchTerm">No users available in the system.</span>
+        @if (searchTerm) {
+        <span>No users match your search criteria.</span>
+        }
+        @if (!searchTerm) {
+        <span>No users available in the system.</span>
+        }
       </p>
-      <button *ngIf="searchTerm" class="btn btn-outline-primary" (click)="searchData('')">
+      @if (searchTerm) {
+      <button class="btn btn-outline-primary" (click)="searchData('')">
         <i class="mdi mdi-refresh me-1"></i>Clear Search
       </button>
+      }
     </div>
   </div>
   }
@@ -109,7 +119,8 @@
       <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeUserModal()"></button>
     </div>
     <div class="modal-body">
-      <div *ngIf="selectedUser" class="user-details">
+      @if (selectedUser) {
+      <div class="user-details">
         <div class="text-center mb-4">
           <div class="user-avatar-wrapper mb-3">
             <div class="avatar-xl mx-auto">
@@ -207,6 +218,7 @@
           </div>
         </div>
       </div>
+      }
     </div>
 
   </ng-template>

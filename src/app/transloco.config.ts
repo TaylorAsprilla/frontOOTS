@@ -11,7 +11,12 @@ export class TranslocoHttpLoaderService implements TranslocoLoader {
   private http = inject(HttpClient);
 
   getTranslation(lang: string): Observable<Translation> {
-    return this.http.get<Translation>(`/assets/i18n/${lang}.json`);
+    // Obtener el baseHref del documento para construir la ruta correcta
+    const baseHref = document.querySelector('base')?.getAttribute('href') || '/';
+    const normalizedBaseHref = baseHref.endsWith('/') ? baseHref : `${baseHref}/`;
+    const path = `${normalizedBaseHref}assets/i18n/${lang}.json`;
+
+    return this.http.get<Translation>(path);
   }
 }
 
@@ -21,18 +26,14 @@ export class TranslocoHttpLoaderService implements TranslocoLoader {
 export const translocoAppConfig = translocoConfig({
   availableLangs: ['es', 'en'],
   defaultLang: 'es',
-  // Re-render when language changes
   reRenderOnLangChange: true,
-  // Remove missing translation handler in production
   prodMode: !isDevMode(),
-  // Enable missing translation handler only in development
   missingHandler: {
-    // Use the key as a fallback
     useFallbackTranslation: true,
   },
-  // Flatten the translation object
+  // Flatten desactivado porque usamos estructura anidada en los JSON
   flatten: {
-    aot: !isDevMode(),
+    aot: false,
   },
 });
 

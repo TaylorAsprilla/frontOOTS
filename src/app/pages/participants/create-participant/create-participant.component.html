@@ -4,30 +4,29 @@
   </app-page-title>
 
   <div class="row justify-content-center">
-    <div class="col-xl-8 mx-auto">
+    <div class="col-xl-10 mx-auto">
       <div class="card shadow-sm border-0">
-        <div class="card-body p-4">
+        <div class="card-body p-5">
           <h4 class="card-title text-center mb-4 text-primary">
             <i class="mdi mdi-account-multiple me-2"></i>Participantes
           </h4>
 
           <!-- Loading Indicator -->
-          <div class="text-center py-4" *ngIf="isLoading">
+          @if (isLoading) {
+          <div class="text-center py-4">
             <div class="spinner-border text-primary" role="status">
               <span class="visually-hidden">{{ 'app.loading' | transloco }}</span>
             </div>
           </div>
+          }
 
           <!-- Main Form -->
-          <div *ngIf="participantForm; else noForm">
+          @if (participantForm) {
+          <div>
             <form [formGroup]="participantForm" (ngSubmit)="onSubmit()" novalidate>
               <div id="progressWizard">
-                <ul
-                  ngbNav
-                  #progressWizard="ngbNav"
-                  [(activeId)]="activeWizardStep"
-                  class="nav-pills nav-justified bg-light form-wizard-header mb-3"
-                >
+                <ul ngbNav #progressWizard="ngbNav" [(activeId)]="activeWizardStep"
+                  class="nav-pills nav-justified bg-light form-wizard-header mb-3">
                   <li [ngbNavItem]="1">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-account-circle me-1"></i>
@@ -35,488 +34,425 @@
                     </a>
                     <ng-template ngbNavContent>
                       <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="7.14"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
+                        <ngb-progressbar type="success" [value]="33.33" [striped]="true" [animated]="true" class="mb-3"
+                          height="7px"></ngb-progressbar>
                       </p>
-                      <div class="row" formGroupName="personalData">
-                        <div class="col-12">
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label obligatorio" for="firstName">
-                              {{ 'participants.firstName' | transloco }}
-                            </label>
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                class="form-control"
-                                [class.is-invalid]="hasFieldError('personalData.firstName')"
-                                id="firstName"
-                                name="firstName"
-                                formControlName="firstName"
-                              />
-                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.firstName')">
-                                {{ getFieldError('personalData.firstName') | transloco }}
+                      <div formGroupName="personalData" class="horizontal-form-section">
+                        <div class="two-column-layout">
+                          <!-- Primera columna -->
+                          <div>
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label obligatorio" for="firstName">
+                                {{ 'participants.firstName' | transloco }}
+                              </label>
+                              <div class="col-md-8">
+                                <input type="text" class="form-control"
+                                  [class.is-invalid]="hasFieldError('personalData.firstName')" id="firstName"
+                                  name="firstName" formControlName="firstName" />
+                                @if (hasFieldError('personalData.firstName')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('personalData.firstName') | transloco }}
+                                </div>
+                                }
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label obligatorio" for="firstLastName">
+                                Primer Apellido
+                              </label>
+                              <div class="col-md-8">
+                                <input type="text" class="form-control"
+                                  [class.is-invalid]="hasFieldError('personalData.firstLastName')" id="firstLastName"
+                                  name="firstLastName" formControlName="firstLastName" />
+                                @if (hasFieldError('personalData.firstLastName')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('personalData.firstLastName') | transloco }}
+                                </div>
+                                }
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label obligatorio" for="phoneNumber">
+                                Celular
+                              </label>
+                              <div class="col-md-8">
+                                <div class="phone-input-wrapper" [ngClass]="{
+                                  'has-error': hasFieldError('personalData.phoneNumber'),
+                                  'has-success': !hasFieldError('personalData.phoneNumber') && participantForm.get('personalData.phoneNumber')?.value
+                                }">
+                                  <ngx-intl-tel-input [cssClass]="'form-control'"
+                                    [preferredCountries]="[CountryISO.Colombia, CountryISO.UnitedStates]"
+                                    [enableAutoCountrySelect]="true" [enablePlaceholder]="true"
+                                    [searchCountryFlag]="true"
+                                    [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                                    [selectFirstCountry]="false" [selectedCountryISO]="CountryISO.Colombia"
+                                    [maxLength]="15" [phoneValidation]="true" [separateDialCode]="false"
+                                    [numberFormat]="PhoneNumberFormat.International" formControlName="phoneNumber"
+                                    id="phoneNumber">
+                                  </ngx-intl-tel-input>
+                                  @if (hasFieldError('personalData.phoneNumber')) {
+                                  <div class="invalid-feedback d-block">
+                                    <i class="mdi mdi-alert-circle-outline me-1"></i>
+                                    {{ getFieldError('personalData.phoneNumber') | transloco }}
+                                  </div>
+                                  }
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label for="documentTypeId" class="col-md-4 col-form-label obligatorio">
+                                Tipo de Documento
+                              </label>
+                              <div class="col-md-8">
+                                <select class="form-select"
+                                  [class.is-invalid]="hasFieldError('personalData.documentTypeId')" id="documentTypeId"
+                                  formControlName="documentTypeId">
+                                  <option value="" disabled selected>Seleccione</option>
+                                  @for (docType of documentTypes; track docType.id) {
+                                  <option [value]="docType.id">{{ docType.name }}</option>
+                                  }
+                                </select>
+                                @if (hasFieldError('personalData.documentTypeId')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('personalData.documentTypeId') | transloco }}
+                                </div>
+                                }
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label obligatorio" for="address">Dirección</label>
+                              <div class="col-md-8">
+                                <input type="text" class="form-control"
+                                  [class.is-invalid]="hasFieldError('personalData.address')" id="address" name="address"
+                                  formControlName="address" />
+                                @if (hasFieldError('personalData.address')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('personalData.address') | transloco }}
+                                </div>
+                                }
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label obligatorio" for="birthDate">Fecha de Nacimiento
+                              </label>
+                              <div class="col-md-8">
+                                <input type="date" class="form-control"
+                                  [class.is-invalid]="hasFieldError('personalData.birthDate')" id="birthDate"
+                                  name="birthDate" formControlName="birthDate" />
+                                @if (hasFieldError('personalData.birthDate')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('personalData.birthDate') | transloco }}
+                                </div>
+                                }
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label for="genderId" class="col-md-4 col-form-label obligatorio"> Género </label>
+                              <div class="col-md-8">
+                                <select class="form-select" [class.is-invalid]="hasFieldError('personalData.genderId')"
+                                  id="genderId" formControlName="genderId">
+                                  <option value="" disabled selected>Seleccione</option>
+                                  @for (gender of genders; track gender.id) {
+                                  <option [value]="gender.id">{{ gender.name }}</option>
+                                  }
+                                </select>
+                                @if (hasFieldError('personalData.genderId')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('personalData.genderId') | transloco }}
+                                </div>
+                                }
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label for="healthInsuranceId" class="col-md-4 col-form-label obligatorio"> EPS </label>
+                              <div class="col-md-8">
+                                <select class="form-select"
+                                  [class.is-invalid]="hasFieldError('personalData.healthInsuranceId')"
+                                  id="healthInsuranceId" formControlName="healthInsuranceId">
+                                  <option value="" disabled selected>Seleccione</option>
+                                  @for (healthInsurance of healthInsurances; track healthInsurance.id) {
+                                  <option [value]="healthInsurance.id">{{ healthInsurance.name }}</option>
+                                  }
+                                  <option value="other">Otro</option>
+                                </select>
+                                @if (hasFieldError('personalData.healthInsuranceId')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('personalData.healthInsuranceId') | transloco }}
+                                </div>
+                                }
                               </div>
                             </div>
                           </div>
 
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label" for="secondName">Segundo Nombre</label>
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                class="form-control"
-                                id="secondName"
-                                name="secondName"
-                                formControlName="secondName"
-                              />
+                          <!-- Segunda columna -->
+                          <div>
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label" for="secondName">Segundo Nombre</label>
+                              <div class="col-md-8">
+                                <input type="text" class="form-control" id="secondName" name="secondName"
+                                  formControlName="secondName" />
+                              </div>
                             </div>
-                          </div>
 
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label obligatorio" for="firstLastName">
-                              Primer Apellido
-                            </label>
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                class="form-control"
-                                [class.is-invalid]="hasFieldError('personalData.firstLastName')"
-                                id="firstLastName"
-                                name="firstLastName"
-                                formControlName="firstLastName"
-                              />
-                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.firstLastName')">
-                                {{ getFieldError('personalData.firstLastName') | transloco }}
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label" for="secondLastName"> Segundo Apellido</label>
+                              <div class="col-md-8">
+                                <input type="text" class="form-control" id="secondLastName" name="secondLastName"
+                                  formControlName="secondLastName" />
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label" for="email">Email</label>
+                              <div class="col-md-8">
+                                <input type="email" class="form-control"
+                                  [class.is-invalid]="hasFieldError('personalData.email')" id="email" name="email"
+                                  formControlName="email" />
+                                @if (hasFieldError('personalData.email')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('personalData.email') | transloco }}
+                                </div>
+                                }
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label obligatorio" for="documentNumber">Número de
+                                Documento
+                              </label>
+                              <div class="col-md-8">
+                                <input type="text" class="form-control"
+                                  [class.is-invalid]="hasFieldError('personalData.documentNumber')" id="documentNumber"
+                                  name="documentNumber" formControlName="documentNumber" />
+                                @if (hasFieldError('personalData.documentNumber')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('personalData.documentNumber') | transloco }}
+                                </div>
+                                }
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label obligatorio" for="city">Ciudad</label>
+                              <div class="col-md-8">
+                                <input type="text" class="form-control"
+                                  [class.is-invalid]="hasFieldError('personalData.city')" id="city" name="city"
+                                  formControlName="city" />
+                                @if (hasFieldError('personalData.city')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('personalData.city') | transloco }}
+                                </div>
+                                }
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label obligatorio" for="religiousAffiliation">Afiliación
+                                Religiosa
+                              </label>
+                              <div class="col-md-8">
+                                <input type="text" class="form-control"
+                                  [class.is-invalid]="hasFieldError('personalData.religiousAffiliation')"
+                                  id="religiousAffiliation" name="religiousAffiliation"
+                                  formControlName="religiousAffiliation" />
+                                @if (hasFieldError('personalData.religiousAffiliation')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('personalData.religiousAffiliation') | transloco }}
+                                </div>
+                                }
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label for="maritalStatusId" class="col-md-4 col-form-label obligatorio">
+                                Estado Civil
+                              </label>
+                              <div class="col-md-8">
+                                <select class="form-select"
+                                  [class.is-invalid]="hasFieldError('personalData.maritalStatusId')"
+                                  id="maritalStatusId" formControlName="maritalStatusId">
+                                  <option value="" disabled selected>Seleccione</option>
+                                  @for (maritalStatus of maritalStatuses; track maritalStatus.id) {
+                                  <option [value]="maritalStatus.id">{{ maritalStatus.name }}</option>
+                                  }
+                                </select>
+                                @if (hasFieldError('personalData.maritalStatusId')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('personalData.maritalStatusId') | transloco }}
+                                </div>
+                                }
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label" for="referralSource">Fuente Referido</label>
+                              <div class="col-md-8">
+                                <input type="text" class="form-control" id="referralSource" name="referralSource"
+                                  formControlName="referralSource" />
                               </div>
                             </div>
                           </div>
 
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label" for="secondLastName"> Segundo Apellido</label>
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                class="form-control"
-                                id="secondLastName"
-                                name="secondLastName"
-                                formControlName="secondLastName"
-                              />
-                            </div>
-                          </div>
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label obligatorio" for="phoneNumber">Celular</label>
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                class="form-control"
-                                [class.is-invalid]="hasFieldError('personalData.phoneNumber')"
-                                id="phoneNumber"
-                                name="phoneNumber"
-                                formControlName="phoneNumber"
-                              />
-                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.phoneNumber')">
-                                {{ getFieldError('personalData.phoneNumber') | transloco }}
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label" for="email">Email</label>
-                            <div class="col-md-9">
-                              <input
-                                type="email"
-                                class="form-control"
-                                [class.is-invalid]="hasFieldError('personalData.email')"
-                                id="email"
-                                name="email"
-                                formControlName="email"
-                              />
-                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.email')">
-                                {{ getFieldError('personalData.email') | transloco }}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
-                            <label for="documentTypeId" class="col-md-3 col-form-label obligatorio">
-                              Tipo de Documento
-                            </label>
-                            <div class="col-md-9">
-                              <select
-                                class="form-select"
-                                [class.is-invalid]="hasFieldError('personalData.documentTypeId')"
-                                id="documentTypeId"
-                                formControlName="documentTypeId"
-                              >
-                                <option value="" disabled selected>Seleccione un tipo de documento</option>
-                                <option value="Cédula de Ciudadanía">Cédula de Ciudadanía</option>
-                                <option value="Tarjeta de Identidad">Tarjeta de Identidad</option>
-                                <option value="Cédula de Extranjería">Cédula de Extranjería</option>
-                                <option value="Pasaporte">Pasaporte</option>
-                              </select>
-                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.documentTypeId')">
-                                {{ getFieldError('personalData.documentTypeId') | transloco }}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label obligatorio" for="documentNumber"
-                              >Número de Documento
-                            </label>
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                class="form-control"
-                                [class.is-invalid]="hasFieldError('personalData.documentNumber')"
-                                id="documentNumber"
-                                name="documentNumber"
-                                formControlName="documentNumber"
-                              />
-                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.documentNumber')">
-                                {{ getFieldError('personalData.documentNumber') | transloco }}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label obligatorio" for="address">Dirección </label>
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                class="form-control"
-                                [class.is-invalid]="hasFieldError('personalData.address')"
-                                id="address"
-                                name="address"
-                                formControlName="address"
-                              />
-                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.address')">
-                                {{ getFieldError('personalData.address') | transloco }}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label obligatorio" for="city">Ciudad </label>
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                class="form-control"
-                                [class.is-invalid]="hasFieldError('personalData.city')"
-                                id="city"
-                                name="city"
-                                formControlName="city"
-                              />
-                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.city')">
-                                {{ getFieldError('personalData.city') | transloco }}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label obligatorio" for="birthDate"
-                              >Fecha de Nacimiento
-                            </label>
-                            <div class="col-md-9">
-                              <input
-                                type="date"
-                                class="form-control"
-                                [class.is-invalid]="hasFieldError('personalData.birthDate')"
-                                id="birthDate"
-                                name="birthDate"
-                                formControlName="birthDate"
-                              />
-                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.birthDate')">
-                                {{ getFieldError('personalData.birthDate') | transloco }}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label obligatorio" for="religiousAffiliation"
-                              >Afiliación Religiosa
-                            </label>
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                class="form-control"
-                                [class.is-invalid]="hasFieldError('personalData.religiousAffiliation')"
-                                id="religiousAffiliation"
-                                name="religiousAffiliation"
-                                formControlName="religiousAffiliation"
-                              />
-                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.religiousAffiliation')">
-                                {{ getFieldError('personalData.religiousAffiliation') | transloco }}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
-                            <label for="genderId" class="col-md-3 col-form-label obligatorio"> Género </label>
-                            <div class="col-md-9">
-                              <select
-                                class="form-select"
-                                [class.is-invalid]="hasFieldError('personalData.genderId')"
-                                id="genderId"
-                                formControlName="genderId"
-                              >
-                                <option value="" disabled selected>Seleccione el género</option>
-                                <option value="Femenino">Femenino</option>
-                                <option value="Masculino">Masculino</option>
-                                <option value="Prefiero No Decirlo">Prefiero No Decirlo</option>
-                              </select>
-                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.genderId')">
-                                {{ getFieldError('personalData.genderId') | transloco }}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
-                            <label for="maritalStatusId" class="col-md-3 col-form-label obligatorio">
-                              Estado Civil
-                            </label>
-                            <div class="col-md-9">
-                              <select
-                                class="form-select"
-                                [class.is-invalid]="hasFieldError('personalData.maritalStatusId')"
-                                id="maritalStatusId"
-                                formControlName="maritalStatusId"
-                              >
-                                <option value="" disabled selected>Seleccione el estado civil</option>
-                                <option value="Casado">Casado</option>
-                                <option value="Divorciado">Divorciado</option>
-                                <option value="Separado">Separado</option>
-                                <option value="Soltero">Soltero</option>
-                                <option value="Unión Libre">Unión Libre</option>
-                                <option value="Viudo">Viudo</option>
-                              </select>
-                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.maritalStatusId')">
-                                {{ getFieldError('personalData.maritalStatusId') | transloco }}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
-                            <label for="healthInsuranceId" class="col-md-3 col-form-label obligatorio"> EPS </label>
-                            <div class="col-md-9">
-                              <select
-                                class="form-select"
-                                [class.is-invalid]="hasFieldError('personalData.healthInsuranceId')"
-                                id="healthInsuranceId"
-                                formControlName="healthInsuranceId"
-                              >
-                                <option value="" disabled selected>Seleccione la EPS</option>
-                                <option value="Asmet Salud">Asmet Salud</option>
-                                <option value="Asociación Indígena del Cauca">Asociación Indígena del Cauca</option>
-                                <option value="Cafesalud">Cafesalud</option>
-                                <option value="Capital Salud">Capital Salud</option>
-                                <option value="Comfachocó">Comfachocó</option>
-                                <option value="Comfamiliar">Comfamiliar</option>
-                                <option value="Comfandi">Comfandi</option>
-                                <option value="Comfenalco">Comfenalco</option>
-                                <option value="Compensar">Compensar</option>
-                                <option value="Coosalud">Coosalud</option>
-                                <option value="Cruz blanca">Cruz blanca</option>
-                                <option value="Emssanar">Emssanar</option>
-                                <option value="EPS Sanitas">EPS Sanitas</option>
-                                <option value="Famisanar">Famisanar</option>
-                                <option value="Ferrocarriles">Ferrocarriles</option>
-                                <option value="Fomag (magisterio)">Fomag (magisterio)</option>
-                                <option value="Mallamas">Mallamas</option>
-                                <option value="Mutual SER">Mutual SER</option>
-                                <option value="Nueva EPS">Nueva EPS</option>
-                                <option value="Pijaos Salud">Pijaos Salud</option>
-                                <option value="Policía Nacional">Policía Nacional</option>
-                                <option value="Salud Bolívar">Salud Bolívar</option>
-                                <option value="Salud Total">Salud Total</option>
-                                <option value="Savia Salud">Savia Salud</option>
-                                <option value="Servicio Occidental de Salud EPS SOS">
-                                  Servicio Occidental de Salud EPS SOS
-                                </option>
-                                <option value="Suramericana">Suramericana</option>
-                                <option value="Sura">Sura</option>
-                                <option value="other">Otro</option>
-                              </select>
-                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.healthInsuranceId')">
-                                {{ getFieldError('personalData.healthInsuranceId') | transloco }}
-                              </div>
-                            </div>
-                          </div>
-
+                          <!-- Campo EPS personalizada ocupa toda la fila -->
                           @if (participantForm.get('personalData.healthInsuranceId')?.value === 'other') {
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label obligatorio" for="customHealthInsurance">
-                              Especifique la EPS
-                            </label>
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                class="form-control"
-                                [class.is-invalid]="hasFieldError('personalData.customHealthInsurance')"
-                                id="customHealthInsurance"
-                                name="customHealthInsurance"
-                                formControlName="customHealthInsurance"
-                                placeholder="Ingrese el nombre de la EPS"
-                              />
-                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.customHealthInsurance')">
-                                {{ getFieldError('personalData.customHealthInsurance') | transloco }}
+                          <div class="col-span-2">
+                            <div class="row mb-3">
+                              <label class="col-md-2 col-form-label obligatorio" for="customHealthInsurance">
+                                Especifique la EPS
+                              </label>
+                              <div class="col-md-10">
+                                <input type="text" class="form-control"
+                                  [class.is-invalid]="hasFieldError('personalData.customHealthInsurance')"
+                                  id="customHealthInsurance" name="customHealthInsurance"
+                                  formControlName="customHealthInsurance" placeholder="Ingrese el nombre de la EPS" />
+                                @if (hasFieldError('personalData.customHealthInsurance')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('personalData.customHealthInsurance') | transloco }}
+                                </div>
+                                }
                               </div>
                             </div>
                           </div>
                           }
+                        </div>
 
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label" for="referralSource">Fuente Referido</label>
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                class="form-control"
-                                id="referralSource"
-                                name="referralSource"
-                                formControlName="referralSource"
-                              />
+                        <!-- Contacto de Emergencia -->
+                        <h5 class="mt-4 mb-3 text-muted col-span-2">
+                          <i class="mdi mdi-account-alert me-2"></i>Contacto de Emergencia
+                        </h5>
+
+                        <div class="two-column-layout">
+                          <!-- Primera columna -->
+                          <div>
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label obligatorio" for="emergencyContactName">
+                                Nombre Completo
+                              </label>
+                              <div class="col-md-8">
+                                <input type="text" class="form-control"
+                                  [class.is-invalid]="hasFieldError('personalData.emergencyContactName')"
+                                  id="emergencyContactName" name="emergencyContactName"
+                                  formControlName="emergencyContactName" />
+                                @if (hasFieldError('personalData.emergencyContactName')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('personalData.emergencyContactName') | transloco }}
+                                </div>
+                                }
+                              </div>
                             </div>
-                          </div>
 
-                          <!-- Contacto de Emergencia -->
-                          <h5 class="mt-4 mb-3 text-muted">
-                            <i class="mdi mdi-account-alert me-2"></i>Contacto de Emergencia
-                          </h5>
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label obligatorio"
+                                for="emergencyContactEmail">Email</label>
+                              <div class="col-md-8">
+                                <input type="email" class="form-control"
+                                  [class.is-invalid]="hasFieldError('personalData.emergencyContactEmail')"
+                                  id="emergencyContactEmail" name="emergencyContactEmail"
+                                  formControlName="emergencyContactEmail" />
+                                @if (hasFieldError('personalData.emergencyContactEmail')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('personalData.emergencyContactEmail') | transloco }}
+                                </div>
+                                }
+                              </div>
+                            </div>
 
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label obligatorio" for="emergencyContactName">
-                              Nombre Completo
-                            </label>
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                class="form-control"
-                                [class.is-invalid]="hasFieldError('personalData.emergencyContactName')"
-                                id="emergencyContactName"
-                                name="emergencyContactName"
-                                formControlName="emergencyContactName"
-                              />
-                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.emergencyContactName')">
-                                {{ getFieldError('personalData.emergencyContactName') | transloco }}
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label obligatorio"
+                                for="emergencyContactCity">Ciudad</label>
+                              <div class="col-md-8">
+                                <input type="text" class="form-control"
+                                  [class.is-invalid]="hasFieldError('personalData.emergencyContactCity')"
+                                  id="emergencyContactCity" name="emergencyContactCity"
+                                  formControlName="emergencyContactCity" />
+                                @if (hasFieldError('personalData.emergencyContactCity')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('personalData.emergencyContactCity') | transloco }}
+                                </div>
+                                }
                               </div>
                             </div>
                           </div>
 
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label obligatorio" for="emergencyContactPhone"
-                              >Celular</label
-                            >
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                class="form-control"
-                                [class.is-invalid]="hasFieldError('personalData.emergencyContactPhone')"
-                                id="emergencyContactPhone"
-                                name="emergencyContactPhone"
-                                formControlName="emergencyContactPhone"
-                              />
-                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.emergencyContactPhone')">
-                                {{ getFieldError('personalData.emergencyContactPhone') | transloco }}
+                          <!-- Segunda columna -->
+                          <div>
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label obligatorio" for="emergencyContactPhone">
+                                Celular
+                              </label>
+                              <div class="col-md-8">
+                                <div class="phone-input-wrapper" [ngClass]="{
+                                  'has-error': hasFieldError('personalData.emergencyContactPhone'),
+                                  'has-success': !hasFieldError('personalData.emergencyContactPhone') && participantForm.get('personalData.emergencyContactPhone')?.value
+                                }">
+                                  <ngx-intl-tel-input [cssClass]="'form-control'"
+                                    [preferredCountries]="[CountryISO.Colombia, CountryISO.UnitedStates]"
+                                    [enableAutoCountrySelect]="true" [enablePlaceholder]="true"
+                                    [searchCountryFlag]="true"
+                                    [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                                    [selectFirstCountry]="false" [selectedCountryISO]="CountryISO.Colombia"
+                                    [maxLength]="15" [phoneValidation]="true" [separateDialCode]="false"
+                                    [numberFormat]="PhoneNumberFormat.International"
+                                    formControlName="emergencyContactPhone" id="emergencyContactPhone">
+                                  </ngx-intl-tel-input>
+                                  @if (hasFieldError('personalData.emergencyContactPhone')) {
+                                  <div class="invalid-feedback d-block">
+                                    <i class="mdi mdi-alert-circle-outline me-1"></i>
+                                    {{ getFieldError('personalData.emergencyContactPhone') | transloco }}
+                                  </div>
+                                  }
+                                </div>
                               </div>
                             </div>
-                          </div>
 
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label obligatorio" for="emergencyContactEmail">Email</label>
-                            <div class="col-md-9">
-                              <input
-                                type="email"
-                                class="form-control"
-                                [class.is-invalid]="hasFieldError('personalData.emergencyContactEmail')"
-                                id="emergencyContactEmail"
-                                name="emergencyContactEmail"
-                                formControlName="emergencyContactEmail"
-                              />
-                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.emergencyContactEmail')">
-                                {{ getFieldError('personalData.emergencyContactEmail') | transloco }}
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label obligatorio" for="emergencyContactAddress">
+                                Dirección
+                              </label>
+                              <div class="col-md-8">
+                                <input type="text" class="form-control"
+                                  [class.is-invalid]="hasFieldError('personalData.emergencyContactAddress')"
+                                  id="emergencyContactAddress" name="emergencyContactAddress"
+                                  formControlName="emergencyContactAddress" />
+                                @if (hasFieldError('personalData.emergencyContactAddress')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('personalData.emergencyContactAddress') | transloco }}
+                                </div>
+                                }
                               </div>
                             </div>
-                          </div>
 
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label obligatorio" for="emergencyContactAddress">
-                              Dirección
-                            </label>
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                class="form-control"
-                                [class.is-invalid]="hasFieldError('personalData.emergencyContactAddress')"
-                                id="emergencyContactAddress"
-                                name="emergencyContactAddress"
-                                formControlName="emergencyContactAddress"
-                              />
-                              <div
-                                class="invalid-feedback"
-                                *ngIf="hasFieldError('personalData.emergencyContactAddress')"
-                              >
-                                {{ getFieldError('personalData.emergencyContactAddress') | transloco }}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label obligatorio" for="emergencyContactCity">Ciudad</label>
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                class="form-control"
-                                [class.is-invalid]="hasFieldError('personalData.emergencyContactCity')"
-                                id="emergencyContactCity"
-                                name="emergencyContactCity"
-                                formControlName="emergencyContactCity"
-                              />
-                              <div class="invalid-feedback" *ngIf="hasFieldError('personalData.emergencyContactCity')">
-                                {{ getFieldError('personalData.emergencyContactCity') | transloco }}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label obligatorio" for="emergencyContactRelationship">
-                              Parentesco
-                            </label>
-                            <div class="col-md-9">
-                              <select
-                                class="form-select"
-                                [class.is-invalid]="hasFieldError('personalData.emergencyContactRelationship')"
-                                id="emergencyContactRelationship"
-                                formControlName="emergencyContactRelationship"
-                              >
-                                <option value="" disabled selected>Seleccione el parentesco</option>
-                                <option value="Padre">Padre</option>
-                                <option value="Madre">Madre</option>
-                                <option value="Hermano/a">Hermano/a</option>
-                                <option value="Hijo/a">Hijo/a</option>
-                                <option value="Esposo/a">Esposo/a</option>
-                                <option value="Tío/a">Tío/a</option>
-                                <option value="Abuelo/a">Abuelo/a</option>
-                                <option value="Primo/a">Primo/a</option>
-                                <option value="Amigo/a">Amigo/a</option>
-                                <option value="Otro">Otro</option>
-                              </select>
-                              <div
-                                class="invalid-feedback"
-                                *ngIf="hasFieldError('personalData.emergencyContactRelationship')"
-                              >
-                                {{ getFieldError('personalData.emergencyContactRelationship') | transloco }}
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label obligatorio" for="emergencyContactRelationship">
+                                Parentesco
+                              </label>
+                              <div class="col-md-8">
+                                <select class="form-select"
+                                  [class.is-invalid]="hasFieldError('personalData.emergencyContactRelationship')"
+                                  id="emergencyContactRelationship" formControlName="emergencyContactRelationship">
+                                  <option value="" disabled selected>Seleccione</option>
+                                  @for (relationship of familyRelationships; track relationship.id) {
+                                  <option [value]="relationship.id">{{ relationship.name }}</option>
+                                  }
+                                </select>
+                                @if (hasFieldError('personalData.emergencyContactRelationship')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('personalData.emergencyContactRelationship') | transloco }}
+                                </div>
+                                }
                               </div>
                             </div>
                           </div>
                         </div>
-                        <!-- end col -->
                       </div>
-                      <!-- end row -->
+                      <!-- end personalData section -->
                       <ul class="list-inline mb-0 wizard">
                         <li class="next list-inline-item float-end">
                           <button type="button" (click)="goToNextStep()" class="btn btn-secondary">Siguiente</button>
@@ -531,126 +467,72 @@
                     </a>
                     <ng-template ngbNavContent>
                       <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="14.29"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        >
+                        <ngb-progressbar type="success" [value]="66" [striped]="true" [animated]="true" class="mb-3"
+                          height="7px">
                         </ngb-progressbar>
                       </p>
                       <div class="row" formArrayName="familyComposition">
                         <div class="col-12">
                           <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="mb-0"><i class="mdi mdi-account-group me-2"></i>Miembros de la Familia</h5>
-                            <button
-                              type="button"
-                              class="btn btn-primary btn-sm add-family-btn"
-                              (click)="addFamilyMember()"
-                            >
+                            <button type="button" class="btn btn-primary btn-sm add-family-btn"
+                              (click)="addFamilyMember()">
                               <i class="mdi mdi-plus me-1"></i>Agregar Familiar
                             </button>
                           </div>
 
-                          <div
-                            *ngFor="let member of familyCompositionArray.controls; let i = index"
-                            [formGroupName]="i"
-                            class="family-member-card p-3 mb-3 position-relative"
-                          >
+                          @for (member of familyCompositionArray.controls; track $index; let i = $index) {
+                          <div [formGroupName]="i" class="family-member-card p-3 mb-3 position-relative">
                             <div class="family-member-header d-flex justify-content-between align-items-center mb-3">
                               <h6 class="mb-0 text-muted"><i class="mdi mdi-account me-1"></i>Familiar {{ i + 1 }}</h6>
-                              <button
-                                *ngIf="familyCompositionArray.length > 1"
-                                type="button"
-                                class="btn btn-danger btn-sm remove-family-btn"
-                                (click)="removeFamilyMember(i)"
-                                title="Eliminar familiar"
-                              >
+                              @if (familyCompositionArray.length > 1) {
+                              <button type="button" class="btn btn-danger btn-sm remove-family-btn"
+                                (click)="removeFamilyMember(i)" title="Eliminar familiar">
                                 <i class="mdi mdi-delete"></i>
                               </button>
+                              }
                             </div>
 
                             <div class="row mb-3">
                               <label class="col-md-3 col-form-label obligatorio" [for]="'name_' + i"> Nombre</label>
                               <div class="col-md-9">
-                                <input
-                                  type="text"
-                                  [id]="'name_' + i"
-                                  [name]="'name_' + i"
-                                  class="form-control"
+                                <input type="text" [id]="'name_' + i" [name]="'name_' + i" class="form-control"
                                   [class.is-invalid]="hasFieldError('familyComposition.' + i + '.name')"
-                                  formControlName="name"
-                                />
-                                <div class="invalid-feedback" *ngIf="hasFieldError('familyComposition.' + i + '.name')">
+                                  formControlName="name" />
+                                @if (hasFieldError('familyComposition.' + i + '.name')) {
+                                <div class="invalid-feedback">
                                   {{ getFieldError('familyComposition.' + i + '.name') | transloco }}
                                 </div>
+                                }
                               </div>
                             </div>
 
                             <div class="row mb-3">
                               <label class="col-md-3 col-form-label" [for]="'familyBirthDate_' + i">
-                                Fecha de Nacimiento</label
-                              >
+                                Fecha de Nacimiento</label>
                               <div class="col-md-9">
-                                <input
-                                  type="date"
-                                  [id]="'familyBirthDate_' + i"
-                                  [name]="'familyBirthDate_' + i"
-                                  class="form-control"
-                                  formControlName="birthDate"
-                                />
+                                <input type="date" [id]="'familyBirthDate_' + i" [name]="'familyBirthDate_' + i"
+                                  class="form-control" formControlName="birthDate" />
                               </div>
                             </div>
 
                             <div class="row mb-3">
                               <label class="col-md-3 col-form-label" [for]="'occupation_' + i">Ocupación</label>
                               <div class="col-md-9">
-                                <input
-                                  type="text"
-                                  [id]="'occupation_' + i"
-                                  [name]="'occupation_' + i"
-                                  class="form-control"
-                                  formControlName="occupation"
-                                />
+                                <input type="text" [id]="'occupation_' + i" [name]="'occupation_' + i"
+                                  class="form-control" formControlName="occupation" />
                               </div>
                             </div>
 
                             <div class="row mb-3">
                               <label [for]="'relationshipId_' + i" class="col-md-3 col-form-label"> Parentesco </label>
                               <div class="col-md-9">
-                                <select
-                                  class="form-select"
-                                  [id]="'relationshipId_' + i"
-                                  formControlName="relationshipId"
-                                >
+                                <select class="form-select" [id]="'relationshipId_' + i"
+                                  formControlName="relationshipId">
                                   <option value="" disabled selected>Seleccione el Parentesco</option>
-                                  <option value="Padre">Padre</option>
-                                  <option value="Madre">Madre</option>
-                                  <option value="Hermano">Hermano</option>
-                                  <option value="Hermana">Hermana</option>
-                                  <option value="Hijo">Hijo</option>
-                                  <option value="Hija">Hija</option>
-                                  <option value="Esposo">Esposo</option>
-                                  <option value="Esposa">Esposa</option>
-                                  <option value="Tio">Tío</option>
-                                  <option value="Tia">Tía</option>
-                                  <option value="Abuelo">Abuelo</option>
-                                  <option value="Abuela">Abuela</option>
-                                  <option value="Primo">Primo</option>
-                                  <option value="Prima">Prima</option>
-                                  <option value="Sobrino">Sobrino</option>
-                                  <option value="Sobrina">Sobrina</option>
-                                  <option value="Nieto">Nieto</option>
-                                  <option value="Nieta">Nieta</option>
-                                  <option value="Cuñado">Cuñado</option>
-                                  <option value="Cuñada">Cuñada</option>
-                                  <option value="Yerno">Yerno</option>
-                                  <option value="Nuera">Nuera</option>
-                                  <option value="Suegro">Suegro</option>
-                                  <option value="Suegra">Suegra</option>
-                                  <option value="Otro">Otro</option>
+                                  @for (relationship of familyRelationships; track relationship.id) {
+                                  <option [value]="relationship.id">{{ relationship.name }}</option>
+                                  }
                                 </select>
                               </div>
                             </div>
@@ -660,29 +542,20 @@
                                 Grado Académico
                               </label>
                               <div class="col-md-9">
-                                <select
-                                  class="form-select"
-                                  [id]="'academicLevelId_' + i"
-                                  formControlName="academicLevelId"
-                                >
+                                <select class="form-select" [id]="'academicLevelId_' + i"
+                                  formControlName="academicLevelId">
                                   <option value="" disabled selected>Seleccione el Grado Académico</option>
-                                  <option value="Sin Grado Académico">Sin Grado Académico</option>
-                                  <option value="Preescolar">Preescolar</option>
-                                  <option value="Primaria">Primaria</option>
-                                  <option value="Secundaria">Secundaria</option>
-                                  <option value="Técnico">Técnico</option>
-                                  <option value="Tecnólogo">Tecnólogo</option>
-                                  <option value="Pregrado">Pregrado</option>
-                                  <option value="Especialización">Especialización</option>
-                                  <option value="Maestria">Maestria</option>
-                                  <option value="Doctorado">Doctorado</option>
-                                  <option value="Postdoctorado">Postdoctorado</option>
+                                  @for (academicLevel of academicLevels; track academicLevel.id) {
+                                  <option [value]="academicLevel.id">{{ academicLevel.name }}</option>
+                                  }
                                 </select>
                               </div>
                             </div>
                           </div>
+                          }
 
-                          <div *ngIf="familyCompositionArray.length === 0" class="empty-family-state text-center py-4">
+                          @if (familyCompositionArray.length === 0) {
+                          <div class="empty-family-state text-center py-4">
                             <div class="text-muted">
                               <i class="mdi mdi-account-group-outline display-4"></i>
                               <p class="mt-2">No hay miembros familiares agregados</p>
@@ -691,6 +564,7 @@
                               </button>
                             </div>
                           </div>
+                          }
                         </div>
                         <!-- end col -->
                       </div>
@@ -714,150 +588,185 @@
                     </a>
                     <ng-template ngbNavContent>
                       <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="21.43"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
+                        <ngb-progressbar type="success" [value]="100" [striped]="true" [animated]="true" class="mb-3"
+                          height="7px"></ngb-progressbar>
                       </p>
-                      <div class="row" formGroupName="bioPsychosocialHistory">
-                        <div class="col-12">
-                          <!-- Escolaridad -->
-                          <div class="row mb-3">
-                            <label for="schooling" class="col-md-3 col-form-label"> Escolaridad </label>
-                            <div class="col-md-9">
-                              <select class="form-select" id="schooling" formControlName="schooling">
-                                <option value="" disabled selected>Seleccione escolaridad</option>
-                                <option value="Primaria">Primaria</option>
-                                <option value="Secundaria">Secundaria</option>
-                                <option value="Técnico">Técnico</option>
-                                <option value="Tecnólogo">Tecnólogo</option>
-                                <option value="Universidad">Universidad</option>
-                                <option value="Especialización">Especialización</option>
-                                <option value="Maestría">Maestría</option>
-                                <option value="Doctorado">Doctorado</option>
-                                <option value="No tiene estudios">No tiene estudios</option>
-                              </select>
+                      <div formGroupName="bioPsychosocialHistory" class="horizontal-form-section">
+                        <div class="two-column-layout">
+                          <!-- Primera columna -->
+                          <div>
+                            <div class="row mb-3">
+                              <label for="academicLevelId" class="col-md-4 col-form-label obligatorio">
+                                Nivel Académico
+                              </label>
+                              <div class="col-md-8">
+                                <select class="form-select"
+                                  [class.is-invalid]="hasFieldError('bioPsychosocialHistory.academicLevelId')"
+                                  id="academicLevelId" formControlName="academicLevelId">
+                                  <option value="" disabled selected>Seleccione</option>
+                                  @for (academicLevel of academicLevels; track academicLevel.id) {
+                                  <option [value]="academicLevel.id">{{ academicLevel.name }}</option>
+                                  }
+                                </select>
+                                @if (hasFieldError('bioPsychosocialHistory.academicLevelId')) {
+                                <div class="invalid-feedback">
+                                  Este campo es requerido
+                                </div>
+                                }
+                              </div>
                             </div>
-                          </div>
 
-                          <!-- Grado completado -->
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label" for="completedGrade"> Grado completado </label>
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                class="form-control"
-                                id="completedGrade"
-                                formControlName="completedGrade"
-                              />
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label obligatorio" for="institution">
+                                Institución
+                              </label>
+                              <div class="col-md-8">
+                                <input type="text" class="form-control"
+                                  [class.is-invalid]="hasFieldError('bioPsychosocialHistory.institution')"
+                                  id="institution" formControlName="institution"
+                                  placeholder="Ej: Universidad Nacional" />
+                                @if (hasFieldError('bioPsychosocialHistory.institution')) {
+                                <div class="invalid-feedback">
+                                  Este campo es requerido
+                                </div>
+                                }
+                              </div>
                             </div>
-                          </div>
 
-                          <!-- Escuela o universidad -->
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label" for="institution"> Escuela o universidad </label>
-                            <div class="col-md-9">
-                              <input type="text" class="form-control" id="institution" formControlName="institution" />
+                            <div class="row mb-3">
+                              <label for="incomeSourceId" class="col-md-4 col-form-label obligatorio">
+                                Fuente de ingresos
+                              </label>
+                              <div class="col-md-8">
+                                <select class="form-select"
+                                  [class.is-invalid]="hasFieldError('bioPsychosocialHistory.incomeSourceId')"
+                                  id="incomeSourceId" formControlName="incomeSourceId">
+                                  <option value="" disabled selected>Seleccione</option>
+                                  @for (incomeSource of incomeSources; track incomeSource.id) {
+                                  <option [value]="incomeSource.id">{{ incomeSource.name }}</option>
+                                  }
+                                </select>
+                                @if (hasFieldError('bioPsychosocialHistory.incomeSourceId')) {
+                                <div class="invalid-feedback">
+                                  Este campo es requerido
+                                </div>
+                                }
+                              </div>
                             </div>
-                          </div>
 
-                          <!-- Profesión -->
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label" for="profession"> Profesión </label>
-                            <div class="col-md-9">
-                              <input type="text" class="form-control" id="profession" formControlName="profession" />
-                            </div>
-                          </div>
-
-                          <!-- Fuente de ingresos -->
-                          <div class="row mb-3">
-                            <label for="incomeSource" class="col-md-3 col-form-label"> Fuente de ingresos </label>
-                            <div class="col-md-9">
-                              <select class="form-select" id="incomeSource" formControlName="incomeSource">
-                                <option value="" disabled selected>Seleccione fuente de ingresos</option>
-                                <option value="Sueldo">Sueldo</option>
-                                <option value="Rentas">Rentas</option>
-                                <option value="Seguro">Seguro</option>
-                                <option value="Pensiones">Pensiones</option>
-                                <option value="Giros">Giros</option>
-                                <option value="Negocio propio">Negocio propio</option>
-                                <option value="Otro">Otro</option>
-                              </select>
-                            </div>
-                          </div>
-
-                          <!-- Estimado mensual -->
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label" for="incomeLevel">
-                              Estimado mensual (en salarios mínimos)
-                            </label>
-                            <div class="col-md-9">
-                              <select class="form-select" id="incomeLevel" formControlName="incomeLevel">
-                                <option value="" disabled selected>Seleccione el estimado mensual</option>
-                                <option value="Menos de 1 SMLV">Menos de 1 SMLV</option>
-                                <option value="1 SMLV">1 SMLV</option>
-                                <option value="Más de 1 SMLV">Más de 1 SMLV</option>
-                              </select>
-                            </div>
-                          </div>
-
-                          <!-- Historial ocupacional -->
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label" for="occupationalHistory">
-                              Historial ocupacional
-                            </label>
-                            <div class="col-md-9">
-                              <textarea
-                                class="form-control"
-                                id="occupationalHistory"
-                                formControlName="occupationalHistory"
-                                rows="3"
-                                placeholder="Describa el historial ocupacional..."
-                              ></textarea>
-                            </div>
-                          </div>
-
-                          <!-- Tipo de Vivienda -->
-                          <div class="row mb-3">
-                            <label for="housingTypeId" class="col-md-3 col-form-label obligatorio">
-                              Tipo de Vivienda
-                            </label>
-                            <div class="col-md-9">
-                              <select
-                                class="form-select"
-                                [class.is-invalid]="hasFieldError('bioPsychosocialHistory.housingTypeId')"
-                                id="housingTypeId"
-                                formControlName="housingTypeId"
-                              >
-                                <option value="" disabled selected>Seleccione el Tipo de Vivienda</option>
-                                <option value="Propia">Propia</option>
-                                <option value="Arriendo">Arriendo</option>
-                                <option value="Familiar">Familiar</option>
-                              </select>
-                              <div
-                                class="invalid-feedback"
-                                *ngIf="hasFieldError('bioPsychosocialHistory.housingTypeId')"
-                              >
-                                {{ getFieldError('bioPsychosocialHistory.housingTypeId') | transloco }}
+                            <div class="row mb-3">
+                              <label for="housingTypeId" class="col-md-4 col-form-label obligatorio">
+                                Tipo de Vivienda
+                              </label>
+                              <div class="col-md-8">
+                                <select class="form-select"
+                                  [class.is-invalid]="hasFieldError('bioPsychosocialHistory.housingTypeId')"
+                                  id="housingTypeId" formControlName="housingTypeId">
+                                  <option value="" disabled selected>Seleccione</option>
+                                  @for (housingType of housingTypes; track housingType.id) {
+                                  <option [value]="housingType.id">{{ housingType.name }}</option>
+                                  }
+                                </select>
+                                @if (hasFieldError('bioPsychosocialHistory.housingTypeId')) {
+                                <div class="invalid-feedback">
+                                  Este campo es requerido
+                                </div>
+                                }
                               </div>
                             </div>
                           </div>
 
-                          <!-- Vivienda -->
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label" for="housing"> Vivienda </label>
-                            <div class="col-md-9">
-                              <textarea
-                                class="form-control"
-                                id="housing"
-                                formControlName="housing"
-                                rows="3"
-                                placeholder="Describa las condiciones de vivienda..."
-                              ></textarea>
+                          <!-- Segunda columna -->
+                          <div>
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label obligatorio" for="completedGrade">
+                                Grado completado
+                              </label>
+                              <div class="col-md-8">
+                                <input type="text" class="form-control"
+                                  [class.is-invalid]="hasFieldError('bioPsychosocialHistory.completedGrade')"
+                                  id="completedGrade" formControlName="completedGrade"
+                                  placeholder="Ej: Profesional Completo" />
+                                @if (hasFieldError('bioPsychosocialHistory.completedGrade')) {
+                                <div class="invalid-feedback">
+                                  Este campo es requerido
+                                </div>
+                                }
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label obligatorio" for="profession">
+                                Profesión
+                              </label>
+                              <div class="col-md-8">
+                                <input type="text" class="form-control"
+                                  [class.is-invalid]="hasFieldError('bioPsychosocialHistory.profession')"
+                                  id="profession" formControlName="profession" placeholder="Ej: Psicóloga Clínica" />
+                                @if (hasFieldError('bioPsychosocialHistory.profession')) {
+                                <div class="invalid-feedback">
+                                  Este campo es requerido
+                                </div>
+                                }
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label obligatorio" for="incomeLevelId">
+                                Nivel de ingresos
+                              </label>
+                              <div class="col-md-8">
+                                <select class="form-select"
+                                  [class.is-invalid]="hasFieldError('bioPsychosocialHistory.incomeLevelId')"
+                                  id="incomeLevelId" formControlName="incomeLevelId">
+                                  <option value="" disabled selected>Seleccione</option>
+                                  @for (incomeLevel of incomeLevels; track incomeLevel.id) {
+                                  <option [value]="incomeLevel.id">{{ incomeLevel.name }}</option>
+                                  }
+                                </select>
+                                @if (hasFieldError('bioPsychosocialHistory.incomeLevelId')) {
+                                <div class="invalid-feedback">
+                                  Este campo es requerido
+                                </div>
+                                }
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Campos que ocupan toda la fila -->
+                          <div class="col-span-2">
+                            <div class="row mb-3">
+                              <label class="col-md-2 col-form-label obligatorio" for="occupationalHistory">
+                                Historial ocupacional
+                              </label>
+                              <div class="col-md-10">
+                                <textarea class="form-control"
+                                  [class.is-invalid]="hasFieldError('bioPsychosocialHistory.occupationalHistory')"
+                                  id="occupationalHistory" formControlName="occupationalHistory" rows="2"
+                                  placeholder="Ej: 5 años como psicóloga clínica en hospital público"></textarea>
+                                @if (hasFieldError('bioPsychosocialHistory.occupationalHistory')) {
+                                <div class="invalid-feedback">
+                                  Este campo es requerido
+                                </div>
+                                }
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-2 col-form-label obligatorio" for="housing">
+                                Descripción de la vivienda
+                              </label>
+                              <div class="col-md-10">
+                                <textarea class="form-control"
+                                  [class.is-invalid]="hasFieldError('bioPsychosocialHistory.housing')" id="housing"
+                                  formControlName="housing" rows="2"
+                                  placeholder="Ej: Casa propia de 2 pisos, 3 habitaciones, buen estado"></textarea>
+                                @if (hasFieldError('bioPsychosocialHistory.housing')) {
+                                <div class="invalid-feedback">
+                                  Este campo es requerido
+                                </div>
+                                }
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -868,1461 +777,10 @@
                           <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">Anterior</button>
                         </li>
                         <li class="next list-inline-item float-end">
-                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">Siguiente</button>
-                        </li>
-                      </ul>
-                    </ng-template>
-                  </li>
-
-                  <li [ngbNavItem]="4">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-checkbox-marked-circle-outline me-1"></i>
-                      <span class="d-none d-sm-inline">Motivo de consulta</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="28.57"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        >
-                        </ngb-progressbar>
-                      </p>
-                      <div class="row" formGroupName="consultationReason">
-                        <div class="col-12">
-                          <div class="mb-3">
-                            <label class="form-label text-muted">
-                              <i class="mdi mdi-information-outline me-1"></i>
-                              Motivo de la consulta según el participante
-                            </label>
-                          </div>
-                          <div class="row mb-3">
-                            <textarea
-                              class="form-control"
-                              id="reason"
-                              formControlName="reason"
-                              rows="4"
-                              placeholder="Escriba el motivo de la consulta aquí..."
-                            ></textarea>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- end row -->
-
-                      <div class="float-end">
-                        <input
-                          type="button"
-                          class="btn btn-secondary button-last me-1"
-                          (click)="goToPreviousStep()"
-                          name="last"
-                          value="Anterior"
-                        />
-                        <input
-                          type="button"
-                          class="btn btn-secondary button-next"
-                          (click)="goToNextStep()"
-                          name="next"
-                          value="Siguiente"
-                        />
-                      </div>
-                    </ng-template>
-                  </li>
-                  <li [ngbNavItem]="5">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-checkbox-marked-circle-outline me-1"></i>
-                      <span class="d-none d-sm-inline">Situaciones Identificadas</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="35.71"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        >
-                        </ngb-progressbar>
-                      </p>
-
-                      <div class="row" formGroupName="identifiedSituations">
-                        <label class="col-md-12 col-form-label">Seleccione los motivos de consulta:</label>
-                        <div class="col-md-4">
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Orientación general"
-                              id="orientacionGeneral"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="orientacionGeneral"> Orientación general </label>
-                          </div>
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Vivienda"
-                              id="vivienda"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="vivienda"> Vivienda </label>
-                          </div>
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Falta de empleo"
-                              id="faltaDeEmpleo"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="faltaDeEmpleo"> Falta de empleo </label>
-                          </div>
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Baja autoestima"
-                              id="bajaAutoestima"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="bajaAutoestima"> Baja autoestima </label>
-                          </div>
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Estrés"
-                              id="estres"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="estres"> Estrés </label>
-                          </div>
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Conducta agresiva"
-                              id="conductaAgresiva"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="conductaAgresiva"> Conducta agresiva </label>
-                          </div>
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Violencia en el hogar"
-                              id="violenciaHogar"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="violenciaHogar"> Violencia en el hogar </label>
-                          </div>
-                        </div>
-
-                        <div class="col-md-4">
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Embarazo adolescente"
-                              id="embarazoAdolescente"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="embarazoAdolescente"> Embarazo adolescente </label>
-                          </div>
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Depresión"
-                              id="depresion"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="depresion"> Depresión </label>
-                          </div>
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Problemas psiquiátricos"
-                              id="problemasPsiquiatricos"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="problemasPsiquiatricos">
-                              Problemas psiquiátricos
-                            </label>
-                          </div>
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Problemas familiares"
-                              id="problemasFamiliares"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="problemasFamiliares"> Problemas familiares </label>
-                          </div>
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Conflictos maritales"
-                              id="conflictosMaritales"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="conflictosMaritales"> Conflictos maritales </label>
-                          </div>
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Crisis de divorcio"
-                              id="crisisDivorcio"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="crisisDivorcio"> Crisis de divorcio </label>
-                          </div>
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Abuso de alcohol"
-                              id="abusoAlcohol"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="abusoAlcohol">
-                              Abuso de alcohol (propio, otras personas)
-                            </label>
-                          </div>
-                        </div>
-
-                        <div class="col-md-4">
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Problemas financieros"
-                              id="problemasFinancieros"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="problemasFinancieros"> Problemas financieros </label>
-                          </div>
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Desórdenes alimenticios"
-                              id="desordenesAlimenticios"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="desordenesAlimenticios">
-                              Desórdenes alimenticios
-                            </label>
-                          </div>
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Problemas espirituales"
-                              id="problemasEspirituales"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="problemasEspirituales"> Problemas espirituales </label>
-                          </div>
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Seguro social"
-                              id="seguroSocial"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="seguroSocial"> Seguro social </label>
-                          </div>
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Problemas con alguna agencia gubernamental"
-                              id="problemasAgenciaGubernamental"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="problemasAgenciaGubernamental">
-                              Problemas con alguna agencia gubernamental
-                            </label>
-                          </div>
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Uso de drogas ilícitas"
-                              id="usoDrogasIlicitas"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="usoDrogasIlicitas"> Uso de drogas ilícitas </label>
-                          </div>
-                          <div class="form-check">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              value="Otros"
-                              id="otros"
-                              formControlName="situations"
-                            />
-                            <label class="form-check-label" for="otros"> Otros: </label>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="float-end">
-                        <input
-                          type="button"
-                          class="btn btn-secondary button-last me-1"
-                          (click)="goToPreviousStep()"
-                          name="last"
-                          value="Anterior"
-                        />
-                        <input
-                          type="button"
-                          class="btn btn-secondary button-next"
-                          (click)="goToNextStep()"
-                          name="next"
-                          value="Siguiente"
-                        />
-                      </div>
-                      <div class="clearfix"></div>
-                    </ng-template>
-                  </li>
-
-                  <li [ngbNavItem]="6">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-checkbox-marked-circle-outline me-1"></i>
-                      <span class="d-none d-sm-inline">Intervención</span>
-                    </a>
-
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="42.86"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        >
-                        </ngb-progressbar>
-                      </p>
-                      <div class="row" formGroupName="intervention">
-                        <div class="col-12">
-                          <div class="row mb-3">
-                            <textarea
-                              class="form-control"
-                              id="intervention"
-                              formControlName="intervention"
-                              rows="4"
-                              placeholder="Registre la acción tomada"
-                            ></textarea>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- end row -->
-                      <div class="float-end">
-                        <input
-                          type="button"
-                          class="btn btn-secondary button-last me-1"
-                          (click)="goToPreviousStep()"
-                          name="last"
-                          value="Anterior"
-                        />
-                        <input
-                          type="button"
-                          class="btn btn-secondary button-next"
-                          (click)="goToNextStep()"
-                          name="next"
-                          value="Siguiente"
-                        />
-                      </div>
-                      <div class="clearfix"></div>
-                    </ng-template>
-                  </li>
-                  <li [ngbNavItem]="7">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-checkbox-marked-circle-outline me-1"></i>
-                      <span class="d-none d-sm-inline">Plan A Seguir</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="50"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        >
-                        </ngb-progressbar>
-                      </p>
-                      <div class="row" formGroupName="followUpPlan">
-                        <div class="row mb-3">
-                          <label class="col-md-12 col-form-label">Seleccione una opción:</label>
-                          <div class="col-md-12">
-                            <div class="form-check">
-                              <input
-                                class="form-check-input"
-                                type="radio"
-                                formControlName="plan"
-                                value="Se culminó el proceso de ayuda"
-                                id="culminoProceso"
-                              />
-                              <label class="form-check-label" for="culminoProceso">
-                                Se culminó el proceso de ayuda
-                              </label>
-                            </div>
-
-                            <div class="form-check">
-                              <input
-                                class="form-check-input"
-                                type="radio"
-                                formControlName="plan"
-                                value="Se coordinó servicios en (mencionar agencia)"
-                                id="coordinoServicios"
-                              />
-                              <label class="form-check-label" for="coordinoServicios">
-                                Se coordinó servicios en (mencionar agencia)
-                              </label>
-                            </div>
-
-                            <div class="form-check">
-                              <input
-                                class="form-check-input"
-                                type="radio"
-                                formControlName="plan"
-                                value="Se hará un referido (mencionar los referidos y justificar)"
-                                id="haraReferido"
-                              />
-                              <label class="form-check-label" for="haraReferido">
-                                Se hará un referido (mencionar los referidos y justificar)
-                              </label>
-                            </div>
-
-                            <div class="form-check">
-                              <input
-                                class="form-check-input"
-                                type="radio"
-                                formControlName="plan"
-                                value="Se coordinó cita para iniciar proceso de orientación"
-                                id="coordinoCita"
-                              />
-                              <label class="form-check-label" for="coordinoCita">
-                                Se coordinó cita para iniciar proceso de orientación
-                              </label>
-                            </div>
-
-                            <div class="form-check">
-                              <input
-                                class="form-check-input"
-                                type="radio"
-                                formControlName="plan"
-                                value="Otros"
-                                id="otros"
-                              />
-                              <label class="form-check-label" for="otros"> Otros </label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- end row -->
-
-                      <ul class="list-inline mb-0 wizard">
-                        <div class="float-end">
-                          <li class="previous list-inline-item">
-                            <button class="btn btn-secondary" (click)="goToPreviousStep()">Anterior</button>
-                          </li>
-                          <li class="next list-inline-item float-end">
-                            <button type="submit" class="btn btn-primary">Enviar</button>
-                          </li>
-                        </div>
-                      </ul>
-                    </ng-template>
-                  </li>
-                  <!-- Historial de Salud Física -->
-                  <li [ngbNavItem]="8">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-heart-pulse me-1"></i>
-                      <span class="d-none d-sm-inline">Historial Salud Física</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="57.14"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-                      <!-- Contenido similar al anterior pero para salud física -->
-                      <div class="row" formGroupName="physicalHealthHistory">
-                        <div class="col-12">
-                          <h5>Condiciones físicas del participante</h5>
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label"
-                              >¿Tiene usted un diagnóstico de salud física? ¿Cuál?</label
-                            >
-                            <div class="col-md-9">
-                              <textarea class="form-control" formControlName="physicalConditions" rows="3"></textarea>
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label"
-                              >¿Actualmente recibe algún tipo de tratamiento?</label
-                            >
-                            <div class="col-md-9">
-                              <div class="form-check form-check-inline">
-                                <input
-                                  class="form-check-input"
-                                  type="radio"
-                                  formControlName="receivingTreatment"
-                                  value="Sí"
-                                  id="tratamientoSi"
-                                />
-                                <label class="form-check-label" for="tratamientoSi">Sí</label>
-                              </div>
-                              <div class="form-check form-check-inline">
-                                <input
-                                  class="form-check-input"
-                                  type="radio"
-                                  formControlName="receivingTreatment"
-                                  value="No"
-                                  id="tratamientoNo"
-                                />
-                                <label class="form-check-label" for="tratamientoNo">No</label>
-                              </div>
-                            </div>
-                          </div>
-
-                          @if ( participantForm.get( 'physicalHealthHistory.receivingTreatment' )?.value === 'Sí' ) {
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label">Medicamentos o terapia</label>
-                            <div class="col-md-9">
-                              <input type="text" class="form-control" formControlName="treatmentDetails" />
-                            </div>
-                          </div>
-                          }
-
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label">Antecedentes familiares de salud física</label>
-                            <div class="col-md-9">
-                              <div class="row">
-                                <div class="col-md-6">
-                                  <label>Familia paterna</label>
-                                  <textarea
-                                    class="form-control"
-                                    formControlName="paternalFamilyHistory"
-                                    rows="3"
-                                  ></textarea>
-                                </div>
-                                <div class="col-md-6">
-                                  <label>Familia materna</label>
-                                  <textarea
-                                    class="form-control"
-                                    formControlName="maternalFamilyHistory"
-                                    rows="3"
-                                  ></textarea>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label">Observaciones sobre salud física:</label>
-                            <div class="col-md-9">
-                              <textarea
-                                class="form-control"
-                                formControlName="physicalHealthObservations"
-                                rows="3"
-                              ></textarea>
-                            </div>
-                          </div>
-
-                          <!-- Botones de navegación -->
-                          <ul class="list-inline mb-0 wizard">
-                            <li class="previous list-inline-item">
-                              <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
-                                Anterior
-                              </button>
-                            </li>
-                            <li class="next list-inline-item float-end">
-                              <button type="button" class="btn btn-secondary" (click)="goToNextStep()">
-                                Siguiente
-                              </button>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                      <!-- Botones de navegación -->
-                    </ng-template>
-                  </li>
-
-                  <!-- Historial de Salud Mental -->
-                  <li [ngbNavItem]="9">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-brain me-1"></i>
-                      <span class="d-none d-sm-inline">Historial Salud Mental</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="64.29"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-
-                      <div class="row" formGroupName="mentalHealthHistory">
-                        <div class="col-12">
-                          <h5 class="mb-3">Historial mental del participante</h5>
-
-                          <!-- Condiciones mentales -->
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label"
-                              >¿Tiene usted un diagnóstico de salud mental? ¿Cuál?</label
-                            >
-                            <div class="col-md-9">
-                              <textarea
-                                class="form-control"
-                                formControlName="mentalConditions"
-                                rows="3"
-                                placeholder="Describa las condiciones mentales del participante..."
-                              ></textarea>
-                            </div>
-                          </div>
-
-                          <!-- Recibe tratamiento -->
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label">¿Actualmente recibe Tratamiento?</label>
-                            <div class="col-md-9">
-                              <div class="form-check form-check-inline">
-                                <input
-                                  class="form-check-input"
-                                  type="radio"
-                                  formControlName="receivingMentalTreatment"
-                                  value="Sí"
-                                  id="tratamientoMentalSi"
-                                />
-                                <label class="form-check-label" for="tratamientoMentalSi">Sí</label>
-                              </div>
-                              <div class="form-check form-check-inline">
-                                <input
-                                  class="form-check-input"
-                                  type="radio"
-                                  formControlName="receivingMentalTreatment"
-                                  value="No"
-                                  id="tratamientoMentalNo"
-                                />
-                                <label class="form-check-label" for="tratamientoMentalNo">No</label>
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- Detalles del tratamiento (mostrar solo si es Sí) -->
-                          @if ( participantForm.get( 'mentalHealthHistory.receivingMentalTreatment' )?.value === 'Sí' )
-                          {
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label">Medicamentos y/o terapia</label>
-                            <div class="col-md-9">
-                              <input
-                                type="text"
-                                class="form-control"
-                                formControlName="mentalTreatmentDetails"
-                                placeholder="Especifique los medicamentos o tipo de terapia..."
-                              />
-                            </div>
-                          </div>
-                          }
-
-                          <!-- Historial familiar -->
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label">Antecedentes familiares de salud mental</label>
-                            <div class="col-md-9">
-                              <div class="row">
-                                <div class="col-md-6 mb-2">
-                                  <label class="form-label">Familia paterna</label>
-                                  <textarea
-                                    class="form-control"
-                                    formControlName="paternalMentalHistory"
-                                    rows="3"
-                                    placeholder="Describa condiciones mentales en familia paterna..."
-                                  ></textarea>
-                                </div>
-                                <div class="col-md-6">
-                                  <label class="form-label">Familia materna</label>
-                                  <textarea
-                                    class="form-control"
-                                    formControlName="maternalMentalHistory"
-                                    rows="3"
-                                    placeholder="Describa condiciones mentales en familia materna..."
-                                  ></textarea>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- Otras observaciones -->
-                          <div class="row mb-3">
-                            <label class="col-md-3 col-form-label">Observaciones sobre salud mental:</label>
-                            <div class="col-md-9">
-                              <textarea
-                                class="form-control"
-                                formControlName="mentalHealthObservations"
-                                rows="3"
-                                placeholder="Agregue cualquier otra observación relevante..."
-                              ></textarea>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Botones de navegación -->
-                      <ul class="list-inline mb-0 wizard">
-                        <div class="float-end">
-                          <li class="previous list-inline-item">
-                            <button class="btn btn-secondary" (click)="goToPreviousStep()">
-                              <i class="mdi mdi-arrow-left me-1"></i> Anterior
-                            </button>
-                          </li>
-                          <li class="next list-inline-item float-end">
-                            <button type="button" class="btn btn-primary" (click)="goToNextStep()">
-                              Siguiente <i class="mdi mdi-arrow-right ms-1"></i>
-                            </button>
-                          </li>
-                        </div>
-                      </ul>
-                    </ng-template>
-                  </li>
-
-                  <!-- Ponderación -->
-                  <li [ngbNavItem]="10">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-clipboard-text me-1"></i>
-                      <span class="d-none d-sm-inline">Ponderación</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="71.43"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-                      <div class="row" formGroupName="assessment">
-                        <div class="col-12">
-                          <div class="row mb-3">
-                            <label class="col-md-12 col-form-label"
-                              >Motivo de consulta (según el trabajador social)</label
-                            >
-                            <div class="col-md-12">
-                              <textarea
-                                class="form-control"
-                                formControlName="consultationReason"
-                                rows="4"
-                                placeholder="Describa la situación desde la perspectiva del trabajador social..."
-                              ></textarea>
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
-                            <label class="col-md-12 col-form-label"
-                              >Describa la situación identificada (Ponderación)</label
-                            >
-                            <div class="col-md-12">
-                              <textarea
-                                class="form-control"
-                                formControlName="weighting"
-                                rows="4"
-                                placeholder="Describa la situación identificada..."
-                              ></textarea>
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
-                            <label class="col-md-12 col-form-label"
-                              >Describa las condiciones favorables que identifica</label
-                            >
-                            <div class="col-md-12">
-                              <textarea
-                                class="form-control"
-                                formControlName="concurrentFactors"
-                                rows="4"
-                                placeholder="Identifique factores que favorecen el proceso..."
-                              ></textarea>
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
-                            <label class="col-md-12 col-form-label"
-                              >Describa condiciones que no favorecen el proceso de ayuda</label
-                            >
-                            <div class="col-md-12">
-                              <textarea
-                                class="form-control"
-                                formControlName="criticalFactors"
-                                rows="4"
-                                placeholder="Identifique obstáculos o factores críticos..."
-                              ></textarea>
-                            </div>
-                          </div>
-
-                          <div class="row mb-3">
-                            <label class="col-md-12 col-form-label"
-                              >Indique el enfoque teórico desde el cual abordará el proceso de ayuda</label
-                            >
-                            <div class="col-md-12">
-                              <textarea
-                                class="form-control"
-                                formControlName="problemAnalysis"
-                                rows="6"
-                                placeholder="Describa el marco teórico y enfoque metodológico..."
-                              ></textarea>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Botones de navegación -->
-                      <ul class="list-inline mb-0 wizard">
-                        <li class="previous list-inline-item">
-                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">Anterior</button>
-                        </li>
-                        <li class="next list-inline-item float-end">
-                          <button type="button" class="btn btn-secondary" (click)="goToNextStep()">Siguiente</button>
-                        </li>
-                      </ul>
-                      <!-- Botones de navegación -->
-                    </ng-template>
-                  </li>
-
-                  <!-- Plan de Intervención -->
-                  <li [ngbNavItem]="11">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-clipboard-check me-1"></i>
-                      <span class="d-none d-sm-inline">{{ 'participants.interventionPlan' | transloco }}</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="78.57"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-                      <div class="row" formArrayName="interventionPlan">
-                        <div class="col-12">
-                          <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h5 class="mb-0">
-                              <i class="mdi mdi-clipboard-check me-2"></i
-                              >{{ 'participants.interventionPlan' | transloco }}
-                            </h5>
-                            <button
-                              type="button"
-                              class="btn btn-primary btn-sm add-intervention-btn"
-                              (click)="addInterventionPlanItem()"
-                            >
-                              <i class="mdi mdi-plus me-1"></i>{{ 'participants.addInterventionItem' | transloco }}
-                            </button>
-                          </div>
-
-                          <!-- Cards de Plan de Intervención -->
-                          <div class="intervention-cards-container">
-                            <div
-                              *ngFor="let item of interventionPlanArray.controls; let i = index"
-                              [formGroupName]="i"
-                              class="intervention-plan-card mb-4"
-                            >
-                              <div class="card shadow-sm border-0">
-                                <div
-                                  class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center"
-                                >
-                                  <h6 class="mb-0">
-                                    <i class="mdi mdi-target me-2"></i
-                                    >{{ 'participants.interventionItem' | transloco }} {{ i + 1 }} -
-                                    {{ 'participants.interventionPlan' | transloco }}
-                                  </h6>
-                                  <button
-                                    *ngIf="interventionPlanArray.length > 1"
-                                    type="button"
-                                    class="btn btn-outline-light btn-sm remove-intervention-btn-card"
-                                    (click)="removeInterventionPlanItem(i)"
-                                    title="Eliminar item"
-                                  >
-                                    <i class="mdi mdi-delete"></i>
-                                  </button>
-                                </div>
-                                <div class="card-body">
-                                  <div class="row">
-                                    <!-- Meta -->
-                                    <div class="col-md-6 mb-3">
-                                      <label class="form-label fw-bold text-primary">
-                                        <i class="mdi mdi-bullseye me-1"></i>{{ 'participants.goal' | transloco }}
-                                      </label>
-                                      <textarea
-                                        class="form-control"
-                                        formControlName="goal"
-                                        rows="3"
-                                        [class.is-invalid]="hasFieldError('interventionPlan.' + i + '.goal')"
-                                        placeholder="Describa la meta específica que se desea alcanzar..."
-                                      ></textarea>
-                                      <div
-                                        class="invalid-feedback"
-                                        *ngIf="hasFieldError('interventionPlan.' + i + '.goal')"
-                                      >
-                                        {{ getFieldError('interventionPlan.' + i + '.goal') | transloco }}
-                                      </div>
-                                    </div>
-
-                                    <!-- Objetivos -->
-                                    <div class="col-md-6 mb-3">
-                                      <label class="form-label fw-bold text-success">
-                                        <i class="mdi mdi-checkbox-marked-circle me-1"></i
-                                        >{{ 'participants.objectives' | transloco }}
-                                      </label>
-                                      <textarea
-                                        class="form-control"
-                                        formControlName="objectives"
-                                        rows="3"
-                                        [class.is-invalid]="hasFieldError('interventionPlan.' + i + '.objectives')"
-                                        placeholder="Defina los objetivos específicos y medibles..."
-                                      ></textarea>
-                                      <div
-                                        class="invalid-feedback"
-                                        *ngIf="hasFieldError('interventionPlan.' + i + '.objectives')"
-                                      >
-                                        {{ getFieldError('interventionPlan.' + i + '.objectives') | transloco }}
-                                      </div>
-                                    </div>
-
-                                    <!-- Actividades o Técnicas -->
-                                    <div class="col-12 mb-3">
-                                      <label class="form-label fw-bold text-info">
-                                        <i class="mdi mdi-cog me-1"></i>{{ 'participants.activities' | transloco }}
-                                      </label>
-                                      <textarea
-                                        class="form-control"
-                                        formControlName="activities"
-                                        rows="3"
-                                        [class.is-invalid]="hasFieldError('interventionPlan.' + i + '.activities')"
-                                        placeholder="Describa las actividades, técnicas o metodologías a implementar..."
-                                      ></textarea>
-                                      <div
-                                        class="invalid-feedback"
-                                        *ngIf="hasFieldError('interventionPlan.' + i + '.activities')"
-                                      >
-                                        {{ getFieldError('interventionPlan.' + i + '.activities') | transloco }}
-                                      </div>
-                                    </div>
-
-                                    <!-- Tiempo y Responsable -->
-                                    <div class="col-md-6 mb-3">
-                                      <label class="form-label fw-bold text-warning">
-                                        <i class="mdi mdi-clock-outline me-1"></i
-                                        >{{ 'participants.timeframe' | transloco }}
-                                      </label>
-                                      <input
-                                        type="text"
-                                        class="form-control"
-                                        formControlName="timeframe"
-                                        [class.is-invalid]="hasFieldError('interventionPlan.' + i + '.timeframe')"
-                                        placeholder="Ej: 3 meses, 6 semanas, 1 año..."
-                                      />
-                                      <div
-                                        class="invalid-feedback"
-                                        *ngIf="hasFieldError('interventionPlan.' + i + '.timeframe')"
-                                      >
-                                        {{ getFieldError('interventionPlan.' + i + '.timeframe') | transloco }}
-                                      </div>
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
-                                      <label class="form-label fw-bold text-secondary">
-                                        <i class="mdi mdi-account-tie me-1"></i
-                                        >{{ 'participants.responsiblePerson' | transloco }}
-                                      </label>
-                                      <input
-                                        type="text"
-                                        class="form-control"
-                                        formControlName="responsiblePerson"
-                                        [class.is-invalid]="
-                                          hasFieldError('interventionPlan.' + i + '.responsiblePerson')
-                                        "
-                                        placeholder="Nombre completo del responsable..."
-                                      />
-                                      <div
-                                        class="invalid-feedback"
-                                        *ngIf="hasFieldError('interventionPlan.' + i + '.responsiblePerson')"
-                                      >
-                                        {{ getFieldError('interventionPlan.' + i + '.responsiblePerson') | transloco }}
-                                      </div>
-                                    </div>
-
-                                    <!-- Criterio de Evaluación -->
-                                    <div class="col-12 mb-3">
-                                      <label class="form-label fw-bold text-danger">
-                                        <i class="mdi mdi-check-circle me-1"></i
-                                        >{{ 'participants.evaluationCriteria' | transloco }}
-                                      </label>
-                                      <textarea
-                                        class="form-control"
-                                        formControlName="evaluationCriteria"
-                                        rows="2"
-                                        [class.is-invalid]="
-                                          hasFieldError('interventionPlan.' + i + '.evaluationCriteria')
-                                        "
-                                        placeholder="Defina cómo se medirá el éxito o cumplimiento de este item..."
-                                      ></textarea>
-                                      <div
-                                        class="invalid-feedback"
-                                        *ngIf="hasFieldError('interventionPlan.' + i + '.evaluationCriteria')"
-                                      >
-                                        {{ getFieldError('interventionPlan.' + i + '.evaluationCriteria') | transloco }}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div
-                            *ngIf="interventionPlanArray.length === 0"
-                            class="empty-intervention-state text-center py-5"
-                          >
-                            <div class="text-muted">
-                              <i class="mdi mdi-clipboard-outline display-4"></i>
-                              <p class="mt-2">{{ 'participants.noInterventionItems' | transloco }}</p>
-                              <button
-                                type="button"
-                                class="btn btn-primary add-intervention-btn"
-                                (click)="addInterventionPlanItem()"
-                              >
-                                <i class="mdi mdi-plus me-1"></i
-                                >{{ 'participants.addFirstInterventionItem' | transloco }}
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Botones de navegación -->
-                      <ul class="list-inline mb-0 wizard">
-                        <li class="previous list-inline-item">
-                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">Anterior</button>
-                        </li>
-                        <li class="next list-inline-item float-end">
-                          <button type="button" class="btn btn-secondary" (click)="goToNextStep()">Siguiente</button>
-                        </li>
-                      </ul>
-                    </ng-template>
-                  </li>
-
-                  <!-- Notas de Progreso -->
-                  <li [ngbNavItem]="12">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-note-text me-1"></i>
-                      <span class="d-none d-sm-inline">{{ 'participants.progressNotes' | transloco }}</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="85.71"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-                      <div class="mb-3">
-                        <div class="alert alert-info">
-                          <h6 class="alert-heading mb-2">
-                            <i class="mdi mdi-information me-1"></i>{{ 'participants.progressNotesInfo' | transloco }}
-                          </h6>
-                          <div class="row">
-                            <div class="col-md-6">
-                              <strong>{{ 'participants.approachTypes' | transloco }}:</strong>
-                              <ul class="mb-0 mt-1 small">
-                                <li><strong>CP:</strong> {{ 'participants.approachTypeCodes.CP' | transloco }}</li>
-                                <li><strong>E:</strong> {{ 'participants.approachTypeCodes.E' | transloco }}</li>
-                                <li><strong>EC:</strong> {{ 'participants.approachTypeCodes.EC' | transloco }}</li>
-                                <li><strong>Ll:</strong> {{ 'participants.approachTypeCodes.Ll' | transloco }}</li>
-                                <li><strong>TC:</strong> {{ 'participants.approachTypeCodes.TC' | transloco }}</li>
-                                <li><strong>V:</strong> {{ 'participants.approachTypeCodes.V' | transloco }}</li>
-                              </ul>
-                            </div>
-                            <div class="col-md-6">
-                              <strong>{{ 'participants.processes' | transloco }}:</strong>
-                              <ul class="mb-2 mt-1 small">
-                                <li><strong>S:</strong> {{ 'participants.processCodes.S' | transloco }}</li>
-                                <li><strong>C:</strong> {{ 'participants.processCodes.C' | transloco }}</li>
-                                <li><strong>T:</strong> {{ 'participants.processCodes.T' | transloco }}</li>
-                                <li><strong>D:</strong> {{ 'participants.processCodes.D' | transloco }}</li>
-                              </ul>
-                              <p class="mb-0 small">
-                                <strong>Acciones:</strong> El botón <span class="badge bg-danger">🗑️</span> permite
-                                <strong>eliminar</strong> la nota de progreso seleccionada.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- Cards de Notas de Progreso -->
-                      <div class="progress-notes-container">
-                        <div class="d-flex justify-content-end mb-4">
-                          <button class="btn btn-primary btn-lg" (click)="addProgressNote()" title="Agregar nueva nota">
-                            <i class="mdi mdi-plus me-1"></i>{{ 'participants.addProgressNote' | transloco }}
+                          <button type="submit" class="btn btn-success" [disabled]="participantForm.invalid">
+                            <i class="mdi mdi-check-circle me-1"></i>Guardar Participante
                           </button>
-                        </div>
-
-                        <div formArrayName="progressNotes">
-                          <div
-                            *ngFor="let nota of progressNotes.controls; let i = index"
-                            [formGroupName]="i"
-                            class="progress-note-card mb-4"
-                          >
-                            <div class="card shadow-sm border-0">
-                              <div
-                                class="card-header bg-gradient-success text-white d-flex justify-content-between align-items-center"
-                              >
-                                <h6 class="mb-0">
-                                  <i class="mdi mdi-note-text me-2"></i
-                                  >{{ 'participants.progressNote' | transloco }} #{{ i + 1 }}
-                                </h6>
-                                <button
-                                  *ngIf="progressNotes.length > 1"
-                                  type="button"
-                                  class="btn btn-outline-light btn-sm remove-note-btn"
-                                  (click)="removeProgressNote(i)"
-                                  title="Eliminar nota"
-                                >
-                                  <i class="mdi mdi-delete"></i>
-                                </button>
-                              </div>
-                              <div class="card-body">
-                                <div class="row">
-                                  <!-- Fecha y Hora -->
-                                  <div class="col-md-3 mb-3">
-                                    <label class="form-label fw-bold text-primary">
-                                      <i class="mdi mdi-calendar me-1"></i>{{ 'participants.date' | transloco }}
-                                    </label>
-                                    <input
-                                      type="date"
-                                      class="form-control"
-                                      formControlName="date"
-                                      [class.is-invalid]="hasFieldError('progressNotes.' + i + '.date')"
-                                    />
-                                    <div class="invalid-feedback" *ngIf="hasFieldError('progressNotes.' + i + '.date')">
-                                      La fecha es requerida
-                                    </div>
-                                  </div>
-
-                                  <div class="col-md-3 mb-3">
-                                    <label class="form-label fw-bold text-primary">
-                                      <i class="mdi mdi-clock me-1"></i>{{ 'participants.time' | transloco }}
-                                    </label>
-                                    <input type="time" class="form-control" formControlName="time" />
-                                  </div>
-
-                                  <!-- Tipo de Abordaje -->
-                                  <div class="col-md-3 mb-3">
-                                    <label class="form-label fw-bold text-info">
-                                      <i class="mdi mdi-account-group me-1"></i
-                                      >{{ 'participants.approachType' | transloco }}
-                                    </label>
-                                    <select
-                                      class="form-select"
-                                      formControlName="approachType"
-                                      [class.is-invalid]="hasFieldError('progressNotes.' + i + '.approachType')"
-                                    >
-                                      <option value="" disabled selected>Seleccione tipo</option>
-                                      <option value="CP">
-                                        CP - {{ 'participants.approachTypeCodes.CP' | transloco }}
-                                      </option>
-                                      <option value="E">
-                                        E - {{ 'participants.approachTypeCodes.E' | transloco }}
-                                      </option>
-                                      <option value="EC">
-                                        EC - {{ 'participants.approachTypeCodes.EC' | transloco }}
-                                      </option>
-                                      <option value="Ll">
-                                        Ll - {{ 'participants.approachTypeCodes.Ll' | transloco }}
-                                      </option>
-                                      <option value="TC">
-                                        TC - {{ 'participants.approachTypeCodes.TC' | transloco }}
-                                      </option>
-                                      <option value="V">
-                                        V - {{ 'participants.approachTypeCodes.V' | transloco }}
-                                      </option>
-                                    </select>
-                                    <div
-                                      class="invalid-feedback"
-                                      *ngIf="hasFieldError('progressNotes.' + i + '.approachType')"
-                                    >
-                                      El tipo de abordaje es requerido
-                                    </div>
-                                  </div>
-
-                                  <!-- Proceso -->
-                                  <div class="col-md-3 mb-3">
-                                    <label class="form-label fw-bold text-warning">
-                                      <i class="mdi mdi-cogs me-1"></i>{{ 'participants.process' | transloco }}
-                                    </label>
-                                    <select
-                                      class="form-select"
-                                      formControlName="process"
-                                      [class.is-invalid]="hasFieldError('progressNotes.' + i + '.process')"
-                                    >
-                                      <option value="" disabled selected>Seleccione proceso</option>
-                                      <option value="S">S - {{ 'participants.processCodes.S' | transloco }}</option>
-                                      <option value="C">C - {{ 'participants.processCodes.C' | transloco }}</option>
-                                      <option value="T">T - {{ 'participants.processCodes.T' | transloco }}</option>
-                                      <option value="D">D - {{ 'participants.processCodes.D' | transloco }}</option>
-                                    </select>
-                                    <div
-                                      class="invalid-feedback"
-                                      *ngIf="hasFieldError('progressNotes.' + i + '.process')"
-                                    >
-                                      El proceso es requerido
-                                    </div>
-                                  </div>
-
-                                  <!-- Resumen de Intervención -->
-                                  <div class="col-12 mb-3">
-                                    <label class="form-label fw-bold text-success">
-                                      <i class="mdi mdi-file-document-edit me-1"></i
-                                      >{{ 'participants.summary' | transloco }}
-                                    </label>
-                                    <textarea
-                                      class="form-control"
-                                      formControlName="summary"
-                                      rows="3"
-                                      [class.is-invalid]="hasFieldError('progressNotes.' + i + '.summary')"
-                                      placeholder="Describa detalladamente las actividades realizadas durante la intervención..."
-                                    ></textarea>
-                                    <div
-                                      class="invalid-feedback"
-                                      *ngIf="hasFieldError('progressNotes.' + i + '.summary')"
-                                    >
-                                      El resumen es requerido
-                                    </div>
-                                  </div>
-
-                                  <!-- Observaciones y Acuerdos -->
-                                  <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold text-secondary">
-                                      <i class="mdi mdi-eye me-1"></i>{{ 'participants.observations' | transloco }}
-                                    </label>
-                                    <textarea
-                                      class="form-control"
-                                      formControlName="observations"
-                                      rows="3"
-                                      placeholder="Registre observaciones adicionales, comportamientos destacados o situaciones relevantes..."
-                                    ></textarea>
-                                  </div>
-
-                                  <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold text-danger">
-                                      <i class="mdi mdi-handshake me-1"></i>{{ 'participants.agreements' | transloco }}
-                                    </label>
-                                    <textarea
-                                      class="form-control"
-                                      formControlName="agreements"
-                                      rows="3"
-                                      placeholder="Documente los acuerdos establecidos, compromisos asumidos y próximos pasos..."
-                                    ></textarea>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <!-- Estado vacío -->
-                        <div *ngIf="progressNotes.length === 0" class="empty-notes-state text-center py-5">
-                          <div class="text-muted">
-                            <i class="mdi mdi-note-outline display-4"></i>
-                            <p class="mt-2">{{ 'participants.noProgressNotes' | transloco }}</p>
-                            <button type="button" class="btn btn-success" (click)="addProgressNote()">
-                              <i class="mdi mdi-plus me-1"></i>{{ 'participants.addFirstProgressNote' | transloco }}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- Botones de navegación -->
-                    </ng-template>
-                  </li>
-
-                  <!-- Referidos -->
-                  <li [ngbNavItem]="13">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-account-arrow-right me-1"></i>
-                      <span class="d-none d-sm-inline">Referidos</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="92.86"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-                      <div class="row" formGroupName="referrals">
-                        <div class="col-12">
-                          <label>V. MENCIONAR Y JUSTIFICAR LOS REFERIDOS QUE SE REALIZARÁN</label>
-                          <textarea class="form-control" formControlName="description" rows="6"></textarea>
-                        </div>
-                      </div>
-                      <!-- Botones de navegación -->
-                    </ng-template>
-                  </li>
-
-                  <!-- Nota de Cierre -->
-                  <li [ngbNavItem]="14">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-bookmark-check me-1"></i>
-                      <span class="d-none d-sm-inline">{{ 'participants.closingNote' | transloco }}</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="100"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-                      <div class="mb-3">
-                        <div class="alert alert-warning">
-                          <h6 class="alert-heading mb-2">
-                            <i class="mdi mdi-information me-1"></i>{{ 'participants.closingNoteInfo' | transloco }}
-                          </h6>
-                          <p class="mb-0 small">
-                            {{ 'participants.closingNoteDescription' | transloco }}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div formGroupName="closingNote" class="closing-note-container">
-                        <div class="card shadow-sm border-0">
-                          <div class="card-header bg-gradient-warning text-dark">
-                            <h6 class="mb-0 fw-bold">
-                              <i class="mdi mdi-bookmark-check me-2"></i>Documento de Cierre - Información Final
-                            </h6>
-                          </div>
-                          <div class="card-body">
-                            <div class="row">
-                              <!-- Motivo de Cierre -->
-                              <div class="col-12 mb-4">
-                                <label class="form-label fw-bold text-danger">
-                                  <i class="mdi mdi-help-circle me-1"></i>{{ 'participants.closureReason' | transloco }}
-                                </label>
-                                <textarea
-                                  class="form-control"
-                                  formControlName="closureReason"
-                                  rows="4"
-                                  [class.is-invalid]="hasFieldError('closingNote.closureReason')"
-                                  placeholder="Describa detalladamente las razones que motivaron el cierre del proceso de intervención (finalización exitosa, abandono, transferencia, etc.)..."
-                                ></textarea>
-                                <div class="invalid-feedback" *ngIf="hasFieldError('closingNote.closureReason')">
-                                  {{ getFieldError('closingNote.closureReason') | transloco }}
-                                </div>
-                              </div>
-
-                              <!-- Logros Alcanzados -->
-                              <div class="col-12 mb-4">
-                                <label class="form-label fw-bold text-success">
-                                  <i class="mdi mdi-trophy me-1"></i>{{ 'participants.achievements' | transloco }}
-                                </label>
-                                <textarea
-                                  class="form-control"
-                                  formControlName="achievements"
-                                  rows="5"
-                                  [class.is-invalid]="hasFieldError('closingNote.achievements')"
-                                  placeholder="Enumere y describa los principales logros, objetivos cumplidos, competencias desarrolladas y cambios positivos observados durante el proceso..."
-                                ></textarea>
-                                <div class="invalid-feedback" *ngIf="hasFieldError('closingNote.achievements')">
-                                  {{ getFieldError('closingNote.achievements') | transloco }}
-                                </div>
-                              </div>
-
-                              <!-- Recomendaciones -->
-                              <div class="col-12 mb-4">
-                                <label class="form-label fw-bold text-info">
-                                  <i class="mdi mdi-lightbulb me-1"></i>{{ 'participants.recommendations' | transloco }}
-                                </label>
-                                <textarea
-                                  class="form-control"
-                                  formControlName="recommendations"
-                                  rows="5"
-                                  [class.is-invalid]="hasFieldError('closingNote.recommendations')"
-                                  placeholder="Proporcione recomendaciones para el futuro del participante, sugerencias de seguimiento, recursos adicionales o acciones recomendadas..."
-                                ></textarea>
-                                <div class="invalid-feedback" *ngIf="hasFieldError('closingNote.recommendations')">
-                                  {{ getFieldError('closingNote.recommendations') | transloco }}
-                                </div>
-                              </div>
-
-                              <!-- Observaciones Generales -->
-                              <div class="col-12 mb-3">
-                                <label class="form-label fw-bold text-secondary">
-                                  <i class="mdi mdi-note-text me-1"></i
-                                  >{{ 'participants.generalObservations' | transloco }}
-                                </label>
-                                <textarea
-                                  class="form-control"
-                                  formControlName="observations"
-                                  rows="4"
-                                  [class.is-invalid]="hasFieldError('closingNote.observations')"
-                                  placeholder="Incluya cualquier observación adicional, comentarios relevantes o información complementaria sobre el proceso..."
-                                ></textarea>
-                                <div class="invalid-feedback" *ngIf="hasFieldError('closingNote.observations')">
-                                  {{ getFieldError('closingNote.observations') | transloco }}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <ul class="list-inline mb-0 wizard">
-                        <div class="float-end">
-                          <li class="previous list-inline-item">
-                            <button class="btn btn-secondary" (click)="goToPreviousStep()">Anterior</button>
-                          </li>
-                          <li class="next list-inline-item float-end">
-                            <button type="submit" class="btn btn-success btn-lg" [disabled]="participantForm.invalid">
-                              <i class="mdi mdi-check-circle me-1"></i>{{ 'participants.finalizeAndSave' | transloco }}
-                            </button>
-                          </li>
-                        </div>
+                        </li>
                       </ul>
                     </ng-template>
                   </li>
@@ -2333,13 +791,12 @@
               <!-- end #basicwizard-->
             </form>
           </div>
-
-          <ng-template #noForm>
-            <div class="alert alert-danger">
-              <h5>Error: Formulario no inicializado</h5>
-              <p>El formulario no se ha podido inicializar correctamente. Por favor, recarga la página.</p>
-            </div>
-          </ng-template>
+          } @else {
+          <div class="alert alert-danger">
+            <h5>Error: Formulario no inicializado</h5>
+            <p>El formulario no se ha podido inicializar correctamente. Por favor, recarga la página.</p>
+          </div>
+          }
         </div>
         <!-- end card-body -->
       </div>

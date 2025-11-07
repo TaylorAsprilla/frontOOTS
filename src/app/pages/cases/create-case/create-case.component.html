@@ -1,0 +1,1169 @@
+<div class="container-fluid">
+    <!-- Page Title -->
+    <app-page-title [breadcrumbItems]="breadcrumbItems"
+        [title]="(isEditMode ? 'cases.editCase' : 'cases.createCase') | transloco">
+    </app-page-title>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    @if (caseForm) {
+                    <div class="wizard-container">
+                        <form [formGroup]="caseForm" (ngSubmit)="onSubmit()" novalidate>
+                            <div id="caseWizard">
+                                <ul ngbNav #caseWizard="ngbNav" [(activeId)]="activeWizardStep"
+                                    class="nav-pills nav-justified bg-light form-wizard-header mb-3">
+                                    <!-- Step 1: Consultation Reason -->
+                                    <li [ngbNavItem]="1">
+                                        <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                                            <i class="mdi mdi-clipboard-text me-1"></i>
+                                            <span class="d-none d-sm-inline">Motivo de Consulta</span>
+                                        </a>
+                                        <ng-template ngbNavContent>
+                                            <p>
+                                                <ngb-progressbar type="success" [value]="10" [striped]="true"
+                                                    [animated]="true" class="mb-3" height="7px"></ngb-progressbar>
+                                            </p>
+                                            <div formGroupName="consultationReason">
+                                                <div class="row mb-3">
+                                                    <label class="col-md-3 col-form-label obligatorio">Motivo de
+                                                        consulta</label>
+                                                    <div class="col-md-9">
+                                                        <textarea class="form-control"
+                                                            [class.is-invalid]="hasFieldError('consultationReason.reason')"
+                                                            formControlName="reason" rows="4"
+                                                            placeholder="Describa el motivo de la consulta..."></textarea>
+                                                        @if (hasFieldError('consultationReason.reason')) {
+                                                        <div class="invalid-feedback">{{
+                                                            getFieldError('consultationReason.reason') }}</div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <ul class="list-inline mb-0 wizard">
+                                                <li class="next list-inline-item float-end">
+                                                    <button type="button" class="btn btn-primary"
+                                                        (click)="goToNextStep()">Siguiente</button>
+                                                </li>
+                                            </ul>
+                                        </ng-template>
+                                    </li>
+
+                                    <!-- Step 2: Identified Situations -->
+                                    <li [ngbNavItem]="2">
+                                        <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                                            <i class="mdi mdi-alert-circle me-1"></i>
+                                            <span class="d-none d-sm-inline">Situaciones Identificadas</span>
+                                        </a>
+                                        <ng-template ngbNavContent>
+                                            <p>
+                                                <ngb-progressbar type="success" [value]="20" [striped]="true"
+                                                    [animated]="true" class="mb-3" height="7px"></ngb-progressbar>
+                                            </p>
+                                            <div formGroupName="identifiedSituations">
+                                                <!-- Checkbox list of identified situations -->
+                                                <div class="row mb-3">
+                                                    <label class="col-md-12 col-form-label obligatorio">Seleccione las
+                                                        situaciones identificadas</label>
+                                                    <div class="col-md-12">
+                                                        @if (identifiedSituations.length > 0) {
+                                                        <div class="row">
+                                                            @for (situation of identifiedSituations; track situation.id)
+                                                            {
+                                                            <div class="col-md-6 col-lg-4 mb-2">
+                                                                <div class="form-check">
+                                                                    <input type="checkbox" class="form-check-input"
+                                                                        [id]="'situation-' + situation.id"
+                                                                        [value]="situation.id"
+                                                                        [checked]="isSituationSelected(situation.id)"
+                                                                        (change)="onSituationChange($event, situation.id)" />
+                                                                    <label class="form-check-label"
+                                                                        [for]="'situation-' + situation.id">
+                                                                        {{ situation.name }}
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            }
+                                                        </div>
+                                                        } @else {
+                                                        <div class="text-muted">Cargando situaciones...</div>
+                                                        } @if (hasFieldError('identifiedSituations.situations')) {
+                                                        <div class="invalid-feedback d-block">
+                                                            <i class="mdi mdi-alert-circle-outline me-1"></i>
+                                                            {{ getFieldError('identifiedSituations.situations') }}
+                                                        </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <ul class="list-inline mb-0 wizard">
+                                                <li class="previous list-inline-item">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        (click)="goToPreviousStep()">Anterior</button>
+                                                </li>
+                                                <li class="next list-inline-item float-end">
+                                                    <button type="button" class="btn btn-primary"
+                                                        (click)="goToNextStep()">Siguiente</button>
+                                                </li>
+                                            </ul>
+                                        </ng-template>
+                                    </li>
+
+                                    <!-- Step 3: Intervention -->
+                                    <li [ngbNavItem]="3">
+                                        <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                                            <i class="mdi mdi-clipboard-check me-1"></i>
+                                            <span class="d-none d-sm-inline">Intervención</span>
+                                        </a>
+                                        <ng-template ngbNavContent>
+                                            <p>
+                                                <ngb-progressbar type="success" [value]="30" [striped]="true"
+                                                    [animated]="true" class="mb-3" height="7px"></ngb-progressbar>
+                                            </p>
+                                            <div formGroupName="intervention">
+                                                <div class="row mb-3">
+                                                    <label
+                                                        class="col-md-3 col-form-label obligatorio">Intervención</label>
+                                                    <div class="col-md-9">
+                                                        <textarea class="form-control"
+                                                            [class.is-invalid]="hasFieldError('intervention.action')"
+                                                            formControlName="action" rows="4"
+                                                            placeholder="Describa la intervención realizada..."></textarea>
+                                                        @if (hasFieldError('intervention.action')) {
+                                                        <div class="invalid-feedback">{{
+                                                            getFieldError('intervention.action') }}</div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <ul class="list-inline mb-0 wizard">
+                                                <li class="previous list-inline-item">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        (click)="goToPreviousStep()">Anterior</button>
+                                                </li>
+                                                <li class="next list-inline-item float-end">
+                                                    <button type="button" class="btn btn-primary"
+                                                        (click)="goToNextStep()">Siguiente</button>
+                                                </li>
+                                            </ul>
+                                        </ng-template>
+                                    </li>
+
+                                    <!-- Step 4: Follow-up Plan -->
+                                    <li [ngbNavItem]="4">
+                                        <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                                            <i class="mdi mdi-clipboard-list me-1"></i>
+                                            <span class="d-none d-sm-inline">Plan a Seguir</span>
+                                        </a>
+                                        <ng-template ngbNavContent>
+                                            <p>
+                                                <ngb-progressbar type="success" [value]="40" [striped]="true"
+                                                    [animated]="true" class="mb-3" height="7px"></ngb-progressbar>
+                                            </p>
+                                            <div formGroupName="followUpPlan">
+                                                <!-- Header Section -->
+                                                <div class="mb-4">
+                                                    <h5 class="text-primary mb-2">
+                                                        <i class="mdi mdi-clipboard-list-outline me-2"></i>
+                                                        G. PLAN A SEGUIR
+                                                    </h5>
+                                                    <p class="text-muted small">Seleccione las acciones realizadas o
+                                                        planificadas</p>
+                                                </div>
+
+                                                <!-- Se culminó el proceso de ayuda -->
+                                                <div class="card border-0 shadow-sm mb-3">
+                                                    <div class="card-body">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input"
+                                                                id="processCompleted"
+                                                                formControlName="processCompleted" />
+                                                            <label class="form-check-label fw-semibold"
+                                                                for="processCompleted">
+                                                                <i
+                                                                    class="mdi mdi-check-circle-outline me-1 text-success"></i>
+                                                                Se culminó el proceso de ayuda
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Se coordinó servicios -->
+                                                <div class="card border-0 shadow-sm mb-3">
+                                                    <div class="card-body">
+                                                        <div class="form-check mb-2">
+                                                            <input type="checkbox" class="form-check-input"
+                                                                id="servicesCoordinated"
+                                                                formControlName="servicesCoordinated" />
+                                                            <label class="form-check-label fw-semibold"
+                                                                for="servicesCoordinated">
+                                                                <i
+                                                                    class="mdi mdi-account-group-outline me-1 text-info"></i>
+                                                                Se coordinó servicios en (mencionar agencia)
+                                                            </label>
+                                                        </div>
+                                                        @if (caseForm.get('followUpPlan.servicesCoordinated')?.value) {
+                                                        <div class="mt-3 ps-4 border-start border-info border-3">
+                                                            <label class="form-label small text-muted">Agencia o
+                                                                servicio coordinado:</label>
+                                                            <textarea class="form-control"
+                                                                formControlName="servicesAgency" rows="2"
+                                                                placeholder="Ej: Hospital Regional, Centro de Salud Mental..."></textarea>
+                                                        </div>
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                                <!-- Se hará un referido -->
+                                                <div class="card border-0 shadow-sm mb-3">
+                                                    <div class="card-body">
+                                                        <div class="form-check mb-2">
+                                                            <input type="checkbox" class="form-check-input"
+                                                                id="referralMade" formControlName="referralMade" />
+                                                            <label class="form-check-label fw-semibold"
+                                                                for="referralMade">
+                                                                <i class="mdi mdi-share-outline me-1 text-warning"></i>
+                                                                Se hará un referido (mencionar los referidos y
+                                                                justificar)
+                                                            </label>
+                                                        </div>
+                                                        @if (caseForm.get('followUpPlan.referralMade')?.value) {
+                                                        <div class="mt-3 ps-4 border-start border-warning border-3">
+                                                            <label class="form-label small text-muted">Detalles del
+                                                                referido y justificación:</label>
+                                                            <textarea class="form-control"
+                                                                formControlName="referralDetails" rows="3"
+                                                                placeholder="Describa a quién se refiere, por qué motivo y la justificación del referido..."></textarea>
+                                                        </div>
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                                <!-- Se coordinó cita -->
+                                                <div class="card border-0 shadow-sm mb-3">
+                                                    <div class="card-body">
+                                                        <div class="form-check mb-2">
+                                                            <input type="checkbox" class="form-check-input"
+                                                                id="appointmentScheduled"
+                                                                formControlName="appointmentScheduled" />
+                                                            <label class="form-check-label fw-semibold"
+                                                                for="appointmentScheduled">
+                                                                <i class="mdi mdi-calendar-clock me-1 text-primary"></i>
+                                                                Se coordinó cita para iniciar proceso de orientación
+                                                            </label>
+                                                        </div>
+                                                        @if (caseForm.get('followUpPlan.appointmentScheduled')?.value) {
+                                                        <div class="mt-3 ps-4 border-start border-primary border-3">
+                                                            <div class="row g-3">
+                                                                <div class="col-md-6">
+                                                                    <label class="form-label small text-muted">
+                                                                        <i class="mdi mdi-calendar me-1"></i>Fecha:
+                                                                    </label>
+                                                                    <input type="date" class="form-control"
+                                                                        formControlName="appointmentDate" />
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label class="form-label small text-muted">
+                                                                        <i class="mdi mdi-clock-outline me-1"></i>Hora:
+                                                                    </label>
+                                                                    <input type="time" class="form-control"
+                                                                        formControlName="appointmentTime" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                                <!-- Otros -->
+                                                <div class="card border-0 shadow-sm mb-3">
+                                                    <div class="card-body">
+                                                        <label class="form-label fw-semibold">
+                                                            <i class="mdi mdi-text-box-outline me-1 text-secondary"></i>
+                                                            Otros detalles:
+                                                        </label>
+                                                        <textarea class="form-control" formControlName="others" rows="3"
+                                                            placeholder="Especifique cualquier otro detalle relevante del plan a seguir..."></textarea>
+                                                        <small class="text-muted">Campo opcional para información
+                                                            adicional</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <ul class="list-inline mb-0 wizard">
+                                                <li class="previous list-inline-item">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        (click)="goToPreviousStep()">
+                                                        <i class="mdi mdi-arrow-left me-1"></i>Anterior
+                                                    </button>
+                                                </li>
+                                                <li class="next list-inline-item float-end">
+                                                    <button type="button" class="btn btn-primary"
+                                                        (click)="goToNextStep()">
+                                                        Siguiente<i class="mdi mdi-arrow-right ms-1"></i>
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </ng-template>
+                                    </li>
+
+                                    <!-- Step 5: Physical Health History -->
+                                    <li [ngbNavItem]="5">
+                                        <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                                            <i class="mdi mdi-hospital-box me-1"></i>
+                                            <span class="d-none d-sm-inline">Historial de Salud Física</span>
+                                        </a>
+                                        <ng-template ngbNavContent>
+                                            <p>
+                                                <ngb-progressbar type="success" [value]="50" [striped]="true"
+                                                    [animated]="true" class="mb-3" height="7px"></ngb-progressbar>
+                                            </p>
+                                            <div formGroupName="physicalHealthHistory">
+                                                <!-- Header Section -->
+                                                <div class="mb-4">
+                                                    <h5 class="text-primary mb-2">
+                                                        <i class="mdi mdi-stethoscope me-2"></i>
+                                                        E. HISTORIAL DE SALUD FÍSICA
+                                                    </h5>
+                                                    <p class="text-muted small">Pregunte por los diagnósticos del
+                                                        participante y su familia</p>
+                                                </div>
+
+                                                <!-- Add Condition Button -->
+                                                <div class="mb-3">
+                                                    <button type="button" class="btn btn-outline-primary btn-sm"
+                                                        (click)="addPhysicalCondition()">
+                                                        <i class="mdi mdi-plus-circle me-1"></i>
+                                                        Agregar Condición Física
+                                                    </button>
+                                                </div>
+
+                                                <!-- Conditions Table -->
+                                                <div formArrayName="conditions">
+                                                    @if (physicalConditions.length > 0) {
+                                                    <div class="table-responsive">
+                                                        <table class="table table-bordered table-hover">
+                                                            <thead class="table-light">
+                                                                <tr>
+                                                                    <th style="width: 15%;">Condiciones físicas del
+                                                                        participante</th>
+                                                                    <th style="width: 20%;" colspan="2"
+                                                                        class="text-center">
+                                                                        ¿Actualmente recibe algún tipo de tratamiento?
+                                                                    </th>
+                                                                    <th style="width: 25%;" colspan="2"
+                                                                        class="text-center">
+                                                                        Historial familiar de condiciones
+                                                                    </th>
+                                                                    <th style="width: 15%;">Observaciones</th>
+                                                                    <th style="width: 5%;" class="text-center">Acción
+                                                                    </th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th></th>
+                                                                    <th style="width: 8%;" class="text-center">Sí/No
+                                                                    </th>
+                                                                    <th style="width: 12%;">Medicamentos o terapia</th>
+                                                                    <th style="width: 12.5%;">Familia paterna</th>
+                                                                    <th style="width: 12.5%;">Familia materna</th>
+                                                                    <th></th>
+                                                                    <th></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @for (condition of physicalConditions.controls; track
+                                                                $index) {
+                                                                <tr [formGroupName]="$index">
+                                                                    <td>
+                                                                        <textarea class="form-control form-control-sm"
+                                                                            formControlName="condition" rows="2"
+                                                                            placeholder="Ej: Diabetes, Hipertensión..."></textarea>
+                                                                    </td>
+                                                                    <td class="text-center align-middle">
+                                                                        <div
+                                                                            class="form-check form-switch d-flex justify-content-center">
+                                                                            <input type="checkbox"
+                                                                                class="form-check-input"
+                                                                                formControlName="receivingTreatment"
+                                                                                [id]="'treatment-' + $index" />
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        @if (condition.get('receivingTreatment')?.value)
+                                                                        {
+                                                                        <textarea class="form-control form-control-sm"
+                                                                            formControlName="treatmentDetails" rows="2"
+                                                                            placeholder="Detalles del tratamiento..."></textarea>
+                                                                        } @else {
+                                                                        <span class="text-muted small">-</span>
+                                                                        }
+                                                                    </td>
+                                                                    <td>
+                                                                        <textarea class="form-control form-control-sm"
+                                                                            formControlName="paternalFamilyHistory"
+                                                                            rows="2"
+                                                                            placeholder="Historial paterno..."></textarea>
+                                                                    </td>
+                                                                    <td>
+                                                                        <textarea class="form-control form-control-sm"
+                                                                            formControlName="maternalFamilyHistory"
+                                                                            rows="2"
+                                                                            placeholder="Historial materno..."></textarea>
+                                                                    </td>
+                                                                    <td>
+                                                                        <textarea class="form-control form-control-sm"
+                                                                            formControlName="observations" rows="2"
+                                                                            placeholder="Observaciones adicionales..."></textarea>
+                                                                    </td>
+                                                                    <td class="text-center align-middle">
+                                                                        <button type="button"
+                                                                            class="btn btn-danger btn-sm"
+                                                                            (click)="removePhysicalCondition($index)"
+                                                                            title="Eliminar condición">
+                                                                            <i class="mdi mdi-delete"></i>
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    } @else {
+                                                    <div class="alert alert-info">
+                                                        <i class="mdi mdi-information me-2"></i>
+                                                        No se han agregado condiciones físicas. Haga clic en "Agregar
+                                                        Condición Física" para comenzar.
+                                                    </div>
+                                                    }
+                                                </div>
+                                            </div>
+
+                                            <ul class="list-inline mb-0 wizard">
+                                                <li class="previous list-inline-item">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        (click)="goToPreviousStep()">
+                                                        <i class="mdi mdi-arrow-left me-1"></i>Anterior
+                                                    </button>
+                                                </li>
+                                                <li class="next list-inline-item float-end">
+                                                    <button type="button" class="btn btn-primary"
+                                                        (click)="goToNextStep()">
+                                                        Siguiente<i class="mdi mdi-arrow-right ms-1"></i>
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </ng-template>
+                                    </li>
+
+                                    <!-- Step 6: Mental Health History -->
+                                    <li [ngbNavItem]="6">
+                                        <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                                            <i class="mdi mdi-brain me-1"></i>
+                                            <span class="d-none d-sm-inline">Historial de Salud Mental</span>
+                                        </a>
+                                        <ng-template ngbNavContent>
+                                            <p>
+                                                <ngb-progressbar type="success" [value]="60" [striped]="true"
+                                                    [animated]="true" class="mb-3" height="7px"></ngb-progressbar>
+                                            </p>
+                                            <div formGroupName="mentalHealthHistory">
+                                                <!-- Header Section -->
+                                                <div class="mb-4">
+                                                    <h5 class="text-primary mb-2">
+                                                        <i class="mdi mdi-head-heart-outline me-2"></i>
+                                                        F. HISTORIAL DE SALUD MENTAL
+                                                    </h5>
+                                                    <p class="text-muted small">Pregunte por los diagnósticos del
+                                                        participante y su familia</p>
+                                                </div>
+
+                                                <!-- Add Condition Button -->
+                                                <div class="mb-3">
+                                                    <button type="button" class="btn btn-outline-primary btn-sm"
+                                                        (click)="addMentalCondition()">
+                                                        <i class="mdi mdi-plus-circle me-1"></i>
+                                                        Agregar Condición Mental
+                                                    </button>
+                                                </div>
+
+                                                <!-- Conditions Table -->
+                                                <div formArrayName="conditions">
+                                                    @if (mentalConditions.length > 0) {
+                                                    <div class="table-responsive">
+                                                        <table class="table table-bordered table-hover">
+                                                            <thead class="table-light">
+                                                                <tr>
+                                                                    <th style="width: 15%;">Historial mental del
+                                                                        participante</th>
+                                                                    <th style="width: 20%;" colspan="2"
+                                                                        class="text-center">
+                                                                        ¿Actualmente recibe Tratamiento?
+                                                                    </th>
+                                                                    <th style="width: 25%;" colspan="2"
+                                                                        class="text-center">
+                                                                        Historial familiar de condiciones
+                                                                    </th>
+                                                                    <th style="width: 15%;">Observaciones</th>
+                                                                    <th style="width: 5%;" class="text-center">Acción
+                                                                    </th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th></th>
+                                                                    <th style="width: 8%;" class="text-center">Sí/No
+                                                                    </th>
+                                                                    <th style="width: 12%;">Medicamentos y/o terapia
+                                                                    </th>
+                                                                    <th style="width: 12.5%;">Familia paterna</th>
+                                                                    <th style="width: 12.5%;">Familia materna</th>
+                                                                    <th></th>
+                                                                    <th></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @for (condition of mentalConditions.controls; track
+                                                                $index) {
+                                                                <tr [formGroupName]="$index">
+                                                                    <td>
+                                                                        <textarea class="form-control form-control-sm"
+                                                                            formControlName="condition" rows="2"
+                                                                            placeholder="Ej: Depresión, Ansiedad, Bipolaridad..."></textarea>
+                                                                    </td>
+                                                                    <td class="text-center align-middle">
+                                                                        <div
+                                                                            class="form-check form-switch d-flex justify-content-center">
+                                                                            <input type="checkbox"
+                                                                                class="form-check-input"
+                                                                                formControlName="receivingTreatment"
+                                                                                [id]="'mental-treatment-' + $index" />
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        @if (condition.get('receivingTreatment')?.value)
+                                                                        {
+                                                                        <textarea class="form-control form-control-sm"
+                                                                            formControlName="treatmentDetails" rows="2"
+                                                                            placeholder="Medicamentos y/o terapia..."></textarea>
+                                                                        } @else {
+                                                                        <span class="text-muted small">-</span>
+                                                                        }
+                                                                    </td>
+                                                                    <td>
+                                                                        <textarea class="form-control form-control-sm"
+                                                                            formControlName="paternalFamilyHistory"
+                                                                            rows="2"
+                                                                            placeholder="Historial paterno..."></textarea>
+                                                                    </td>
+                                                                    <td>
+                                                                        <textarea class="form-control form-control-sm"
+                                                                            formControlName="maternalFamilyHistory"
+                                                                            rows="2"
+                                                                            placeholder="Historial materno..."></textarea>
+                                                                    </td>
+                                                                    <td>
+                                                                        <textarea class="form-control form-control-sm"
+                                                                            formControlName="observations" rows="2"
+                                                                            placeholder="Observaciones adicionales..."></textarea>
+                                                                    </td>
+                                                                    <td class="text-center align-middle">
+                                                                        <button type="button"
+                                                                            class="btn btn-danger btn-sm"
+                                                                            (click)="removeMentalCondition($index)"
+                                                                            title="Eliminar condición">
+                                                                            <i class="mdi mdi-delete"></i>
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    } @else {
+                                                    <div class="alert alert-info">
+                                                        <i class="mdi mdi-information me-2"></i>
+                                                        No se han agregado condiciones mentales. Haga clic en "Agregar
+                                                        Condición Mental" para comenzar.
+                                                    </div>
+                                                    }
+                                                </div>
+                                            </div>
+
+                                            <ul class="list-inline mb-0 wizard">
+                                                <li class="previous list-inline-item">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        (click)="goToPreviousStep()">
+                                                        <i class="mdi mdi-arrow-left me-1"></i>Anterior
+                                                    </button>
+                                                </li>
+                                                <li class="next list-inline-item float-end">
+                                                    <button type="button" class="btn btn-primary"
+                                                        (click)="goToNextStep()">
+                                                        Siguiente<i class="mdi mdi-arrow-right ms-1"></i>
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </ng-template>
+                                    </li>
+
+                                    <!-- Step 7: Assessment (Ponderación) -->
+                                    <li [ngbNavItem]="7">
+                                        <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                                            <i class="mdi mdi-clipboard-text-multiple me-1"></i>
+                                            <span class="d-none d-sm-inline">Ponderación</span>
+                                        </a>
+                                        <ng-template ngbNavContent>
+                                            <p>
+                                                <ngb-progressbar type="success" [value]="70" [striped]="true"
+                                                    [animated]="true" class="mb-3" height="7px"></ngb-progressbar>
+                                            </p>
+
+                                            <div formGroupName="assessment">
+                                                <div class="mb-4">
+                                                    <h4 class="mb-3">
+                                                        <i class="mdi mdi-scale-balance text-primary me-2"></i>
+                                                        PONDERACIÓN
+                                                    </h4>
+                                                </div>
+
+                                                <!-- A. General Description -->
+                                                <div class="card shadow-sm mb-4">
+                                                    <div class="card-body">
+                                                        <label class="form-label fw-semibold">
+                                                            <i class="mdi mdi-text-box-outline text-info me-1"></i>
+                                                            DESCRIPCIÓN GENERAL DEL MOTIVO DE CONSULTA
+                                                        </label>
+                                                        <p class="text-muted small mb-2">Describa la situación
+                                                            identificada</p>
+                                                        <textarea formControlName="generalDescription"
+                                                            class="form-control" rows="5"
+                                                            placeholder="Describa de manera detallada la situación que motivó la consulta..."
+                                                            [class.is-invalid]="hasFieldError('assessment.generalDescription')"></textarea>
+                                                        @if (hasFieldError('assessment.generalDescription')) {
+                                                        <div class="invalid-feedback">
+                                                            {{ getFieldError('assessment.generalDescription') }}
+                                                        </div>
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                                <!-- B. Concurrent Factors -->
+                                                <div class="card shadow-sm mb-4 border-start border-success border-3">
+                                                    <div class="card-body">
+                                                        <label class="form-label fw-semibold">
+                                                            <i class="mdi mdi-thumb-up-outline text-success me-1"></i>
+                                                            FACTORES CONCURRENTES
+                                                        </label>
+                                                        <p class="text-muted small mb-2">Describa las condiciones
+                                                            favorables que identifica</p>
+                                                        <textarea formControlName="concurrentFactors"
+                                                            class="form-control" rows="5"
+                                                            placeholder="Factores positivos: apoyo familiar, recursos disponibles, fortalezas personales..."
+                                                            [class.is-invalid]="hasFieldError('assessment.concurrentFactors')"></textarea>
+                                                        @if (hasFieldError('assessment.concurrentFactors')) {
+                                                        <div class="invalid-feedback">
+                                                            {{ getFieldError('assessment.concurrentFactors') }}
+                                                        </div>
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                                <!-- C. Critical Factors -->
+                                                <div class="card shadow-sm mb-4 border-start border-danger border-3">
+                                                    <div class="card-body">
+                                                        <label class="form-label fw-semibold">
+                                                            <i
+                                                                class="mdi mdi-alert-circle-outline text-danger me-1"></i>
+                                                            FACTORES CRÍTICOS
+                                                        </label>
+                                                        <p class="text-muted small mb-2">Describa condiciones que no
+                                                            favorecen el proceso de ayuda</p>
+                                                        <textarea formControlName="criticalFactors" class="form-control"
+                                                            rows="5"
+                                                            placeholder="Obstáculos identificados: falta de recursos, resistencia al cambio, situaciones de riesgo..."
+                                                            [class.is-invalid]="hasFieldError('assessment.criticalFactors')"></textarea>
+                                                        @if (hasFieldError('assessment.criticalFactors')) {
+                                                        <div class="invalid-feedback">
+                                                            {{ getFieldError('assessment.criticalFactors') }}
+                                                        </div>
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                                <!-- D. Theoretical Framework -->
+                                                <div class="card shadow-sm mb-4 border-start border-primary border-3">
+                                                    <div class="card-body">
+                                                        <label class="form-label fw-semibold">
+                                                            <i class="mdi mdi-book-open-variant text-primary me-1"></i>
+                                                            ANÁLISIS DEL PROBLEMA DESDE UN MARCO TEÓRICO
+                                                        </label>
+                                                        <p class="text-muted small mb-2">Indique el enfoque teórico
+                                                            desde el cual abordará el proceso de ayuda</p>
+                                                        <textarea formControlName="theoreticalFramework"
+                                                            class="form-control" rows="5"
+                                                            placeholder="Marco teórico de referencia: enfoque sistémico, cognitivo-conductual, humanista, etc..."
+                                                            [class.is-invalid]="hasFieldError('assessment.theoreticalFramework')"></textarea>
+                                                        @if (hasFieldError('assessment.theoreticalFramework')) {
+                                                        <div class="invalid-feedback">
+                                                            {{ getFieldError('assessment.theoreticalFramework') }}
+                                                        </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <ul class="list-inline mb-0 wizard">
+                                                <li class="previous list-inline-item">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        (click)="goToPreviousStep()">
+                                                        <i class="mdi mdi-arrow-left me-1"></i>Anterior
+                                                    </button>
+                                                </li>
+                                                <li class="next list-inline-item float-end">
+                                                    <button type="button" class="btn btn-primary"
+                                                        (click)="goToNextStep()">
+                                                        Siguiente<i class="mdi mdi-arrow-right ms-1"></i>
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </ng-template>
+                                    </li>
+
+                                    <!-- Step 8: Intervention Plan -->
+                                    <li [ngbNavItem]="8">
+                                        <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                                            <i class="mdi mdi-clipboard-list-outline me-1"></i>
+                                            <span class="d-none d-sm-inline">Plan de Intervención</span>
+                                        </a>
+                                        <ng-template ngbNavContent>
+                                            <p>
+                                                <ngb-progressbar type="success" [value]="80" [striped]="true"
+                                                    [animated]="true" class="mb-3" height="7px"></ngb-progressbar>
+                                            </p>
+
+                                            <div formGroupName="interventionPlan">
+                                                <div class="mb-4">
+                                                    <h4 class="mb-3">
+                                                        <i class="mdi mdi-calendar-check text-primary me-2"></i>
+                                                        PLAN DE INTERVENCIÓN
+                                                    </h4>
+                                                    <button type="button" class="btn btn-success btn-sm"
+                                                        (click)="addIntervention()">
+                                                        <i class="mdi mdi-plus-circle me-1"></i>Agregar Intervención
+                                                    </button>
+                                                </div>
+
+                                                @if (interventions.length === 0) {
+                                                <div class="alert alert-info">
+                                                    <i class="mdi mdi-information me-2"></i>
+                                                    No hay intervenciones agregadas. Haga clic en "Agregar Intervención"
+                                                    para comenzar.
+                                                </div>
+                                                }
+
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered table-hover table-sm"
+                                                        formArrayName="interventions">
+                                                        <thead class="table-light">
+                                                            <tr>
+                                                                <th style="width: 15%;">Meta(s)</th>
+                                                                <th style="width: 15%;">Objetivos</th>
+                                                                <th style="width: 15%;">Actividades o técnicas</th>
+                                                                <th style="width: 10%;">Tiempo</th>
+                                                                <th style="width: 12%;">Persona Responsable</th>
+                                                                <th style="width: 15%;">Criterio de Evaluación</th>
+                                                                <th style="width: 5%;"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @for (intervention of interventions.controls; track $index)
+                                                            {
+                                                            <tr [formGroupName]="$index">
+                                                                <td>
+                                                                    <textarea formControlName="goals"
+                                                                        class="form-control form-control-sm" rows="3"
+                                                                        placeholder="Metas a alcanzar..."></textarea>
+                                                                </td>
+                                                                <td>
+                                                                    <textarea formControlName="objectives"
+                                                                        class="form-control form-control-sm" rows="3"
+                                                                        placeholder="Objetivos específicos..."></textarea>
+                                                                </td>
+                                                                <td>
+                                                                    <textarea formControlName="activities"
+                                                                        class="form-control form-control-sm" rows="3"
+                                                                        placeholder="Actividades o técnicas a implementar..."></textarea>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" formControlName="timeframe"
+                                                                        class="form-control form-control-sm"
+                                                                        placeholder="Ej: 3 meses">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text"
+                                                                        formControlName="responsiblePerson"
+                                                                        class="form-control form-control-sm"
+                                                                        placeholder="Nombre del responsable">
+                                                                </td>
+                                                                <td>
+                                                                    <textarea formControlName="evaluationCriteria"
+                                                                        class="form-control form-control-sm" rows="3"
+                                                                        placeholder="Criterios para evaluar..."></textarea>
+
+                                                                </td>
+
+                                                                <td class="text-center">
+                                                                    <button type="button" class="btn btn-danger btn-sm"
+                                                                        (click)="removeIntervention($index)"
+                                                                        title="Eliminar intervención">
+                                                                        <i class="mdi mdi-delete"></i>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                                @if (interventions.length > 0) {
+                                                <div class="card shadow-sm mt-3">
+                                                    <div class="card-body">
+                                                        <p class="mb-0">
+                                                            <i class="mdi mdi-information-outline text-info me-1"></i>
+                                                            <strong>Nota:</strong> Cada intervención debe incluir metas
+                                                            claras, objetivos específicos y criterios de evaluación para
+                                                            medir el progreso.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                }
+                                            </div>
+
+                                            <ul class="list-inline mb-0 wizard mt-4">
+                                                <li class="previous list-inline-item">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        (click)="goToPreviousStep()">
+                                                        <i class="mdi mdi-arrow-left me-1"></i>Anterior
+                                                    </button>
+                                                </li>
+                                                <li class="next list-inline-item float-end">
+                                                    <button type="button" class="btn btn-primary"
+                                                        (click)="goToNextStep()">
+                                                        Siguiente<i class="mdi mdi-arrow-right ms-1"></i>
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </ng-template>
+                                    </li>
+
+                                    <!-- Step 9: Progress Notes -->
+                                    <li [ngbNavItem]="9">
+                                        <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                                            <i class="mdi mdi-file-document-edit me-1"></i>
+                                            <span class="d-none d-sm-inline">Notas de Progreso</span>
+                                        </a>
+                                        <ng-template ngbNavContent>
+                                            <p>
+                                                <ngb-progressbar type="success" [value]="81.81" [striped]="true"
+                                                    [animated]="true" class="mb-3" height="7px"></ngb-progressbar>
+                                            </p>
+
+                                            <div formGroupName="progressNotes">
+                                                <div class="mb-4">
+                                                    <h4 class="mb-3">
+                                                        <i class="mdi mdi-clipboard-text text-primary me-2"></i>
+                                                        IV. NOTAS DE PROGRESO
+                                                    </h4>
+                                                    <p class="text-muted mb-3">
+                                                        Registre las intervenciones realizadas
+                                                    </p>
+                                                    <button type="button" class="btn btn-success btn-sm"
+                                                        (click)="addProgressNote()">
+                                                        <i class="mdi mdi-plus-circle me-1"></i>Agregar Nota de Progreso
+                                                    </button>
+                                                </div>
+
+                                                @if (progressNotesArray.length === 0) {
+                                                <div class="alert alert-info">
+                                                    <i class="mdi mdi-information me-2"></i>
+                                                    No hay notas de progreso agregadas. Haga clic en "Agregar Nota de
+                                                    Progreso" para comenzar.
+                                                </div>
+                                                }
+
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered table-hover table-sm"
+                                                        formArrayName="notes">
+                                                        <thead class="table-light">
+                                                            <tr>
+                                                                <th style="width: 10%;">FECHA</th>
+                                                                <th style="width: 8%;">HORA</th>
+                                                                <th style="width: 12%;">TIPO DE ABORDAJE</th>
+                                                                <th style="width: 12%;">PROCESO</th>
+                                                                <th style="width: 18%;">RESUMEN DE INTERVENCIÓN</th>
+                                                                <th style="width: 15%;">OBSERVACIONES</th>
+                                                                <th style="width: 15%;">ACUERDOS</th>
+                                                                <th style="width: 5%;"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @for (note of progressNotesArray.controls; track $index) {
+                                                            <tr [formGroupName]="$index">
+                                                                <td>
+                                                                    <input type="date" formControlName="date"
+                                                                        class="form-control form-control-sm">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="time" formControlName="time"
+                                                                        class="form-control form-control-sm">
+                                                                </td>
+                                                                <td>
+                                                                    <textarea formControlName="approachType"
+                                                                        class="form-control form-control-sm" rows="2"
+                                                                        placeholder="Ej: Individual, Familiar, Grupal..."></textarea>
+                                                                </td>
+                                                                <td>
+                                                                    <textarea formControlName="process"
+                                                                        class="form-control form-control-sm" rows="2"
+                                                                        placeholder="Descripción del proceso..."></textarea>
+                                                                </td>
+                                                                <td>
+                                                                    <textarea formControlName="interventionSummary"
+                                                                        class="form-control form-control-sm" rows="2"
+                                                                        placeholder="Resumen de la intervención realizada..."></textarea>
+                                                                </td>
+                                                                <td>
+                                                                    <textarea formControlName="observations"
+                                                                        class="form-control form-control-sm" rows="2"
+                                                                        placeholder="Observaciones..."></textarea>
+                                                                </td>
+                                                                <td>
+                                                                    <textarea formControlName="agreements"
+                                                                        class="form-control form-control-sm" rows="2"
+                                                                        placeholder="Acuerdos establecidos..."></textarea>
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <button type="button" class="btn btn-danger btn-sm"
+                                                                        (click)="removeProgressNote($index)"
+                                                                        title="Eliminar nota">
+                                                                        <i class="mdi mdi-delete"></i>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                                @if (progressNotesArray.length > 0) {
+                                                <div class="card shadow-sm mt-3">
+                                                    <div class="card-body">
+                                                        <p class="mb-0">
+                                                            <i class="mdi mdi-information-outline text-info me-1"></i>
+                                                            <strong>Nota:</strong> Registre cada intervención de manera
+                                                            cronológica, incluyendo la fecha, hora y detalles relevantes
+                                                            del proceso.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                }
+                                            </div>
+
+                                            <ul class="list-inline mb-0 wizard mt-4">
+                                                <li class="previous list-inline-item">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        (click)="goToPreviousStep()">
+                                                        <i class="mdi mdi-arrow-left me-1"></i>Anterior
+                                                    </button>
+                                                </li>
+                                                <li class="next list-inline-item float-end">
+                                                    <button type="button" class="btn btn-primary"
+                                                        (click)="goToNextStep()">
+                                                        Siguiente<i class="mdi mdi-arrow-right ms-1"></i>
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </ng-template>
+                                    </li>
+
+                                    <!-- Step 10: Referrals -->
+                                    <li [ngbNavItem]="10">
+                                        <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                                            <i class="mdi mdi-share-variant me-1"></i>
+                                            <span class="d-none d-sm-inline">Referidos</span>
+                                        </a>
+                                        <ng-template ngbNavContent>
+                                            <p>
+                                                <ngb-progressbar type="success" [value]="90.90" [striped]="true"
+                                                    [animated]="true" class="mb-3" height="7px"></ngb-progressbar>
+                                            </p>
+
+                                            <div formGroupName="referrals">
+                                                <div class="mb-4">
+                                                    <h4 class="mb-3">
+                                                        <i class="mdi mdi-account-arrow-right text-primary me-2"></i>
+                                                        MENCIONAR Y JUSTIFICAR LOS REFERIDOS QUE SE REALIZARÁN
+                                                    </h4>
+                                                </div>
+
+                                                <div class="card shadow-sm">
+                                                    <div class="card-body">
+                                                        <label class="form-label fw-semibold">
+                                                            <i class="mdi mdi-text-box-multiple text-info me-1"></i>
+                                                            Descripción de los Referidos y su Justificación
+                                                        </label>
+                                                        <p class="text-muted small mb-2">
+                                                            Especifique a qué instituciones, organizaciones o
+                                                            profesionales se realizarán los referidos y explique las
+                                                            razones que justifican cada uno.
+                                                        </p>
+                                                        <textarea formControlName="referralsJustification"
+                                                            class="form-control" rows="8"
+                                                            placeholder="Describa los referidos que se realizarán y la justificación de cada uno. "
+                                                            [class.is-invalid]="hasFieldError('referrals.referralsJustification')"></textarea>
+                                                        @if (hasFieldError('referrals.referralsJustification')) {
+                                                        <div class="invalid-feedback">
+                                                            {{ getFieldError('referrals.referralsJustification') }}
+                                                        </div>
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                                <div class="card shadow-sm border-start border-primary border-3 mt-3">
+                                                    <div class="card-body">
+                                                        <h6 class="mb-2">
+                                                            <i class="mdi mdi-lightbulb-on text-warning me-1"></i>
+                                                            Recomendaciones
+                                                        </h6>
+                                                        <ul class="mb-0 small">
+                                                            <li>Sea específico con el nombre de la institución o
+                                                                profesional</li>
+                                                            <li>Justifique claramente por qué cada referido es necesario
+                                                            </li>
+                                                            <li>Mencione qué necesidades del participante se atenderán
+                                                            </li>
+                                                            <li>Indique si hay coordinación previa o contacto
+                                                                establecido</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <ul class="list-inline mb-0 wizard mt-4">
+                                                <li class="previous list-inline-item">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        (click)="goToPreviousStep()">
+                                                        <i class="mdi mdi-arrow-left me-1"></i>Anterior
+                                                    </button>
+                                                </li>
+                                                <li class="next list-inline-item float-end">
+                                                    <button type="button" class="btn btn-primary"
+                                                        (click)="goToNextStep()">
+                                                        Siguiente<i class="mdi mdi-arrow-right ms-1"></i>
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </ng-template>
+                                    </li>
+
+                                    <!-- Step 11: Closing Note -->
+                                    <li [ngbNavItem]="11">
+                                        <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                                            <i class="mdi mdi-bookmark-check me-1"></i>
+                                            <span class="d-none d-sm-inline">Nota de Cierre</span>
+                                        </a>
+                                        <ng-template ngbNavContent>
+                                            <p>
+                                                <ngb-progressbar type="success" [value]="100" [striped]="true"
+                                                    [animated]="true" class="mb-3" height="7px"></ngb-progressbar>
+                                            </p>
+                                            <div formGroupName="closingNote">
+                                                <div class="alert alert-warning">
+                                                    <h6 class="alert-heading mb-2">
+                                                        <i class="mdi mdi-information me-1"></i>Nota de Cierre
+                                                        (Opcional)
+                                                    </h6>
+                                                    <p class="mb-0 small">Complete esta sección solo si está cerrando el
+                                                        caso.</p>
+                                                </div>
+
+                                                <div class="row mb-3">
+                                                    <label class="col-md-3 col-form-label">Fecha de cierre</label>
+                                                    <div class="col-md-9">
+                                                        <input type="date" class="form-control"
+                                                            formControlName="closureDate" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-3">
+                                                    <label class="col-md-3 col-form-label">Motivo de cierre</label>
+                                                    <div class="col-md-9">
+                                                        <textarea class="form-control" formControlName="closureReason"
+                                                            rows="3"
+                                                            placeholder="Describa el motivo del cierre..."></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-3">
+                                                    <label class="col-md-3 col-form-label">Logros alcanzados</label>
+                                                    <div class="col-md-9">
+                                                        <textarea class="form-control" formControlName="achievements"
+                                                            rows="4"
+                                                            placeholder="Enumere los logros alcanzados durante el proceso..."></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-3">
+                                                    <label class="col-md-3 col-form-label">Recomendaciones</label>
+                                                    <div class="col-md-9">
+                                                        <textarea class="form-control" formControlName="recommendations"
+                                                            rows="4"
+                                                            placeholder="Recomendaciones para el participante..."></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-3">
+                                                    <label class="col-md-3 col-form-label">Sugerencias de
+                                                        seguimiento</label>
+                                                    <div class="col-md-9">
+                                                        <textarea class="form-control"
+                                                            formControlName="followUpSuggestions" rows="3"
+                                                            placeholder="Sugerencias de seguimiento..."></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <ul class="list-inline mb-0 wizard">
+                                                <li class="previous list-inline-item">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        (click)="goToPreviousStep()">Anterior</button>
+                                                </li>
+                                                <li class="next list-inline-item float-end">
+                                                    <button type="submit" class="btn btn-success"
+                                                        [disabled]="caseForm.invalid">
+                                                        <i class="mdi mdi-check-circle me-1"></i>
+                                                        {{ isEditMode ? 'Actualizar Caso' : 'Crear Caso' }}
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </ng-template>
+                                    </li>
+                                </ul>
+
+                                <div [ngbNavOutlet]="caseWizard" class="b-0 mb-0 pt-0"></div>
+                            </div>
+                        </form>
+                    </div>
+                    } @else {
+                    <div class="alert alert-danger">
+                        <h5>Error: Formulario no inicializado</h5>
+                        <p>El formulario no se ha podido inicializar correctamente. Por favor, recarga la página.</p>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

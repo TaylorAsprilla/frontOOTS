@@ -1,38 +1,54 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Column } from 'src/app/shared/advanced-table/advanced-table.component';
+import { NgbModal, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { SearchCountryField, CountryISO, PhoneNumberFormat, NgxIntlTelInputModule } from 'ngx-intl-tel-input';
+import { Column, AdvancedTableComponent } from 'src/app/shared/advanced-table/advanced-table.component';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
+import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
 import { CRMCustomer } from '../shared/crm.model';
 import { CRMCUSTOMERS } from '../shared/data';
 
 @Component({
   selector: 'app-crm-contacts',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    NgbModalModule,
+    NgxIntlTelInputModule,
+    AdvancedTableComponent,
+    PageTitleComponent,
+  ],
   templateUrl: './contacts.component.html',
-  styleUrls: ['./contacts.component.scss']
+  styleUrls: ['./contacts.component.scss'],
 })
 export class ContactsComponent implements OnInit {
-
   pageTitle: BreadcrumbItem[] = [];
   contacts: CRMCustomer[] = [];
   columns: Column[] = [];
   selectedContact!: CRMCustomer;
   newContact!: FormGroup;
 
+  // Expose enums for template
+  SearchCountryField = SearchCountryField;
+  CountryISO = CountryISO;
+  PhoneNumberFormat = PhoneNumberFormat;
+
   @ViewChild('advancedTable') advancedTable: any;
   @ViewChild('content', { static: true }) content: any;
 
-  constructor (
-    private sanitizer: DomSanitizer,
-    public activeModal: NgbModal,
-    private fb: FormBuilder
-  ) { }
+  constructor(private sanitizer: DomSanitizer, public activeModal: NgbModal, private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.pageTitle = [{ label: 'CRM', path: '/' }, { label: 'Contacts', path: '/', active: true }];
+    this.pageTitle = [
+      { label: 'CRM', path: '/' },
+      { label: 'Contacts', path: '/', active: true },
+    ];
     this._fetchData();
-    // initialize advance table 
+    // initialize advance table
     this.initAdvancedTableData();
 
     this.selectedContact = this.contacts[0];
@@ -41,18 +57,20 @@ export class ContactsComponent implements OnInit {
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', Validators.required],
-      location: ['', Validators.required]
+      location: ['', Validators.required],
     });
   }
 
   // convenience getter for easy access to form fields
-  get form1() { return this.newContact.controls; }
+  get form1() {
+    return this.newContact.controls;
+  }
 
   /**
- * opens modal
- * @param title title of modal 
- * @param data data to be used in modal
- */
+   * opens modal
+   * @param title title of modal
+   * @param data data to be used in modal
+   */
   openModal(): void {
     this.activeModal.open(this.content, { centered: true });
   }
@@ -72,48 +90,48 @@ export class ContactsComponent implements OnInit {
       {
         name: 'name',
         label: 'Basic Info',
-        formatter: this.customerNameFormatter.bind(this)
+        formatter: this.customerNameFormatter.bind(this),
       },
       {
         name: 'phone',
         label: 'Phone',
-        formatter: (customer: CRMCustomer) => customer.phone
+        formatter: (customer: CRMCustomer) => customer.phone,
       },
       {
         name: 'email',
         label: 'Email',
-        formatter: (customer: CRMCustomer) => customer.email
+        formatter: (customer: CRMCustomer) => customer.email,
       },
       {
         name: 'company',
         label: 'Company Name',
-        formatter: (customer: CRMCustomer) => customer.company
+        formatter: (customer: CRMCustomer) => customer.company,
       },
       {
         name: 'created_date',
         label: 'Created Date',
-        formatter: (customer: CRMCustomer) => customer.created_date
+        formatter: (customer: CRMCustomer) => customer.created_date,
       },
       {
         name: 'Action',
         label: 'Action',
         width: 82,
         formatter: this.customerActionFormatter.bind(this),
-        sort: false
-      }]
+        sort: false,
+      },
+    ];
   }
 
   /**
- *  handles operations that need to be performed after loading table
- */
+   *  handles operations that need to be performed after loading table
+   */
   handleTableLoad(event: any): void {
     // product cell
     document.querySelectorAll('.customer').forEach((e) => {
-      e.addEventListener("click", () => {
-        this.selectedContact = this.contacts[Number(e.id) - 1]
-
+      e.addEventListener('click', () => {
+        this.selectedContact = this.contacts[Number(e.id) - 1];
       });
-    })
+    });
   }
 
   // formats name cell
@@ -137,32 +155,31 @@ export class ContactsComponent implements OnInit {
   }
 
   /**
-* Match table data with search input
-* @param row Table row
-* @param term Search the value
-*/
+   * Match table data with search input
+   * @param row Table row
+   * @param term Search the value
+   */
   matches(row: CRMCustomer, term: string) {
-    return row.name?.toLowerCase().includes(term)
-      || row.phone?.toLowerCase().includes(term)
-      || row.created_date.toLowerCase().includes(term)
-      || row.company.toLowerCase().includes(term)
-      || row.email?.toLocaleLowerCase().includes(term);
+    return (
+      row.name?.toLowerCase().includes(term) ||
+      row.phone?.toLowerCase().includes(term) ||
+      row.created_date.toLowerCase().includes(term) ||
+      row.company.toLowerCase().includes(term) ||
+      row.email?.toLocaleLowerCase().includes(term)
+    );
   }
 
   /**
    * Search Method
-  */
+   */
   searchData(searchTerm: string): void {
     if (searchTerm === '') {
       this._fetchData();
-    }
-    else {
+    } else {
       let updatedData = CRMCUSTOMERS;
       //  filter
-      updatedData = updatedData.filter(customer => this.matches(customer, searchTerm));
+      updatedData = updatedData.filter((customer) => this.matches(customer, searchTerm));
       this.contacts = updatedData;
     }
-
   }
-
 }

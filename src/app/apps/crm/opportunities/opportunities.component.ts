@@ -1,19 +1,31 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { NgbModal, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { SearchCountryField, CountryISO, PhoneNumberFormat, NgxIntlTelInputModule } from 'ngx-intl-tel-input';
+import { NgApexchartsModule } from 'ng-apexcharts';
 import { ChartOptions } from 'src/app/pages/charts/apex/apex-chart.model';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
+import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
 import { CompanyInfoItem } from '../shared/crm.model';
 import { COMPANYLIST } from '../shared/data';
 
 @Component({
   selector: 'app-crm-opportunities',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    NgbModalModule,
+    NgxIntlTelInputModule,
+    NgApexchartsModule,
+    PageTitleComponent,
+  ],
   templateUrl: './opportunities.component.html',
-  styleUrls: ['./opportunities.component.scss']
+  styleUrls: ['./opportunities.component.scss'],
 })
 export class OpportunitiesComponent implements OnInit {
-
-
   pageTitle: BreadcrumbItem[] = [];
   newOpportunity!: FormGroup;
   companyList: CompanyInfoItem[] = [];
@@ -21,29 +33,34 @@ export class OpportunitiesComponent implements OnInit {
   sortCategory: string = 'All';
   staticsChart!: Partial<ChartOptions>;
 
+  // Expose enums for template
+  SearchCountryField = SearchCountryField;
+  CountryISO = CountryISO;
+  PhoneNumberFormat = PhoneNumberFormat;
+
   @ViewChild('content', { static: true }) content: any;
 
-  constructor (
-    public activeModal: NgbModal,
-    private fb: FormBuilder
-  ) { }
-
+  constructor(public activeModal: NgbModal, private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.pageTitle = [{ label: 'CRM', path: '/' }, { label: 'Opportunities', path: '/', active: true }];
+    this.pageTitle = [
+      { label: 'CRM', path: '/' },
+      { label: 'Opportunities', path: '/', active: true },
+    ];
     this.newOpportunity = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', Validators.required],
-      category: ['', Validators.required]
+      category: ['', Validators.required],
     });
     this._fetchData();
     this.initChart();
   }
 
   // convenience getter for easy access to form fields
-  get form1() { return this.newOpportunity.controls; }
-
+  get form1() {
+    return this.newOpportunity.controls;
+  }
 
   /**
    * fetches data
@@ -69,40 +86,42 @@ export class OpportunitiesComponent implements OnInit {
       legend: {
         position: 'bottom',
         fontSize: '15px',
-        horizontalAlign: 'center'
+        horizontalAlign: 'center',
       },
-
-    }
+    };
   }
 
   /**
- * opens modal
- * @param title title of modal 
- * @param data data to be used in modal
- */
+   * opens modal
+   * @param title title of modal
+   * @param data data to be used in modal
+   */
   openModal(): void {
     this.activeModal.open(this.content, { centered: true });
   }
 
-
   /**
    * Search Method
-  */
+   */
   searchData(searchTerm: string): void {
     if (searchTerm === '') {
       this._fetchData();
-    }
-    else {
+    } else {
       let updatedData = COMPANYLIST;
       //  filter
-      updatedData = updatedData.filter(company => (company.name?.toLowerCase().includes(searchTerm) || company.location.toLowerCase().includes(searchTerm)));
+      updatedData = updatedData.filter(
+        (company) =>
+          company.name?.toLowerCase().includes(searchTerm) || company.location.toLowerCase().includes(searchTerm)
+      );
       this.companyList = updatedData;
     }
   }
 
   changeCategory(status: string): void {
     this.sortCategory = status;
-    this.companyList = this.sortCategory === 'All' ? COMPANYLIST : COMPANYLIST.filter((company) => company.status.includes(this.sortCategory));
+    this.companyList =
+      this.sortCategory === 'All'
+        ? COMPANYLIST
+        : COMPANYLIST.filter((company) => company.status.includes(this.sortCategory));
   }
-
 }

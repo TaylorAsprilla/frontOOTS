@@ -1,0 +1,177 @@
+<div class="container-fluid">
+    <!-- Page Title -->
+    <app-page-title [breadcrumbItems]="breadcrumbItems" [title]="'cases.listTitle' | transloco"> </app-page-title>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Header Actions -->
+                    <div class="row align-items-center mb-4">
+                        <div class="col-sm-6">
+                            <h4 class="card-title mb-0">
+                                <i class="mdi mdi-folder-open me-2 text-primary"></i>
+                                {{ 'cases.listTitle' | transloco }}
+                            </h4>
+                        </div>
+                    </div>
+
+                    <!-- Filters and Search -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <form [formGroup]="searchForm">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" formControlName="searchTerm"
+                                        [placeholder]="'cases.searchPlaceholder' | transloco" />
+                                    <button class="btn btn-outline-secondary" type="button" (click)="clearSearch()">
+                                        <i class="mdi mdi-close"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-end">
+                                <div ngbDropdown class="d-inline-block">
+                                    <button class="btn btn-outline-primary dropdown-toggle" ngbDropdownToggle
+                                        id="statusFilter">
+                                        <i class="mdi mdi-filter me-1"></i>
+                                        {{ getStatusLabel(statusFilter) | transloco }}
+                                    </button>
+                                    <div ngbDropdownMenu aria-labelledby="statusFilter">
+                                        @for (option of statusOptions; track option.value) {
+                                        <button ngbDropdownItem (click)="onStatusFilterChange(option.value)"
+                                            [class.active]="statusFilter === option.value">
+                                            {{ option.label | transloco }}
+                                        </button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loading State -->
+                    @if (isLoading) {
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">{{ 'app.loading' | transloco }}</span>
+                        </div>
+                        <p class="mt-2 text-muted">{{ 'cases.loadingCases' | transloco }}</p>
+                    </div>
+                    }
+
+                    <!-- Cases Table -->
+                    @if (!isLoading && filteredCases.length > 0) {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>{{ 'cases.caseNumber' | transloco }}</th>
+                                    <th>{{ 'cases.participantName' | transloco }}</th>
+                                    <th>{{ 'cases.consultationReason' | transloco }}</th>
+                                    <th>{{ 'cases.status' | transloco }}</th>
+                                    <th>{{ 'cases.openingDate' | transloco }}</th>
+                                    <th class="text-center">{{ 'app.actions' | transloco }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (caseItem of filteredCases; track caseItem.id) {
+                                <tr>
+                                    <td>
+                                        <span class="fw-bold text-primary">{{ caseItem.caseNumber || 'N/A' }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div
+                                                class="avatar-sm bg-primary rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                <span class="text-white fw-bold">
+                                                    <i class="mdi mdi-account"></i>
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0">{{ getParticipantName(caseItem) }}</h6>
+                                                <small class="text-muted">ID: {{ caseItem.participantId }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="text-truncate d-inline-block" style="max-width: 300px;"
+                                            [title]="caseItem.consultationReason.reason">
+                                            {{ caseItem.consultationReason.reason }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span [class]="getStatusBadgeClass(caseItem.status)">
+                                            {{ 'cases.' + caseItem.status | transloco }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (caseItem.openingDate) {
+                                        <span>{{ caseItem.openingDate | date : 'short' }}</span>
+                                        } @else {
+                                        <span class="text-muted">{{ 'app.notAvailable' | transloco }}</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group" ngbDropdown>
+                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                                ngbDropdownToggle [attr.aria-label]="'cases.actions' | transloco">
+                                                <i class="mdi mdi-dots-horizontal"></i>
+                                            </button>
+                                            <div ngbDropdownMenu>
+                                                <a ngbDropdownItem [routerLink]="['/cases/detail', caseItem.id]">
+                                                    <i class="mdi mdi-eye me-2"></i>
+                                                    {{ 'app.view' | transloco }}
+                                                </a>
+                                                <a ngbDropdownItem [routerLink]="['/cases/edit', caseItem.id]">
+                                                    <i class="mdi mdi-pencil me-2"></i>
+                                                    {{ 'app.edit' | transloco }}
+                                                </a>
+                                                <div class="dropdown-divider"></div>
+                                                <button ngbDropdownItem class="text-danger"
+                                                    (click)="deleteCase(caseItem)">
+                                                    <i class="mdi mdi-delete me-2"></i>
+                                                    {{ 'app.delete' | transloco }}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    @if (totalItems > pageSize) {
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <div>
+                            <small class="text-muted">
+                                {{ 'app.showing' | transloco }}
+                                {{ (currentPage - 1) * pageSize + 1 }} -
+                                {{ Math.min(currentPage * pageSize, totalItems) }}
+                                {{ 'app.of' | transloco }} {{ totalItems }}
+                                {{ 'cases.cases' | transloco }}
+                            </small>
+                        </div>
+                        <ngb-pagination [(page)]="currentPage" [pageSize]="pageSize" [collectionSize]="totalItems"
+                            [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="onPageChange($event)">
+                        </ngb-pagination>
+                    </div>
+                    } }
+
+                    <!-- Empty State -->
+                    @if (!isLoading && filteredCases.length === 0) {
+                    <div class="text-center py-5">
+                        <div class="mb-3">
+                            <i class="mdi mdi-folder-search display-4 text-muted"></i>
+                        </div>
+                        <h5 class="text-muted">{{ 'cases.noCasesFound' | transloco }}</h5>
+                        <p class="text-muted mb-4">{{ 'cases.noCasesMessage' | transloco }}</p>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import {
@@ -9,7 +9,12 @@ import {
   ParticipantListResponse,
   ParticipantStatus,
 } from '../interfaces/participant.interface';
+import {
+  CreateParticipantDto,
+  ParticipantResponse as CreateParticipantResponse,
+} from '../interfaces/participant-create.interface';
 import { NotificationService } from './notification.service';
+import { TokenStorageService } from './token-storage.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -20,7 +25,16 @@ export class ParticipantService {
 
   private readonly http = inject(HttpClient);
   private readonly notificationService = inject(NotificationService);
+  private readonly tokenStorageService = inject(TokenStorageService);
   private readonly apiUrl = `${this.url}/participants`; // Base API URL
+
+  private getHeaders(): HttpHeaders {
+    const token = this.tokenStorageService.getToken();
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    });
+  }
 
   // State management
   private participantsSubject = new BehaviorSubject<Participant[]>([]);
@@ -53,7 +67,7 @@ export class ParticipantService {
 
     return this.http.get<ParticipantListResponse>(`${this.apiUrl}${params}`).pipe(
       map((response) => {
-        this.participantsSubject.next(response.data);
+        this.participantsSubject.next(response.data.data);
         this.loadingSubject.next(false);
         return response;
       }),
@@ -68,7 +82,7 @@ export class ParticipantService {
   /**
    * Get participant by ID
    */
-  getParticipantById(id: string): Observable<ParticipantResponse> {
+  getParticipantById(id: number | string): Observable<ParticipantResponse> {
     this.loadingSubject.next(true);
 
     return this.http.get<ParticipantResponse>(`${this.apiUrl}/${id}`).pipe(
@@ -85,34 +99,42 @@ export class ParticipantService {
   }
 
   /**
-   * Create new participant
+   * Create new participant with new API structure
    */
-  createParticipant(participantData: ParticipantFormData): Observable<ParticipantResponse> {
+  createParticipant(participantData: CreateParticipantDto): Observable<CreateParticipantResponse> {
     this.loadingSubject.next(true);
 
-    return this.http.post<ParticipantResponse>(`${this.apiUrl}`, participantData).pipe(
-      map((response) => {
-        this.loadingSubject.next(false);
-        this.notificationService.showSuccess('Participant created successfully');
-
-        // Update local state
-        const currentParticipants = this.participantsSubject.value;
-        this.participantsSubject.next([...currentParticipants, response.data]);
-
-        return response;
-      }),
-      catchError((error) => {
-        this.loadingSubject.next(false);
-        this.notificationService.showError('Failed to create participant');
-        return throwError(() => error);
+    return this.http
+      .post<CreateParticipantResponse>(this.apiUrl, participantData, {
+        headers: this.getHeaders(),
       })
-    );
+      .pipe(
+        map((response) => {
+          this.loadingSubject.next(false);
+          this.notificationService.showSuccess('Participante creado exitosamente');
+
+          // Update local state if needed
+          const currentParticipants = this.participantsSubject.value;
+          this.participantsSubject.next([...currentParticipants, response.data as any]);
+
+          return response;
+        }),
+        catchError((error) => {
+          this.loadingSubject.next(false);
+          const errorMessage = error.error?.message || 'Error al crear el participante';
+          this.notificationService.showError(errorMessage);
+          return throwError(() => error);
+        })
+      );
   }
 
   /**
    * Update existing participant
    */
-  updateParticipant(id: string, participantData: Partial<ParticipantFormData>): Observable<ParticipantResponse> {
+  updateParticipant(
+    id: number | string,
+    participantData: Partial<ParticipantFormData>
+  ): Observable<ParticipantResponse> {
     this.loadingSubject.next(true);
 
     return this.http.put<ParticipantResponse>(`${this.apiUrl}/${id}`, participantData).pipe(
@@ -122,7 +144,7 @@ export class ParticipantService {
 
         // Update local state
         const currentParticipants = this.participantsSubject.value;
-        const updatedParticipants = currentParticipants.map((p) => (p.id === id ? response.data : p));
+        const updatedParticipants = currentParticipants.map((p) => (p.id === Number(id) ? response.data : p));
         this.participantsSubject.next(updatedParticipants);
 
         return response;
@@ -138,7 +160,7 @@ export class ParticipantService {
   /**
    * Delete participant
    */
-  deleteParticipant(id: string): Observable<{ success: boolean; message?: string }> {
+  deleteParticipant(id: number): Observable<{ success: boolean; message?: string }> {
     this.loadingSubject.next(true);
 
     return this.http.delete<{ success: boolean; message?: string }>(`${this.apiUrl}/${id}`).pipe(
