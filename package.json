@@ -10,7 +10,7 @@
     "build:subfolder": "ng build oots-colombia --configuration production-subfolder",
     "build:oots": "ng build oots-colombia --configuration production-oots",
     "build:pr": "ng build oots-colombia --configuration production-pr",
-    "build:col": "ng build oots-colombia --configuration production-col",
+    "build:col": "ng build oots-colombia --configuration production-col", 
     "clean": "rimraf dist",
     "clean-modules": "rimraf node_modules",
     "analyze": "ng build oots-colombia --configuration production --stats-json && npx webpack-bundle-analyzer dist/oots-colombia/stats.json",

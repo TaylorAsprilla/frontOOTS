@@ -87,8 +87,8 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
-              "baseHref": "/oots-colombia/",
-              "deployUrl": "/oots-colombia/",
+              "baseHref": "/oots/",
+              "deployUrl": "/oots/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -146,6 +146,8 @@
               "vendorChunk": false,
               "buildOptimizer": true,
               "outputPath": "dist/oots-pr",
+              "baseHref": "/oots/",
+              "deployUrl": "/oots/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -174,6 +176,8 @@
               "vendorChunk": false,
               "buildOptimizer": true,
               "outputPath": "dist/oots-col",
+              "baseHref": "/oots/",
+              "deployUrl": "/oots/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
