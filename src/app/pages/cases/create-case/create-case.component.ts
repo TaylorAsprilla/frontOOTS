@@ -14,12 +14,15 @@ import { PageTitleComponent } from '../../../shared/page-title/page-title.compon
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import {
   CreateCaseDto,
+  FollowUpPlanDto,
+  PhysicalHealthHistoryDto,
+  MentalHealthHistoryDto,
+  WeighingDto,
+  InterventionPlanDto,
+  ProgressNoteDto,
+  ClosingNoteDto,
   ApproachType,
   ProcessType,
-  Medication,
-  SubstanceUse,
-  ProgressNote,
-  Referral,
 } from '../../../core/interfaces/case.interface';
 
 /**
@@ -443,15 +446,67 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
     return {
       participantId: this.participantId,
-      consultationReason: formValue.consultationReason,
-      identifiedSituations: formValue.identifiedSituations,
-      intervention: formValue.intervention,
-      followUpPlan: formValue.followUpPlan,
-      physicalHealthHistory: formValue.physicalHealthHistory,
-      mentalHealthHistory: formValue.mentalHealthHistory,
-      assessment: formValue.assessment,
-      interventionPlan: formValue.interventionPlan,
-      referrals: formValue.referrals,
+      consultationReason: formValue.consultationReason.reason,
+      identifiedSituations: formValue.identifiedSituations.situations,
+      intervention: formValue.intervention.action,
+      followUpPlan: [
+        {
+          processCompleted: formValue.followUpPlan.processCompleted,
+          coordinatedService: formValue.followUpPlan.servicesCoordinated ? formValue.followUpPlan.servicesAgency : null,
+          referred: formValue.followUpPlan.referralMade,
+          referralDetails: formValue.followUpPlan.referralDetails || null,
+          orientationAppointment: formValue.followUpPlan.appointmentScheduled,
+          appointmentDate: formValue.followUpPlan.appointmentDate || null,
+          appointmentTime: formValue.followUpPlan.appointmentTime || null,
+          others: formValue.followUpPlan.others || null,
+        },
+      ],
+      physicalHealthHistory: formValue.physicalHealthHistory.conditions.map((condition: any) => ({
+        currentConditions: condition.condition,
+        medications: condition.receivingTreatment ? condition.treatmentDetails : null,
+        familyHistoryFather: condition.paternalFamilyHistory,
+        familyHistoryMother: condition.maternalFamilyHistory,
+        observations: condition.observations,
+      })),
+      mentalHealthHistory: formValue.mentalHealthHistory.conditions.map((condition: any) => ({
+        currentConditions: condition.condition,
+        medications: condition.receivingTreatment ? condition.treatmentDetails : null,
+        familyHistoryFather: condition.paternalFamilyHistory,
+        familyHistoryMother: condition.maternalFamilyHistory,
+        observations: condition.observations,
+      })),
+      weighing: {
+        reasonConsultation: formValue.assessment.generalDescription,
+        identifiedSituation: formValue.identifiedSituations.description,
+        favorableConditions: formValue.assessment.concurrentFactors,
+        conditionsNotFavorable: formValue.assessment.criticalFactors,
+        helpProcess: formValue.assessment.theoreticalFramework,
+      },
+      interventionPlans: formValue.interventionPlan.interventions.map((intervention: any) => ({
+        goal: intervention.goals,
+        objectives: intervention.objectives,
+        activities: intervention.activities,
+        timeline: intervention.timeframe,
+        responsible: intervention.responsiblePerson,
+        evaluationCriteria: intervention.evaluationCriteria,
+      })),
+      progressNotes: formValue.progressNotes.notes.map((note: any) => ({
+        sessionDate: note.date,
+        sessionType: note.approachType,
+        summary: note.interventionSummary,
+        observations: note.observations,
+        agreements: note.agreements,
+      })),
+      referrals: formValue.referrals.referralsJustification,
+      closingNote: formValue.closingNote.closureDate
+        ? {
+            closingDate: formValue.closingNote.closureDate,
+            reason: formValue.closingNote.closureReason,
+            achievements: formValue.closingNote.achievements,
+            recommendations: formValue.closingNote.recommendations,
+            observations: formValue.closingNote.observations,
+          }
+        : undefined,
     };
   }
 

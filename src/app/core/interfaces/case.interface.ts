@@ -257,6 +257,84 @@ export interface ClosingNote {
  */
 export interface CreateCaseDto {
   participantId: number;
+  consultationReason: string;
+  identifiedSituations: number[];
+  intervention: string;
+  followUpPlan: FollowUpPlanDto[];
+  physicalHealthHistory: PhysicalHealthHistoryDto[];
+  mentalHealthHistory: MentalHealthHistoryDto[];
+  weighing: WeighingDto;
+  interventionPlans: InterventionPlanDto[];
+  progressNotes: ProgressNoteDto[];
+  referrals: string;
+  closingNote?: ClosingNoteDto;
+}
+
+export interface FollowUpPlanDto {
+  processCompleted: boolean;
+  coordinatedService?: string | null;
+  referred: boolean;
+  referralDetails?: string | null;
+  orientationAppointment: boolean;
+  appointmentDate?: string | null;
+  appointmentTime?: string | null;
+  others?: string | null;
+}
+
+export interface PhysicalHealthHistoryDto {
+  currentConditions: string;
+  medications: string | null;
+  familyHistoryFather: string;
+  familyHistoryMother: string;
+  observations: string;
+}
+
+export interface MentalHealthHistoryDto {
+  currentConditions: string;
+  medications: string | null;
+  familyHistoryFather: string;
+  familyHistoryMother: string;
+  observations: string;
+}
+
+export interface WeighingDto {
+  reasonConsultation: string;
+  identifiedSituation: string;
+  favorableConditions: string;
+  conditionsNotFavorable: string;
+  helpProcess: string;
+}
+
+export interface InterventionPlanDto {
+  goal: string;
+  objectives: string;
+  activities: string;
+  timeline: string;
+  responsible: string;
+  evaluationCriteria: string;
+}
+
+export interface ProgressNoteDto {
+  sessionDate: string;
+  sessionType: string;
+  summary: string;
+  observations: string;
+  agreements: string;
+}
+
+export interface ClosingNoteDto {
+  closingDate: string;
+  reason: string;
+  achievements: string;
+  recommendations: string;
+  observations?: string;
+}
+
+/**
+ * DTO for creating a new case (Legacy - mantener para compatibilidad)
+ */
+export interface CreateCaseDtoLegacy {
+  participantId: number;
   consultationReason: ConsultationReason;
   identifiedSituations: IdentifiedSituations;
   intervention: Intervention;
