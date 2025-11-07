@@ -26,9 +26,7 @@ export class AppComponent implements OnInit {
   private validateExistingToken(): void {
     if (this.authService.isAuthenticated() && !this.authService.isTokenExpired()) {
       this.authService.validateToken().subscribe({
-        next: (completeUser) => {
-          console.log('Token validado exitosamente. Usuario completo:', completeUser);
-        },
+        next: (completeUser) => {},
         error: (error) => {
           console.warn('Error al validar token existente:', error);
           // El servicio ya maneja el logout automático en caso de error 401

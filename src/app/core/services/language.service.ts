@@ -23,7 +23,6 @@ export class LanguageService {
     // Esperar a que Transloco esté listo antes de inicializar
     this.transloco.events$.subscribe((event) => {
       if (event.type === 'translationLoadSuccess') {
-        console.log('Traducciones cargadas exitosamente para:', event.payload.langName);
       }
       if (event.type === 'translationLoadFailure') {
         console.error('Error cargando traducciones para:', event.payload.langName);
