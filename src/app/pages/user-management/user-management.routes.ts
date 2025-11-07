@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { documentTypesResolver } from '../../core/resolvers/document-types.resolver';
 
 /**
  * Rutas escalables para el módulo de gestión de usuarios
@@ -32,6 +33,9 @@ export const USER_MANAGEMENT_ROUTES: Routes = [
     path: 'create',
     title: 'Create User',
     loadComponent: () => import('./user-create/user-create.component').then((c) => c.UserCreateComponent),
+    resolve: {
+      documentTypes: documentTypesResolver,
+    },
     data: {
       breadcrumb: 'Create User',
       description: 'Create a new user in the system',

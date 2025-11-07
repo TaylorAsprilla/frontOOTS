@@ -75,7 +75,6 @@ export class LoginComponent implements OnInit {
         .pipe(first())
         .subscribe({
           next: (authenticatedUser) => {
-            console.log('Login successful:', authenticatedUser);
             // Navegar al dashboard o a la URL de retorno
             this.router.navigate([this.returnUrl]);
           },

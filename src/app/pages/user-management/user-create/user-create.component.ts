@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule } from '@ngneat/transloco';
 import { NgxIntlTelInputModule, SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
@@ -9,6 +9,7 @@ import { PageTitleComponent } from '../../../shared/page-title/page-title.compon
 import { UserService } from '../../../core/services/user.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
+import { DocumentType } from '../../configuration/document-types/document-type.interface';
 
 @Component({
   selector: 'app-user-create',
@@ -21,6 +22,7 @@ export class UserCreateComponent implements OnInit, OnDestroy {
   // Dependency injection with inject()
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly userService = inject(UserService);
   private readonly notificationService = inject(NotificationService);
   private readonly destroy$ = new Subject<void>();
@@ -29,6 +31,9 @@ export class UserCreateComponent implements OnInit, OnDestroy {
   userForm!: FormGroup;
   isSubmitting = false;
 
+  // Document types from resolver
+  documentTypes: DocumentType[] = [];
+
   // Expose enums for template
   SearchCountryField = SearchCountryField;
   CountryISO = CountryISO;
@@ -36,6 +41,7 @@ export class UserCreateComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.setupPageTitle();
+    this.loadDocumentTypesFromResolver();
     this.initializeForm();
     this.setupDocumentValidation();
   }
@@ -53,6 +59,20 @@ export class UserCreateComponent implements OnInit, OnDestroy {
     ];
   }
 
+  /**
+   * Load document types from route resolver
+   */
+  private loadDocumentTypesFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['documentTypes'];
+    if (resolvedData && resolvedData.statusCode === 200) {
+      this.documentTypes = resolvedData.data;
+      console.log('Document types loaded from resolver:', this.documentTypes);
+    } else {
+      console.warn('No document types found in resolver data');
+      this.documentTypes = [];
+    }
+  }
+
   private initializeForm(): void {
     this.userForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
@@ -68,7 +88,7 @@ export class UserCreateComponent implements OnInit, OnDestroy {
       birthDate: ['', [Validators.required]],
       position: ['', [Validators.required, Validators.maxLength(100)]],
       headquarters: ['', [Validators.required, Validators.maxLength(100)]],
-      documentTypeId: [1, [Validators.required]],
+      documentTypeId: ['', [Validators.required]],
     });
   }
 

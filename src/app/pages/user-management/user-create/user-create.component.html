@@ -108,9 +108,9 @@
                       <select class="form-select" id="documentTypeId" formControlName="documentTypeId"
                         [class.is-invalid]="isFieldInvalid('documentTypeId')">
                         <option value="" disabled selected>Seleccione</option>
-                        <option [ngValue]="1">Cédula de Ciudadanía</option>
-                        <option [ngValue]="2">Cédula de Extranjería</option>
-                        <option [ngValue]="3">Pasaporte</option>
+                        @for (docType of documentTypes; track docType.id) {
+                        <option [ngValue]="docType.id">{{ docType.name }}</option>
+                        }
                       </select>
                       @if (isFieldInvalid('documentTypeId')) {
                       <div class="invalid-feedback d-block">
