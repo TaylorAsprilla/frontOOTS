@@ -7,6 +7,7 @@ import {
   ParticipantFormData,
   ParticipantResponse,
   ParticipantListResponse,
+  ParticipantByUserResponse,
   ParticipantStatus,
 } from '../interfaces/participant.interface';
 import {
@@ -77,6 +78,30 @@ export class ParticipantService {
         return throwError(() => error);
       })
     );
+  }
+
+  /**
+   * Get participants created by a specific user
+   */
+  getParticipantsByUser(userId: number): Observable<ParticipantByUserResponse> {
+    this.loadingSubject.next(true);
+
+    return this.http
+      .get<ParticipantByUserResponse>(`${this.apiUrl}/by-user/${userId}`, {
+        headers: this.getHeaders(),
+      })
+      .pipe(
+        map((response) => {
+          this.participantsSubject.next(response.data.participants);
+          this.loadingSubject.next(false);
+          return response;
+        }),
+        catchError((error) => {
+          this.loadingSubject.next(false);
+          this.notificationService.showError('Error al cargar los participantes del usuario');
+          return throwError(() => error);
+        })
+      );
   }
 
   /**
