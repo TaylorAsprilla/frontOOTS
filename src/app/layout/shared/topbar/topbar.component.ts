@@ -148,56 +148,56 @@ export class TopbarComponent implements OnInit {
         subText: '1 min ago',
         icon: 'mdi mdi-comment-account-outline',
         bgColor: 'primary',
-        redirectTo: '/dashboard-1',
+        redirectTo: '/dashboard',
       },
       {
         text: 'New user registered.',
         subText: '5 min ago',
         icon: 'mdi mdi-account-plus',
         bgColor: 'info',
-        redirectTo: '/dashboard-1',
+        redirectTo: '/dashboard',
       },
       {
         text: 'Cristina Pride',
         subText: 'Hi, How are you? What about our next meeting',
         avatar: 'assets/images/users/user-4.jpg',
         bgColor: 'success',
-        redirectTo: '/dashboard-1',
+        redirectTo: '/dashboard',
       },
       {
         text: 'Caleb Flakelar commented on Admin',
         subText: '2 days ago',
         icon: 'mdi mdi-comment-account-outline',
         bgColor: 'danger',
-        redirectTo: '/dashboard-1',
+        redirectTo: '/dashboard',
       },
       {
         text: 'Caleb Flakelar commented on Admin',
         subText: '1 min ago',
         icon: 'mdi mdi-comment-account-outline',
         bgColor: 'primary',
-        redirectTo: '/dashboard-1',
+        redirectTo: '/dashboard',
       },
       {
         text: 'New user registered.',
         subText: '5 min ago',
         icon: 'mdi mdi-account-plus',
         bgColor: 'info',
-        redirectTo: '/dashboard-1',
+        redirectTo: '/dashboard',
       },
       {
         text: 'Cristina Pride',
         subText: 'Hi, How are you? What about our next meeting',
         avatar: 'assets/images/users/user-1.jpg',
         bgColor: 'success',
-        redirectTo: '/dashboard-1',
+        redirectTo: '/dashboard',
       },
       {
         text: 'Caleb Flakelar commented on Admin',
         subText: '2 days ago',
         icon: 'mdi mdi-comment-account-outline',
         bgColor: 'danger',
-        redirectTo: '/dashboard-1',
+        redirectTo: '/dashboard',
       },
     ];
   }
@@ -215,7 +215,7 @@ export class TopbarComponent implements OnInit {
       {
         label: 'navigation.settings',
         icon: 'fe-settings',
-        redirectTo: '/dashboard/dashboard-1', // Temporary redirect until settings page is ready
+        redirectTo: '/dashboard/dashboard', // Temporary redirect until settings page is ready
       },
       {
         label: 'auth.changePassword',
