@@ -1,35 +1,21 @@
 <div class="language-switcher" [attr.aria-label]="'navigation.language_switcher' | transloco">
   <div class="language-flags">
     <!-- Bandera España -->
-    <span
-      class="flag-option"
-      [class.active]="languageService.isLanguageActive('es')"
+    <span class="flag-option" [class.active]="languageService.isLanguageActive('es')"
       [class.inactive]="!languageService.isLanguageActive('es')"
-      [attr.aria-label]="'navigation.switch_to' | transloco : { language: 'Español' }"
-      [attr.role]="'button'"
-      [attr.tabindex]="0"
-      (click)="switchToLanguage('es')"
-      (keydown.enter)="switchToLanguage('es')"
-      (keydown.space)="switchToLanguage('es')"
-      title="Español"
-    >
-      <span class="flag-emoji">🇪🇸</span>
+      [attr.aria-label]="'navigation.switch_to' | transloco : { language: 'Español' }" [attr.role]="'button'"
+      [attr.tabindex]="0" (click)="switchToLanguage('es')" (keydown.enter)="switchToLanguage('es')"
+      (keydown.space)="switchToLanguage('es')" title="Español">
+      <img src="assets/images/flags/spain.jpg" alt="Español" class="flag-img" />
     </span>
 
-    <!-- Bandera Reino Unido -->
-    <span
-      class="flag-option"
-      [class.active]="languageService.isLanguageActive('en')"
+    <!-- Bandera Estados Unidos -->
+    <span class="flag-option" [class.active]="languageService.isLanguageActive('en')"
       [class.inactive]="!languageService.isLanguageActive('en')"
-      [attr.aria-label]="'navigation.switch_to' | transloco : { language: 'English' }"
-      [attr.role]="'button'"
-      [attr.tabindex]="0"
-      (click)="switchToLanguage('en')"
-      (keydown.enter)="switchToLanguage('en')"
-      (keydown.space)="switchToLanguage('en')"
-      title="English"
-    >
-      <span class="flag-emoji">🇬🇧</span>
+      [attr.aria-label]="'navigation.switch_to' | transloco : { language: 'English' }" [attr.role]="'button'"
+      [attr.tabindex]="0" (click)="switchToLanguage('en')" (keydown.enter)="switchToLanguage('en')"
+      (keydown.space)="switchToLanguage('en')" title="English">
+      <img src="assets/images/flags/us.jpg" alt="English" class="flag-img" />
     </span>
   </div>
 </div>

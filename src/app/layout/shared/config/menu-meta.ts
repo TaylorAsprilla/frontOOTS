@@ -9,7 +9,7 @@ const MENU_ITEMS: MenuItem[] = [
     isTitle: false,
     icon: 'airplay',
     collapsed: false,
-    link: '/dashboard-1',
+    link: '/dashboard',
   },
 
   { key: 'administrador', label: 'navigation.administrator', isTitle: true },
@@ -955,7 +955,7 @@ const TWO_COl_MENU_ITEMS: MenuItem[] = [
       {
         key: 'ds-dashboard-1',
         label: 'Dashboard 1',
-        link: '/dashboard-1',
+        link: '/dashboard',
         parentKey: 'dashboard',
       },
       {
@@ -1790,7 +1790,7 @@ const HORIZONTAL_MENU_ITEMS: MenuItem[] = [
       {
         key: 'ds-dashboard-1',
         label: 'Dashboard 1',
-        link: '/dashboard-1',
+        link: '/dashboard',
         parentKey: 'dashboard',
       },
       {

@@ -199,3 +199,15 @@ export interface ParticipantListResponse {
   timestamp: string;
   path: string;
 }
+
+export interface ParticipantByUserResponse {
+  data: {
+    userId: number;
+    total: number;
+    participants: Participant[];
+  };
+  statusCode: number;
+  message: string;
+  timestamp: string;
+  path: string;
+}

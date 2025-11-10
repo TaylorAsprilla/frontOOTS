@@ -12,7 +12,7 @@
                 <div class="text-end">
                     <h3 class="text-dark mt-1"><span [countUp]="statisticsCardData.stats!"
                             [options]="statisticsCardData.options!">{{statisticsCardData.stats | number}}</span></h3>
-                    <p class="text-muted mb-1 text-truncate">{{statisticsCardData.description}}</p>
+                    <p class="text-muted mb-1 text-truncate">{{statisticsCardData.description | transloco}}</p>
                 </div>
             </div>
         </div> <!-- end row-->

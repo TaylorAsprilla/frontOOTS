@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'dashboard-1', pathMatch: 'full' },
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   {
-    path: 'dashboard-1',
+    path: 'dashboard',
     loadComponent: () =>
       import('./dashboard/dashboard-one/dashboard-one.component').then((c) => c.DashboardOneComponent),
   },

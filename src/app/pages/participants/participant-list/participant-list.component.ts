@@ -8,6 +8,7 @@ import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 
 import { ParticipantService } from '../../../core/services/participant.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { AuthenticationService } from '../../../core/services/auth.service';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { Participant, ParticipantStatus } from '../../../core/interfaces/participant.interface';
@@ -31,6 +32,7 @@ import { Participant, ParticipantStatus } from '../../../core/interfaces/partici
 export class ParticipantListComponent implements OnInit, OnDestroy {
   private readonly participantService = inject(ParticipantService);
   private readonly notificationService = inject(NotificationService);
+  private readonly authService = inject(AuthenticationService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly destroy$ = new Subject<void>();
 
@@ -93,24 +95,61 @@ export class ParticipantListComponent implements OnInit, OnDestroy {
   loadParticipants(): void {
     this.isLoading = true;
 
-    const filters = {
-      page: this.currentPage,
-      limit: this.pageSize,
-      search: this.searchForm.get('searchTerm')?.value || '',
-      status: this.statusFilter !== 'all' ? this.statusFilter : undefined,
-    };
+    // Obtener el usuario actual
+    const currentUser = this.authService.currentUser();
 
+    if (!currentUser || !currentUser.id) {
+      this.notificationService.showError('No se pudo obtener la información del usuario');
+      this.isLoading = false;
+      return;
+    }
+
+    // Usar el nuevo método que filtra por usuario (sin filtros adicionales en el backend)
     this.participantService
-      .getParticipants(filters)
+      .getParticipantsByUser(currentUser.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.participants = response.data.data;
-          this.filteredParticipants = response.data.data;
-          this.totalItems = response.data.total || 0;
+          // Obtener los participantes de la respuesta
+          const allParticipants = response?.data?.participants || [];
+
+          // Aplicar filtros localmente
+          let filteredData = [...allParticipants];
+
+          // Filtrar por búsqueda local
+          const searchTerm = this.searchForm.get('searchTerm')?.value?.toLowerCase() || '';
+          if (searchTerm) {
+            filteredData = filteredData.filter(
+              (participant) =>
+                participant.firstName?.toLowerCase().includes(searchTerm) ||
+                participant.firstLastName?.toLowerCase().includes(searchTerm) ||
+                participant.secondLastName?.toLowerCase().includes(searchTerm) ||
+                participant.email?.toLowerCase().includes(searchTerm) ||
+                participant.documentNumber?.includes(searchTerm)
+            );
+          }
+
+          // Filtrar por estado local
+          if (this.statusFilter !== 'all') {
+            filteredData = filteredData.filter((participant) => participant.status === this.statusFilter);
+          }
+
+          // Calcular total después de filtros
+          this.totalItems = filteredData.length;
+
+          // Aplicar paginación local
+          const startIndex = (this.currentPage - 1) * this.pageSize;
+          const endIndex = startIndex + this.pageSize;
+
+          this.participants = allParticipants; // Guardar todos los participantes
+          this.filteredParticipants = filteredData.slice(startIndex, endIndex); // Mostrar solo la página actual
           this.isLoading = false;
         },
         error: (error) => {
+          console.error('Error loading participants:', error);
+          this.participants = [];
+          this.filteredParticipants = [];
+          this.totalItems = 0;
           this.isLoading = false;
         },
       });

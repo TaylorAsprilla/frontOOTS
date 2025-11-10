@@ -6,7 +6,14 @@ import { map, catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { TokenStorageService } from './token-storage.service';
 import { NotificationService } from './notification.service';
-import { Case, CaseResponse, CaseListResponse, CreateCaseDto, CaseStatus } from '../interfaces/case.interface';
+import {
+  Case,
+  CaseResponse,
+  CaseListResponse,
+  CasesByUserResponse,
+  CreateCaseDto,
+  CaseStatus,
+} from '../interfaces/case.interface';
 
 /**
  * Service for managing participant cases
@@ -96,6 +103,24 @@ export class CaseService {
    */
   getCasesByParticipantId(participantId: number): Observable<CaseListResponse> {
     return this.getCases({ participantId });
+  }
+
+  /**
+   * Get cases by user ID
+   */
+  getCasesByUserId(userId: number): Observable<CasesByUserResponse> {
+    this.loadingSubject.next(true);
+
+    return this.http.get<CasesByUserResponse>(`${this.apiUrl}/by-user/${userId}`, { headers: this.getHeaders() }).pipe(
+      tap((response) => {
+        this.loadingSubject.next(false);
+      }),
+      catchError((error) => {
+        this.loadingSubject.next(false);
+        this.notificationService.showError(error.error?.message || 'Error al cargar los casos del usuario');
+        return throwError(() => error);
+      })
+    );
   }
 
   /**

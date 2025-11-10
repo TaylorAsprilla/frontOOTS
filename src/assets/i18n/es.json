@@ -427,7 +427,55 @@
     "stats": {
       "participants": "Participantes",
       "openCases": "Casos Abiertos",
+      "closedCases": "Casos Cerrados",
+      "followUps": "Seguimientos"
+    },
+    "charts": {
+      "participantRelation": "Relación Casos / Participantes",
+      "participants": "Participantes",
+      "cases": "Casos",
+      "average": "Promedio",
+      "casesPerParticipant": "casos por participante",
+      "casesPerMonth": "Casos Realizados por Mes",
+      "totalCases": "Total de Casos",
       "closedCases": "Casos Cerrados"
+    },
+    "tables": {
+      "recentParticipants": "Participantes Recientes",
+      "caseHistory": "Historial de Casos",
+      "name": "Nombre",
+      "document": "Documento",
+      "email": "Email",
+      "date": "Fecha",
+      "participant": "Participante",
+      "caseNumber": "Número de Caso",
+      "status": "Estado",
+      "actions": "Acciones",
+      "noParticipants": "No hay participantes registrados",
+      "noCases": "No hay casos registrados",
+      "viewDetails": "Ver detalles"
+    },
+    "status": {
+      "inProgress": "En Progreso",
+      "active": "Activo",
+      "closed": "Cerrado",
+      "transferred": "Transferido",
+      "suspended": "Suspendido",
+      "unknown": "Desconocido"
+    },
+    "months": {
+      "jan": "Ene",
+      "feb": "Feb",
+      "mar": "Mar",
+      "apr": "Abr",
+      "may": "May",
+      "jun": "Jun",
+      "jul": "Jul",
+      "aug": "Ago",
+      "sep": "Sep",
+      "oct": "Oct",
+      "nov": "Nov",
+      "dec": "Dic"
     }
   },
   "auth": {

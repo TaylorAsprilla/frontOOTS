@@ -367,3 +367,25 @@ export interface CaseListResponse {
   };
   message?: string;
 }
+
+/**
+ * Response for cases by user
+ */
+export interface CasesByUserResponse {
+  userId: number;
+  total: number;
+  cases: Array<{
+    id: number;
+    caseNumber: string;
+    status: string;
+    consultationReason: string;
+    intervention: string;
+    createdAt: string;
+    updatedAt: string;
+    participant: {
+      id: number;
+      fullName: string;
+      documentNumber: string;
+    };
+  }>;
+}
