@@ -5,17 +5,8 @@
       <div class="page-title-right">
         <form class="d-flex align-items-center mb-3">
           <div class="input-group input-group-sm">
-            <input
-              type="text"
-              name="datepicker"
-              id="dash-datepicker"
-              class="form-control border"
-              [(ngModel)]="date"
-              ngbDatepicker
-              #datepicker="ngbDatepicker"
-              (click)="datepicker.toggle()"
-              autoClose="'outside'"
-              />
+            <input type="text" name="datepicker" id="dash-datepicker" class="form-control border" [(ngModel)]="date"
+              ngbDatepicker #datepicker="ngbDatepicker" (click)="datepicker.toggle()" autoClose="'outside'" />
 
             <span class="input-group-text bg-blue border-blue text-white">
               <i class="mdi mdi-calendar-range"></i>
@@ -36,12 +27,18 @@
 <!-- end page title -->
 
 <div class="row">
-  @for (item of statisticsCardData; track item) {
-    <div class="col-md-6 col-xl-3">
-      <app-widget-statistics-card1
-        [statisticsCardData]="item"
-      ></app-widget-statistics-card1>
+  @if (statisticsCardData.length === 0) {
+  <div class="col-12 text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
     </div>
+    <p class="mt-2 text-muted">Cargando estadísticas...</p>
+  </div>
+  }
+  @for (item of statisticsCardData; track item.id) {
+  <div class="col-md-6 col-xl-3">
+    <app-widget-statistics-card1 [statisticsCardData]="item"></app-widget-statistics-card1>
+  </div>
   }
   <!-- end col-->
 </div>
@@ -52,11 +49,7 @@
     <div class="card">
       <div class="card-body">
         <div class="float-end" ngbDropdown>
-          <a
-            href="javascript:void(0);"
-            class="arrow-none card-drop"
-            ngbDropdownToggle
-            >
+          <a href="javascript:void(0);" class="arrow-none card-drop" ngbDropdownToggle>
             <i class="mdi mdi-dots-vertical"></i>
           </a>
           <div class="dropdown-menu-end" ngbDropdownMenu>
@@ -71,44 +64,47 @@
           </div>
         </div>
 
-        <h4 class="header-title mb-0" i18n>Cantidad de Participantes</h4>
+        <h4 class="header-title mb-0" i18n>Casos / Participantes</h4>
 
         <div class="widget-chart text-center" dir="ltr">
           <div id="total-revenue" class="mt-0">
-            <apx-chart
-              class="apex-charts"
-              [series]="revenuChart.series!"
-              [chart]="revenuChart.chart!"
-              [plotOptions]="revenuChart.plotOptions!"
-              [colors]="revenuChart.colors!"
-              [labels]="revenuChart.labels!"
-            ></apx-chart>
+            <apx-chart class="apex-charts" [series]="revenuChart.series!" [chart]="revenuChart.chart!"
+              [plotOptions]="revenuChart.plotOptions!" [colors]="revenuChart.colors!"
+              [labels]="revenuChart.labels!"></apx-chart>
           </div>
 
-          <h5 class="text-muted mt-0" i18n>Cantidad de Casos</h5>
-          <h2>208</h2>
 
-          <div class="row mt-3">
-            <!-- <div class="col-4" *ngFor="let item of chartStatisticsData">
-            <app-widget-chart-statistics
-              [title]="item.title"
-              [icon]="item.icon"
-              [stats]="item.stats"
-              [variant]="item.variant"
-            ></app-widget-chart-statistics>
-          </div> -->
+          <div class="row">
+            <div class="col-6">
+              <p class="text-muted mb-0" i18n="@@dashboardParticipants">Participantes</p>
+              <h3 class="mb-0">{{ totalParticipants }}</h3>
+            </div>
+            <div class="col-6">
+              <p class="text-muted mb-0" i18n="@@dashboardCases">Casos</p>
+              <h3 class="mb-0">{{ totalCases }}</h3>
+            </div>
+          </div>
+          <div class="mt-2">
+            <p class="text-muted mb-0">
+              <small>
+                <span i18n="@@dashboardAverage">Promedio:</span> {{ totalParticipants > 0 ? (totalCases /
+                totalParticipants).toFixed(2) : '0' }} <span i18n="@@dashboardCasesPerParticipant">casos por
+                  participante</span>
+              </small>
+            </p>
+          </div>
         </div>
       </div>
     </div>
+    <!-- end card -->
   </div>
-  <!-- end card -->
-</div>
-<!-- end col-->
+  <!-- end col-->
 
-<div class="col-lg-8">
-  <div class="card">
-    <div class="card-body pb-2">
-      <div class="float-end d-none d-md-inline-block">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-body pb-2">
+        <!-- Botones de filtro comentados por ahora -->
+        <!-- <div class="float-end d-none d-md-inline-block">
         <div class="btn-group mb-2">
           <button type="button" class="btn btn-xs btn-light" i18n>
               Today
@@ -120,34 +116,25 @@
               Monthly
             </button>
         </div>
-      </div>
+      </div> -->
 
-      <h4 class="header-title mb-3" i18n>Casos Realizados</h4>
+        <h4 class="header-title mb-3" i18n="@@dashboardCasesPerMonth">Casos Realizados por Mes ({{ currentYear }})</h4>
 
-      <div dir="ltr">
-        <div id="sales-analytics" class="mt-4">
-          <apx-chart
-            class="apex-charts"
-            [series]="salesAnalyticsChart.series!"
-            [chart]="salesAnalyticsChart.chart!"
-            [plotOptions]="salesAnalyticsChart.plotOptions!"
-            [dataLabels]="salesAnalyticsChart.dataLabels!"
-            [yaxis]="salesAnalyticsChart.yaxis!"
-            [legend]="salesAnalyticsChart.legend!"
-            [grid]="salesAnalyticsChart.grid!"
-            [fill]="salesAnalyticsChart.fill!"
-            [colors]="salesAnalyticsChart.colors!"
-            [labels]="salesAnalyticsChart.labels!"
-            [xaxis]="salesAnalyticsChart.xaxis!"
-            [stroke]="salesAnalyticsChart.stroke!"
-          ></apx-chart>
+        <div dir="ltr">
+          <div id="sales-analytics" class="mt-4">
+            <apx-chart class="apex-charts" [series]="salesAnalyticsChart.series!" [chart]="salesAnalyticsChart.chart!"
+              [plotOptions]="salesAnalyticsChart.plotOptions!" [dataLabels]="salesAnalyticsChart.dataLabels!"
+              [yaxis]="salesAnalyticsChart.yaxis!" [legend]="salesAnalyticsChart.legend!"
+              [grid]="salesAnalyticsChart.grid!" [fill]="salesAnalyticsChart.fill!"
+              [colors]="salesAnalyticsChart.colors!" [labels]="salesAnalyticsChart.labels!"
+              [xaxis]="salesAnalyticsChart.xaxis!" [stroke]="salesAnalyticsChart.stroke!"></apx-chart>
+          </div>
         </div>
       </div>
     </div>
+    <!-- end card -->
   </div>
-  <!-- end card -->
-</div>
-<!-- end col-->
+  <!-- end col-->
 </div>
 <!-- end row -->
 
@@ -156,11 +143,7 @@
     <div class="card">
       <div class="card-body">
         <div class="float-end" ngbDropdown>
-          <a
-            href="javascript:void(0);"
-            class="arrow-none card-drop"
-            ngbDropdownToggle
-            >
+          <a href="javascript:void(0);" class="arrow-none card-drop" ngbDropdownToggle>
             <i class="mdi mdi-dots-vertical"></i>
           </a>
           <div class="dropdown-menu-end" ngbDropdownMenu>
@@ -173,50 +156,52 @@
           </div>
         </div>
 
-        <h4 class="header-title mb-3" i18n>Participantes Recientes</h4>
+        <h4 class="header-title mb-3" i18n="@@dashboardRecentParticipants">Participantes Recientes</h4>
 
         <div class="table-responsive">
-          <table
-            class="table table-borderless table-hover table-nowrap table-centered m-0"
-            >
+          <table class="table table-borderless table-hover table-nowrap table-centered m-0">
             <thead class="table-light">
               <tr>
-                <th colspan="2" i18n>Nombre</th>
-                <th i18n>Tipo</th>
-                <th i18n>Estado</th>
-                <th i18n>Asignado</th>
-                <th i18n>Acciones</th>
+                <th colspan="2" i18n="@@dashboardTableName">Nombre</th>
+                <th i18n="@@dashboardTableDocument">Documento</th>
+                <th i18n="@@dashboardTableEmail">Email</th>
+                <th i18n="@@dashboardTableDate">Fecha</th>
+                <th i18n="@@dashboardTableActions">Acciones</th>
               </tr>
             </thead>
             <tbody>
-              @for (record of userBalanceData; track record) {
-                <tr>
-                  <td style="width: 36px">
-                    <img
-                      [src]="record.avatar"
-                      alt="contact-img"
-                      title="contact-img"
-                      class="rounded-circle avatar-sm"
-                      />
-                  </td>
-                  <td>
-                    <h5 class="m-0 fw-normal" i18n>{{ record.name }}</h5>
-                    <p class="mb-0 text-muted">
-                      <small i18n>Abril - 2024</small>
-                    </p>
-                  </td>
-                  <td>Trabajo Social</td>
-                  <td>Abierto</td>
-                  <td>Myriam Cortes</td>
-                  <td>
-                    <a href="javascript: void(0);" class="btn btn-xs btn-light"
-                      ><i class="mdi mdi-plus"></i
-                    ></a>
-                    <a href="javascript: void(0);" class="btn btn-xs btn-danger"
-                      ><i class="mdi mdi-minus"></i
-                    ></a>
-                  </td>
-                </tr>
+              @if (recentParticipants.length === 0) {
+              <tr>
+                <td colspan="6" class="text-center text-muted">
+                  <p class="mt-3 mb-3" i18n="@@dashboardNoParticipants">No hay participantes registrados</p>
+                </td>
+              </tr>
+              }
+              @for (participant of recentParticipants; track participant.id) {
+              <tr>
+                <td style="width: 36px">
+                  <div
+                    class="avatar-sm bg-primary rounded-circle d-flex align-items-center justify-content-center text-white fw-bold">
+                    {{ getInitials(participant.fullName || participant.firstName + ' ' + participant.firstLastName) }}
+                  </div>
+                </td>
+                <td>
+                  <h5 class="m-0 fw-normal">{{ participant.fullName || participant.firstName + ' ' +
+                    participant.firstLastName }}</h5>
+                  <p class="mb-0 text-muted">
+                    <small>{{ participant.createdAt | date : 'MMMM - yyyy' }}</small>
+                  </p>
+                </td>
+                <td>{{ participant.documentNumber }}</td>
+                <td>{{ participant.email }}</td>
+                <td>{{ participant.createdAt | date : 'dd/MM/yyyy' }}</td>
+                <td>
+                  <a [routerLink]="['/apps/participants', participant.id]" class="btn btn-xs btn-light"
+                    title="Ver detalles">
+                    <i class="mdi mdi-eye"></i>
+                  </a>
+                </td>
+              </tr>
               }
             </tbody>
           </table>
@@ -230,11 +215,7 @@
     <div class="card">
       <div class="card-body">
         <div class="float-end" ngbDropdown>
-          <a
-            href="javascript:void(0);"
-            class="arrow-none card-drop"
-            ngbDropdownToggle
-            >
+          <a href="javascript:void(0);" class="arrow-none card-drop" ngbDropdownToggle>
             <i class="mdi mdi-dots-vertical"></i>
           </a>
           <div class="dropdown-menu-end" ngbDropdownMenu>
@@ -247,65 +228,57 @@
           </div>
         </div>
 
-        <h4 class="header-title mb-3" i18n>Historial</h4>
+        <h4 class="header-title mb-3" i18n="@@dashboardCaseHistory">Historial de Casos</h4>
 
         <div class="table-responsive">
-          <table
-            class="table table-borderless table-nowrap table-hover table-centered m-0"
-            >
+          <table class="table table-borderless table-nowrap table-hover table-centered m-0">
             <thead class="table-light">
               <tr>
-                <th i18n>Tipo de citas</th>
-                <th i18n>Fecha</th>
-
-                <th i18n>Estatus</th>
-                <th i18n>Acciones</th>
+                <th i18n="@@dashboardTableParticipant">Participante</th>
+                <th i18n="@@dashboardTableCaseNumber">Número de Caso</th>
+                <th i18n="@@dashboardTableDate">Fecha</th>
+                <th i18n="@@dashboardTableStatus">Estado</th>
+                <th i18n="@@dashboardTableActions">Acciones</th>
               </tr>
             </thead>
             <tbody>
-              @for (record of revenueHistoryData; track record) {
-                <tr>
-                  <td>
-                    <h5 class="m-0 fw-normal" i18n>{{ record.marketplaces }}</h5>
-                  </td>
-                  <td>
-                    {{ record.date | date : "MMM dd, y" }}
-                  </td>
-                  <td>
-                    @if (record.status === 'Upcoming') {
-                      <span
-                        class="badge bg-soft-warning text-warning"
-                        >Cerrados</span
-                        >
-                      }
-                      @if (record.status === 'Overdue') {
-                        <span
-                          class="badge bg-soft-danger text-danger"
-                          >Abiertos</span
-                          >
-                        }
-                        @if (record.status === 'Paid') {
-                          <span
-                            class="badge bg-soft-success text-success"
-                            >No Regresó</span
-                            >
-                          }
-                        </td>
-                        <td>
-                          <a href="javascript: void(0);" class="btn btn-xs btn-light"
-                            ><i class="mdi mdi-pencil"></i
-                          ></a>
-                        </td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
-              </div>
-              <!-- end .table-responsive-->
-            </div>
-          </div>
-          <!-- end card-->
+              @if (recentCases.length === 0) {
+              <tr>
+                <td colspan="5" class="text-center text-muted">
+                  <p class="mt-3 mb-3" i18n="@@dashboardNoCases">No hay casos registrados</p>
+                </td>
+              </tr>
+              }
+              @for (caseItem of recentCases; track caseItem.id) {
+              <tr>
+                <td>
+                  <h5 class="m-0 fw-normal">{{ caseItem.participant.fullName }}</h5>
+                  <p class="mb-0 text-muted">
+                    <small>{{ caseItem.participant.documentNumber }}</small>
+                  </p>
+                </td>
+                <td>{{ caseItem.caseNumber }}</td>
+                <td>{{ caseItem.createdAt | date : 'MMM dd, y' }}</td>
+                <td>
+                  <span [class]="getCaseStatusClass(caseItem.status)">
+                    {{ getCaseStatusLabel(caseItem.status) }}
+                  </span>
+                </td>
+                <td>
+                  <a [routerLink]="['/apps/cases', caseItem.id]" class="btn btn-xs btn-light" title="Ver detalles">
+                    <i class="mdi mdi-eye"></i>
+                  </a>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
         </div>
-        <!-- end col -->
+        <!-- end .table-responsive-->
       </div>
-      <!-- end row -->
+    </div>
+    <!-- end card-->
+  </div>
+  <!-- end col -->
+</div>
+<!-- end row -->
