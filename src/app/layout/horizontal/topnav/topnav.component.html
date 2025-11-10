@@ -6,26 +6,24 @@
           @for (menu of menuItems; track menu; let i = $index) {
           <!-- menu item without any child -->
           @if (!hasSubmenu(menu)) {
-          <ng-container
-            *ngTemplateOutlet="
+          <ng-container *ngTemplateOutlet="
               MenuItem;
               context: { menu: menu, className: 'nav-item', linkClassName: 'nav-link nav-link-ref' }
-            "
-          >
+            ">
           </ng-container>
           }
+
+
           <!-- menu item with child -->
           @if (hasSubmenu(menu)) {
-          <ng-container
-            *ngTemplateOutlet="
+          <ng-container *ngTemplateOutlet="
               MenuItemWithChildren;
               context: {
                 menu: menu,
                 className: 'nav-item dropdown',
                 linkClassName: 'dropdown-toggle nav-link arrow-none nav-link-ref'
               }
-            "
-          >
+            ">
           </ng-container>
           } }
         </ul>
@@ -41,17 +39,9 @@
 <!-- Reusable Templates -->
 <ng-template #MenuItemWithChildren let-menu="menu" let-className="className" let-linkClassName="linkClassName">
   <li [class]="className" [ngClass]="{ active: activeMenuItems.includes(menu.key) }" ngbDropdown>
-    <a
-      [class]="linkClassName"
-      [ngClass]="{ active: activeMenuItems.includes(menu.key) }"
-      href="javascript: void(0);"
-      role="button"
-      id="topnav-{{ menu.key }}"
-      aria-haspopup="true"
-      [attr.aria-expanded]="!menu.collapsed"
-      [attr.data-menu-key]="menu.key"
-      (click)="toggleMenuItem(menu)"
-    >
+    <a [class]="linkClassName" [ngClass]="{ active: activeMenuItems.includes(menu.key) }" href="javascript: void(0);"
+      role="button" id="topnav-{{ menu.key }}" aria-haspopup="true" [attr.aria-expanded]="!menu.collapsed"
+      [attr.data-menu-key]="menu.key" (click)="toggleMenuItem(menu)">
       @if (menu.icon) {
       <i class="fe-{{ menu.icon }} me-1"></i>
       }
@@ -60,38 +50,31 @@
     </a>
 
     @if (!hasGrandChildren(menu) && menu.children.length >=10) {
-    <div
-      class="dropdown-menu mega-dropdown-menu dropdown-mega-menu-xl"
-      [ngClass]="{ show: !menu.collapsed }"
-      attr.aria-labelledby="topnav-{{ menu.key }}"
-    >
+    <div class="dropdown-menu mega-dropdown-menu dropdown-mega-menu-xl" [ngClass]="{ show: !menu.collapsed }"
+      attr.aria-labelledby="topnav-{{ menu.key }}">
       <ng-container *ngTemplateOutlet="MegaMenu; context: { menu: menu.children }"> </ng-container>
     </div>
-    } @if (!hasGrandChildren(menu) && menu.children.length < 10) {
-    <div class="dropdown-menu" [ngClass]="{ show: !menu.collapsed }" attr.aria-labelledby="topnav-{{ menu.key }}">
+    } @if (!hasGrandChildren(menu) && menu.children.length < 10) { <div class="dropdown-menu"
+      [ngClass]="{ show: !menu.collapsed }" attr.aria-labelledby="topnav-{{ menu.key }}">
       @for ( subitem of menu.children; track subitem) {
-      <ng-container
-        *ngTemplateOutlet="
+      <ng-container *ngTemplateOutlet="
           SubMenu;
           context: { menu: subitem, linkClassName: 'dropdown-toggle dropdown-item arrow-none nav-link-ref' }
-        "
-      >
+        ">
       </ng-container>
       }
-    </div>
-    } @if (hasGrandChildren(menu)) {
-    <div class="dropdown-menu" [ngClass]="{ show: !menu.collapsed }" attr.aria-labelledby="topnav-{{ menu.key }}">
-      @for ( subitem of menu.children; track subitem) {
-      <ng-container
-        *ngTemplateOutlet="
+      </div>
+      } @if (hasGrandChildren(menu)) {
+      <div class="dropdown-menu" [ngClass]="{ show: !menu.collapsed }" attr.aria-labelledby="topnav-{{ menu.key }}">
+        @for ( subitem of menu.children; track subitem) {
+        <ng-container *ngTemplateOutlet="
           SubMenu;
           context: { menu: subitem, linkClassName: 'dropdown-toggle dropdown-item arrow-none nav-link-ref' }
-        "
-      >
-      </ng-container>
+        ">
+        </ng-container>
+        }
+      </div>
       }
-    </div>
-    }
   </li>
 </ng-template>
 
@@ -99,12 +82,8 @@
   <div class="row">
     @for (menuItem of menu; track menuItem) {
     <div class="col-lg-4">
-      <a
-        [routerLink]="menuItem.link"
-        class="dropdown-item nav-link-ref"
-        [ngClass]="{ active: activeMenuItems.includes(menuItem.key) }"
-        [attr.data-menu-key]="menuItem.key"
-      >
+      <a [routerLink]="menuItem.link" class="dropdown-item nav-link-ref"
+        [ngClass]="{ active: activeMenuItems.includes(menuItem.key) }" [attr.data-menu-key]="menuItem.key">
         {{ menuItem.label }}
       </a>
     </div>
@@ -115,46 +94,30 @@
 <ng-template #SubMenu let-menu="menu" let-linkClassName="linkClassName">
   @if (hasSubmenu(menu)) {
   <div class="dropdown">
-    <a
-      [class]="linkClassName"
-      [ngClass]="{ active: activeMenuItems.includes(menu.key) }"
-      href="javascript: void(0);"
-      id="topnav-{{ menu.key }}"
-      role="button"
-      [attr.data-menu-key]="menu.key"
-      (click)="toggleMenuItem(menu)"
-    >
+    <a [class]="linkClassName" [ngClass]="{ active: activeMenuItems.includes(menu.key) }" href="javascript: void(0);"
+      id="topnav-{{ menu.key }}" role="button" [attr.data-menu-key]="menu.key" (click)="toggleMenuItem(menu)">
       {{ menu.label }}
       <div class="arrow-down"></div>
     </a>
     <div class="dropdown-menu" [ngClass]="{ show: !menu.collapsed }" attr.aria-labelledby="topnav-{{ menu.key }}">
       @for (subitem of menu.children; track subitem) {
       <ng-container
-        *ngTemplateOutlet="SubMenu; context: { menu: subitem, linkClassName: 'dropdown-item arrow-none nav-link-ref' }"
-      >
+        *ngTemplateOutlet="SubMenu; context: { menu: subitem, linkClassName: 'dropdown-item arrow-none nav-link-ref' }">
       </ng-container>
       }
     </div>
   </div>
   } @if (!hasSubmenu(menu)) {
-  <a
-    [routerLink]="menu.link"
-    class="dropdown-item nav-link-ref"
-    [ngClass]="{ active: activeMenuItems.includes(menu.key) }"
-    [attr.data-menu-key]="menu.key"
-    >{{ menu.label }}
+  <a [routerLink]="menu.link" class="dropdown-item nav-link-ref"
+    [ngClass]="{ active: activeMenuItems.includes(menu.key) }" [attr.data-menu-key]="menu.key">{{ menu.label }}
   </a>
   }
 </ng-template>
 
 <ng-template #MenuItem let-menu="menu" let-className="className" let-linkClassName="linkClassName">
   <li [class]="className" [ngClass]="{ active: activeMenuItems.includes(menu.key) }">
-    <a
-      [routerLink]="menu.link"
-      [class]="linkClassName"
-      [ngClass]="{ active: activeMenuItems.includes(menu.key) }"
-      [attr.data-menu-key]="menu.key"
-    >
+    <a [routerLink]="menu.link" [class]="linkClassName" [ngClass]="{ active: activeMenuItems.includes(menu.key) }"
+      [attr.data-menu-key]="menu.key">
       @if (menu.icon) {
       <i [class]="'fe-' + menu.icon"></i>
       }
