@@ -36,7 +36,6 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   @ViewChild('userDetailsModal', { static: false }) userDetailsModal: any;
   // Open modal with user info
   openUserModal(user: UserInfoInterface): void {
-    console.log('Ingresa');
     this.selectedUser = user;
     setTimeout(() => {
       this.modalRef = this.modalService.open(this.userDetailsModal, { centered: true });

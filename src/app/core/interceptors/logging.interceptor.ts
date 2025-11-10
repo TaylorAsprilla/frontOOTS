@@ -17,7 +17,7 @@ export class LoggingInterceptor implements HttpInterceptor {
         },
         error: (error) => {
           const duration = Date.now() - startTime;
-          console.group(`❌ HTTP ${req.method} Error (${duration}ms)`);
+          console.group(`HTTP ${req.method} Error (${duration}ms)`);
           console.error('Error:', error);
           console.error('Status:', error.status);
           console.error('Message:', error.message);

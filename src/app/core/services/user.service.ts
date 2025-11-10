@@ -78,9 +78,6 @@ export class UserService {
 
         return users;
       }),
-      tap((users) => {
-        console.log(`Successfully loaded ${users.length} users from backend`);
-      }),
       catchError((error) => this.handleError(error, 'Error al obtener los usuarios'))
     );
   }
@@ -120,9 +117,6 @@ export class UserService {
         // Transformar la respuesta del backend a UserModel
         const userModel = UserModel.fromBackendResponse(response.data);
         return userModel;
-      }),
-      tap((user) => {
-        console.log(`Successfully loaded user #${id}:`, user.getFullName());
       }),
       catchError((error) => this.handleError(error, 'Error al obtener el usuario'))
     );

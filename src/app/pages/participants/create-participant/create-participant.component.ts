@@ -148,9 +148,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     const resolvedData = this.route.snapshot.data['documentTypes'];
     if (resolvedData && resolvedData.statusCode === 200) {
       this.documentTypes = resolvedData.data;
-      console.log('Document types loaded from resolver:', this.documentTypes);
     } else {
-      console.warn('No document types found in resolver data');
       this.documentTypes = [];
     }
   }
@@ -162,9 +160,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     const resolvedGenders = this.route.snapshot.data['genders'];
     if (resolvedGenders && Array.isArray(resolvedGenders)) {
       this.genders = resolvedGenders;
-      console.log('Genders loaded from resolver:', this.genders);
     } else {
-      console.warn('No genders found in resolver data');
       this.genders = [];
     }
   }
@@ -176,9 +172,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     const resolvedData = this.route.snapshot.data['maritalStatuses'];
     if (resolvedData && Array.isArray(resolvedData)) {
       this.maritalStatuses = resolvedData;
-      console.log('Marital statuses loaded from resolver:', this.maritalStatuses);
     } else {
-      console.warn('No marital statuses found in resolver data');
       this.maritalStatuses = [];
     }
   }
@@ -190,9 +184,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     const resolvedData = this.route.snapshot.data['healthInsurances'];
     if (resolvedData && Array.isArray(resolvedData)) {
       this.healthInsurances = resolvedData;
-      console.log('Health insurances loaded from resolver:', this.healthInsurances);
     } else {
-      console.warn('No health insurances found in resolver data');
       this.healthInsurances = [];
     }
   }
@@ -204,9 +196,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     const resolvedData = this.route.snapshot.data['familyRelationships'];
     if (resolvedData && Array.isArray(resolvedData)) {
       this.familyRelationships = resolvedData;
-      console.log('Family relationships loaded from resolver:', this.familyRelationships);
     } else {
-      console.warn('No family relationships found in resolver data');
       this.familyRelationships = [];
     }
   }
@@ -218,9 +208,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     const resolvedData = this.route.snapshot.data['incomeSources'];
     if (resolvedData && Array.isArray(resolvedData)) {
       this.incomeSources = resolvedData;
-      console.log('Income sources loaded from resolver:', this.incomeSources);
     } else {
-      console.warn('No income sources found in resolver data');
       this.incomeSources = [];
     }
   }
@@ -232,9 +220,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     const resolvedData = this.route.snapshot.data['incomeLevels'];
     if (resolvedData && Array.isArray(resolvedData)) {
       this.incomeLevels = resolvedData;
-      console.log('Income levels loaded from resolver:', this.incomeLevels);
     } else {
-      console.warn('No income levels found in resolver data');
       this.incomeLevels = [];
     }
   }
@@ -246,9 +232,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     const resolvedData = this.route.snapshot.data['housingTypes'];
     if (resolvedData && Array.isArray(resolvedData)) {
       this.housingTypes = resolvedData;
-      console.log('Housing types loaded from resolver:', this.housingTypes);
     } else {
-      console.warn('No housing types found in resolver data');
       this.housingTypes = [];
     }
   }
@@ -260,9 +244,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     const resolvedData = this.route.snapshot.data['academicLevels'];
     if (resolvedData && Array.isArray(resolvedData)) {
       this.academicLevels = resolvedData;
-      console.log('Academic levels loaded from resolver:', this.academicLevels);
     } else {
-      console.warn('No academic levels found in resolver data');
       this.academicLevels = [];
     }
   }

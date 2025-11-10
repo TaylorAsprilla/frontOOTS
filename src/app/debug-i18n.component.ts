@@ -133,7 +133,8 @@ export class I18nDebugComponent implements OnInit {
   private setupSubscriptions() {
     // Suscribirse a cambios del LanguageService
     this.languageService.currentLanguage$.subscribe((lang) => {
-      console.log('LanguageService idioma actual:', lang);
+      this.activeLanguage = lang;
+      this.checkTranslationsLoaded();
     });
   }
 

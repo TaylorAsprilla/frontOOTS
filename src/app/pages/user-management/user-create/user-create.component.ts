@@ -66,9 +66,7 @@ export class UserCreateComponent implements OnInit, OnDestroy {
     const resolvedData = this.route.snapshot.data['documentTypes'];
     if (resolvedData && resolvedData.statusCode === 200) {
       this.documentTypes = resolvedData.data;
-      console.log('Document types loaded from resolver:', this.documentTypes);
     } else {
-      console.warn('No document types found in resolver data');
       this.documentTypes = [];
     }
   }
@@ -152,7 +150,6 @@ export class UserCreateComponent implements OnInit, OnDestroy {
             this.isSubmitting = false;
           },
           error: (error) => {
-            console.log('Error al registrar usuario:', error);
             this.isSubmitting = false;
             let errorTitle = 'Error al registrar usuario';
             let errorMessage = 'Ocurrió un error al intentar registrar el usuario. Por favor intente nuevamente.';

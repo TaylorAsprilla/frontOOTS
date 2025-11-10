@@ -109,11 +109,8 @@ export class ParticipantListComponent implements OnInit, OnDestroy {
           this.filteredParticipants = response.data.data;
           this.totalItems = response.data.total || 0;
           this.isLoading = false;
-
-          console.log('Participantes', response);
         },
         error: (error) => {
-          console.error('Error loading participants:', error);
           this.isLoading = false;
         },
       });
