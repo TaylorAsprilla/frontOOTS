@@ -271,7 +271,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         phoneNumber: ['', [Validators.required]],
         email: ['', [Validators.required, Validators.email]],
         documentTypeId: ['', Validators.required],
-        documentNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{6,12}$/)]],
+        documentNumber: ['', [Validators.required]],
         address: ['', [Validators.required, Validators.maxLength(200)]],
         city: ['', [Validators.required, Validators.maxLength(50)]],
         birthDate: ['', [Validators.required, this.validateMinimumAge(18)]],
