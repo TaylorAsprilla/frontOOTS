@@ -24,8 +24,13 @@ export class TranslocoHttpLoaderService implements TranslocoLoader {
  * Configuración principal de Transloco
  */
 export const translocoAppConfig = translocoConfig({
-  availableLangs: ['es', 'en'],
-  defaultLang: 'es',
+  availableLangs: [
+    { id: 'es-CO', label: 'Español (Colombia)' },
+    { id: 'es-PR', label: 'Español (Puerto Rico)' },
+    { id: 'en', label: 'English' },
+  ],
+  defaultLang: 'es-CO',
+  fallbackLang: 'es-CO',
   reRenderOnLangChange: true,
   prodMode: !isDevMode(),
   missingHandler: {

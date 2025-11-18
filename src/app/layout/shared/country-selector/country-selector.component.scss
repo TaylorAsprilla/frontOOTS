@@ -1,0 +1,55 @@
+.flag-icon {
+  width: 20px;
+  height: auto;
+  vertical-align: middle;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.dropdown-menu {
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  padding: 0.5rem 0;
+  min-width: 200px;
+}
+
+.dropdown-item {
+  padding: 0.6rem 1rem;
+  color: #495057;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background-color: #f8f9fa;
+    color: #212529;
+  }
+
+  &.active {
+    font-weight: 600;
+    background-color: #e7f3ff;
+    color: #0d6efd;
+  }
+
+  .mdi-check {
+    font-size: 1.2rem;
+    margin-left: auto;
+  }
+
+  span {
+    flex: 1;
+  }
+}
+
+.dropdown-header {
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #6c757d;
+  padding: 0.5rem 1rem 0.25rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e9ecef;
+  margin-bottom: 0.25rem;
+}

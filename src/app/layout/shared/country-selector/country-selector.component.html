@@ -1,0 +1,19 @@
+<div class="dropdown" ngbDropdown>
+    <button class="btn btn-sm btn-link nav-link dropdown-toggle arrow-none" type="button" id="countryDropdown"
+        ngbDropdownToggle aria-haspopup="true" aria-expanded="false">
+        <img [src]="currentCountry?.flag" [alt]="currentCountry?.name + ' flag'" class="flag-icon me-1" />
+        <span class="align-middle d-none d-sm-inline-block">{{ currentCountry?.name }}</span>
+    </button>
+
+    <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu aria-labelledby="countryDropdown">
+        <h6 class="dropdown-header">Seleccionar País</h6>
+
+        <a *ngFor="let country of availableCountries" class="dropdown-item"
+            [class.active]="country.code === currentCountry?.code" (click)="selectCountry(country.code)"
+            style="cursor: pointer;">
+            <img [src]="country.flag" [alt]="country.name + ' flag'" class="flag-icon me-2" />
+            <span>{{ country.name }}</span>
+            <i *ngIf="country.code === currentCountry?.code" class="mdi mdi-check float-end text-success"></i>
+        </a>
+    </div>
+</div>

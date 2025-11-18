@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@ngneat/transloco';
-import { LanguageService, SupportedLanguage } from '../../../core/services/language.service';
+import { CountryService, BaseLanguage } from '../../../core/services/country.service';
 
 /**
  * Componente standalone para cambio de idioma con banderas
@@ -14,19 +14,19 @@ import { LanguageService, SupportedLanguage } from '../../../core/services/langu
   styleUrls: ['./language-switcher.component.scss'],
 })
 export class LanguageSwitcherComponent {
-  protected readonly languageService = inject(LanguageService);
+  protected readonly countryService = inject(CountryService);
 
   /**
-   * Cambia al idioma especificado
+   * Cambia al idioma base especificado (mantiene el país actual)
    */
-  protected switchToLanguage(language: SupportedLanguage): void {
-    this.languageService.setLanguage(language);
+  protected switchToLanguage(language: BaseLanguage): void {
+    this.countryService.setBaseLanguage(language);
   }
 
   /**
    * Alterna entre idiomas (útil para métodos adicionales)
    */
   protected toggleLanguage(): void {
-    this.languageService.switchLanguage();
+    this.countryService.switchLanguage();
   }
 }

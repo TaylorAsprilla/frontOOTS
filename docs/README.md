@@ -64,6 +64,15 @@ Documentación completa del sistema de gestión social OOTS Colombia
   - Actualización de datos de contacto
   - Integración con sistema de autenticación
 
+### Internacionalización y Regionalización
+
+- **[Sistema Multi-País](MULTI_COUNTRY.md)** - Soporte para múltiples países:
+  - Colombia (es-CO)
+  - Puerto Rico (es-PR)
+  - Terminología específica por país
+  - Selector de país en navbar
+  - Configuración regional (moneda, prefijos telefónicos)
+
 ### Despliegue y Producción
 
 - **[Guía de Despliegue](DEPLOYMENT.md)** - Instrucciones para producción (Planificado)
@@ -126,6 +135,7 @@ Documentación completa del sistema de gestión social OOTS Colombia
 | README Principal         | ✅ Completo    | Nov 2025             |
 | Sistema de Autenticación | ✅ Completo    | Oct 2025             |
 | Gestión de Contraseñas   | ✅ Completo    | Nov 2025             |
+| Sistema Multi-País       | ✅ Completo    | Nov 2025             |
 | Módulos de Configuración | ✅ Completo    | Nov 2025             |
 | Acciones de Tabla        | ✅ Completo    | Oct 2025             |
 | Guía de Despliegue       | 📋 Planificado | -                    |
@@ -161,6 +171,15 @@ Documentación completa del sistema de gestión social OOTS Colombia
 - ✅ Soporte completo en español
 - ✅ Preparado para inglés y otros idiomas
 - ✅ Componentes completamente traducidos
+
+### Sistema Multi-País 🌎
+
+- ✅ Soporte para Colombia (es-CO) y Puerto Rico (es-PR)
+- ✅ Terminología específica por país (EPS vs Plan Médico)
+- ✅ Selector de país en navbar con banderas
+- ✅ Configuración regional (moneda, prefijos telefónicos)
+- ✅ Persistencia de país seleccionado en localStorage
+- ✅ Integración completa con sistema de traducciones
 
 ---
 
