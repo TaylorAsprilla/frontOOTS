@@ -220,7 +220,7 @@ export class TopbarComponent implements OnInit {
       {
         label: 'auth.changePassword',
         icon: 'fe-lock',
-        redirectTo: '/auth/lock-screen',
+        redirectTo: '/change-password',
       },
       {
         label: 'navigation.logout',

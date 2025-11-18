@@ -22,6 +22,7 @@ const routes: Routes = [
     loadComponent: () => import('./tasks/kanban/kanban.component').then((c) => c.KanbanComponent),
   },
   { path: 'tickets', loadChildren: () => import('./tickets/tickets.module').then((m) => m.TicketsModule) },
+  { path: 'contacts', loadChildren: () => import('./contacts/contacts.module').then((m) => m.ContactsModule) },
   // Modules that still need conversion (temporarily commented out)
   // { path: 'calendar', loadChildren: () => import('./calendar/calendar.module').then(m => m.CalendarModule) },
   // { path: 'chat', loadChildren: () => import('./chat/chat.module').then(m => m.ChatModule) },
@@ -31,7 +32,6 @@ const routes: Routes = [
   // { path: 'companies', loadChildren: () => import('./companies/companies.module').then(m => m.CompaniesModule) },
   // { path: 'projects', loadChildren: () => import('./projects/projects.module').then(m => m.ProjectsModule) },
   // { path: 'tasks', loadChildren: () => import('./tasks/tasks.module').then(m => m.TasksModule) },
-  // { path: 'contacts', loadChildren: () => import('./contacts/contacts.module').then(m => m.ContactsModule) },
   // { path: 'file-manager', loadChildren: () => import('./file-manager/file-manager.module').then(m => m.FileManagerModule) }
 ];
 

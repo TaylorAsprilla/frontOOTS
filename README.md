@@ -1,4 +1,4 @@
-# OOTS Colombia - Sistema de Gestión Social
+# OOTS Colombia - Sistema de la Oficina de Orientación y Trabajo Social de la Congregación Mita
 
 <div align="center">
 
@@ -555,7 +555,7 @@ Este proyecto usa [Semantic Versioning](https://semver.org/):
 - **MINOR**: Nueva funcionalidad compatible
 - **PATCH**: Correcciones de bugs
 
-**Versión actual**: 1.1.0
+**Versión actual**: 1.2.0
 
 ### Changelog
 
@@ -584,24 +584,27 @@ Para soporte técnico o consultas:
 
 ## Roadmap
 
-### Completado (v1.1.0)
+### Completado (v1.2.0)
 
-- Sistema de autenticación con JWT
-- Gestión de participantes
-- Gestión de casos (wizard de 11 pasos)
-- Gestión de usuarios
-- Módulos de configuración
-- Situaciones identificadas
-- Menú de configuración desplegable
-- Sistema multiidioma (ES/EN)
+- ✅ Sistema de autenticación con JWT
+- ✅ Gestión de participantes
+- ✅ Gestión de casos (wizard de 11 pasos)
+- ✅ Gestión de usuarios
+- ✅ Módulos de configuración
+- ✅ Situaciones identificadas
+- ✅ Menú de configuración desplegable
+- ✅ Sistema multiidioma (ES/EN)
+- ✅ **Gestión completa de contraseñas** (cambiar, recuperar, restablecer)
+- ✅ **Sistema i18n completo** - Traducciones para perfil de usuario y gestión de contraseñas
+- ✅ **Perfil de usuario editable** - Con información personal y redes sociales
 
-### En Desarrollo (v1.2.0)
+### En Desarrollo (v1.3.0)
 
-- Dashboard con estadísticas
-- [ ] Reportes exportables
-- Sistema de notificaciones
-- Gestión de documentos
-- Firma digital de documentos
+- 🔄 Dashboard con estadísticas
+- 🔄 Reportes exportables
+- 🔄 Sistema de notificaciones
+- 🔄 Gestión de documentos
+- 🔄 Firma digital de documentos
 
 ### Planificado (v2.0.0)
 

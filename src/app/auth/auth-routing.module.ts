@@ -23,6 +23,11 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   {
+    path: 'reset-password/:token',
+    component: RecoverPasswordComponent,
+    pathMatch: 'full',
+  },
+  {
     path: 'logout',
     component: LogoutComponent,
     pathMatch: 'full',
