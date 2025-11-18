@@ -8,6 +8,11 @@ const routes: Routes = [
     loadComponent: () =>
       import('./dashboard/dashboard-one/dashboard-one.component').then((c) => c.DashboardOneComponent),
   },
+  {
+    path: 'change-password',
+    loadComponent: () =>
+      import('../auth/account/change-password/change-password.component').then((c) => c.ChangePasswordComponent),
+  },
   { path: 'icons', loadChildren: () => import('./icons/icons-routing.module') },
   {
     path: 'users',

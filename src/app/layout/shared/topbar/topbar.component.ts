@@ -14,7 +14,7 @@ import { SimplebarAngularModule } from 'simplebar-angular';
 import { RouterModule } from '@angular/router';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule } from '@ngneat/transloco';
-import { LanguageSwitcherComponent } from '../../../shared/components/language-switcher/language-switcher.component';
+import { CountrySelectorComponent } from '../country-selector/country-selector.component';
 
 @Component({
   selector: 'app-topbar',
@@ -27,7 +27,7 @@ import { LanguageSwitcherComponent } from '../../../shared/components/language-s
     RouterModule,
     NgbDropdownModule,
     TranslocoModule,
-    LanguageSwitcherComponent,
+    CountrySelectorComponent,
   ],
 })
 export class TopbarComponent implements OnInit {
@@ -220,7 +220,7 @@ export class TopbarComponent implements OnInit {
       {
         label: 'auth.changePassword',
         icon: 'fe-lock',
-        redirectTo: '/auth/lock-screen',
+        redirectTo: '/change-password',
       },
       {
         label: 'navigation.logout',

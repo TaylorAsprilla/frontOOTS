@@ -11,6 +11,12 @@ import {
   AuthError,
   ValidateTokenResponse,
   AuthenticatedUserComplete,
+  ChangePasswordDto,
+  ForgotPasswordDto,
+  ResetPasswordDto,
+  PasswordResponse,
+  UpdateProfileDto,
+  UpdateProfileResponse,
 } from '../interfaces/auth.interface';
 import { TokenStorageService } from './token-storage.service';
 import { environment } from 'src/environments/environment';
@@ -176,5 +182,139 @@ export class AuthenticationService {
    */
   getCurrentUserComplete(): Observable<AuthenticatedUserComplete> {
     return this.validateToken();
+  }
+
+  // ==================== PASSWORD MANAGEMENT METHODS ====================
+
+  /**
+   * Cambiar contraseña del usuario autenticado
+   * @param payload Datos para cambiar la contraseña
+   * @returns Observable con la respuesta del servidor
+   */
+  changePassword(payload: ChangePasswordDto): Observable<PasswordResponse> {
+    return this.http.patch<PasswordResponse>(`${this.API_URL}/auth/change-password`, payload).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Change password error:', error);
+
+        let errorMessage = 'Error al cambiar la contraseña. Por favor, intente nuevamente.';
+
+        if (error.error?.message) {
+          errorMessage = error.error.message;
+        } else if (error.status === 400) {
+          errorMessage = 'Datos inválidos. Verifique que las contraseñas coincidan.';
+        } else if (error.status === 401) {
+          errorMessage = 'La contraseña actual es incorrecta.';
+        } else if (error.status === 0) {
+          errorMessage = 'No se pudo conectar con el servidor. Verifique su conexión.';
+        } else if (error.status >= 500) {
+          errorMessage = 'Error en el servidor. Por favor, intente más tarde.';
+        }
+
+        return throwError(() => errorMessage);
+      })
+    );
+  }
+
+  /**
+   * Solicitar recuperación de contraseña (envía email)
+   * @param payload Email del usuario
+   * @returns Observable con la respuesta del servidor
+   */
+  forgotPassword(payload: ForgotPasswordDto): Observable<PasswordResponse> {
+    return this.http.post<PasswordResponse>(`${this.API_URL}/auth/forgot-password`, payload).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Forgot password error:', error);
+
+        let errorMessage = 'Error al procesar la solicitud. Por favor, intente nuevamente.';
+
+        if (error.error?.message) {
+          errorMessage = error.error.message;
+        } else if (error.status === 404) {
+          // Por seguridad, no revelamos si el email existe o no
+          errorMessage = 'Si el correo está registrado, recibirás las instrucciones para recuperar tu contraseña.';
+        } else if (error.status === 0) {
+          errorMessage = 'No se pudo conectar con el servidor. Verifique su conexión.';
+        } else if (error.status >= 500) {
+          errorMessage = 'Error en el servidor. Por favor, intente más tarde.';
+        }
+
+        return throwError(() => errorMessage);
+      })
+    );
+  }
+
+  /**
+   * Restablecer contraseña con token
+   * @param payload Token y nueva contraseña
+   * @returns Observable con la respuesta del servidor
+   */
+  resetPassword(payload: ResetPasswordDto): Observable<PasswordResponse> {
+    return this.http.post<PasswordResponse>(`${this.API_URL}/auth/reset-password`, payload).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Reset password error:', error);
+
+        let errorMessage = 'Error al restablecer la contraseña. Por favor, intente nuevamente.';
+
+        if (error.error?.message) {
+          errorMessage = error.error.message;
+        } else if (error.status === 400) {
+          errorMessage = 'Datos inválidos. Verifique que las contraseñas coincidan.';
+        } else if (error.status === 401 || error.status === 403) {
+          errorMessage = 'El enlace de recuperación ha expirado o es inválido. Solicite uno nuevo.';
+        } else if (error.status === 404) {
+          errorMessage = 'Token no encontrado. Por favor, solicite un nuevo enlace de recuperación.';
+        } else if (error.status === 0) {
+          errorMessage = 'No se pudo conectar con el servidor. Verifique su conexión.';
+        } else if (error.status >= 500) {
+          errorMessage = 'Error en el servidor. Por favor, intente más tarde.';
+        }
+
+        return throwError(() => errorMessage);
+      })
+    );
+  }
+
+  /**
+   * Actualizar perfil del usuario autenticado
+   * @param payload Datos del perfil a actualizar
+   * @returns Observable con el perfil actualizado
+   */
+  updateProfile(payload: UpdateProfileDto): Observable<UpdateProfileResponse> {
+    return this.http.patch<UpdateProfileResponse>(`${this.API_URL}/auth/profile`, payload).pipe(
+      map((response: UpdateProfileResponse) => {
+        // Actualizar el usuario en el storage si hay cambios en nombre o email
+        const currentUser = this.currentUser();
+        if (currentUser) {
+          const updatedUser: AuthenticatedUser = {
+            ...currentUser,
+            firstName: payload.firstName || currentUser.firstName,
+            firstLastName: payload.firstLastName || currentUser.firstLastName,
+          };
+          this.tokenStorage.saveUser(updatedUser);
+        }
+        return response;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Update profile error:', error);
+
+        let errorMessage = 'Error al actualizar el perfil. Por favor, intente nuevamente.';
+
+        if (error.error?.message) {
+          errorMessage = error.error.message;
+        } else if (error.status === 400) {
+          errorMessage = 'Datos inválidos. Verifique la información ingresada.';
+        } else if (error.status === 401) {
+          errorMessage = 'Sesión expirada. Por favor, inicie sesión nuevamente.';
+        } else if (error.status === 409) {
+          errorMessage = 'El correo electrónico ya está en uso por otro usuario.';
+        } else if (error.status === 0) {
+          errorMessage = 'No se pudo conectar con el servidor. Verifique su conexión.';
+        } else if (error.status >= 500) {
+          errorMessage = 'Error en el servidor. Por favor, intente más tarde.';
+        }
+
+        return throwError(() => errorMessage);
+      })
+    );
   }
 }

@@ -1,8 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { CountryService } from './country.service';
 
-export type SupportedLanguage = 'es' | 'en';
+export type SupportedLanguage = 'es-CO' | 'es-PR' | 'en';
+export type BaseLanguage = 'es' | 'en';
 
 /**
  * Servicio para gestionar el cambio de idioma en la aplicación
@@ -13,7 +15,8 @@ export type SupportedLanguage = 'es' | 'en';
 export class LanguageService {
   private readonly transloco = inject(TranslocoService);
   private readonly STORAGE_KEY = 'app-language';
-  private readonly DEFAULT_LANGUAGE: SupportedLanguage = 'es';
+  private readonly DEFAULT_LANGUAGE: SupportedLanguage = 'es-CO';
+  private countryService?: CountryService;
 
   // Observable para el idioma actual
   private currentLanguageSubject = new BehaviorSubject<SupportedLanguage>(this.DEFAULT_LANGUAGE);
@@ -32,6 +35,8 @@ export class LanguageService {
     // Inicializar después de un pequeño delay para permitir que Transloco se configure
     setTimeout(() => {
       this.initializeLanguage();
+      // Inyectar CountryService después de la inicialización para evitar dependencia circular
+      this.countryService = inject(CountryService);
     }, 100);
   }
 
@@ -80,7 +85,23 @@ export class LanguageService {
    * Valida si un idioma es soportado
    */
   private isValidLanguage(lang: string): lang is SupportedLanguage {
-    return lang === 'es' || lang === 'en';
+    return lang === 'es-CO' || lang === 'es-PR' || lang === 'en';
+  }
+
+  /**
+   * Obtiene el idioma base (sin país) de un locale
+   */
+  private getBaseLanguage(locale: SupportedLanguage): BaseLanguage {
+    return locale.startsWith('es') ? 'es' : 'en';
+  }
+
+  /**
+   * Obtiene el código de país de un locale
+   */
+  getCountryFromLocale(locale: SupportedLanguage): string {
+    if (locale === 'es-CO') return 'CO';
+    if (locale === 'es-PR') return 'PR';
+    return '';
   }
 
   /**
@@ -131,10 +152,43 @@ export class LanguageService {
   }
 
   /**
-   * Cambia entre español e inglés
+   * Cambia entre español e inglés manteniendo el país
    */
   switchLanguage(): void {
-    const newLanguage: SupportedLanguage = this.currentLanguage === 'es' ? 'en' : 'es';
+    const currentBase = this.getBaseLanguage(this.currentLanguage);
+    let newLanguage: SupportedLanguage;
+
+    if (currentBase === 'es') {
+      // Cambiar a inglés
+      newLanguage = 'en';
+    } else {
+      // Cambiar a español, mantener el país si había uno
+      const country = this.getCountryFromLocale(this.currentLanguage);
+      newLanguage = country ? (`es-${country}` as SupportedLanguage) : 'es-CO';
+    }
+
+    this.setLanguage(newLanguage);
+  }
+
+  /**
+   * Cambia el idioma base manteniendo el país actual (para español)
+   */
+  setBaseLanguage(baseLanguage: BaseLanguage): void {
+    let newLanguage: SupportedLanguage;
+
+    if (baseLanguage === 'en') {
+      newLanguage = 'en';
+    } else {
+      // Usar CountryService para obtener el locale correcto según el país actual
+      if (this.countryService) {
+        newLanguage = this.countryService.getLocaleForLanguage('es') as SupportedLanguage;
+      } else {
+        // Fallback si CountryService no está disponible
+        const currentCountry = this.getCountryFromLocale(this.currentLanguage);
+        newLanguage = currentCountry ? (`es-${currentCountry}` as SupportedLanguage) : 'es-CO';
+      }
+    }
+
     this.setLanguage(newLanguage);
   }
 
@@ -143,13 +197,14 @@ export class LanguageService {
    */
   getLanguageName(language: SupportedLanguage): string {
     // Por ahora retornamos nombres fijos, pero podríamos usar traducciones
-    return language === 'es' ? 'Español' : 'English';
+    if (language === 'en') return 'English';
+    return 'Español'; // es-CO o es-PR
   }
 
   /**
-   * Obtiene las opciones de idioma disponibles
+   * Obtiene las opciones de idioma base disponibles
    */
-  getAvailableLanguages(): Array<{ code: SupportedLanguage; name: string; flag: string }> {
+  getAvailableLanguages(): Array<{ code: BaseLanguage; name: string; flag: string }> {
     return [
       { code: 'es', name: 'Español', flag: 'es' },
       { code: 'en', name: 'English', flag: 'gb' },
@@ -157,10 +212,24 @@ export class LanguageService {
   }
 
   /**
+   * Obtiene el idioma base actual (sin país)
+   */
+  get baseLanguage(): BaseLanguage {
+    return this.getBaseLanguage(this.currentLanguage);
+  }
+
+  /**
    * Verifica si un idioma está activo
    */
   isLanguageActive(language: SupportedLanguage): boolean {
     return this.currentLanguage === language;
+  }
+
+  /**
+   * Verifica si un idioma base está activo
+   */
+  isBaseLanguageActive(language: BaseLanguage): boolean {
+    return this.getBaseLanguage(this.currentLanguage) === language;
   }
 
   /**

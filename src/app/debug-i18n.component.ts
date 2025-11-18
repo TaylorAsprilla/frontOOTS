@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoService, TranslocoModule } from '@ngneat/transloco';
-import { LanguageService } from './core/services/language.service';
+import { CountryService } from './core/services/country.service';
 
 /**
  * Componente de diagnóstico para verificar el estado de las traducciones
@@ -70,7 +70,7 @@ import { LanguageService } from './core/services/language.service';
 })
 export class I18nDebugComponent implements OnInit {
   private transloco = inject(TranslocoService);
-  private languageService = inject(LanguageService);
+  private countryService = inject(CountryService);
 
   activeLanguage = '';
   availableLanguages: string[] = [];
@@ -131,19 +131,19 @@ export class I18nDebugComponent implements OnInit {
   }
 
   private setupSubscriptions() {
-    // Suscribirse a cambios del LanguageService
-    this.languageService.currentLanguage$.subscribe((lang) => {
+    // Suscribirse a cambios del CountryService
+    this.countryService.currentLanguage$.subscribe((lang) => {
       this.activeLanguage = lang;
       this.checkTranslationsLoaded();
     });
   }
 
   changeToSpanish() {
-    this.languageService.setLanguage('es');
+    this.countryService.setBaseLanguage('es');
   }
 
   changeToEnglish() {
-    this.languageService.setLanguage('en');
+    this.countryService.setBaseLanguage('en');
   }
 
   reloadTranslations() {

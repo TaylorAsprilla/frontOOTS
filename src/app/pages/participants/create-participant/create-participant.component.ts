@@ -31,6 +31,7 @@ import { IncomeSource } from '../../configuration/income-source/income-source.in
 import { IncomeLevel } from '../../configuration/income-level/income-level.interface';
 import { HousingType } from '../../configuration/housing-type/housing-type.interface';
 import { AcademicLevel } from '../../../core/interfaces/academic-level.interface';
+import { CountryService } from '../../../core/services/country.service';
 
 @Component({
   selector: 'app-create-participant',
@@ -51,6 +52,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   private readonly caseService = inject(CaseService);
   private readonly tokenStorageService = inject(TokenStorageService);
   private readonly route = inject(ActivatedRoute);
+  private readonly countryService = inject(CountryService);
   participantId: number | null = null;
   private readonly formBuilder = inject(FormBuilder);
   private readonly participantService = inject(ParticipantService);
@@ -115,6 +117,8 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
       emergencyContactPhone: 'participants.validation.emergencyContactPhoneRequired',
       emergencyContactEmail: 'participants.validation.emergencyContactEmailRequired',
       emergencyContactAddress: 'participants.validation.emergencyContactAddressRequired',
+      city: 'participants.validation.cityRequired',
+      state: 'participants.validation.stateRequired',
       emergencyContactCity: 'participants.validation.emergencyContactCityRequired',
       emergencyContactRelationship: 'participants.validation.emergencyContactRelationshipRequired',
       goal: 'participants.validation.goalRequired',
@@ -274,7 +278,9 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         documentNumber: ['', [Validators.required]],
         address: ['', [Validators.required, Validators.maxLength(200)]],
         city: ['', [Validators.required, Validators.maxLength(50)]],
-        birthDate: ['', [Validators.required, this.validateMinimumAge(18)]],
+        state: ['', [Validators.required, Validators.maxLength(50)]],
+        zipCode: ['', [Validators.required, Validators.maxLength(10)]],
+        birthDate: ['', [Validators.required, this.validateMinimumAge(11)]],
         religiousAffiliation: [''],
         referralSource: [''],
         genderId: ['', Validators.required],
@@ -694,6 +700,8 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
       documentNumber: personalData.documentNumber,
       address: personalData.address,
       city: personalData.city,
+      state: personalData.state,
+      zipCode: personalData.zipCode,
       birthDate: personalData.birthDate,
       religiousAffiliation: personalData.religiousAffiliation || undefined,
       genderId: personalData.genderId ? Number(personalData.genderId) : null,
@@ -995,5 +1003,20 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     if (this.interventionPlanArray.length > 1) {
       this.interventionPlanArray.removeAt(index);
     }
+  }
+
+  /**
+   * Obtener label dinámico para el campo state según el país
+   */
+  get stateLabel(): string {
+    const country = this.countryService.getCurrentCountry();
+    return country === 'CO' ? 'Departamento' : 'Estado';
+  }
+
+  /**
+   * Obtener label dinámico para el campo de seguro médico según el país
+   */
+  get healthInsuranceLabel(): string {
+    return this.countryService.healthInsuranceLabel;
   }
 }

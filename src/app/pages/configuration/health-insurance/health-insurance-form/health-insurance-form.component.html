@@ -15,14 +15,8 @@
           <form [formGroup]="healthInsuranceForm" (ngSubmit)="onSubmit()">
             <div class="mb-3">
               <label for="name" class="form-label">Nombre <span class="text-danger">*</span></label>
-              <input
-                type="text"
-                id="name"
-                class="form-control"
-                formControlName="name"
-                [class.is-invalid]="hasFieldError('name')"
-                placeholder="Ej: Soltero, Casado, Divorciado..."
-              />
+              <input type="text" id="name" class="form-control" formControlName="name"
+                [class.is-invalid]="hasFieldError('name')" />
               @if (hasFieldError('name')) {
               <div class="invalid-feedback">{{ getFieldError('name') }}</div>
               }
@@ -30,12 +24,7 @@
 
             <div class="mb-3">
               <div class="form-check form-switch">
-                <input
-                  type="checkbox"
-                  id="isActive"
-                  class="form-check-input"
-                  formControlName="isActive"
-                />
+                <input type="checkbox" id="isActive" class="form-check-input" formControlName="isActive" />
                 <label for="isActive" class="form-check-label">Activo</label>
               </div>
             </div>

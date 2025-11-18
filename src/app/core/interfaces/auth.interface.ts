@@ -69,13 +69,18 @@ export interface ValidatedUser {
   email: string;
   phoneNumber: string;
   position: string;
-  organization: string;
+  headquarters: string;
   documentNumber: string;
   address: string;
   city: string;
   birthDate: string; // ISO date string
   documentTypeId: number;
   status: 'ACTIVE' | 'INACTIVE';
+  facebook: string | null;
+  twitter: string | null;
+  instagram: string | null;
+  linkedin: string | null;
+  github: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -106,4 +111,89 @@ export interface AuthenticatedUserComplete extends ValidatedUser {
   token: string;
   tokenType: string;
   expiresAt: Date;
+}
+
+// ==================== PASSWORD MANAGEMENT INTERFACES ====================
+
+/**
+ * DTO para cambiar contraseña (usuario autenticado)
+ */
+export interface ChangePasswordDto {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+/**
+ * DTO para solicitar recuperación de contraseña
+ */
+export interface ForgotPasswordDto {
+  email: string;
+}
+
+/**
+ * DTO para restablecer contraseña con token
+ */
+export interface ResetPasswordDto {
+  token: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+/**
+ * Interface para respuesta genérica de operaciones de contraseña
+ */
+export interface PasswordResponse {
+  data?: any;
+  statusCode: number;
+  message: string;
+  timestamp: string;
+  path: string;
+}
+
+// ==================== PROFILE MANAGEMENT INTERFACES ====================
+
+/**
+ * DTO para actualizar perfil de usuario
+ */
+export interface UpdateProfileDto {
+  firstName?: string;
+  firstLastName?: string;
+  phoneNumber?: string;
+  position?: string;
+  website?: string;
+  facebook?: string;
+  twitter?: string;
+  instagram?: string;
+  linkedin?: string;
+  github?: string;
+}
+
+/**
+ * Interface para usuario con redes sociales
+ */
+export interface UserProfile {
+  id: number;
+  firstName: string;
+  firstLastName: string;
+  email: string;
+  phoneNumber?: string;
+  position?: string;
+  website?: string;
+  facebook?: string;
+  twitter?: string;
+  instagram?: string;
+  linkedin?: string;
+  github?: string;
+}
+
+/**
+ * Interface para respuesta de actualización de perfil
+ */
+export interface UpdateProfileResponse {
+  data: UserProfile;
+  statusCode: number;
+  message: string;
+  timestamp: string;
+  path: string;
 }
