@@ -121,11 +121,18 @@
                               <div class="col-md-8">
                                 <input type="text" class="form-control"
                                   [class.is-invalid]="hasFieldError('personalData.documentNumber')" id="documentNumber"
-                                  name="documentNumber" formControlName="documentNumber" />
+                                  name="documentNumber" formControlName="documentNumber"
+                                  (blur)="onDocumentNumberBlur()" />
                                 @if (hasFieldError('personalData.documentNumber')) {
+                                @if (participantForm.get('personalData.documentNumber')?.hasError('documentExists')) {
+                                <div class="invalid-feedback">
+                                  El número de documento {{ getDocumentNumberFromError() }} ya está registrado
+                                </div>
+                                } @else {
                                 <div class="invalid-feedback">
                                   {{ getFieldError('personalData.documentNumber') | transloco }}
                                 </div>
+                                }
                                 }
                               </div>
                             </div>

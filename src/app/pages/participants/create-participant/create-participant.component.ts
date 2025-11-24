@@ -323,16 +323,6 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   private setupFormSubscriptions(): void {
     // Listen to loading state from service
     this.participantService.loading$.pipe(takeUntil(this.destroy$)).subscribe((loading) => (this.isLoading = loading));
-
-    // Check for duplicate document number
-    const documentControl = this.participantForm.get('personalData.documentNumber');
-    if (documentControl) {
-      documentControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
-        if (value && value.length >= 6) {
-          this.checkDocumentExists(value);
-        }
-      });
-    }
   }
 
   /**
@@ -436,6 +426,19 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Check if document number already exists when user leaves the field
+   */
+  onDocumentNumberBlur(): void {
+    const documentControl = this.participantForm.get('personalData.documentNumber');
+    if (documentControl && documentControl.value) {
+      console.log('Document number field lost focus, checking existence...', documentControl);
+      const documentNumber = documentControl.value.trim();
+
+      this.checkDocumentExists(documentNumber);
+    }
+  }
+
+  /**
    * Check if document number already exists
    */
   private checkDocumentExists(documentNumber: string): void {
@@ -443,11 +446,20 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
       .checkParticipantExists(documentNumber)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (result) => {
-          if (result.exists) {
-            const documentControl = this.participantForm.get('personalData.documentNumber');
-            if (documentControl) {
-              documentControl.setErrors({ documentExists: true });
+        next: (response) => {
+          const documentControl = this.participantForm.get('personalData.documentNumber');
+          if (documentControl) {
+            if (response.data.exists) {
+              documentControl.setErrors({ documentExists: true, documentNumber: documentNumber });
+              documentControl.markAsTouched();
+            } else {
+              // Limpiar el error de documentExists si ya no existe
+              if (documentControl.hasError('documentExists')) {
+                const errors = { ...documentControl.errors };
+                delete errors['documentExists'];
+                delete errors['documentNumber'];
+                documentControl.setErrors(Object.keys(errors).length > 0 ? errors : null);
+              }
             }
           }
         },
@@ -593,6 +605,17 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
       if (errors['documentExists']) return 'participants.validation.documentExists';
     }
 
+    return '';
+  }
+
+  /**
+   * Get the document number from error state
+   */
+  getDocumentNumberFromError(): string {
+    const control = this.participantForm.get('personalData.documentNumber');
+    if (control && control.errors && control.errors['documentNumber']) {
+      return control.errors['documentNumber'];
+    }
     return '';
   }
 

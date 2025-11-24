@@ -316,12 +316,14 @@ export class ParticipantService {
   /**
    * Check if participant exists by document number
    */
-  checkParticipantExists(documentNumber: string): Observable<{ exists: boolean }> {
-    return this.http.get<{ exists: boolean }>(`${this.apiUrl}/check-exists/${documentNumber}`).pipe(
-      catchError((error) => {
-        console.error('Error checking participant existence:', error);
-        return throwError(() => error);
-      })
-    );
+  checkParticipantExists(documentNumber: string): Observable<{ data: { exists: boolean; participant?: any } }> {
+    return this.http
+      .get<{ data: { exists: boolean; participant?: any } }>(`${this.apiUrl}/check-exists/${documentNumber}`)
+      .pipe(
+        catchError((error) => {
+          console.error('Error checking participant existence:', error);
+          return throwError(() => error);
+        })
+      );
   }
 }
