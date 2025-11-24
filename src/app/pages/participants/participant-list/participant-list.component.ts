@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { NgbPaginationModule, NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -34,6 +34,7 @@ export class ParticipantListComponent implements OnInit, OnDestroy {
   private readonly notificationService = inject(NotificationService);
   private readonly authService = inject(AuthenticationService);
   private readonly formBuilder = inject(FormBuilder);
+  private readonly router = inject(Router);
   private readonly destroy$ = new Subject<void>();
 
   // Data and state
@@ -213,5 +214,11 @@ export class ParticipantListComponent implements OnInit, OnDestroy {
     this.statusFilter = 'all';
     this.currentPage = 1;
     this.loadParticipants();
+  }
+
+  viewParticipant(participant: Participant): void {
+    if (participant.id) {
+      this.router.navigate(['/participants/detail', participant.id]);
+    }
   }
 }

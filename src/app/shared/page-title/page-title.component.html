@@ -8,22 +8,22 @@
             <a href="javascript: void(0);">OOTS</a>
           </li>
           @for (item of breadcrumbItems; track item) {
-            @if (!item.active) {
-              <li class="breadcrumb-item">
-                <a href="javascript: void(0);" routerLink="[item.path]">{{
-                  item.label
-                }}</a>
-              </li>
-            }
-            @if (item.active) {
-              <li class="breadcrumb-item active">
-                <a routerLink="[item.path]">{{ item.label }}</a>
-              </li>
-            }
+          @if (!item.active) {
+          <li class="breadcrumb-item">
+            <a href="javascript: void(0);" routerLink="[item.path]">{{
+              item.label | transloco
+              }}</a>
+          </li>
+          }
+          @if (item.active) {
+          <li class="breadcrumb-item active">
+            <a routerLink="[item.path]">{{ item.label | transloco }}</a>
+          </li>
+          }
           }
         </ol>
       </div>
-      <h4 class="page-title">{{ title }}</h4>
+      <h4 class="page-title">{{ title | transloco }}</h4>
     </div>
   </div>
 </div>

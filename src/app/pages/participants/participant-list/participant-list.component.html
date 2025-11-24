@@ -111,7 +111,7 @@
               </thead>
               <tbody>
                 @for (participant of filteredParticipants; track participant.id) {
-                <tr class="participant-row">
+                <tr class="participant-row" (click)="viewParticipant(participant)" style="cursor: pointer;">
                   <td>
                     <div class="d-flex align-items-center">
                       <div class="avatar-wrapper position-relative me-3">
@@ -172,7 +172,7 @@
                       }
                     </div>
                   </td>
-                  <td class="text-center">
+                  <td class="text-center" (click)="$event.stopPropagation()">
                     <div class="action-buttons">
                       <a [routerLink]="['/participants/detail', participant.id]" class="btn btn-sm btn-soft-info me-1"
                         placement="top" ngbTooltip="{{ 'app.view' | transloco }}">
