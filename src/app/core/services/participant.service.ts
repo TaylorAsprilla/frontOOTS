@@ -107,10 +107,10 @@ export class ParticipantService {
   /**
    * Get participant by ID
    */
-  getParticipantById(id: number | string): Observable<ParticipantResponse> {
+  getParticipantById(id: number | string): Observable<CreateParticipantResponse> {
     this.loadingSubject.next(true);
 
-    return this.http.get<ParticipantResponse>(`${this.apiUrl}/${id}`).pipe(
+    return this.http.get<CreateParticipantResponse>(`${this.apiUrl}/${id}`).pipe(
       map((response) => {
         this.loadingSubject.next(false);
         return response;
