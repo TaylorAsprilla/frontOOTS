@@ -3,6 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { NgbDatepickerModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { TranslocoModule } from '@ngneat/transloco';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { StatisticsCardComponent } from 'src/app/shared/widget/statistics-card/statistics-card.component';
 import { NgbCalendar, NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
@@ -65,6 +66,7 @@ export class CustomDateParserFormatter extends NgbDateParserFormatter {
     NgApexchartsModule,
     StatisticsCardComponent,
     DatePipe,
+    TranslocoModule,
   ],
   templateUrl: './dashboard-one.component.html',
   styleUrls: ['./dashboard-one.component.scss'],

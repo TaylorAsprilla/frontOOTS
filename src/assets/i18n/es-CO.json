@@ -444,6 +444,13 @@
     }
   },
   "dashboard": {
+    "home": "Inicio",
+    "loading": "Cargando estadísticas...",
+    "salesReport": "Reporte de Ventas",
+    "exportReport": "Exportar Reporte",
+    "profit": "Ganancias",
+    "action": "Acción",
+    "editReport": "Editar Reporte",
     "stats": {
       "participants": "Participantes",
       "openCases": "Casos Abiertos",
@@ -451,7 +458,7 @@
       "followUps": "Seguimientos"
     },
     "charts": {
-      "participantRelation": "Relación Casos / Participantes",
+      "participantRelation": "Casos / Participantes",
       "participants": "Participantes",
       "cases": "Casos",
       "average": "Promedio",
