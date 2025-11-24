@@ -832,7 +832,9 @@
                         </li>
                         <li class="next list-inline-item float-end">
                           <button type="submit" class="btn btn-success" [disabled]="participantForm.invalid">
-                            <i class="mdi mdi-check-circle me-1"></i>Guardar Participante
+                            <i class="mdi mdi-check-circle me-1"></i>
+                            {{ participantId ? ('participants.updateParticipant' | transloco) :
+                            ('participants.saveParticipant' | transloco) }}
                           </button>
                         </li>
                       </ul>

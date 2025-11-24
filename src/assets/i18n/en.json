@@ -224,6 +224,10 @@
   },
   "participants": {
     "title": "Participants",
+    "create": "Create Participant",
+    "edit": "Edit Participant",
+    "saveParticipant": "Save Participant",
+    "updateParticipant": "Update Participant",
     "createTitle": "Create Participant",
     "listTitle": "Participants List",
     "detailTitle": "Participant Details",
@@ -988,6 +992,11 @@
       "minLength": "Field must be at least {{min}} characters",
       "maxLength": "Field cannot exceed {{max}} characters",
       "invalid": "The entered value is not valid"
+    }
+  },
+  "ui": {
+    "cards": {
+      "navigation": "Navigation"
     }
   }
 }

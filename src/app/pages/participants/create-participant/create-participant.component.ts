@@ -142,7 +142,19 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     this.loadAcademicLevelsFromResolver();
     this.initializeForm();
     this.setupFormSubscriptions();
-    this.isLoading = false;
+
+    // Check if in edit mode
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.participantId = parseInt(id, 10);
+      this.breadcrumbItems = [
+        { label: 'participants.title', active: false },
+        { label: 'participants.edit', active: true },
+      ];
+      this.loadParticipantData(this.participantId);
+    } else {
+      this.isLoading = false;
+    }
   }
 
   /**
@@ -253,6 +265,91 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Load participant data for editing
+   */
+  private loadParticipantData(id: number): void {
+    this.isLoading = true;
+    this.participantService
+      .getParticipantById(id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          const participant = response.data;
+
+          // Populate personal data with emergency contact (only first one)
+          const emergencyContact = participant.emergencyContacts?.[0];
+
+          this.participantForm.get('personalData')?.patchValue({
+            firstName: participant.firstName,
+            secondName: participant.secondName || '',
+            firstLastName: participant.firstLastName,
+            secondLastName: participant.secondLastName || '',
+            phoneNumber: participant.phoneNumber,
+            email: participant.email,
+            documentTypeId: participant.documentTypeId,
+            documentNumber: participant.documentNumber,
+            address: participant.address,
+            city: participant.city,
+            birthDate: participant.birthDate,
+            genderId: participant.genderId,
+            maritalStatusId: participant.maritalStatusId,
+            healthInsuranceId: participant.healthInsuranceId,
+            customHealthInsurance: participant.customHealthInsurance || '',
+            religiousAffiliation: participant.religiousAffiliation || '',
+            referralSource: participant.referralSource || '',
+            emergencyContactName: emergencyContact?.emergencyContact?.name || '',
+            emergencyContactPhone: emergencyContact?.emergencyContact?.phone || '',
+            emergencyContactEmail: emergencyContact?.emergencyContact?.email || '',
+            emergencyContactAddress: emergencyContact?.emergencyContact?.address || '',
+            emergencyContactCity: emergencyContact?.emergencyContact?.city || '',
+            emergencyContactRelationship: emergencyContact?.relationshipId || '',
+          });
+
+          // Populate family members
+          if (participant.familyMembers && participant.familyMembers.length > 0) {
+            const familyCompositionArray = this.participantForm.get('familyComposition') as FormArray;
+            familyCompositionArray.clear();
+
+            participant.familyMembers.forEach((member) => {
+              familyCompositionArray.push(
+                this.formBuilder.group({
+                  name: [member.name, Validators.required],
+                  birthDate: [member.birthDate, Validators.required],
+                  occupation: [member.occupation, Validators.required],
+                  relationshipId: [member.familyRelationshipId, Validators.required],
+                  academicLevelId: [member.academicLevelId, Validators.required],
+                })
+              );
+            });
+          }
+
+          // Populate biopsychosocial history
+          if (participant.bioPsychosocialHistory) {
+            this.participantForm.get('bioPsychosocialHistory')?.patchValue({
+              academicLevelId: participant.bioPsychosocialHistory.academicLevelId,
+              completedGrade: participant.bioPsychosocialHistory.completedGrade || '',
+              institution: participant.bioPsychosocialHistory.institution || '',
+              profession: participant.bioPsychosocialHistory.profession || '',
+              incomeLevelId: participant.bioPsychosocialHistory.incomeLevelId,
+              incomeSourceId: participant.bioPsychosocialHistory.incomeSourceId,
+              occupationalHistory: participant.bioPsychosocialHistory.occupationalHistory || '',
+              housingTypeId: participant.bioPsychosocialHistory.housingTypeId,
+              housing: participant.bioPsychosocialHistory.housing || '',
+            });
+          }
+
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading participant:', error);
+          this.notificationService.showError('Error al cargar los datos del participante');
+          this.isLoading = false;
+          this.router.navigate(['/participants/list']);
+        },
+      });
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
@@ -279,7 +376,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         address: ['', [Validators.required, Validators.maxLength(200)]],
         city: ['', [Validators.required, Validators.maxLength(50)]],
         state: ['', [Validators.required, Validators.maxLength(50)]],
-        zipCode: ['', [Validators.required, Validators.maxLength(10)]],
+        zipCode: ['', Validators.maxLength(10)],
         birthDate: ['', [Validators.required, this.validateMinimumAge(11)]],
         religiousAffiliation: [''],
         referralSource: [''],
@@ -788,7 +885,38 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
    * Submit form data to the service
    */
   private submitForm(): void {
-    this.createParticipantAndContinue();
+    if (this.participantId) {
+      this.updateParticipant();
+    } else {
+      this.createParticipantAndContinue();
+    }
+  }
+
+  /**
+   * Update existing participant
+   */
+  private updateParticipant(): void {
+    if (!this.participantId) return;
+
+    this.isSubmitting = true;
+    const dto = this.mapFormDataToDto();
+
+    this.participantService
+      .updateParticipantComplete(this.participantId, dto)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.isSubmitting = false;
+          this.notificationService.showSuccess('Participante actualizado exitosamente');
+          this.router.navigate(['/participants/detail', this.participantId]);
+        },
+        error: (error) => {
+          this.isSubmitting = false;
+          console.error('Error updating participant:', error);
+          const errorMessage = error.error?.message || 'Error al actualizar el participante';
+          this.notificationService.showError(errorMessage);
+        },
+      });
   }
 
   /**
