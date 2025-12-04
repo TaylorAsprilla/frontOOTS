@@ -278,7 +278,7 @@ export interface FollowUpPlanDto {
   orientationAppointment: boolean;
   appointmentDate?: string | null;
   appointmentTime?: string | null;
-  others?: string | null;
+  otherDetails?: string | null;
 }
 
 export interface PhysicalHealthHistoryDto {

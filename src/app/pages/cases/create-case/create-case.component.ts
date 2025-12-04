@@ -1,6 +1,15 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  FormArray,
+  Validators,
+  ValidatorFn,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbNavModule, NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -102,9 +111,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
       // Step 2: Identified Situations
       identifiedSituations: this.formBuilder.group({
-        situations: [[], Validators.required],
-        description: ['', Validators.required],
-        urgencyLevel: ['', Validators.required],
+        situations: [[], [Validators.required, this.atLeastOneSelectedValidator()]],
       }),
 
       // Step 3: Intervention
@@ -122,7 +129,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
         appointmentScheduled: [false],
         appointmentDate: [''],
         appointmentTime: [''],
-        others: [''],
+        otherDetails: [''],
       }),
 
       // Step 5: Physical Health History
@@ -228,6 +235,19 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Custom validator to ensure at least one checkbox is selected
+   */
+  private atLeastOneSelectedValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!Array.isArray(value) || value.length === 0) {
+        return { atLeastOne: true };
+      }
+      return null;
+    };
+  }
+
   onSituationChange(event: Event, situationId: number): void {
     const checkbox = event.target as HTMLInputElement;
     const situationsControl = this.caseForm.get('identifiedSituations.situations');
@@ -246,6 +266,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
     situationsControl?.setValue(situations);
     situationsControl?.markAsTouched();
+    situationsControl?.updateValueAndValidity();
   }
 
   isSituationSelected(situationId: number): boolean {
@@ -458,7 +479,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
           orientationAppointment: formValue.followUpPlan.appointmentScheduled,
           appointmentDate: formValue.followUpPlan.appointmentDate || null,
           appointmentTime: formValue.followUpPlan.appointmentTime || null,
-          others: formValue.followUpPlan.others || null,
+          otherDetails: formValue.followUpPlan.otherDetails || null,
         },
       ],
       physicalHealthHistory: formValue.physicalHealthHistory.conditions.map((condition: any) => ({
@@ -535,6 +556,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   getFieldError(fieldPath: string): string {
     const field = this.caseForm.get(fieldPath);
     if (field?.hasError('required')) return 'Este campo es requerido';
+    if (field?.hasError('atLeastOne')) return 'Debe seleccionar al menos una situación';
     if (field?.hasError('min')) return 'Valor mínimo no alcanzado';
     if (field?.hasError('max')) return 'Valor máximo excedido';
     return '';
