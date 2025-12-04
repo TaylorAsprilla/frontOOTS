@@ -32,6 +32,7 @@ import { IncomeLevel } from '../../configuration/income-level/income-level.inter
 import { HousingType } from '../../configuration/housing-type/housing-type.interface';
 import { AcademicLevel } from '../../../core/interfaces/academic-level.interface';
 import { CountryService } from '../../../core/services/country.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-create-participant',
@@ -98,6 +99,9 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   CountryISO = CountryISO;
   PhoneNumberFormat = PhoneNumberFormat;
 
+  // Preferred countries from environment
+  preferredCountries: CountryISO[] = [];
+
   // Breadcrumb configuration
   breadcrumbItems: BreadcrumbItem[] = [
     { label: 'participants.title', active: false },
@@ -140,9 +144,21 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     this.loadIncomeLevelsFromResolver();
     this.loadHousingTypesFromResolver();
     this.loadAcademicLevelsFromResolver();
+    this.initializePreferredCountries();
     this.initializeForm();
     this.setupFormSubscriptions();
     this.isLoading = false;
+  }
+
+  /**
+   * Initialize preferred countries from environment
+   */
+  private initializePreferredCountries(): void {
+    const envCountries = environment.preferredCountries || ['co', 'us'];
+    this.preferredCountries = envCountries.map((code) => {
+      const upperCode = code.toUpperCase();
+      return CountryISO[upperCode as keyof typeof CountryISO] || CountryISO.Colombia;
+    });
   }
 
   /**

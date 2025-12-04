@@ -6,4 +6,5 @@ export const environment = {
   apiTimeout: 30000,
   enableLogging: false,
   enableMockData: false,
+  preferredCountries: ['co'], // Colombia only
 };
