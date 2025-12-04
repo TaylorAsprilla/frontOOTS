@@ -1,8 +1,9 @@
 import { Component, Injectable, OnInit, inject, OnDestroy } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NgbDatepickerModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { TranslocoModule } from '@ngneat/transloco';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { StatisticsCardComponent } from 'src/app/shared/widget/statistics-card/statistics-card.component';
 import { NgbCalendar, NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
@@ -65,6 +66,7 @@ export class CustomDateParserFormatter extends NgbDateParserFormatter {
     NgApexchartsModule,
     StatisticsCardComponent,
     DatePipe,
+    TranslocoModule,
   ],
   templateUrl: './dashboard-one.component.html',
   styleUrls: ['./dashboard-one.component.scss'],
@@ -75,6 +77,7 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
   private readonly authService = inject(AuthenticationService);
   private readonly caseService = inject(CaseService);
   private readonly calendar = inject(NgbCalendar);
+  private readonly router = inject(Router);
   private readonly destroy$ = new Subject<void>();
 
   statisticsCardData: StatisticsCard1[] = [];
@@ -391,6 +394,15 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
       return (names[0][0] + names[1][0]).toUpperCase();
     }
     return fullName.substring(0, 2).toUpperCase();
+  }
+
+  /**
+   * Navigate to participant detail view
+   */
+  viewParticipant(participant: any): void {
+    if (participant.id) {
+      this.router.navigate(['/participants/detail', participant.id]);
+    }
   }
 
   /**

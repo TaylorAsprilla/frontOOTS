@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { TranslocoModule } from '@ngneat/transloco';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
 import { Variant } from '../shared/ui.model';
 import { CardGroupItem } from './cards.model';
@@ -9,7 +10,7 @@ import { CardGroupItem } from './cards.model';
 @Component({
   selector: 'app-ui-cards',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, NgbNavModule],
+  imports: [CommonModule, PageTitleComponent, NgbNavModule, TranslocoModule],
   templateUrl: './cards.component.html',
   styleUrls: ['./cards.component.scss'],
 })

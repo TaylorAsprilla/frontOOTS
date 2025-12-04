@@ -156,11 +156,16 @@
                                   name="documentNumber"
                                   formControlName="documentNumber"
                                 />
-                                @if (hasFieldError('personalData.documentNumber')) {
+                                @if (hasFieldError('personalData.documentNumber')) { @if
+                                (participantForm.get('personalData.documentNumber')?.hasError('documentExists')) {
+                                <div class="invalid-feedback">
+                                  El número de documento {{ getDocumentNumberFromError() }} ya está registrado
+                                </div>
+                                } @else {
                                 <div class="invalid-feedback">
                                   {{ getFieldError('personalData.documentNumber') | transloco }}
                                 </div>
-                                }
+                                } }
                               </div>
                             </div>
 
@@ -1012,7 +1017,12 @@
                         </li>
                         <li class="next list-inline-item float-end">
                           <button type="submit" class="btn btn-success" [disabled]="participantForm.invalid">
-                            <i class="mdi mdi-check-circle me-1"></i>Guardar Participante
+                            <i class="mdi mdi-check-circle me-1"></i>
+                            {{
+                              participantId
+                                ? ('participants.updateParticipant' | transloco)
+                                : ('participants.saveParticipant' | transloco)
+                            }}
                           </button>
                         </li>
                       </ul>

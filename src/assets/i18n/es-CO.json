@@ -226,6 +226,10 @@
   },
   "participants": {
     "title": "Participantes",
+    "create": "Crear Participante",
+    "edit": "Editar Participante",
+    "saveParticipant": "Guardar Participante",
+    "updateParticipant": "Actualizar Participante",
     "createTitle": "Crear Participante",
     "listTitle": "Lista de Participantes",
     "detailTitle": "Detalles del Participante",
@@ -408,6 +412,20 @@
     "createError": "Error al crear el participante",
     "confirmReset": "¿Está seguro de restablecer el formulario?",
     "confirmCancel": "¿Está seguro de cancelar? Se perderán los cambios no guardados",
+    "years": "años",
+    "age": "Edad",
+    "name": "Nombre",
+    "relationship": "Parentesco",
+    "occupation": "Ocupación",
+    "academicLevel": "Nivel Académico",
+    "emergencyContacts": "Contactos de Emergencia",
+    "bioPsychosocialHistory": "Historial Biopsicosocial",
+    "academicInformation": "Información Académica",
+    "economicInformation": "Información Económica",
+    "completedGrade": "Grado Completado",
+    "institution": "Institución",
+    "occupationalHistory": "Historia Ocupacional",
+    "housingDetails": "Detalles de Vivienda",
     "validation": {
       "required": "Este campo es requerido",
       "invalidEmail": "Formato de correo electrónico inválido",
@@ -426,6 +444,13 @@
     }
   },
   "dashboard": {
+    "home": "Inicio",
+    "loading": "Cargando estadísticas...",
+    "salesReport": "Reporte de Ventas",
+    "exportReport": "Exportar Reporte",
+    "profit": "Ganancias",
+    "action": "Acción",
+    "editReport": "Editar Reporte",
     "stats": {
       "participants": "Participantes",
       "openCases": "Casos Abiertos",
@@ -433,7 +458,7 @@
       "followUps": "Seguimientos"
     },
     "charts": {
-      "participantRelation": "Relación Casos / Participantes",
+      "participantRelation": "Casos / Participantes",
       "participants": "Participantes",
       "cases": "Casos",
       "average": "Promedio",
@@ -1022,6 +1047,11 @@
       "minLength": "El campo debe tener al menos {{min}} caracteres",
       "maxLength": "El campo no puede exceder {{max}} caracteres",
       "invalid": "El valor ingresado no es válido"
+    }
+  },
+  "ui": {
+    "cards": {
+      "navigation": "Navegación"
     }
   }
 }

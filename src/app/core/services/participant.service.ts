@@ -107,10 +107,10 @@ export class ParticipantService {
   /**
    * Get participant by ID
    */
-  getParticipantById(id: number | string): Observable<ParticipantResponse> {
+  getParticipantById(id: number | string): Observable<CreateParticipantResponse> {
     this.loadingSubject.next(true);
 
-    return this.http.get<ParticipantResponse>(`${this.apiUrl}/${id}`).pipe(
+    return this.http.get<CreateParticipantResponse>(`${this.apiUrl}/${id}`).pipe(
       map((response) => {
         this.loadingSubject.next(false);
         return response;
@@ -154,7 +154,7 @@ export class ParticipantService {
   }
 
   /**
-   * Update existing participant
+   * Update existing participant (partial update)
    */
   updateParticipant(
     id: number | string,
@@ -180,6 +180,41 @@ export class ParticipantService {
         return throwError(() => error);
       })
     );
+  }
+
+  /**
+   * Update participant with complete data (for edit form)
+   */
+  updateParticipantComplete(
+    id: number | string,
+    participantData: CreateParticipantDto
+  ): Observable<CreateParticipantResponse> {
+    this.loadingSubject.next(true);
+
+    return this.http
+      .put<CreateParticipantResponse>(`${this.apiUrl}/${id}`, participantData, {
+        headers: this.getHeaders(),
+      })
+      .pipe(
+        map((response) => {
+          this.loadingSubject.next(false);
+
+          // Update local state
+          const currentParticipants = this.participantsSubject.value;
+          const updatedParticipants = currentParticipants.map((p) =>
+            p.id === Number(id) ? (response.data as any) : p
+          );
+          this.participantsSubject.next(updatedParticipants);
+
+          return response;
+        }),
+        catchError((error) => {
+          this.loadingSubject.next(false);
+          const errorMessage = error.error?.message || 'Error al actualizar el participante';
+          this.notificationService.showError(errorMessage);
+          return throwError(() => error);
+        })
+      );
   }
 
   /**
@@ -316,12 +351,14 @@ export class ParticipantService {
   /**
    * Check if participant exists by document number
    */
-  checkParticipantExists(documentNumber: string): Observable<{ exists: boolean }> {
-    return this.http.get<{ exists: boolean }>(`${this.apiUrl}/check-exists/${documentNumber}`).pipe(
-      catchError((error) => {
-        console.error('Error checking participant existence:', error);
-        return throwError(() => error);
-      })
-    );
+  checkParticipantExists(documentNumber: string): Observable<{ data: { exists: boolean; participant?: any } }> {
+    return this.http
+      .get<{ data: { exists: boolean; participant?: any } }>(`${this.apiUrl}/check-exists/${documentNumber}`)
+      .pipe(
+        catchError((error) => {
+          console.error('Error checking participant existence:', error);
+          return throwError(() => error);
+        })
+      );
   }
 }

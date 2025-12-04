@@ -8,7 +8,7 @@ import { ParticipantService } from '../../../core/services/participant.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
-import { Participant } from '../../../core/interfaces/participant.interface';
+import { Participant } from '../../../core/interfaces/participant-create.interface';
 
 @Component({
   selector: 'app-participant-detail',
@@ -26,6 +26,17 @@ export class ParticipantDetailComponent implements OnInit, OnDestroy {
   participant: Participant | null = null;
   isLoading = false;
   participantId: string | null = null;
+
+  calculateAge(birthDate: string): number {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  }
 
   breadcrumbItems: BreadcrumbItem[] = [
     { label: 'participants.title', active: false },

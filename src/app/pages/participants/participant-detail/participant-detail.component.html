@@ -14,83 +14,459 @@
 
   <!-- Participant Details -->
   @if (!isLoading && participant) {
+
+  <!-- Header Card -->
   <div class="row">
     <div class="col-12">
-      <div class="card">
+      <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="card-title mb-0">
-              <i class="mdi mdi-account me-2 text-primary"></i>
-              {{ participant.firstName }} {{ participant.firstLastName }}
-            </h4>
-            <div>
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <div class="d-flex align-items-center">
+                <div
+                  class="avatar-lg rounded-circle bg-primary bg-gradient d-flex align-items-center justify-content-center me-3">
+                  <i class="fas fa-user text-white fs-2"></i>
+                </div>
+                <div>
+                  <h3 class="mb-1">
+                    {{ participant.firstName }} {{ participant.secondName || '' }}
+                    {{ participant.firstLastName }} {{ participant.secondLastName || '' }}
+                  </h3>
+                  <p class="text-muted mb-0">
+                    <i class="fas fa-id-card me-2"></i>
+                    {{ participant.documentNumber }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
               <a [routerLink]="['/participants/edit', participant.id]" class="btn btn-primary me-2">
-                <i class="mdi mdi-pencil me-1"></i>
+                <i class="fas fa-edit me-1"></i>
                 {{ 'app.edit' | transloco }}
               </a>
               <a [routerLink]="['/participants']" class="btn btn-secondary">
-                <i class="mdi mdi-arrow-left me-1"></i>
+                <i class="fas fa-arrow-left me-1"></i>
                 {{ 'app.back' | transloco }}
               </a>
-            </div>
-          </div>
-
-          <!-- Personal Information -->
-          <div class="row">
-            <div class="col-md-6">
-              <h5 class="text-primary mb-3">{{ 'participants.personalInformation' | transloco }}</h5>
-              <table class="table table-borderless">
-                <tr>
-                  <td class="fw-bold">{{ 'participants.fullName' | transloco }}:</td>
-                  <td>
-                    {{ participant.firstName }} {{ participant.secondName || '' }}
-                    {{ participant.firstLastName }} {{ participant.secondLastName || '' }}
-                  </td>
-                </tr>
-                <tr>
-                  <td class="fw-bold">{{ 'participants.document' | transloco }}:</td>
-                  <td>{{ participant.documentTypeId }} {{ participant.documentNumber }}</td>
-                </tr>
-                <tr>
-                  <td class="fw-bold">{{ 'participants.email' | transloco }}:</td>
-                  <td>{{ participant.email || '-' }}</td>
-                </tr>
-                <tr>
-                  <td class="fw-bold">{{ 'participants.phone' | transloco }}:</td>
-                  <td>{{ participant.phoneNumber || '-' }}</td>
-                </tr>
-                <tr>
-                  <td class="fw-bold">{{ 'participants.birthDate' | transloco }}:</td>
-                  <td>{{ participant.birthDate | date : 'dd/MM/yyyy' }}</td>
-                </tr>
-              </table>
-            </div>
-            <div class="col-md-6">
-              <h5 class="text-primary mb-3">{{ 'participants.contactInformation' | transloco }}</h5>
-              <table class="table table-borderless">
-                <tr>
-                  <td class="fw-bold">{{ 'participants.address' | transloco }}:</td>
-                  <td>{{ participant.address }}</td>
-                </tr>
-                <tr>
-                  <td class="fw-bold">{{ 'participants.city' | transloco }}:</td>
-                  <td>{{ participant.city }}</td>
-                </tr>
-                <tr>
-                  <td class="fw-bold">{{ 'participants.gender' | transloco }}:</td>
-                  <td>{{ 'participants.' + participant.genderId | transloco }}</td>
-                </tr>
-                <tr>
-                  <td class="fw-bold">{{ 'participants.maritalStatus' | transloco }}:</td>
-                  <td>{{ 'participants.' + participant.maritalStatusId | transloco }}</td>
-                </tr>
-              </table>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Information Cards -->
+  <div class="row">
+    <!-- Personal Information -->
+    <div class="col-lg-6 mb-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-bottom">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-user-circle text-primary me-2"></i>
+            {{ 'participants.personalInformation' | transloco }}
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="info-item mb-3">
+            <div class="d-flex align-items-start">
+              <div class="icon-wrapper me-3">
+                <i class="fas fa-id-card text-primary"></i>
+              </div>
+              <div class="flex-grow-1">
+                <small class="text-muted d-block">{{ 'participants.document' | transloco }}</small>
+                <strong>{{ participant.documentType.name }} {{ participant.documentNumber }}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-item mb-3">
+            <div class="d-flex align-items-start">
+              <div class="icon-wrapper me-3">
+                <i class="fas fa-calendar-alt text-primary"></i>
+              </div>
+              <div class="flex-grow-1">
+                <small class="text-muted d-block">{{ 'participants.birthDate' | transloco }}</small>
+                <strong>{{ participant.birthDate | date : 'dd/MM/yyyy' }} ({{ calculateAge(participant.birthDate) }} {{
+                  'participants.years' | transloco }})</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-item mb-3">
+            <div class="d-flex align-items-start">
+              <div class="icon-wrapper me-3">
+                <i class="fas fa-venus-mars text-primary"></i>
+              </div>
+              <div class="flex-grow-1">
+                <small class="text-muted d-block">{{ 'participants.gender' | transloco }}</small>
+                <strong>{{ participant.gender.name }}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="d-flex align-items-start">
+              <div class="icon-wrapper me-3">
+                <i class="fas fa-heart text-primary"></i>
+              </div>
+              <div class="flex-grow-1">
+                <small class="text-muted d-block">{{ 'participants.maritalStatus' | transloco }}</small>
+                <strong>{{ participant.maritalStatus.name }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Information -->
+    <div class="col-lg-6 mb-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-bottom">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-address-book text-success me-2"></i>
+            {{ 'participants.contactInformation' | transloco }}
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="info-item mb-3">
+            <div class="d-flex align-items-start">
+              <div class="icon-wrapper me-3">
+                <i class="fas fa-envelope text-success"></i>
+              </div>
+              <div class="flex-grow-1">
+                <small class="text-muted d-block">{{ 'participants.email' | transloco }}</small>
+                <strong>{{ participant.email || '-' }}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-item mb-3">
+            <div class="d-flex align-items-start">
+              <div class="icon-wrapper me-3">
+                <i class="fas fa-phone text-success"></i>
+              </div>
+              <div class="flex-grow-1">
+                <small class="text-muted d-block">{{ 'participants.phoneNumber' | transloco }}</small>
+                <strong>{{ participant.phoneNumber || '-' }}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-item mb-3">
+            <div class="d-flex align-items-start">
+              <div class="icon-wrapper me-3">
+                <i class="fas fa-map-marker-alt text-success"></i>
+              </div>
+              <div class="flex-grow-1">
+                <small class="text-muted d-block">{{ 'participants.address' | transloco }}</small>
+                <strong>{{ participant.address }}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-item mb-3">
+            <div class="d-flex align-items-start">
+              <div class="icon-wrapper me-3">
+                <i class="fas fa-city text-success"></i>
+              </div>
+              <div class="flex-grow-1">
+                <small class="text-muted d-block">{{ 'participants.city' | transloco }}</small>
+                <strong>{{ participant.city }}</strong>
+              </div>
+            </div>
+          </div>
+
+          @if (participant.healthInsurance) {
+          <div class="info-item mb-3">
+            <div class="d-flex align-items-start">
+              <div class="icon-wrapper me-3">
+                <i class="fas fa-hospital text-success"></i>
+              </div>
+              <div class="flex-grow-1">
+                <small class="text-muted d-block">{{ 'participants.healthInsurance' | transloco }}</small>
+                <strong>{{ participant.healthInsurance.name }}@if (participant.customHealthInsurance) { - {{
+                  participant.customHealthInsurance }}}</strong>
+              </div>
+            </div>
+          </div>
+          }
+
+          @if (participant.religiousAffiliation) {
+          <div class="info-item mb-3">
+            <div class="d-flex align-items-start">
+              <div class="icon-wrapper me-3">
+                <i class="fas fa-praying-hands text-success"></i>
+              </div>
+              <div class="flex-grow-1">
+                <small class="text-muted d-block">{{ 'participants.religiousAffiliation' | transloco }}</small>
+                <strong>{{ participant.religiousAffiliation }}</strong>
+              </div>
+            </div>
+          </div>
+          }
+
+          @if (participant.referralSource) {
+          <div class="info-item">
+            <div class="d-flex align-items-start">
+              <div class="icon-wrapper me-3">
+                <i class="fas fa-user-friends text-success"></i>
+              </div>
+              <div class="flex-grow-1">
+                <small class="text-muted d-block">{{ 'participants.referralSource' | transloco }}</small>
+                <strong>{{ participant.referralSource }}</strong>
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Emergency Contacts Section -->
+  @if (participant.emergencyContacts && participant.emergencyContacts.length > 0) {
+  <div class="row">
+    <div class="col-12 mb-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-phone-square-alt text-danger me-2"></i>
+            {{ 'participants.emergencyContacts' | transloco }}
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            @for (contact of participant.emergencyContacts; track contact.id) {
+            <div class="col-md-6 mb-3">
+              <div class="emergency-contact-card p-3 border rounded">
+                <div class="d-flex align-items-start mb-2">
+                  <div class="icon-wrapper me-3">
+                    <i class="fas fa-user-shield text-danger"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="mb-1">{{ contact.emergencyContact.name }}</h6>
+                    <span class="badge bg-danger-subtle text-danger">{{ contact.relationship.name }}</span>
+                  </div>
+                </div>
+                <div class="contact-details ms-5">
+                  <div class="mb-1">
+                    <i class="fas fa-phone text-muted me-2"></i>
+                    <small>{{ contact.emergencyContact.phone }}</small>
+                  </div>
+                  <div class="mb-1">
+                    <i class="fas fa-envelope text-muted me-2"></i>
+                    <small>{{ contact.emergencyContact.email }}</small>
+                  </div>
+                  <div class="mb-1">
+                    <i class="fas fa-map-marker-alt text-muted me-2"></i>
+                    <small>{{ contact.emergencyContact.address }}, {{ contact.emergencyContact.city }}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- Family Composition Section -->
+  @if (participant.familyMembers && participant.familyMembers.length > 0) {
+  <div class="row">
+    <div class="col-12 mb-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-users text-info me-2"></i>
+            {{ 'participants.familyComposition' | transloco }}
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th><i class="fas fa-user me-2"></i>{{ 'participants.name' | transloco }}</th>
+                  <th><i class="fas fa-link me-2"></i>{{ 'participants.relationship' | transloco }}</th>
+                  <th><i class="fas fa-birthday-cake me-2"></i>{{ 'participants.age' | transloco }}</th>
+                  <th><i class="fas fa-briefcase me-2"></i>{{ 'participants.occupation' | transloco }}</th>
+                  <th><i class="fas fa-graduation-cap me-2"></i>{{ 'participants.academicLevel' | transloco }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (member of participant.familyMembers; track member.id) {
+                <tr>
+                  <td><strong>{{ member.name }}</strong></td>
+                  <td><span class="badge bg-info-subtle text-info">{{ member.familyRelationship.name }}</span></td>
+                  <td>{{ calculateAge(member.birthDate) }} {{ 'participants.years' | transloco }}</td>
+                  <td>{{ member.occupation || '-' }}</td>
+                  <td>{{ member.academicLevel.name }}</td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- BioPsychosocial History Section -->
+  @if (participant.bioPsychosocialHistory) {
+  <div class="row">
+    <div class="col-12 mb-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-file-medical-alt text-warning me-2"></i>
+            {{ 'participants.bioPsychosocialHistory' | transloco }}
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <!-- Academic Information -->
+            <div class="col-lg-6 mb-4">
+              <h6 class="text-primary mb-3">
+                <i class="fas fa-graduation-cap me-2"></i>
+                {{ 'participants.academicInformation' | transloco }}
+              </h6>
+
+              <div class="info-item mb-3">
+                <div class="d-flex align-items-start">
+                  <div class="icon-wrapper me-3">
+                    <i class="fas fa-book text-warning"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <small class="text-muted d-block">{{ 'participants.academicLevel' | transloco }}</small>
+                    <strong>{{ participant.bioPsychosocialHistory.academicLevel.name }}</strong>
+                  </div>
+                </div>
+              </div>
+
+              @if (participant.bioPsychosocialHistory.completedGrade) {
+              <div class="info-item mb-3">
+                <div class="d-flex align-items-start">
+                  <div class="icon-wrapper me-3">
+                    <i class="fas fa-award text-warning"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <small class="text-muted d-block">{{ 'participants.completedGrade' | transloco }}</small>
+                    <strong>{{ participant.bioPsychosocialHistory.completedGrade }}</strong>
+                  </div>
+                </div>
+              </div>
+              }
+
+              @if (participant.bioPsychosocialHistory.institution) {
+              <div class="info-item mb-3">
+                <div class="d-flex align-items-start">
+                  <div class="icon-wrapper me-3">
+                    <i class="fas fa-school text-warning"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <small class="text-muted d-block">{{ 'participants.institution' | transloco }}</small>
+                    <strong>{{ participant.bioPsychosocialHistory.institution }}</strong>
+                  </div>
+                </div>
+              </div>
+              }
+
+              @if (participant.bioPsychosocialHistory.profession) {
+              <div class="info-item mb-3">
+                <div class="d-flex align-items-start">
+                  <div class="icon-wrapper me-3">
+                    <i class="fas fa-user-tie text-warning"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <small class="text-muted d-block">{{ 'participants.profession' | transloco }}</small>
+                    <strong>{{ participant.bioPsychosocialHistory.profession }}</strong>
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
+
+            <!-- Economic and Housing Information -->
+            <div class="col-lg-6 mb-4">
+              <h6 class="text-success mb-3">
+                <i class="fas fa-dollar-sign me-2"></i>
+                {{ 'participants.economicInformation' | transloco }}
+              </h6>
+
+              <div class="info-item mb-3">
+                <div class="d-flex align-items-start">
+                  <div class="icon-wrapper me-3">
+                    <i class="fas fa-money-bill-wave text-warning"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <small class="text-muted d-block">{{ 'participants.incomeLevel' | transloco }}</small>
+                    <strong>{{ participant.bioPsychosocialHistory.incomeLevel.name }}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-item mb-3">
+                <div class="d-flex align-items-start">
+                  <div class="icon-wrapper me-3">
+                    <i class="fas fa-piggy-bank text-warning"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <small class="text-muted d-block">{{ 'participants.incomeSource' | transloco }}</small>
+                    <strong>{{ participant.bioPsychosocialHistory.incomeSource.name }}</strong>
+                  </div>
+                </div>
+              </div>
+
+              @if (participant.bioPsychosocialHistory.occupationalHistory) {
+              <div class="info-item mb-3">
+                <div class="d-flex align-items-start">
+                  <div class="icon-wrapper me-3">
+                    <i class="fas fa-history text-warning"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <small class="text-muted d-block">{{ 'participants.occupationalHistory' | transloco }}</small>
+                    <strong>{{ participant.bioPsychosocialHistory.occupationalHistory }}</strong>
+                  </div>
+                </div>
+              </div>
+              }
+
+              <div class="info-item mb-3">
+                <div class="d-flex align-items-start">
+                  <div class="icon-wrapper me-3">
+                    <i class="fas fa-home text-warning"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <small class="text-muted d-block">{{ 'participants.housingType' | transloco }}</small>
+                    <strong>{{ participant.bioPsychosocialHistory.housingType.name }}</strong>
+                  </div>
+                </div>
+              </div>
+
+              @if (participant.bioPsychosocialHistory.housing) {
+              <div class="info-item mb-3">
+                <div class="d-flex align-items-start">
+                  <div class="icon-wrapper me-3">
+                    <i class="fas fa-info-circle text-warning"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <small class="text-muted d-block">{{ 'participants.housingDetails' | transloco }}</small>
+                    <strong>{{ participant.bioPsychosocialHistory.housing }}</strong>
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
   }
 
   <!-- Not Found State -->
