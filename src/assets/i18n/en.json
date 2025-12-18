@@ -1029,6 +1029,11 @@
       "invalid": "The entered value is not valid"
     }
   },
+  "footer": {
+    "aboutUs": "About Us",
+    "help": "Help",
+    "contactUs": "Contact Us"
+  },
   "ui": {
     "cards": {
       "navigation": "Navigation"
