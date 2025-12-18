@@ -33,6 +33,7 @@ import { HousingType } from '../../configuration/housing-type/housing-type.inter
 import { AcademicLevel } from '../../../core/interfaces/academic-level.interface';
 import { CountryService } from '../../../core/services/country.service';
 import { environment } from '../../../../environments/environment';
+import { Participant } from 'src/app/core/interfaces/participant-create.interface';
 
 @Component({
   selector: 'app-create-participant',
@@ -291,7 +292,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          const participant = response.data;
+          const participant: Participant = response.data;
 
           // Populate personal data with emergency contact (only first one)
           const emergencyContact = participant.emergencyContacts?.[0];
@@ -307,6 +308,8 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
             documentNumber: participant.documentNumber,
             address: participant.address,
             city: participant.city,
+            state: participant.state,
+            zipCode: participant.zipCode || '',
             birthDate: participant.birthDate,
             genderId: participant.genderId,
             maritalStatusId: participant.maritalStatusId,
@@ -623,10 +626,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     const emergencyContacts = [
       {
         name: personalData.emergencyContactName,
-        phone:
-          personalData.emergencyContactPhone?.e164Number ||
-          personalData.emergencyContactPhone?.internationalNumber ||
-          personalData.emergencyContactPhone,
+        phone: personalData.emergencyContactPhone?.internationalNumber,
         email: personalData.emergencyContactEmail,
         address: personalData.emergencyContactAddress,
         city: personalData.emergencyContactCity,
@@ -642,10 +642,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
       secondName: personalData.secondName || undefined,
       firstLastName: personalData.firstLastName,
       secondLastName: personalData.secondLastName || undefined,
-      phoneNumber:
-        personalData.phoneNumber?.e164Number ||
-        personalData.phoneNumber?.internationalNumber ||
-        personalData.phoneNumber,
+      phoneNumber: personalData.phoneNumber?.internationalNumber || undefined,
       email: personalData.email,
       documentTypeId: personalData.documentTypeId ? Number(personalData.documentTypeId) : null,
       documentNumber: personalData.documentNumber,

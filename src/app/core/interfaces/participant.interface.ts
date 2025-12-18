@@ -120,6 +120,7 @@ export interface Participant {
   documentNumber: string;
   address: string;
   city: string;
+  state: string;
   birthDate: string;
   religiousAffiliation?: string;
   genderId: number;

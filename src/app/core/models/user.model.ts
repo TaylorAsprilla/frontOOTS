@@ -15,6 +15,8 @@ export interface UserBackendResponse {
   documentTypeId?: number;
   address: string;
   city: string;
+  state: string;
+  zipCode: string;
   birthDate: string; // ISO string from backend
   status: 'ACTIVE' | 'INACTIVE'; // Backend uses status instead of isActive
   createdAt: string; // ISO string from backend
@@ -41,6 +43,8 @@ export class UserModel {
     public documentTypeId: number,
     public address: string,
     public city: string,
+    public state: string,
+    public zipCode: string,
     public birthDate: Date,
     public createdAt: Date,
     public updatedAt: Date,
@@ -66,6 +70,8 @@ export class UserModel {
       response.documentTypeId || 1,
       response.address,
       response.city,
+      response.state,
+      response.zipCode || '',
       new Date(response.birthDate),
       new Date(response.createdAt),
       new Date(response.updatedAt),
