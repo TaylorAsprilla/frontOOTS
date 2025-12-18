@@ -19,7 +19,7 @@ import { ParticipantService } from '../../../core/services/participant.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
-import { ParticipantFormData, ValidationMessages } from '../../../core/interfaces/participant.interface';
+import { ValidationMessages } from '../../../core/interfaces/participant.interface';
 import { CaseService } from '../../../core/services/case.service';
 import { TokenStorageService } from '../../../core/services/token-storage.service';
 import { DocumentType } from '../../configuration/document-types/document-type.interface';
@@ -54,13 +54,13 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   private readonly tokenStorageService = inject(TokenStorageService);
   private readonly route = inject(ActivatedRoute);
   private readonly countryService = inject(CountryService);
-  participantId: number | null = null;
   private readonly formBuilder = inject(FormBuilder);
   private readonly participantService = inject(ParticipantService);
   private readonly notificationService = inject(NotificationService);
   private readonly router = inject(Router);
   private readonly destroy$ = new Subject<void>();
 
+  participantId: number | null = null;
   // Form and wizard state
   participantForm!: FormGroup;
   activeWizardStep: number = 1;
@@ -322,39 +322,6 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
             emergencyContactRelationship: emergencyContact?.relationshipId || '',
           });
 
-          // Populate family members
-          if (participant.familyMembers && participant.familyMembers.length > 0) {
-            const familyCompositionArray = this.participantForm.get('familyComposition') as FormArray;
-            familyCompositionArray.clear();
-
-            participant.familyMembers.forEach((member) => {
-              familyCompositionArray.push(
-                this.formBuilder.group({
-                  name: [member.name, Validators.required],
-                  birthDate: [member.birthDate, Validators.required],
-                  occupation: [member.occupation, Validators.required],
-                  relationshipId: [member.familyRelationshipId, Validators.required],
-                  academicLevelId: [member.academicLevelId, Validators.required],
-                })
-              );
-            });
-          }
-
-          // Populate biopsychosocial history
-          if (participant.bioPsychosocialHistory) {
-            this.participantForm.get('bioPsychosocialHistory')?.patchValue({
-              academicLevelId: participant.bioPsychosocialHistory.academicLevelId,
-              completedGrade: participant.bioPsychosocialHistory.completedGrade || '',
-              institution: participant.bioPsychosocialHistory.institution || '',
-              profession: participant.bioPsychosocialHistory.profession || '',
-              incomeLevelId: participant.bioPsychosocialHistory.incomeLevelId,
-              incomeSourceId: participant.bioPsychosocialHistory.incomeSourceId,
-              occupationalHistory: participant.bioPsychosocialHistory.occupationalHistory || '',
-              housingTypeId: participant.bioPsychosocialHistory.housingTypeId,
-              housing: participant.bioPsychosocialHistory.housing || '',
-            });
-          }
-
           this.isLoading = false;
         },
         error: (error) => {
@@ -372,14 +339,11 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Initialize the reactive form with 3 main sections:
-   * 1. Personal Data (Datos Personales)
-   * 2. Family Composition (Composición Familiar)
-   * 3. Biopsychosocial History (Historial BioPsicosocial)
+   * Initialize the reactive form with Personal Data (Datos Personales)
    */
   private initializeForm(): void {
     this.participantForm = this.formBuilder.group({
-      // Step 1: Personal Data
+      // Personal Data
       personalData: this.formBuilder.group({
         firstName: ['', [Validators.required, Validators.maxLength(50)]],
         secondName: ['', Validators.maxLength(50)],
@@ -403,26 +367,10 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         // Emergency Contact fields
         emergencyContactName: ['', Validators.required],
         emergencyContactPhone: ['', Validators.required],
-        emergencyContactEmail: ['', [Validators.required, Validators.email]],
-        emergencyContactAddress: ['', Validators.required],
-        emergencyContactCity: ['', Validators.required],
+        emergencyContactEmail: ['', [Validators.email]],
+        emergencyContactAddress: [''],
+        emergencyContactCity: [''],
         emergencyContactRelationship: ['', Validators.required],
-      }),
-
-      // Step 2: Family Composition
-      familyComposition: this.formBuilder.array([this.createFamilyMemberForm()]),
-
-      // Step 3: Biopsychosocial History
-      bioPsychosocialHistory: this.formBuilder.group({
-        academicLevelId: ['', Validators.required],
-        completedGrade: ['', Validators.required],
-        institution: ['', Validators.required],
-        profession: ['', Validators.required],
-        incomeSourceId: ['', Validators.required],
-        incomeLevelId: ['', Validators.required],
-        occupationalHistory: ['', Validators.required],
-        housingTypeId: ['', Validators.required],
-        housing: ['', Validators.required],
       }),
     });
 
@@ -583,108 +531,6 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Navigate to next wizard step
-   */
-  goToNextStep(): void {
-    if (this.canProceedToNextStep()) {
-      this.activeWizardStep++;
-    } else {
-      this.markCurrentStepAsTouched();
-    }
-  }
-
-  /**
-   * Navigate to previous wizard step
-   */
-  goToPreviousStep(): void {
-    if (this.activeWizardStep > 1) {
-      this.activeWizardStep--;
-    }
-  }
-
-  /**
-   * Check if can proceed to next step based on current step validation
-   */
-  private canProceedToNextStep(): boolean {
-    switch (this.activeWizardStep) {
-      case 1:
-        return this.participantForm.get('personalData')?.valid || false;
-      case 2:
-        return this.participantForm.get('familyComposition')?.valid || false;
-      case 3:
-        return this.participantForm.get('bioPsychosocialHistory')?.valid || false;
-      case 4:
-        return this.participantForm.get('consultationReason')?.valid || false;
-      case 5:
-        return this.participantForm.get('identifiedSituations')?.valid || false;
-      case 6:
-        return this.participantForm.get('intervention')?.valid || false;
-      case 7:
-        return this.participantForm.get('followUpPlan')?.valid || false;
-      default:
-        return true; // Para pasos sin validación obligatoria
-    }
-  }
-
-  /**
-   * Mark all controls in current step as touched
-   */
-  private markCurrentStepAsTouched(): void {
-    let groupName = '';
-    switch (this.activeWizardStep) {
-      case 1:
-        groupName = 'personalData';
-        break;
-      case 2:
-        groupName = 'familyComposition';
-        break;
-      case 3:
-        groupName = 'bioPsychosocialHistory';
-        break;
-      case 4:
-        groupName = 'consultationReason';
-        break;
-      case 5:
-        groupName = 'identifiedSituations';
-        break;
-      case 6:
-        groupName = 'intervention';
-        break;
-      case 7:
-        groupName = 'followUpPlan';
-        break;
-      case 8:
-        groupName = 'physicalHealthHistory';
-        break;
-      case 9:
-        groupName = 'mentalHealthHistory';
-        break;
-      case 10:
-        groupName = 'assessment';
-        break;
-      case 11:
-        groupName = 'interventionPlan';
-        break;
-      case 12:
-        groupName = 'progressNotes';
-        break;
-      case 13:
-        groupName = 'referrals';
-        break;
-      case 14:
-        groupName = 'closingNote';
-        break;
-    }
-
-    if (groupName) {
-      const group = this.participantForm.get(groupName);
-      if (group) {
-        this.markFormGroupTouched(group as FormGroup);
-      }
-    }
-  }
-
-  /**
    * Mark all controls in a form group as touched
    */
   private markFormGroupTouched(formGroup: FormGroup | FormArray): void {
@@ -745,25 +591,17 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
    */
 
   onSubmit(): void {
-    // Validar que todos los pasos estén completos
+    // Validar que el formulario esté completo
     const personalDataValid = this.participantForm.get('personalData')?.valid;
-    const familyCompositionValid = this.participantForm.get('familyComposition')?.valid;
-    const bioHistoryValid = this.participantForm.get('bioPsychosocialHistory')?.valid;
 
-    if (!personalDataValid || !familyCompositionValid || !bioHistoryValid) {
+    if (!personalDataValid) {
       this.markFormGroupTouched(this.participantForm);
       this.notificationService.showWarning('Por favor complete todos los campos requeridos');
       return;
     }
 
     if (this.participantForm.valid && !this.isSubmitting) {
-      // Si estamos en el paso 3, crear el participante
-      if (this.activeWizardStep === 3) {
-        this.confirmSubmission();
-      } else {
-        // En otros pasos, solo avanzar
-        this.goToNextStep();
-      }
+      this.confirmSubmission();
     } else {
       this.markFormGroupTouched(this.participantForm);
       this.notificationService.showWarning('Por favor complete todos los campos requeridos');
@@ -776,7 +614,6 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   private mapFormDataToDto(): any {
     const formValue = this.participantForm.value;
     const personalData = formValue.personalData;
-    const bioHistory = formValue.bioPsychosocialHistory;
 
     // Get current user ID
     const currentUser = this.tokenStorageService.getUser();
@@ -798,28 +635,6 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
           : null,
       },
     ];
-
-    // Map family members
-    const familyMembers = formValue.familyComposition.map((member: any) => ({
-      name: member.name,
-      birthDate: member.birthDate,
-      occupation: member.occupation,
-      familyRelationshipId: member.relationshipId ? Number(member.relationshipId) : null,
-      academicLevelId: member.academicLevelId ? Number(member.academicLevelId) : null,
-    }));
-
-    // Map biopsychosocial history
-    const bioPsychosocialHistory = {
-      academicLevelId: bioHistory.academicLevelId ? Number(bioHistory.academicLevelId) : null,
-      completedGrade: bioHistory.completedGrade,
-      institution: bioHistory.institution,
-      profession: bioHistory.profession,
-      incomeLevelId: bioHistory.incomeLevelId ? Number(bioHistory.incomeLevelId) : null,
-      incomeSourceId: bioHistory.incomeSourceId ? Number(bioHistory.incomeSourceId) : null,
-      occupationalHistory: bioHistory.occupationalHistory,
-      housingTypeId: bioHistory.housingTypeId ? Number(bioHistory.housingTypeId) : null,
-      housing: bioHistory.housing,
-    };
 
     // Build the complete DTO
     const dto = {
@@ -847,8 +662,6 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
       referralSource: personalData.referralSource || undefined,
       registeredById,
       emergencyContacts,
-      familyMembers,
-      bioPsychosocialHistory,
     };
 
     return dto;
@@ -1008,8 +821,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
    * Get progress percentage for current step
    */
   getProgressPercentage(): number {
-    const totalSteps = 3; // Total number of wizard steps
-    return (this.activeWizardStep / totalSteps) * 100;
+    return 100; // Single step form
   }
 
   /**
@@ -1097,42 +909,6 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
       { value: 'oneSMLV', label: 'participants.incomeLevel.oneSMLV' },
       { value: 'moreThanOne', label: 'participants.incomeLevel.moreThanOne' },
     ];
-  }
-
-  /**
-   * Create a new family member form
-   */
-  createFamilyMemberForm(): FormGroup {
-    return this.formBuilder.group({
-      name: ['', Validators.required],
-      birthDate: [''],
-      occupation: [''],
-      relationshipId: [''],
-      academicLevelId: [''],
-    });
-  }
-
-  /**
-   * Get family composition FormArray
-   */
-  get familyCompositionArray(): FormArray {
-    return this.participantForm.get('familyComposition') as FormArray;
-  }
-
-  /**
-   * Add new family member
-   */
-  addFamilyMember(): void {
-    this.familyCompositionArray.push(this.createFamilyMemberForm());
-  }
-
-  /**
-   * Remove family member at specific index
-   */
-  removeFamilyMember(index: number): void {
-    if (this.familyCompositionArray.length > 1) {
-      this.familyCompositionArray.removeAt(index);
-    }
   }
 
   /**

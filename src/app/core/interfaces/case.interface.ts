@@ -257,6 +257,8 @@ export interface ClosingNote {
  */
 export interface CreateCaseDto {
   participantId: number;
+  familyMembers?: FamilyMemberDto[];
+  bioPsychosocialHistory?: BioPsychosocialHistoryDto;
   consultationReason: string;
   identifiedSituations: number[];
   intervention: string;
@@ -268,6 +270,26 @@ export interface CreateCaseDto {
   progressNotes: ProgressNoteDto[];
   referrals: string;
   closingNote?: ClosingNoteDto;
+}
+
+export interface FamilyMemberDto {
+  name: string;
+  birthDate?: string | null;
+  occupation?: string | null;
+  familyRelationshipId?: number | null;
+  academicLevelId?: number | null;
+}
+
+export interface BioPsychosocialHistoryDto {
+  academicLevelId?: number | null;
+  completedGrade: string;
+  institution: string;
+  profession: string;
+  incomeSourceId?: number | null;
+  incomeLevelId?: number | null;
+  occupationalHistory: string;
+  housingTypeId?: number | null;
+  housing: string;
 }
 
 export interface FollowUpPlanDto {

@@ -19,6 +19,11 @@ import { CaseService } from '../../../core/services/case.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { TokenStorageService } from '../../../core/services/token-storage.service';
 import { IdentifiedSituationService, IdentifiedSituation } from '../../../core/services/identified-situation.service';
+import { FamilyRelationship } from '../../configuration/family-relationship/family-relationship.interface';
+import { AcademicLevel } from '../../../core/interfaces/academic-level.interface';
+import { IncomeSource } from '../../configuration/income-source/income-source.interface';
+import { IncomeLevel } from '../../configuration/income-level/income-level.interface';
+import { HousingType } from '../../configuration/housing-type/housing-type.interface';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import {
@@ -64,6 +69,11 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
   // Data
   identifiedSituations: IdentifiedSituation[] = [];
+  familyRelationships: FamilyRelationship[] = [];
+  academicLevels: AcademicLevel[] = [];
+  incomeSources: IncomeSource[] = [];
+  incomeLevels: IncomeLevel[] = [];
+  housingTypes: HousingType[] = [];
 
   // Breadcrumb
   breadcrumbItems: BreadcrumbItem[] = [];
@@ -79,6 +89,11 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       this.isEditMode = !!this.caseId;
 
       this.setupBreadcrumb();
+      this.loadFamilyRelationshipsFromResolver();
+      this.loadAcademicLevelsFromResolver();
+      this.loadIncomeSourcesFromResolver();
+      this.loadIncomeLevelsFromResolver();
+      this.loadHousingTypesFromResolver();
       this.initializeForm();
       this.loadIdentifiedSituations();
 
@@ -100,26 +115,102 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
     ];
   }
 
+  /**
+   * Load family relationships from route resolver
+   */
+  private loadFamilyRelationshipsFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['familyRelationships'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.familyRelationships = resolvedData;
+    } else {
+      this.familyRelationships = [];
+    }
+  }
+
+  /**
+   * Load academic levels from route resolver
+   */
+  private loadAcademicLevelsFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['academicLevels'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.academicLevels = resolvedData;
+    } else {
+      this.academicLevels = [];
+    }
+  }
+
+  /**
+   * Load income sources from route resolver
+   */
+  private loadIncomeSourcesFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['incomeSources'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.incomeSources = resolvedData;
+    } else {
+      this.incomeSources = [];
+    }
+  }
+
+  /**
+   * Load income levels from route resolver
+   */
+  private loadIncomeLevelsFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['incomeLevels'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.incomeLevels = resolvedData;
+    } else {
+      this.incomeLevels = [];
+    }
+  }
+
+  /**
+   * Load housing types from route resolver
+   */
+  private loadHousingTypesFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['housingTypes'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.housingTypes = resolvedData;
+    } else {
+      this.housingTypes = [];
+    }
+  }
+
   private initializeForm(): void {
     this.caseForm = this.formBuilder.group({
-      // Step 1: Consultation Reason
+      // Step 1: Family Members (Composición Familiar)
+      familyMembers: this.formBuilder.array([this.createFamilyMemberForm()]),
+
+      // Step 2: Biopsychosocial History (Historial BioPsicosocial)
+      bioPsychosocialHistory: this.formBuilder.group({
+        academicLevelId: ['', Validators.required],
+        completedGrade: ['', Validators.required],
+        institution: ['', Validators.required],
+        profession: ['', Validators.required],
+        incomeSourceId: ['', Validators.required],
+        incomeLevelId: ['', Validators.required],
+        occupationalHistory: ['', Validators.required],
+        housingTypeId: ['', Validators.required],
+        housing: ['', Validators.required],
+      }),
+
+      // Step 3: Consultation Reason
       consultationReason: this.formBuilder.group({
         reason: ['', Validators.required],
         referredBy: [''],
         observations: [''],
       }),
 
-      // Step 2: Identified Situations
+      // Step 4: Identified Situations
       identifiedSituations: this.formBuilder.group({
         situations: [[], [Validators.required, this.atLeastOneSelectedValidator()]],
       }),
 
-      // Step 3: Intervention
+      // Step 5: Intervention
       intervention: this.formBuilder.group({
         action: ['', Validators.required],
       }),
 
-      // Step 4: Follow-up Plan
+      // Step 6: Follow-up Plan
       followUpPlan: this.formBuilder.group({
         processCompleted: [false],
         servicesCoordinated: [false],
@@ -132,17 +223,17 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
         otherDetails: [''],
       }),
 
-      // Step 5: Physical Health History
+      // Step 7: Physical Health History
       physicalHealthHistory: this.formBuilder.group({
         conditions: this.formBuilder.array([]),
       }),
 
-      // Step 6: Mental Health History
+      // Step 8: Mental Health History
       mentalHealthHistory: this.formBuilder.group({
         conditions: this.formBuilder.array([]),
       }),
 
-      // Step 7: Assessment (Ponderación)
+      // Step 9: Assessment (Ponderación)
       assessment: this.formBuilder.group({
         generalDescription: ['', Validators.required],
         concurrentFactors: ['', Validators.required],
@@ -150,22 +241,22 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
         theoreticalFramework: ['', Validators.required],
       }),
 
-      // Step 8: Intervention Plan
+      // Step 10: Intervention Plan
       interventionPlan: this.formBuilder.group({
         interventions: this.formBuilder.array([]),
       }),
 
-      // Step 9: Progress Notes
+      // Step 11: Progress Notes
       progressNotes: this.formBuilder.group({
         notes: this.formBuilder.array([]),
       }),
 
-      // Step 10: Referrals (Referidos)
+      // Step 12: Referrals (Referidos)
       referrals: this.formBuilder.group({
         referralsJustification: ['', Validators.required],
       }),
 
-      // Step 11: Closing Note (optional, for closing cases)
+      // Step 13: Closing Note (optional, for closing cases)
       closingNote: this.formBuilder.group({
         closureDate: [''],
         closureReason: [''],
@@ -274,6 +365,31 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
     return situations.includes(situationId);
   }
 
+  // Family Members methods
+  get familyMembersArray(): FormArray {
+    return this.caseForm.get('familyMembers') as FormArray;
+  }
+
+  createFamilyMemberForm(): FormGroup {
+    return this.formBuilder.group({
+      name: ['', Validators.required],
+      birthDate: [''],
+      occupation: [''],
+      familyRelationshipId: [''],
+      academicLevelId: [''],
+    });
+  }
+
+  addFamilyMember(): void {
+    this.familyMembersArray.push(this.createFamilyMemberForm());
+  }
+
+  removeFamilyMember(index: number): void {
+    if (this.familyMembersArray.length > 1) {
+      this.familyMembersArray.removeAt(index);
+    }
+  }
+
   // Physical Health Conditions methods
   get physicalConditions(): FormArray {
     return this.caseForm.get('physicalHealthHistory.conditions') as FormArray;
@@ -363,7 +479,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   // Navigation methods
   goToNextStep(): void {
     if (this.isStepValid(this.activeWizardStep)) {
-      this.activeWizardStep = Math.min(this.activeWizardStep + 1, 11);
+      this.activeWizardStep = Math.min(this.activeWizardStep + 1, 13);
     } else {
       this.notificationService.showWarning('Por favor complete todos los campos requeridos');
     }
@@ -375,17 +491,19 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
   private isStepValid(step: number): boolean {
     const stepControls: { [key: number]: string } = {
-      1: 'consultationReason',
-      2: 'identifiedSituations',
-      3: 'intervention',
-      4: 'followUpPlan',
-      5: 'physicalHealthHistory',
-      6: 'mentalHealthHistory',
-      7: 'assessment',
-      8: 'interventionPlan',
-      9: 'progressNotes',
-      10: 'referrals',
-      11: 'closingNote',
+      1: 'familyMembers',
+      2: 'bioPsychosocialHistory',
+      3: 'consultationReason',
+      4: 'identifiedSituations',
+      5: 'intervention',
+      6: 'followUpPlan',
+      7: 'physicalHealthHistory',
+      8: 'mentalHealthHistory',
+      9: 'assessment',
+      10: 'interventionPlan',
+      11: 'progressNotes',
+      12: 'referrals',
+      13: 'closingNote',
     };
 
     const controlName = stepControls[step];
@@ -397,7 +515,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
   // Submit methods
   onSubmit(): void {
-    if (this.activeWizardStep === 11) {
+    if (this.activeWizardStep === 13) {
       this.confirmSubmission();
     } else {
       this.goToNextStep();
@@ -467,6 +585,32 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
     return {
       participantId: this.participantId,
+      familyMembers: formValue.familyMembers.map((member: any) => ({
+        name: member.name,
+        birthDate: member.birthDate || null,
+        occupation: member.occupation || null,
+        familyRelationshipId: member.familyRelationshipId ? Number(member.familyRelationshipId) : null,
+        academicLevelId: member.academicLevelId ? Number(member.academicLevelId) : null,
+      })),
+      bioPsychosocialHistory: {
+        academicLevelId: formValue.bioPsychosocialHistory.academicLevelId
+          ? Number(formValue.bioPsychosocialHistory.academicLevelId)
+          : null,
+        completedGrade: formValue.bioPsychosocialHistory.completedGrade,
+        institution: formValue.bioPsychosocialHistory.institution,
+        profession: formValue.bioPsychosocialHistory.profession,
+        incomeSourceId: formValue.bioPsychosocialHistory.incomeSourceId
+          ? Number(formValue.bioPsychosocialHistory.incomeSourceId)
+          : null,
+        incomeLevelId: formValue.bioPsychosocialHistory.incomeLevelId
+          ? Number(formValue.bioPsychosocialHistory.incomeLevelId)
+          : null,
+        occupationalHistory: formValue.bioPsychosocialHistory.occupationalHistory,
+        housingTypeId: formValue.bioPsychosocialHistory.housingTypeId
+          ? Number(formValue.bioPsychosocialHistory.housingTypeId)
+          : null,
+        housing: formValue.bioPsychosocialHistory.housing,
+      },
       consultationReason: formValue.consultationReason.reason,
       identifiedSituations: formValue.identifiedSituations.situations,
       intervention: formValue.intervention.action,
@@ -497,8 +641,8 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
         observations: condition.observations,
       })),
       weighing: {
-        reasonConsultation: formValue.assessment.generalDescription,
-        identifiedSituation: formValue.identifiedSituations.description,
+        reasonConsultation: formValue.consultationReason.reason,
+        identifiedSituation: formValue.identifiedSituations.situations.join(', '),
         favorableConditions: formValue.assessment.concurrentFactors,
         conditionsNotFavorable: formValue.assessment.criticalFactors,
         helpProcess: formValue.assessment.theoreticalFramework,

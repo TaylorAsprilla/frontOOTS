@@ -20,8 +20,310 @@
                   [(activeId)]="activeWizardStep"
                   class="nav-pills nav-justified bg-light form-wizard-header mb-3"
                 >
-                  <!-- Step 1: Consultation Reason -->
+                  <!-- Step 1: Family Members -->
                   <li [ngbNavItem]="1">
+                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                      <i class="mdi mdi-account-group me-1"></i>
+                      <span class="d-none d-sm-inline">Composición Familiar</span>
+                    </a>
+                    <ng-template ngbNavContent>
+                      <p>
+                        <ngb-progressbar
+                          type="success"
+                          [value]="7.7"
+                          [striped]="true"
+                          [animated]="true"
+                          class="mb-3"
+                          height="7px"
+                        ></ngb-progressbar>
+                      </p>
+                      <div class="row" formArrayName="familyMembers">
+                        <div class="col-12">
+                          <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0"><i class="mdi mdi-account-group me-2"></i>Miembros de la Familia</h5>
+                            <button type="button" class="btn btn-primary btn-sm" (click)="addFamilyMember()">
+                              <i class="mdi mdi-plus me-1"></i>Agregar Familiar
+                            </button>
+                          </div>
+
+                          @for (member of familyMembersArray.controls; track $index; let i = $index) {
+                          <div [formGroupName]="i" class="family-member-card p-3 mb-3 position-relative">
+                            <div class="family-member-header d-flex justify-content-between align-items-center mb-3">
+                              <h6 class="mb-0 text-muted"><i class="mdi mdi-account me-1"></i>Familiar {{ i + 1 }}</h6>
+                              @if (familyMembersArray.length > 1) {
+                              <button
+                                type="button"
+                                class="btn btn-danger btn-sm"
+                                (click)="removeFamilyMember(i)"
+                                title="Eliminar familiar"
+                              >
+                                <i class="mdi mdi-delete"></i>
+                              </button>
+                              }
+                            </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-3 col-form-label obligatorio" [for]="'name_' + i">Nombre</label>
+                              <div class="col-md-9">
+                                <input type="text" [id]="'name_' + i" class="form-control" formControlName="name" />
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-3 col-form-label" [for]="'birthDate_' + i"
+                                >Fecha de Nacimiento</label
+                              >
+                              <div class="col-md-9">
+                                <input
+                                  type="date"
+                                  [id]="'birthDate_' + i"
+                                  class="form-control"
+                                  formControlName="birthDate"
+                                />
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-3 col-form-label" [for]="'occupation_' + i">Ocupación</label>
+                              <div class="col-md-9">
+                                <input
+                                  type="text"
+                                  [id]="'occupation_' + i"
+                                  class="form-control"
+                                  formControlName="occupation"
+                                />
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label [for]="'relationshipId_' + i" class="col-md-3 col-form-label">Parentesco</label>
+                              <div class="col-md-9">
+                                <select
+                                  class="form-select"
+                                  [id]="'relationshipId_' + i"
+                                  formControlName="familyRelationshipId"
+                                >
+                                  <option value="" disabled selected>Seleccione el Parentesco</option>
+                                  @for (relationship of familyRelationships; track relationship.id) {
+                                  <option [value]="relationship.id">{{ relationship.name }}</option>
+                                  }
+                                </select>
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label [for]="'academicLevelId_' + i" class="col-md-3 col-form-label"
+                                >Grado Académico</label
+                              >
+                              <div class="col-md-9">
+                                <select
+                                  class="form-select"
+                                  [id]="'academicLevelId_' + i"
+                                  formControlName="academicLevelId"
+                                >
+                                  <option value="" disabled selected>Seleccione el Grado Académico</option>
+                                  @for (academicLevel of academicLevels; track academicLevel.id) {
+                                  <option [value]="academicLevel.id">{{ academicLevel.name }}</option>
+                                  }
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          }
+                        </div>
+                      </div>
+
+                      <ul class="list-inline mb-0 wizard">
+                        <li class="next list-inline-item float-end">
+                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">Siguiente</button>
+                        </li>
+                      </ul>
+                    </ng-template>
+                  </li>
+
+                  <!-- Step 2: Biopsychosocial History -->
+                  <li [ngbNavItem]="2">
+                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                      <i class="mdi mdi-school me-1"></i>
+                      <span class="d-none d-sm-inline">Historial BioPsicosocial</span>
+                    </a>
+                    <ng-template ngbNavContent>
+                      <p>
+                        <ngb-progressbar
+                          type="success"
+                          [value]="15.4"
+                          [striped]="true"
+                          [animated]="true"
+                          class="mb-3"
+                          height="7px"
+                        ></ngb-progressbar>
+                      </p>
+                      <div formGroupName="bioPsychosocialHistory">
+                        <div class="row">
+                          <div class="col-md-6 mb-3">
+                            <label for="academicLevelId" class="form-label obligatorio">Nivel Académico</label>
+                            <select
+                              class="form-select"
+                              [class.is-invalid]="hasFieldError('bioPsychosocialHistory.academicLevelId')"
+                              id="academicLevelId"
+                              formControlName="academicLevelId"
+                            >
+                              <option value="" disabled selected>Seleccione</option>
+                              @for (academicLevel of academicLevels; track academicLevel.id) {
+                              <option [value]="academicLevel.id">{{ academicLevel.name }}</option>
+                              }
+                            </select>
+                            @if (hasFieldError('bioPsychosocialHistory.academicLevelId')) {
+                            <div class="invalid-feedback">Este campo es requerido</div>
+                            }
+                          </div>
+
+                          <div class="col-md-6 mb-3">
+                            <label class="form-label obligatorio" for="completedGrade">Grado completado</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              [class.is-invalid]="hasFieldError('bioPsychosocialHistory.completedGrade')"
+                              id="completedGrade"
+                              formControlName="completedGrade"
+                              placeholder="Ej: Profesional Completo"
+                            />
+                            @if (hasFieldError('bioPsychosocialHistory.completedGrade')) {
+                            <div class="invalid-feedback">Este campo es requerido</div>
+                            }
+                          </div>
+
+                          <div class="col-md-6 mb-3">
+                            <label class="form-label obligatorio" for="institution">Institución</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              [class.is-invalid]="hasFieldError('bioPsychosocialHistory.institution')"
+                              id="institution"
+                              formControlName="institution"
+                              placeholder="Ej: Universidad Nacional"
+                            />
+                            @if (hasFieldError('bioPsychosocialHistory.institution')) {
+                            <div class="invalid-feedback">Este campo es requerido</div>
+                            }
+                          </div>
+
+                          <div class="col-md-6 mb-3">
+                            <label class="form-label obligatorio" for="profession">Profesión</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              [class.is-invalid]="hasFieldError('bioPsychosocialHistory.profession')"
+                              id="profession"
+                              formControlName="profession"
+                              placeholder="Ej: Psicóloga Clínica"
+                            />
+                            @if (hasFieldError('bioPsychosocialHistory.profession')) {
+                            <div class="invalid-feedback">Este campo es requerido</div>
+                            }
+                          </div>
+
+                          <div class="col-md-6 mb-3">
+                            <label for="incomeSourceId" class="form-label obligatorio">Fuente de ingresos</label>
+                            <select
+                              class="form-select"
+                              [class.is-invalid]="hasFieldError('bioPsychosocialHistory.incomeSourceId')"
+                              id="incomeSourceId"
+                              formControlName="incomeSourceId"
+                            >
+                              <option value="" disabled selected>Seleccione</option>
+                              @for (incomeSource of incomeSources; track incomeSource.id) {
+                              <option [value]="incomeSource.id">{{ incomeSource.name }}</option>
+                              }
+                            </select>
+                            @if (hasFieldError('bioPsychosocialHistory.incomeSourceId')) {
+                            <div class="invalid-feedback">Este campo es requerido</div>
+                            }
+                          </div>
+
+                          <div class="col-md-6 mb-3">
+                            <label class="form-label obligatorio" for="incomeLevelId">Nivel de ingresos</label>
+                            <select
+                              class="form-select"
+                              [class.is-invalid]="hasFieldError('bioPsychosocialHistory.incomeLevelId')"
+                              id="incomeLevelId"
+                              formControlName="incomeLevelId"
+                            >
+                              <option value="" disabled selected>Seleccione</option>
+                              @for (incomeLevel of incomeLevels; track incomeLevel.id) {
+                              <option [value]="incomeLevel.id">{{ incomeLevel.name }}</option>
+                              }
+                            </select>
+                            @if (hasFieldError('bioPsychosocialHistory.incomeLevelId')) {
+                            <div class="invalid-feedback">Este campo es requerido</div>
+                            }
+                          </div>
+
+                          <div class="col-md-6 mb-3">
+                            <label for="housingTypeId" class="form-label obligatorio">Tipo de Vivienda</label>
+                            <select
+                              class="form-select"
+                              [class.is-invalid]="hasFieldError('bioPsychosocialHistory.housingTypeId')"
+                              id="housingTypeId"
+                              formControlName="housingTypeId"
+                            >
+                              <option value="" disabled selected>Seleccione</option>
+                              @for (housingType of housingTypes; track housingType.id) {
+                              <option [value]="housingType.id">{{ housingType.name }}</option>
+                              }
+                            </select>
+                            @if (hasFieldError('bioPsychosocialHistory.housingTypeId')) {
+                            <div class="invalid-feedback">Este campo es requerido</div>
+                            }
+                          </div>
+
+                          <div class="col-12 mb-3">
+                            <label class="form-label obligatorio" for="occupationalHistory"
+                              >Historial ocupacional</label
+                            >
+                            <textarea
+                              class="form-control"
+                              [class.is-invalid]="hasFieldError('bioPsychosocialHistory.occupationalHistory')"
+                              id="occupationalHistory"
+                              formControlName="occupationalHistory"
+                              rows="2"
+                              placeholder="Ej: 5 años como psicóloga clínica en hospital público"
+                            ></textarea>
+                            @if (hasFieldError('bioPsychosocialHistory.occupationalHistory')) {
+                            <div class="invalid-feedback">Este campo es requerido</div>
+                            }
+                          </div>
+
+                          <div class="col-12 mb-3">
+                            <label class="form-label obligatorio" for="housing">Descripción de la vivienda</label>
+                            <textarea
+                              class="form-control"
+                              [class.is-invalid]="hasFieldError('bioPsychosocialHistory.housing')"
+                              id="housing"
+                              formControlName="housing"
+                              rows="2"
+                              placeholder="Ej: Casa propia de 2 pisos, 3 habitaciones, buen estado"
+                            ></textarea>
+                            @if (hasFieldError('bioPsychosocialHistory.housing')) {
+                            <div class="invalid-feedback">Este campo es requerido</div>
+                            }
+                          </div>
+                        </div>
+                      </div>
+
+                      <ul class="list-inline mb-0 wizard">
+                        <li class="previous list-inline-item">
+                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">Anterior</button>
+                        </li>
+                        <li class="next list-inline-item float-end">
+                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">Siguiente</button>
+                        </li>
+                      </ul>
+                    </ng-template>
+                  </li>
+
+                  <!-- Step 3: Consultation Reason -->
+                  <li [ngbNavItem]="3">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-clipboard-text me-1"></i>
                       <span class="d-none d-sm-inline">Motivo de Consulta</span>
@@ -30,7 +332,7 @@
                       <p>
                         <ngb-progressbar
                           type="success"
-                          [value]="10"
+                          [value]="23.1"
                           [striped]="true"
                           [animated]="true"
                           class="mb-3"
@@ -56,6 +358,9 @@
                       </div>
 
                       <ul class="list-inline mb-0 wizard">
+                        <li class="previous list-inline-item">
+                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">Anterior</button>
+                        </li>
                         <li class="next list-inline-item float-end">
                           <button type="button" class="btn btn-primary" (click)="goToNextStep()">Siguiente</button>
                         </li>
@@ -63,8 +368,8 @@
                     </ng-template>
                   </li>
 
-                  <!-- Step 2: Identified Situations -->
-                  <li [ngbNavItem]="2">
+                  <!-- Step 4: Identified Situations -->
+                  <li [ngbNavItem]="4">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-alert-circle me-1"></i>
                       <span class="d-none d-sm-inline">Situaciones Identificadas</span>
@@ -73,7 +378,7 @@
                       <p>
                         <ngb-progressbar
                           type="success"
-                          [value]="20"
+                          [value]="30.8"
                           [striped]="true"
                           [animated]="true"
                           class="mb-3"
@@ -130,8 +435,8 @@
                     </ng-template>
                   </li>
 
-                  <!-- Step 3: Intervention -->
-                  <li [ngbNavItem]="3">
+                  <!-- Step 5: Intervention -->
+                  <li [ngbNavItem]="5">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-clipboard-check me-1"></i>
                       <span class="d-none d-sm-inline">Intervención</span>
@@ -140,7 +445,7 @@
                       <p>
                         <ngb-progressbar
                           type="success"
-                          [value]="30"
+                          [value]="38.5"
                           [striped]="true"
                           [animated]="true"
                           class="mb-3"
@@ -176,8 +481,8 @@
                     </ng-template>
                   </li>
 
-                  <!-- Step 4: Follow-up Plan -->
-                  <li [ngbNavItem]="4">
+                  <!-- Step 6: Follow-up Plan -->
+                  <li [ngbNavItem]="6">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-clipboard-list me-1"></i>
                       <span class="d-none d-sm-inline">Plan a Seguir</span>
@@ -186,7 +491,7 @@
                       <p>
                         <ngb-progressbar
                           type="success"
-                          [value]="40"
+                          [value]="46.2"
                           [striped]="true"
                           [animated]="true"
                           class="mb-3"
@@ -348,8 +653,8 @@
                     </ng-template>
                   </li>
 
-                  <!-- Step 5: Physical Health History -->
-                  <li [ngbNavItem]="5">
+                  <!-- Step 7: Physical Health History -->
+                  <li [ngbNavItem]="7">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-hospital-box me-1"></i>
                       <span class="d-none d-sm-inline">Historial de Salud Física</span>
@@ -358,7 +663,7 @@
                       <p>
                         <ngb-progressbar
                           type="success"
-                          [value]="50"
+                          [value]="53.9"
                           [striped]="true"
                           [animated]="true"
                           class="mb-3"
@@ -507,8 +812,8 @@
                     </ng-template>
                   </li>
 
-                  <!-- Step 6: Mental Health History -->
-                  <li [ngbNavItem]="6">
+                  <!-- Step 8: Mental Health History -->
+                  <li [ngbNavItem]="8">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-brain me-1"></i>
                       <span class="d-none d-sm-inline">Historial de Salud Mental</span>
@@ -517,7 +822,7 @@
                       <p>
                         <ngb-progressbar
                           type="success"
-                          [value]="60"
+                          [value]="61.6"
                           [striped]="true"
                           [animated]="true"
                           class="mb-3"
@@ -666,8 +971,8 @@
                     </ng-template>
                   </li>
 
-                  <!-- Step 7: Assessment (Ponderación) -->
-                  <li [ngbNavItem]="7">
+                  <!-- Step 9: Assessment (Ponderación) -->
+                  <li [ngbNavItem]="9">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-clipboard-text-multiple me-1"></i>
                       <span class="d-none d-sm-inline">Ponderación</span>
@@ -676,7 +981,7 @@
                       <p>
                         <ngb-progressbar
                           type="success"
-                          [value]="70"
+                          [value]="69.3"
                           [striped]="true"
                           [animated]="true"
                           class="mb-3"
@@ -804,8 +1109,8 @@
                     </ng-template>
                   </li>
 
-                  <!-- Step 8: Intervention Plan -->
-                  <li [ngbNavItem]="8">
+                  <!-- Step 10: Intervention Plan -->
+                  <li [ngbNavItem]="10">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-clipboard-list-outline me-1"></i>
                       <span class="d-none d-sm-inline">Plan de Intervención</span>
@@ -814,7 +1119,7 @@
                       <p>
                         <ngb-progressbar
                           type="success"
-                          [value]="80"
+                          [value]="77.0"
                           [striped]="true"
                           [animated]="true"
                           class="mb-3"
@@ -949,8 +1254,8 @@
                     </ng-template>
                   </li>
 
-                  <!-- Step 9: Progress Notes -->
-                  <li [ngbNavItem]="9">
+                  <!-- Step 11: Progress Notes -->
+                  <li [ngbNavItem]="11">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-file-document-edit me-1"></i>
                       <span class="d-none d-sm-inline">Notas de Progreso</span>
@@ -959,7 +1264,7 @@
                       <p>
                         <ngb-progressbar
                           type="success"
-                          [value]="81.81"
+                          [value]="84.7"
                           [striped]="true"
                           [animated]="true"
                           class="mb-3"
@@ -1093,8 +1398,8 @@
                     </ng-template>
                   </li>
 
-                  <!-- Step 10: Referrals -->
-                  <li [ngbNavItem]="10">
+                  <!-- Step 12: Referrals -->
+                  <li [ngbNavItem]="12">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-share-variant me-1"></i>
                       <span class="d-none d-sm-inline">Referidos</span>
@@ -1103,7 +1408,7 @@
                       <p>
                         <ngb-progressbar
                           type="success"
-                          [value]="90.9"
+                          [value]="92.4"
                           [striped]="true"
                           [animated]="true"
                           class="mb-3"
@@ -1175,8 +1480,8 @@
                     </ng-template>
                   </li>
 
-                  <!-- Step 11: Closing Note -->
-                  <li [ngbNavItem]="11">
+                  <!-- Step 13: Closing Note -->
+                  <li [ngbNavItem]="13">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-bookmark-check me-1"></i>
                       <span class="d-none d-sm-inline">Nota de Cierre</span>

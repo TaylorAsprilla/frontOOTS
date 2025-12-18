@@ -1,4 +1,9 @@
 import { Routes } from '@angular/router';
+import { familyRelationshipResolver } from '../../core/resolvers/family-relationship.resolver';
+import { academicLevelResolver } from '../../core/resolvers/academic-level.resolver';
+import { incomeSourceResolver } from '../../core/resolvers/income-source.resolver';
+import { incomeLevelResolver } from '../../core/resolvers/income-level.resolver';
+import { housingTypeResolver } from '../../core/resolvers/housing-type.resolver';
 
 /**
  * Cases module routes configuration
@@ -24,6 +29,13 @@ export const CASES_ROUTES: Routes = [
     title: 'Cases - Create New',
     data: {
       breadcrumb: 'cases.create',
+    },
+    resolve: {
+      familyRelationships: familyRelationshipResolver,
+      academicLevels: academicLevelResolver,
+      incomeSources: incomeSourceResolver,
+      incomeLevels: incomeLevelResolver,
+      housingTypes: housingTypeResolver,
     },
   },
   {
