@@ -30,7 +30,8 @@
     "showing": "Mostrando",
     "to": "a",
     "of": "de",
-    "notAvailable": "No disponible"
+    "notAvailable": "No disponible",
+    "select": "Seleccione"
   },
   "navigation": {
     "dashboard": "Panel de control",
@@ -249,10 +250,13 @@
     "documentNumber": "Número de Documento",
     "address": "Dirección",
     "city": "Ciudad",
+    "state": "Estado",
+    "zipCode": "Código Postal",
     "birthDate": "Fecha de Nacimiento",
     "gender": "Género",
     "maritalStatus": "Estado Civil",
     "healthInsurance": "Plan Médico",
+    "customHealthInsurance": "Especifique el Plan Médico",
     "housingType": "Tipo de Vivienda",
     "religiousAffiliation": "Afiliación Religiosa",
     "referralSource": "Fuente de Referido",
@@ -372,6 +376,8 @@
     "enterCity": "Ingrese la ciudad",
     "enterReligiousAffiliation": "Ingrese la afiliación religiosa",
     "enterReferralSource": "Ingrese la fuente de referido",
+    "enterEpsName": "Ingrese el nombre del Plan Médico",
+    "documentAlreadyRegistered": "El número de documento {{documentNumber}} ya está registrado",
     "selectDocumentType": "Seleccione el tipo de documento",
     "selectGender": "Seleccione el género",
     "selectMaritalStatus": "Seleccione el estado civil",

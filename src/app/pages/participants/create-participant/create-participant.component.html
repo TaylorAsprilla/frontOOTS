@@ -8,7 +8,7 @@
       <div class="card shadow-sm border-0">
         <div class="card-body p-5">
           <h4 class="card-title text-center mb-4 text-primary">
-            <i class="mdi mdi-account-multiple me-2"></i>Participantes
+            <i class="mdi mdi-account-multiple me-2"></i>{{ 'participants.title' | transloco }}
           </h4>
 
           <!-- Loading Indicator -->
@@ -66,7 +66,7 @@
                           <!-- Fila 3 -->
                           <div class="row mb-3">
                             <label class="col-md-4 col-form-label obligatorio" for="firstLastName">
-                              Primer Apellido
+                              {{ 'participants.firstLastName' | transloco }}
                             </label>
                             <div class="col-md-8">
                               <input
@@ -88,7 +88,7 @@
                           <!-- Fila 5 -->
                           <div class="row mb-3">
                             <label class="col-md-4 col-form-label obligatorio" for="birthDate"
-                              >Fecha de Nacimiento
+                              >{{ 'participants.birthDate' | transloco }}
                             </label>
                             <div class="col-md-8">
                               <input
@@ -110,7 +110,7 @@
                           <!-- Fila 7 -->
                           <div class="row mb-3">
                             <label for="maritalStatusId" class="col-md-4 col-form-label obligatorio">
-                              Estado Civil
+                              {{ 'participants.maritalStatus' | transloco }}
                             </label>
                             <div class="col-md-8">
                               <select
@@ -119,7 +119,7 @@
                                 id="maritalStatusId"
                                 formControlName="maritalStatusId"
                               >
-                                <option value="" disabled selected>Seleccione</option>
+                                <option value="" disabled selected>{{ 'app.select' | transloco }}</option>
                                 @for (maritalStatus of maritalStatuses; track maritalStatus.id) {
                                 <option [value]="maritalStatus.id">{{ maritalStatus.name }}</option>
                                 }
@@ -135,7 +135,7 @@
                           <!-- Fila 9 -->
                           <div class="row mb-3">
                             <label class="col-md-4 col-form-label obligatorio" for="documentNumber"
-                              >Número de Documento
+                              >{{ 'participants.documentNumber' | transloco }}
                             </label>
                             <div class="col-md-8">
                               <input
@@ -149,7 +149,10 @@
                               @if (hasFieldError('personalData.documentNumber')) { @if
                               (participantForm.get('personalData.documentNumber')?.hasError('documentExists')) {
                               <div class="invalid-feedback">
-                                El número de documento {{ getDocumentNumberFromError() }} ya está registrado
+                                {{
+                                  'participants.documentAlreadyRegistered'
+                                    | transloco : { documentNumber: getDocumentNumberFromError() }
+                                }}
                               </div>
                               } @else {
                               <div class="invalid-feedback">
@@ -161,7 +164,9 @@
 
                           <!-- Fila 11 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label" for="email">Email</label>
+                            <label class="col-md-4 col-form-label" for="email">{{
+                              'participants.email' | transloco
+                            }}</label>
                             <div class="col-md-8">
                               <input
                                 type="email"
@@ -201,7 +206,9 @@
 
                           <!-- Fila 15 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label" for="zipCode">Código Postal</label>
+                            <label class="col-md-4 col-form-label" for="zipCode">{{
+                              'participants.zipCode' | transloco
+                            }}</label>
                             <div class="col-md-8">
                               <input
                                 type="text"
@@ -222,7 +229,7 @@
                           <!-- Fila 17 -->
                           <div class="row mb-3">
                             <label class="col-md-4 col-form-label obligatorio" for="religiousAffiliation"
-                              >Afiliación Religiosa
+                              >{{ 'participants.religiousAffiliation' | transloco }}
                             </label>
                             <div class="col-md-8">
                               <input
@@ -246,7 +253,9 @@
                         <div>
                           <!-- Fila 2 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label" for="secondName">Segundo Nombre</label>
+                            <label class="col-md-4 col-form-label" for="secondName">{{
+                              'participants.secondName' | transloco
+                            }}</label>
                             <div class="col-md-8">
                               <input
                                 type="text"
@@ -260,7 +269,9 @@
 
                           <!-- Fila 4 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label" for="secondLastName"> Segundo Apellido</label>
+                            <label class="col-md-4 col-form-label" for="secondLastName">{{
+                              'participants.secondLastName' | transloco
+                            }}</label>
                             <div class="col-md-8">
                               <input
                                 type="text"
@@ -274,7 +285,9 @@
 
                           <!-- Fila 6 -->
                           <div class="row mb-3">
-                            <label for="genderId" class="col-md-4 col-form-label obligatorio"> Género </label>
+                            <label for="genderId" class="col-md-4 col-form-label obligatorio">{{
+                              'participants.gender' | transloco
+                            }}</label>
                             <div class="col-md-8">
                               <select
                                 class="form-select"
@@ -282,7 +295,7 @@
                                 id="genderId"
                                 formControlName="genderId"
                               >
-                                <option value="" disabled selected>Seleccione</option>
+                                <option value="" disabled selected>{{ 'app.select' | transloco }}</option>
                                 @for (gender of genders; track gender.id) {
                                 <option [value]="gender.id">{{ gender.name }}</option>
                                 }
@@ -298,7 +311,7 @@
                           <!-- Fila 8 -->
                           <div class="row mb-3">
                             <label for="documentTypeId" class="col-md-4 col-form-label obligatorio">
-                              Tipo de Documento
+                              {{ 'participants.documentType' | transloco }}
                             </label>
                             <div class="col-md-8">
                               <select
@@ -307,7 +320,7 @@
                                 id="documentTypeId"
                                 formControlName="documentTypeId"
                               >
-                                <option value="" disabled selected>Seleccione</option>
+                                <option value="" disabled selected>{{ 'app.select' | transloco }}</option>
                                 @for (docType of documentTypes; track docType.id) {
                                 <option [value]="docType.id">{{ docType.name }}</option>
                                 }
@@ -322,7 +335,9 @@
 
                           <!-- Fila 10 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label obligatorio" for="phoneNumber"> Celular </label>
+                            <label class="col-md-4 col-form-label obligatorio" for="phoneNumber">{{
+                              'participants.phoneNumber' | transloco
+                            }}</label>
                             <div class="col-md-8">
                               <div
                                 class="phone-input-wrapper"
@@ -362,7 +377,9 @@
 
                           <!-- Fila 12 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label obligatorio" for="address">Dirección</label>
+                            <label class="col-md-4 col-form-label obligatorio" for="address">{{
+                              'participants.address' | transloco
+                            }}</label>
                             <div class="col-md-8">
                               <input
                                 type="text"
@@ -382,7 +399,9 @@
 
                           <!-- Fila 14 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label obligatorio" for="city">Ciudad</label>
+                            <label class="col-md-4 col-form-label obligatorio" for="city">{{
+                              'participants.city' | transloco
+                            }}</label>
                             <div class="col-md-8">
                               <input
                                 type="text"
@@ -412,11 +431,11 @@
                                 id="healthInsuranceId"
                                 formControlName="healthInsuranceId"
                               >
-                                <option value="" disabled selected>Seleccione</option>
+                                <option value="" disabled selected>{{ 'app.select' | transloco }}</option>
                                 @for (healthInsurance of healthInsurances; track healthInsurance.id) {
                                 <option [value]="healthInsurance.id">{{ healthInsurance.name }}</option>
                                 }
-                                <option value="other">Otro</option>
+                                <option value="other">{{ 'participants.other' | transloco }}</option>
                               </select>
                               @if (hasFieldError('personalData.healthInsuranceId')) {
                               <div class="invalid-feedback">
@@ -428,7 +447,9 @@
 
                           <!-- Fila 18 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label" for="referralSource">Fuente Referido</label>
+                            <label class="col-md-4 col-form-label" for="referralSource">{{
+                              'participants.referralSource' | transloco
+                            }}</label>
                             <div class="col-md-8">
                               <input
                                 type="text"
@@ -446,7 +467,7 @@
                         <div class="col-span-2">
                           <div class="row mb-3">
                             <label class="col-md-2 col-form-label obligatorio" for="customHealthInsurance">
-                              Especifique la EPS
+                              {{ 'participants.customHealthInsurance' | transloco }}
                             </label>
                             <div class="col-md-10">
                               <input
@@ -456,7 +477,7 @@
                                 id="customHealthInsurance"
                                 name="customHealthInsurance"
                                 formControlName="customHealthInsurance"
-                                placeholder="Ingrese el nombre de la EPS"
+                                [placeholder]="'participants.enterEpsName' | transloco"
                               />
                               @if (hasFieldError('personalData.customHealthInsurance')) {
                               <div class="invalid-feedback">
@@ -471,7 +492,7 @@
 
                       <!-- Contacto de Emergencia -->
                       <h5 class="mt-4 mb-3 text-muted col-span-2">
-                        <i class="mdi mdi-account-alert me-2"></i>Contacto de Emergencia
+                        <i class="mdi mdi-account-alert me-2"></i>{{ 'participants.emergencyContact' | transloco }}
                       </h5>
 
                       <div class="two-column-layout">
@@ -479,7 +500,7 @@
                         <div>
                           <div class="row mb-3">
                             <label class="col-md-4 col-form-label obligatorio" for="emergencyContactName">
-                              Nombre Completo
+                              {{ 'participants.fullName' | transloco }}
                             </label>
                             <div class="col-md-8">
                               <input
@@ -499,7 +520,9 @@
                           </div>
 
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label" for="emergencyContactEmail">Email</label>
+                            <label class="col-md-4 col-form-label" for="emergencyContactEmail">{{
+                              'participants.email' | transloco
+                            }}</label>
                             <div class="col-md-8">
                               <input
                                 type="email"
@@ -518,7 +541,9 @@
                           </div>
 
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label" for="emergencyContactCity">Ciudad</label>
+                            <label class="col-md-4 col-form-label" for="emergencyContactCity">{{
+                              'participants.city' | transloco
+                            }}</label>
                             <div class="col-md-8">
                               <input
                                 type="text"
@@ -540,7 +565,9 @@
                         <!-- Segunda columna -->
                         <div>
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label" for="emergencyContactPhone"> Celular </label>
+                            <label class="col-md-4 col-form-label" for="emergencyContactPhone">{{
+                              'participants.phoneNumber' | transloco
+                            }}</label>
                             <div class="col-md-8">
                               <div
                                 class="phone-input-wrapper"
@@ -579,7 +606,9 @@
                           </div>
 
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label" for="emergencyContactAddress"> Dirección </label>
+                            <label class="col-md-4 col-form-label" for="emergencyContactAddress">{{
+                              'participants.address' | transloco
+                            }}</label>
                             <div class="col-md-8">
                               <input
                                 type="text"
@@ -599,7 +628,7 @@
 
                           <div class="row mb-3">
                             <label class="col-md-4 col-form-label obligatorio" for="emergencyContactRelationship">
-                              Parentesco
+                              {{ 'participants.relationship' | transloco }}
                             </label>
                             <div class="col-md-8">
                               <select
@@ -608,7 +637,7 @@
                                 id="emergencyContactRelationship"
                                 formControlName="emergencyContactRelationship"
                               >
-                                <option value="" disabled selected>Seleccione</option>
+                                <option value="" disabled selected>{{ 'app.select' | transloco }}</option>
                                 @for (relationship of familyRelationships; track relationship.id) {
                                 <option [value]="relationship.id">{{ relationship.name }}</option>
                                 }
@@ -629,7 +658,7 @@
               <!-- end personalData section -->
               <ul class="list-inline mb-0 wizard">
                 <li class="next list-inline-item float-end">
-                  <button type="submit" class="btn btn-secondary">Guardar</button>
+                  <button type="submit" class="btn btn-secondary">{{ 'app.save' | transloco }}</button>
                 </li>
               </ul>
             </form>

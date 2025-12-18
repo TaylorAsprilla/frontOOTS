@@ -30,7 +30,8 @@
     "showing": "Showing",
     "to": "to",
     "of": "of",
-    "notAvailable": "Not available"
+    "notAvailable": "Not available",
+    "select": "Select"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -245,10 +246,13 @@
     "documentNumber": "Document Number",
     "address": "Address",
     "city": "City",
+    "state": "State",
+    "zipCode": "Zip Code",
     "birthDate": "Birth Date",
     "gender": "Gender",
     "maritalStatus": "Marital Status",
     "healthInsurance": "Health Insurance",
+    "customHealthInsurance": "Specify EPS",
     "housingType": "Housing Type",
     "religiousAffiliation": "Religious Affiliation",
     "referralSource": "Referral Source",
@@ -368,6 +372,8 @@
     "enterCity": "Enter city",
     "enterReligiousAffiliation": "Enter religious affiliation",
     "enterReferralSource": "Enter referral source",
+    "enterEpsName": "Enter the EPS name",
+    "documentAlreadyRegistered": "Document number {{documentNumber}} is already registered",
     "selectDocumentType": "Select document type",
     "selectGender": "Select gender",
     "selectMaritalStatus": "Select marital status",
