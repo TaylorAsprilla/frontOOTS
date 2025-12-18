@@ -22,7 +22,7 @@
                 placeholder="Ej: Consulta Presencial, Llamada telefónica..."
               />
               @if (hasFieldError('name')) {
-              <div class="invalid-feedback">{{ getFieldError('name') }}</div>
+              <div class="invalid-feedback d-block">{{ getFieldError('name') }}</div>
               }
             </div>
 
@@ -37,7 +37,7 @@
                 placeholder="Descripción opcional del tipo de proceso..."
               ></textarea>
               @if (hasFieldError('description')) {
-              <div class="invalid-feedback">{{ getFieldError('description') }}</div>
+              <div class="invalid-feedback d-block">{{ getFieldError('description') }}</div>
               }
             </div>
 

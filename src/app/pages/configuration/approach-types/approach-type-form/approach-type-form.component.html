@@ -61,19 +61,19 @@
                     [placeholder]="'approachType.namePlaceholder' | transloco"
                   />
                   @if (hasError('name', 'required')) {
-                  <div class="invalid-feedback">
+                  <div class="invalid-feedback d-block">
                     {{ 'approachType.validation.nameRequired' | transloco }}
                   </div>
                   } @if (hasError('name', 'minlength')) {
-                  <div class="invalid-feedback">
+                  <div class="invalid-feedback d-block">
                     {{ 'approachType.validation.nameMinLength' | transloco }}
                   </div>
                   } @if (hasError('name', 'maxlength')) {
-                  <div class="invalid-feedback">
+                  <div class="invalid-feedback d-block">
                     {{ 'approachType.validation.nameMaxLength' | transloco }}
                   </div>
                   } @if (hasBackendError('name')) {
-                  <div class="invalid-feedback">
+                  <div class="invalid-feedback d-block">
                     {{ getBackendError('name') }}
                   </div>
                   }
