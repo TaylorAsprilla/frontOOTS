@@ -28,14 +28,17 @@
       <div class="card">
         <div class="card-body">
           <!-- Loading State -->
-          <div *ngIf="isLoading" class="text-center py-4">
+          @if (isLoading) {
+          <div class="text-center py-4">
             <div class="spinner-border text-primary" role="status">
               <span class="visually-hidden">{{ 'common.loading' | transloco }}</span>
             </div>
           </div>
+          }
 
           <!-- Form -->
-          <form *ngIf="!isLoading" [formGroup]="approachTypeForm" (ngSubmit)="onSubmit()">
+          @if (!isLoading) {
+          <form [formGroup]="approachTypeForm" (ngSubmit)="onSubmit()">
             <div class="row">
               <div class="col-md-6">
                 <!-- Name Field -->
@@ -57,18 +60,23 @@
                     "
                     [placeholder]="'approachType.namePlaceholder' | transloco"
                   />
-                  <div class="invalid-feedback" *ngIf="hasError('name', 'required')">
+                  @if (hasError('name', 'required')) {
+                  <div class="invalid-feedback">
                     {{ 'approachType.validation.nameRequired' | transloco }}
                   </div>
-                  <div class="invalid-feedback" *ngIf="hasError('name', 'minlength')">
+                  } @if (hasError('name', 'minlength')) {
+                  <div class="invalid-feedback">
                     {{ 'approachType.validation.nameMinLength' | transloco }}
                   </div>
-                  <div class="invalid-feedback" *ngIf="hasError('name', 'maxlength')">
+                  } @if (hasError('name', 'maxlength')) {
+                  <div class="invalid-feedback">
                     {{ 'approachType.validation.nameMaxLength' | transloco }}
                   </div>
-                  <div class="invalid-feedback" *ngIf="hasBackendError('name')">
+                  } @if (hasBackendError('name')) {
+                  <div class="invalid-feedback">
                     {{ getBackendError('name') }}
                   </div>
+                  }
                 </div>
 
                 <!-- Active Status Field -->
@@ -92,14 +100,18 @@
                     {{ 'common.cancel' | transloco }}
                   </button>
                   <button type="submit" class="btn btn-primary" [disabled]="approachTypeForm.invalid || isSubmitting">
-                    <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-1"></span>
-                    <i *ngIf="!isSubmitting" class="fas fa-save me-1"></i>
+                    @if (isSubmitting) {
+                    <span class="spinner-border spinner-border-sm me-1"></span>
+                    } @if (!isSubmitting) {
+                    <i class="fas fa-save me-1"></i>
+                    }
                     {{ (isEditMode ? 'common.update' : 'common.save') | transloco }}
                   </button>
                 </div>
               </div>
             </div>
           </form>
+          }
         </div>
       </div>
     </div>
