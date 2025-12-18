@@ -201,6 +201,12 @@ const MENU_ITEMS: MenuItem[] = [
         link: '/configuration/marital-status',
         parentKey: 'configuration-management',
       },
+      {
+        key: 'configuration-process-types',
+        label: 'processType.title',
+        link: '/configuration/process-types',
+        parentKey: 'configuration-management',
+      },
     ],
   },
   // {

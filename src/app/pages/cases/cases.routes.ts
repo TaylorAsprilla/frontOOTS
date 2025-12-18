@@ -4,6 +4,8 @@ import { academicLevelResolver } from '../../core/resolvers/academic-level.resol
 import { incomeSourceResolver } from '../../core/resolvers/income-source.resolver';
 import { incomeLevelResolver } from '../../core/resolvers/income-level.resolver';
 import { housingTypeResolver } from '../../core/resolvers/housing-type.resolver';
+import { processTypeResolver } from '../configuration/process-types/process-type.resolver';
+import { approachTypeResolver } from '../configuration/approach-types/approach-type.resolver';
 
 /**
  * Cases module routes configuration
@@ -36,6 +38,8 @@ export const CASES_ROUTES: Routes = [
       incomeSources: incomeSourceResolver,
       incomeLevels: incomeLevelResolver,
       housingTypes: housingTypeResolver,
+      processTypes: processTypeResolver,
+      approachTypes: approachTypeResolver,
     },
   },
   {

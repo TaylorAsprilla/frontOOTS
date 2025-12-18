@@ -84,7 +84,9 @@
                             </div>
 
                             <div class="row mb-3">
-                              <label class="col-md-3 col-form-label" [for]="'occupation_' + i">Ocupación</label>
+                              <label class="col-md-3 col-form-label obligatorio" [for]="'occupation_' + i"
+                                >Ocupación</label
+                              >
                               <div class="col-md-9">
                                 <input
                                   type="text"
@@ -96,7 +98,9 @@
                             </div>
 
                             <div class="row mb-3">
-                              <label [for]="'relationshipId_' + i" class="col-md-3 col-form-label">Parentesco</label>
+                              <label [for]="'relationshipId_' + i" class="col-md-3 col-form-label obligatorio"
+                                >Parentesco</label
+                              >
                               <div class="col-md-9">
                                 <select
                                   class="form-select"
@@ -112,7 +116,7 @@
                             </div>
 
                             <div class="row mb-3">
-                              <label [for]="'academicLevelId_' + i" class="col-md-3 col-form-label"
+                              <label [for]="'academicLevelId_' + i" class="col-md-3 col-form-label obligatorio"
                                 >Grado Académico</label
                               >
                               <div class="col-md-9">
@@ -1315,20 +1319,20 @@
                                   <input type="time" formControlName="time" class="form-control form-control-sm" />
                                 </td>
                                 <td>
-                                  <textarea
-                                    formControlName="approachType"
-                                    class="form-control form-control-sm"
-                                    rows="2"
-                                    placeholder="Ej: Individual, Familiar, Grupal..."
-                                  ></textarea>
+                                  <select formControlName="approachType" class="form-select form-select-sm">
+                                    <option value="" disabled selected>Seleccione un tipo de abordaje</option>
+                                    @for (approachType of approachTypes; track approachType.id) {
+                                    <option [value]="approachType.name">{{ approachType.name }}</option>
+                                    }
+                                  </select>
                                 </td>
                                 <td>
-                                  <textarea
-                                    formControlName="process"
-                                    class="form-control form-control-sm"
-                                    rows="2"
-                                    placeholder="Descripción del proceso..."
-                                  ></textarea>
+                                  <select formControlName="process" class="form-select form-select-sm">
+                                    <option value="" disabled selected>Seleccione un proceso</option>
+                                    @for (processType of processTypes; track processType.id) {
+                                    <option [value]="processType.name">{{ processType.name }}</option>
+                                    }
+                                  </select>
                                 </td>
                                 <td>
                                   <textarea

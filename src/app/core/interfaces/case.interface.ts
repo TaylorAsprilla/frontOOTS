@@ -3,6 +3,8 @@
  * Defines the structure for participant cases
  */
 
+import { ProcessType } from 'src/app/pages/configuration/process-types/process-type.interface';
+
 export enum CaseStatus {
   ACTIVE = 'active',
   IN_PROGRESS = 'in_progress',
@@ -18,13 +20,6 @@ export enum ApproachType {
   CALL = 'Ll',
   TELECONSULTATION = 'TC',
   VIRTUAL = 'V',
-}
-
-export enum ProcessType {
-  FOLLOW_UP = 'S',
-  CLOSURE = 'C',
-  TRANSFER = 'T',
-  REFERRAL = 'D',
 }
 
 /**
@@ -206,7 +201,7 @@ export interface ProgressNote {
   id?: number;
   date: string;
   approachType: ApproachType;
-  processType: ProcessType;
+  processType: ProcessType; // Process type name from catalog
   duration: number; // in minutes
   summary: string;
   activities: string[];

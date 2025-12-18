@@ -26,18 +26,9 @@ import { IncomeLevel } from '../../configuration/income-level/income-level.inter
 import { HousingType } from '../../configuration/housing-type/housing-type.interface';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
-import {
-  CreateCaseDto,
-  FollowUpPlanDto,
-  PhysicalHealthHistoryDto,
-  MentalHealthHistoryDto,
-  WeighingDto,
-  InterventionPlanDto,
-  ProgressNoteDto,
-  ClosingNoteDto,
-  ApproachType,
-  ProcessType,
-} from '../../../core/interfaces/case.interface';
+import { CreateCaseDto, ApproachType } from '../../../core/interfaces/case.interface';
+import { ProcessType } from '../../configuration/process-types/process-type.interface';
+import { ApproachType as ApproachTypeCatalog } from '../../configuration/approach-types/approach-type.interface';
 
 /**
  * Component for creating and editing cases
@@ -74,13 +65,14 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   incomeSources: IncomeSource[] = [];
   incomeLevels: IncomeLevel[] = [];
   housingTypes: HousingType[] = [];
+  processTypes: ProcessType[] = [];
+  approachTypes: ApproachTypeCatalog[] = [];
 
   // Breadcrumb
   breadcrumbItems: BreadcrumbItem[] = [];
 
   // Enums for templates
-  approachTypes = Object.values(ApproachType);
-  processTypes = Object.values(ProcessType);
+  approachTypesEnum = Object.values(ApproachType);
 
   ngOnInit(): void {
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
@@ -94,6 +86,8 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       this.loadIncomeSourcesFromResolver();
       this.loadIncomeLevelsFromResolver();
       this.loadHousingTypesFromResolver();
+      this.loadProcessTypesFromResolver();
+      this.loadApproachTypesFromResolver();
       this.initializeForm();
       this.loadIdentifiedSituations();
 
@@ -172,6 +166,27 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       this.housingTypes = resolvedData;
     } else {
       this.housingTypes = [];
+    }
+  }
+
+  /**
+   * Load process types from route resolver
+   */
+  private loadProcessTypesFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['processTypes'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.processTypes = resolvedData;
+    } else {
+      this.processTypes = [];
+    }
+  }
+
+  private loadApproachTypesFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['approachTypes'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.approachTypes = resolvedData;
+    } else {
+      this.approachTypes = [];
     }
   }
 
@@ -374,9 +389,9 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
     return this.formBuilder.group({
       name: ['', Validators.required],
       birthDate: [''],
-      occupation: [''],
-      familyRelationshipId: [''],
-      academicLevelId: [''],
+      occupation: ['', Validators.required],
+      familyRelationshipId: ['', Validators.required],
+      academicLevelId: ['', Validators.required],
     });
   }
 

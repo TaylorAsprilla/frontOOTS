@@ -872,6 +872,41 @@
       "nameMaxLength": "Name cannot exceed 100 characters"
     }
   },
+  "processType": {
+    "title": "Process Types",
+    "createNew": "Create Process Type",
+    "create": "Create Process Type",
+    "createTitle": "Create New Process Type",
+    "edit": "Edit Process Type",
+    "editTitle": "Edit Process Type",
+    "delete": "Delete Process Type",
+    "view": "View Process Type",
+    "list": "Process Types List",
+    "searchPlaceholder": "Search process types...",
+    "filterAll": "All Statuses",
+    "filterActive": "Active",
+    "filterInactive": "Inactive",
+    "clearFilters": "Clear Filters",
+    "noResults": "No process types found",
+    "active": "Active",
+    "inactive": "Inactive",
+    "id": "ID",
+    "name": "Name",
+    "description": "Description",
+    "status": "Status",
+    "actions": "Actions",
+    "isActive": "Active Status",
+    "namePlaceholder": "E.g: In-Person Consultation, Phone Call...",
+    "descriptionPlaceholder": "Process type description...",
+    "showing": "Showing",
+    "of": "of",
+    "validation": {
+      "nameRequired": "Name is required",
+      "nameMinLength": "Name must be at least 2 characters",
+      "nameMaxLength": "Name cannot exceed 100 characters",
+      "descriptionMaxLength": "Description cannot exceed 500 characters"
+    }
+  },
   "maritalStatus": {
     "title": "Marital Statuses",
     "createNew": "Create Marital Status",

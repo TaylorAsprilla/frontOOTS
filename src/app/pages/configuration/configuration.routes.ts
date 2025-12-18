@@ -48,6 +48,10 @@ export const CONFIGURATION_ROUTES: Routes = [
     loadChildren: () => import('./marital-status/marital-status.routes').then((m) => m.MARITAL_STATUS_ROUTES),
   },
   {
+    path: 'process-types',
+    loadChildren: () => import('./process-types/process-types.routes').then((m) => m.PROCESS_TYPES_ROUTES),
+  },
+  {
     path: '',
     redirectTo: 'academic-level',
     pathMatch: 'full',

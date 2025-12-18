@@ -71,14 +71,12 @@ export class ApproachTypeListComponent implements OnInit, OnDestroy {
   loadApproachTypes(): void {
     this.isLoading = true;
     this.approachTypeService
-      .getApproachTypes()
+      .getAll(true)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          if (response.statusCode === 200) {
-            this.approachTypes = response.data;
-            this.applyFilters(this.approachTypes);
-          }
+          this.approachTypes = response.data;
+          this.applyFilters(this.approachTypes);
           this.isLoading = false;
         },
         error: (error) => {
@@ -193,7 +191,7 @@ export class ApproachTypeListComponent implements OnInit, OnDestroy {
     }).then((result) => {
       if (result.isConfirmed) {
         this.approachTypeService
-          .deleteApproachType(approachType.id)
+          .deactivate(approachType.id)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: () => {

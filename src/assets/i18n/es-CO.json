@@ -959,6 +959,41 @@
       "nameMaxLength": "El nombre no puede exceder 100 caracteres"
     }
   },
+  "processType": {
+    "title": "Tipos de Proceso",
+    "createNew": "Crear Tipo de Proceso",
+    "create": "Crear Tipo de Proceso",
+    "createTitle": "Crear Nuevo Tipo de Proceso",
+    "edit": "Editar Tipo de Proceso",
+    "editTitle": "Editar Tipo de Proceso",
+    "delete": "Eliminar Tipo de Proceso",
+    "view": "Ver Tipo de Proceso",
+    "list": "Lista de Tipos de Proceso",
+    "searchPlaceholder": "Buscar tipos de proceso...",
+    "filterAll": "Todos los Estados",
+    "filterActive": "Activos",
+    "filterInactive": "Inactivos",
+    "clearFilters": "Limpiar Filtros",
+    "noResults": "No se encontraron tipos de proceso",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "id": "ID",
+    "name": "Nombre",
+    "description": "Descripción",
+    "status": "Estado",
+    "actions": "Acciones",
+    "isActive": "Estado Activo",
+    "namePlaceholder": "Ej: Consulta Presencial, Llamada telefónica...",
+    "descriptionPlaceholder": "Descripción del tipo de proceso...",
+    "showing": "Mostrando",
+    "of": "de",
+    "validation": {
+      "nameRequired": "El nombre es requerido",
+      "nameMinLength": "El nombre debe tener al menos 2 caracteres",
+      "nameMaxLength": "El nombre no puede exceder 100 caracteres",
+      "descriptionMaxLength": "La descripción no puede exceder 500 caracteres"
+    }
+  },
   "identifiedSituation": {
     "title": "Situaciones Identificadas",
     "createNew": "Crear Situación Identificada",
