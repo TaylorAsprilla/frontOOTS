@@ -53,10 +53,20 @@ export const CASES_ROUTES: Routes = [
   },
   {
     path: 'detail/:id',
-    loadComponent: () => import('./case-detail/case-detail.component').then((m) => m.CaseDetailComponent),
+    loadComponent: () => import('./create-case/create-case.component').then((m) => m.CreateCaseComponent),
     title: 'Cases - Details',
     data: {
       breadcrumb: 'cases.detail',
+      mode: 'view',
+    },
+    resolve: {
+      familyRelationships: familyRelationshipResolver,
+      academicLevels: academicLevelResolver,
+      incomeSources: incomeSourceResolver,
+      incomeLevels: incomeLevelResolver,
+      housingTypes: housingTypeResolver,
+      processTypes: processTypeResolver,
+      approachTypes: approachTypeResolver,
     },
   },
   {

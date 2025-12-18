@@ -57,6 +57,8 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   participantId!: number;
   caseId?: number;
   isEditMode = false;
+  isViewMode = false;
+  isLoadingCase = false;
 
   // Data
   identifiedSituations: IdentifiedSituation[] = [];
@@ -78,7 +80,8 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.participantId = +params['participantId'];
       this.caseId = params['id'] ? +params['id'] : undefined;
-      this.isEditMode = !!this.caseId;
+      this.isViewMode = this.route.snapshot.data['mode'] === 'view';
+      this.isEditMode = !!this.caseId && !this.isViewMode;
 
       this.setupBreadcrumb();
       this.loadFamilyRelationshipsFromResolver();
@@ -91,7 +94,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       this.initializeForm();
       this.loadIdentifiedSituations();
 
-      if (this.isEditMode && this.caseId) {
+      if ((this.isEditMode || this.isViewMode) && this.caseId) {
         this.loadCase();
       }
     });
@@ -103,10 +106,13 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   }
 
   private setupBreadcrumb(): void {
-    this.breadcrumbItems = [
-      { label: 'participants.title' },
-      { label: this.isEditMode ? 'cases.edit' : 'cases.create', active: true },
-    ];
+    let label = 'cases.create';
+    if (this.isViewMode) {
+      label = 'cases.detail';
+    } else if (this.isEditMode) {
+      label = 'cases.edit';
+    }
+    this.breadcrumbItems = [{ label: 'participants.title' }, { label: label, active: true }];
   }
 
   /**
@@ -312,18 +318,275 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   private loadCase(): void {
     if (!this.caseId) return;
 
+    this.isLoadingCase = true;
+
     this.caseService
       .getCaseById(this.caseId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.caseForm.patchValue(response.data);
+          const caseData = response.data;
+
+          if (caseData) {
+            // Mapear datos del caso al formulario
+            this.mapCaseDataToForm(caseData);
+
+            // Si es modo vista, deshabilitar formulario después de cargar datos
+            if (this.isViewMode) {
+              this.caseForm.disable();
+            }
+
+            this.notificationService.showSuccess('Caso cargado correctamente');
+          } else {
+            console.error('No se encontraron datos del caso');
+            this.notificationService.showError('No se encontraron datos del caso');
+          }
+
+          this.isLoadingCase = false;
         },
         error: (error) => {
           console.error('Error loading case:', error);
-          this.router.navigate(['/participants']);
+          this.isLoadingCase = false;
+          this.notificationService.showError('Error al cargar el caso: ' + (error.message || 'Error desconocido'));
+          this.router.navigate(['/cases/list']);
         },
       });
+  }
+
+  /**
+   * Map case data from API to form structure
+   */
+  private mapCaseDataToForm(caseData: any): void {
+    try {
+      // 1. Cargar miembros de familia
+      if (caseData.familyMembers && Array.isArray(caseData.familyMembers) && caseData.familyMembers.length > 0) {
+        this.familyMembersArray.clear();
+        caseData.familyMembers.forEach((member: any) => {
+          const memberGroup = this.createFamilyMemberForm();
+          memberGroup.patchValue({
+            name: member.name || '',
+            birthDate: member.birthDate || '',
+            occupation: member.occupation || '',
+            familyRelationshipId: member.familyRelationshipId || '',
+            academicLevelId: member.academicLevelId || '',
+          });
+          this.familyMembersArray.push(memberGroup);
+        });
+      }
+
+      // 2. Cargar historial biopsicosocial
+      if (caseData.bioPsychosocialHistory) {
+        this.caseForm.get('bioPsychosocialHistory')?.patchValue({
+          academicLevelId: caseData.bioPsychosocialHistory.academicLevelId || '',
+          completedGrade: caseData.bioPsychosocialHistory.completedGrade || '',
+          institution: caseData.bioPsychosocialHistory.institution || '',
+          profession: caseData.bioPsychosocialHistory.profession || '',
+          incomeSourceId: caseData.bioPsychosocialHistory.incomeSourceId || '',
+          incomeLevelId: caseData.bioPsychosocialHistory.incomeLevelId || '',
+          occupationalHistory: caseData.bioPsychosocialHistory.occupationalHistory || '',
+          housingTypeId: caseData.bioPsychosocialHistory.housingTypeId || '',
+          housing: caseData.bioPsychosocialHistory.housing || '',
+        });
+      }
+
+      // 3. Cargar motivo de consulta
+      if (caseData.consultationReason) {
+        // Si viene como string simple
+        if (typeof caseData.consultationReason === 'string') {
+          this.caseForm.get('consultationReason')?.patchValue({
+            reason: caseData.consultationReason,
+            referredBy: '',
+            observations: '',
+          });
+        } else {
+          // Si viene como objeto
+          this.caseForm.get('consultationReason')?.patchValue(caseData.consultationReason);
+        }
+      }
+
+      // 4. Cargar situaciones identificadas
+      if (caseData.identifiedSituations) {
+        // Si viene como array de IDs
+        if (Array.isArray(caseData.identifiedSituations)) {
+          this.caseForm.get('identifiedSituations')?.patchValue({
+            situations: caseData.identifiedSituations,
+          });
+        } else if (caseData.identifiedSituations.situations) {
+          // Si viene como objeto con propiedad situations
+          this.caseForm.get('identifiedSituations')?.patchValue(caseData.identifiedSituations);
+        }
+      }
+
+      // 5. Cargar intervención
+      if (caseData.intervention) {
+        // Si viene como string simple
+        if (typeof caseData.intervention === 'string') {
+          this.caseForm.get('intervention')?.patchValue({
+            action: caseData.intervention,
+          });
+        } else {
+          // Si viene como objeto
+          this.caseForm.get('intervention')?.patchValue({
+            action: caseData.intervention.description || caseData.intervention.action || '',
+          });
+        }
+      }
+
+      // 6. Cargar plan de seguimiento
+      if (caseData.followUpPlan) {
+        // Si es un array, tomar el primer elemento
+        const followUpData = Array.isArray(caseData.followUpPlan) ? caseData.followUpPlan[0] : caseData.followUpPlan;
+
+        if (followUpData) {
+          this.caseForm.get('followUpPlan')?.patchValue({
+            processCompleted: followUpData.processCompleted || false,
+            servicesCoordinated: !!followUpData.coordinatedService,
+            servicesAgency: followUpData.coordinatedService || '',
+            referralMade: followUpData.referred || false,
+            referralDetails: followUpData.referralDetails || '',
+            appointmentScheduled: followUpData.orientationAppointment || false,
+            appointmentDate: followUpData.appointmentDate || '',
+            appointmentTime: followUpData.appointmentTime || '',
+            otherDetails: followUpData.otherDetails || '',
+          });
+        }
+      }
+
+      // 7. Cargar condiciones físicas
+      if (caseData.physicalHealthHistory && Array.isArray(caseData.physicalHealthHistory)) {
+        this.physicalConditions.clear();
+        caseData.physicalHealthHistory.forEach((condition: any) => {
+          const conditionGroup = this.formBuilder.group({
+            condition: [condition.currentConditions || ''],
+            receivingTreatment: [!!condition.medications],
+            treatmentDetails: [condition.medications || ''],
+            paternalFamilyHistory: [condition.familyHistoryFather || ''],
+            maternalFamilyHistory: [condition.familyHistoryMother || ''],
+            observations: [condition.observations || ''],
+          });
+          this.physicalConditions.push(conditionGroup);
+        });
+      }
+
+      // 8. Cargar condiciones mentales
+      if (caseData.mentalHealthHistory && Array.isArray(caseData.mentalHealthHistory)) {
+        this.mentalConditions.clear();
+        caseData.mentalHealthHistory.forEach((condition: any) => {
+          const conditionGroup = this.formBuilder.group({
+            condition: [condition.currentConditions || ''],
+            receivingTreatment: [!!condition.medications],
+            treatmentDetails: [condition.medications || ''],
+            paternalFamilyHistory: [condition.familyHistoryFather || ''],
+            maternalFamilyHistory: [condition.familyHistoryMother || ''],
+            observations: [condition.observations || ''],
+          });
+          this.mentalConditions.push(conditionGroup);
+        });
+      }
+
+      // 9. Cargar evaluación (weighing/assessment)
+      if (caseData.weighing) {
+        this.caseForm.get('assessment')?.patchValue({
+          generalDescription: caseData.weighing.reasonConsultation || '',
+          concurrentFactors: caseData.weighing.favorableConditions || '',
+          criticalFactors: caseData.weighing.conditionsNotFavorable || '',
+          theoreticalFramework: caseData.weighing.helpProcess || '',
+        });
+      } else if (caseData.assessment) {
+        this.caseForm.get('assessment')?.patchValue(caseData.assessment);
+      }
+
+      // 10. Cargar plan de intervención
+      if (caseData.interventionPlans && Array.isArray(caseData.interventionPlans)) {
+        this.interventions.clear();
+        caseData.interventionPlans.forEach((intervention: any) => {
+          const interventionGroup = this.formBuilder.group({
+            goals: [intervention.goal || ''],
+            objectives: [intervention.objectives || ''],
+            activities: [intervention.activities || ''],
+            timeframe: [intervention.timeline || ''],
+            responsiblePerson: [intervention.responsible || ''],
+            evaluationCriteria: [
+              intervention.evaluationCriteria || 'Observación subjetiva y objetiva del profesional.',
+            ],
+            progressNotes: [''],
+          });
+          this.interventions.push(interventionGroup);
+        });
+      } else if (caseData.interventionPlan?.interventions && Array.isArray(caseData.interventionPlan.interventions)) {
+        this.interventions.clear();
+        caseData.interventionPlan.interventions.forEach((intervention: any) => {
+          const interventionGroup = this.formBuilder.group({
+            goals: [intervention.goals || ''],
+            objectives: [intervention.objectives || ''],
+            activities: [intervention.activities || ''],
+            timeframe: [intervention.timeframe || ''],
+            responsiblePerson: [intervention.responsiblePerson || ''],
+            evaluationCriteria: [
+              intervention.evaluationCriteria || 'Observación subjetiva y objetiva del profesional.',
+            ],
+            progressNotes: [''],
+          });
+          this.interventions.push(interventionGroup);
+        });
+      }
+
+      // 11. Cargar notas de progreso
+      if (caseData.progressNotes && Array.isArray(caseData.progressNotes)) {
+        this.progressNotesArray.clear();
+        caseData.progressNotes.forEach((note: any) => {
+          const noteGroup = this.formBuilder.group({
+            date: [note.sessionDate || note.date || ''],
+            time: [note.time || ''],
+            approachType: [note.sessionType || note.approachType || ''],
+            process: [note.process || ''],
+            interventionSummary: [note.summary || note.interventionSummary || ''],
+            observations: [note.observations || ''],
+            agreements: [note.agreements || ''],
+          });
+          this.progressNotesArray.push(noteGroup);
+        });
+      }
+
+      // 12. Cargar referidos
+      if (caseData.referrals) {
+        // Si viene como string simple
+        if (typeof caseData.referrals === 'string') {
+          this.caseForm.get('referrals')?.patchValue({
+            referralsJustification: caseData.referrals,
+          });
+        } else {
+          this.caseForm.get('referrals')?.patchValue(caseData.referrals);
+        }
+      }
+
+      // 13. Cargar nota de cierre (si existe)
+      if (caseData.closingNote) {
+        this.caseForm.get('closingNote')?.patchValue(caseData.closingNote);
+      }
+
+      // Forzar actualización de la vista
+      this.caseForm.updateValueAndValidity();
+      this.caseForm.markAsPristine();
+      this.caseForm.markAsUntouched();
+    } catch (error) {
+      console.error('Error durante el mapeo de datos:', error);
+      this.notificationService.showError('Error al cargar algunos datos del caso');
+    }
+  }
+
+  /**
+   * Get all validation errors from the form (for debugging)
+   */
+  private getFormValidationErrors(): any[] {
+    const errors: any[] = [];
+    Object.keys(this.caseForm.controls).forEach((key) => {
+      const control = this.caseForm.get(key);
+      if (control && control.errors) {
+        errors.push({ field: key, errors: control.errors });
+      }
+    });
+    return errors;
   }
 
   private loadIdentifiedSituations(): void {
