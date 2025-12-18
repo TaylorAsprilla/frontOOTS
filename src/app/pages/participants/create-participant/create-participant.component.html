@@ -31,7 +31,7 @@
                   [(activeId)]="activeWizardStep"
                   class="nav-pills nav-justified bg-light form-wizard-header mb-3"
                 >
-                  <li [ngbNavItem]="1">
+                  <li [ngbNavItem]="1" class="p-3">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-account-circle me-1"></i>
                       <span class="d-none d-sm-inline">{{ 'participants.personalData' | transloco }}</span>
@@ -43,7 +43,7 @@
                         <div>
                           <!-- Fila 1 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label obligatorio" for="firstName">
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="firstName">
                               {{ 'participants.firstName' | transloco }}
                             </label>
                             <div class="col-md-8">
@@ -65,7 +65,7 @@
 
                           <!-- Fila 3 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label obligatorio" for="firstLastName">
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="firstLastName">
                               {{ 'participants.firstLastName' | transloco }}
                             </label>
                             <div class="col-md-8">
@@ -87,7 +87,7 @@
 
                           <!-- Fila 5 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label obligatorio" for="birthDate"
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="birthDate"
                               >{{ 'participants.birthDate' | transloco }}
                             </label>
                             <div class="col-md-8">
@@ -109,7 +109,7 @@
 
                           <!-- Fila 7 -->
                           <div class="row mb-3">
-                            <label for="maritalStatusId" class="col-md-4 col-form-label obligatorio">
+                            <label for="maritalStatusId" class="col-md-4 col-form-label obligatorio text-start">
                               {{ 'participants.maritalStatus' | transloco }}
                             </label>
                             <div class="col-md-8">
@@ -134,7 +134,7 @@
 
                           <!-- Fila 9 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label obligatorio" for="documentNumber"
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="documentNumber"
                               >{{ 'participants.documentNumber' | transloco }}
                             </label>
                             <div class="col-md-8">
@@ -164,7 +164,7 @@
 
                           <!-- Fila 11 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label" for="email">{{
+                            <label class="col-md-4 col-form-label text-start" for="email">{{
                               'participants.email' | transloco
                             }}</label>
                             <div class="col-md-8">
@@ -186,7 +186,9 @@
 
                           <!-- Fila 13 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label obligatorio" for="state">{{ stateLabel }}</label>
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="state">{{
+                              stateLabel
+                            }}</label>
                             <div class="col-md-8">
                               <input
                                 type="text"
@@ -206,7 +208,7 @@
 
                           <!-- Fila 15 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label" for="zipCode">{{
+                            <label class="col-md-4 col-form-label text-start" for="zipCode">{{
                               'participants.zipCode' | transloco
                             }}</label>
                             <div class="col-md-8">
@@ -228,7 +230,7 @@
 
                           <!-- Fila 17 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label obligatorio" for="religiousAffiliation"
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="religiousAffiliation"
                               >{{ 'participants.religiousAffiliation' | transloco }}
                             </label>
                             <div class="col-md-8">
@@ -253,7 +255,7 @@
                         <div>
                           <!-- Fila 2 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label" for="secondName">{{
+                            <label class="col-md-4 col-form-label text-start" for="secondName">{{
                               'participants.secondName' | transloco
                             }}</label>
                             <div class="col-md-8">
@@ -269,7 +271,7 @@
 
                           <!-- Fila 4 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label" for="secondLastName">{{
+                            <label class="col-md-4 col-form-label text-start" for="secondLastName">{{
                               'participants.secondLastName' | transloco
                             }}</label>
                             <div class="col-md-8">
@@ -285,7 +287,7 @@
 
                           <!-- Fila 6 -->
                           <div class="row mb-3">
-                            <label for="genderId" class="col-md-4 col-form-label obligatorio">{{
+                            <label for="genderId" class="col-md-4 col-form-label obligatorio text-start">{{
                               'participants.gender' | transloco
                             }}</label>
                             <div class="col-md-8">
@@ -310,7 +312,7 @@
 
                           <!-- Fila 8 -->
                           <div class="row mb-3">
-                            <label for="documentTypeId" class="col-md-4 col-form-label obligatorio">
+                            <label for="documentTypeId" class="col-md-4 col-form-label obligatorio text-start">
                               {{ 'participants.documentType' | transloco }}
                             </label>
                             <div class="col-md-8">
@@ -335,7 +337,7 @@
 
                           <!-- Fila 10 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label obligatorio" for="phoneNumber">{{
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="phoneNumber">{{
                               'participants.phoneNumber' | transloco
                             }}</label>
                             <div class="col-md-8">
@@ -377,7 +379,7 @@
 
                           <!-- Fila 12 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label obligatorio" for="address">{{
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="address">{{
                               'participants.address' | transloco
                             }}</label>
                             <div class="col-md-8">
@@ -399,7 +401,7 @@
 
                           <!-- Fila 14 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label obligatorio" for="city">{{
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="city">{{
                               'participants.city' | transloco
                             }}</label>
                             <div class="col-md-8">
@@ -421,7 +423,7 @@
 
                           <!-- Fila 16 -->
                           <div class="row mb-3">
-                            <label for="healthInsuranceId" class="col-md-4 col-form-label obligatorio">
+                            <label for="healthInsuranceId" class="col-md-4 col-form-label obligatorio text-start">
                               {{ healthInsuranceLabel }}
                             </label>
                             <div class="col-md-8">
@@ -447,7 +449,7 @@
 
                           <!-- Fila 18 -->
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label" for="referralSource">{{
+                            <label class="col-md-4 col-form-label text-start" for="referralSource">{{
                               'participants.referralSource' | transloco
                             }}</label>
                             <div class="col-md-8">
@@ -466,7 +468,7 @@
                         @if (participantForm.get('personalData.healthInsuranceId')?.value === 'other') {
                         <div class="col-span-2">
                           <div class="row mb-3">
-                            <label class="col-md-2 col-form-label obligatorio" for="customHealthInsurance">
+                            <label class="col-md-2 col-form-label obligatorio text-start" for="customHealthInsurance">
                               {{ 'participants.customHealthInsurance' | transloco }}
                             </label>
                             <div class="col-md-10">
@@ -499,7 +501,7 @@
                         <!-- Primera columna -->
                         <div>
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label obligatorio" for="emergencyContactName">
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="emergencyContactName">
                               {{ 'participants.fullName' | transloco }}
                             </label>
                             <div class="col-md-8">
@@ -520,7 +522,7 @@
                           </div>
 
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label" for="emergencyContactEmail">{{
+                            <label class="col-md-4 col-form-label text-start" for="emergencyContactEmail">{{
                               'participants.email' | transloco
                             }}</label>
                             <div class="col-md-8">
@@ -541,7 +543,7 @@
                           </div>
 
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label" for="emergencyContactCity">{{
+                            <label class="col-md-4 col-form-label text-start" for="emergencyContactCity">{{
                               'participants.city' | transloco
                             }}</label>
                             <div class="col-md-8">
@@ -565,7 +567,7 @@
                         <!-- Segunda columna -->
                         <div>
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label" for="emergencyContactPhone">{{
+                            <label class="col-md-4 col-form-label text-start" for="emergencyContactPhone">{{
                               'participants.phoneNumber' | transloco
                             }}</label>
                             <div class="col-md-8">
@@ -606,7 +608,7 @@
                           </div>
 
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label" for="emergencyContactAddress">{{
+                            <label class="col-md-4 col-form-label text-start" for="emergencyContactAddress">{{
                               'participants.address' | transloco
                             }}</label>
                             <div class="col-md-8">
@@ -627,7 +629,10 @@
                           </div>
 
                           <div class="row mb-3">
-                            <label class="col-md-4 col-form-label obligatorio" for="emergencyContactRelationship">
+                            <label
+                              class="col-md-4 col-form-label obligatorio text-start"
+                              for="emergencyContactRelationship"
+                            >
                               {{ 'participants.relationship' | transloco }}
                             </label>
                             <div class="col-md-8">
