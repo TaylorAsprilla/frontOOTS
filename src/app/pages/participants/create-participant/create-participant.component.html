@@ -664,7 +664,13 @@
               <!-- end personalData section -->
               <ul class="list-inline mb-0 wizard">
                 <li class="next list-inline-item float-end">
-                  <button type="submit" class="btn btn-secondary">{{ 'app.save' | transloco }}</button>
+                  <button type="submit" class="btn btn-secondary">
+                    {{
+                      participantId
+                        ? ('participants.updateParticipant' | transloco)
+                        : ('participants.saveParticipant' | transloco)
+                    }}
+                  </button>
                 </li>
               </ul>
             </form>
