@@ -436,7 +436,7 @@
       "invalidFormat": "Invalid format",
       "invalidPhoneFormat": "Enter a valid phone number (10 digits for Colombia)",
       "maxLength": "Maximum character limit exceeded",
-      "minimumAge": "Participant must be of legal age",
+      "minimumAge": "Participant must be at least 11 years old",
       "documentExists": "This document number is already registered",
       "firstNameRequired": "First name is required",
       "firstLastNameRequired": "First last name is required",

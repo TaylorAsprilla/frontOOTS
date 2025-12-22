@@ -103,6 +103,9 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   // Preferred countries from environment
   preferredCountries: CountryISO[] = [];
 
+  // Selected country ISO for phone input default
+  selectedCountryISO: CountryISO = CountryISO.Colombia;
+
   // Breadcrumb configuration
   breadcrumbItems: BreadcrumbItem[] = [
     { label: 'participants.title', active: false },
@@ -148,6 +151,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     this.initializePreferredCountries();
     this.initializeForm();
     this.setupFormSubscriptions();
+    this.subscribeToCountryChanges();
 
     // Check if in edit mode
     const id = this.route.snapshot.paramMap.get('id');
@@ -164,14 +168,12 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Initialize preferred countries from environment
+   * Initialize preferred countries from localStorage
    */
   private initializePreferredCountries(): void {
-    const envCountries = environment.preferredCountries || ['co', 'us'];
-    this.preferredCountries = envCountries.map((code) => {
-      const upperCode = code.toUpperCase();
-      return CountryISO[upperCode as keyof typeof CountryISO] || CountryISO.Colombia;
-    });
+    // Get current country from localStorage via CountryService
+    const currentCountry = this.countryService.getCurrentCountry();
+    this.updatePhoneCountry(currentCountry || 'CO');
   }
 
   /**
@@ -387,6 +389,32 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   private setupFormSubscriptions(): void {
     // Listen to loading state from service
     this.participantService.loading$.pipe(takeUntil(this.destroy$)).subscribe((loading) => (this.isLoading = loading));
+  }
+
+  /**
+   * Subscribe to country changes from header selector
+   */
+  private subscribeToCountryChanges(): void {
+    this.countryService.currentCountry$.pipe(takeUntil(this.destroy$)).subscribe((country) => {
+      this.updatePhoneCountry(country);
+    });
+  }
+
+  /**
+   * Update phone country based on selected country
+   */
+  private updatePhoneCountry(country: string): void {
+    const upperCode = country.toUpperCase();
+
+    // Map country codes to CountryISO enum
+    const countryMap: { [key: string]: CountryISO } = {
+      CO: CountryISO.Colombia,
+      US: CountryISO.UnitedStates,
+      PR: CountryISO.PuertoRico,
+    };
+
+    this.selectedCountryISO = countryMap[upperCode] || CountryISO.Colombia;
+    this.preferredCountries = [this.selectedCountryISO];
   }
 
   /**

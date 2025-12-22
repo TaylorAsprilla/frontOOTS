@@ -438,7 +438,7 @@
       "invalidFormat": "Formato inválido",
       "invalidPhoneFormat": "Ingrese un número de teléfono válido (10 dígitos para Colombia)",
       "maxLength": "Ha excedido el número máximo de caracteres",
-      "minimumAge": "El participante debe ser mayor de edad",
+      "minimumAge": "El participante debe ser mayor de 11 años",
       "documentExists": "Este número de documento ya está registrado",
       "firstNameRequired": "El primer nombre es requerido",
       "firstLastNameRequired": "El primer apellido es requerido",
