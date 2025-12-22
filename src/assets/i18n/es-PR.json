@@ -34,6 +34,7 @@
     "select": "Seleccione"
   },
   "navigation": {
+    "Navigation": "Navegación",
     "dashboard": "Panel de control",
     "home": "Inicio",
     "userManagement": "Gestión de usuarios",
@@ -229,6 +230,7 @@
   },
   "participants": {
     "title": "Participantes",
+    "Crear Participante": "Crear Participante",
     "create": "Crear Participante",
     "edit": "Editar Participante",
     "saveParticipant": "Guardar Participante",

@@ -34,6 +34,7 @@
     "select": "Select"
   },
   "navigation": {
+    "Navigation": "Navigation",
     "dashboard": "Dashboard",
     "home": "Home",
     "userManagement": "User Management",
@@ -225,6 +226,7 @@
   },
   "participants": {
     "title": "Participants",
+    "Crear Participante": "Create Participant",
     "create": "Create Participant",
     "edit": "Edit Participant",
     "saveParticipant": "Save Participant",
