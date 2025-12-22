@@ -145,6 +145,7 @@
                                 id="documentNumber"
                                 name="documentNumber"
                                 formControlName="documentNumber"
+                                (blur)="onDocumentNumberBlur()"
                               />
                               @if (hasFieldError('personalData.documentNumber')) { @if
                               (participantForm.get('personalData.documentNumber')?.hasError('documentExists')) {

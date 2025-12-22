@@ -12,7 +12,7 @@ import {
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbNavModule, NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { Subject, takeUntil } from 'rxjs';
 import { NgxIntlTelInputModule, SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 import { ParticipantService } from '../../../core/services/participant.service';
@@ -59,6 +59,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   private readonly participantService = inject(ParticipantService);
   private readonly notificationService = inject(NotificationService);
   private readonly router = inject(Router);
+  private readonly translocoService = inject(TranslocoService);
   private readonly destroy$ = new Subject<void>();
 
   participantId: number | null = null;
@@ -728,7 +729,8 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
    * Show confirmation dialog before submitting
    */
   private confirmSubmission(): void {
-    this.notificationService.showConfirmation('participants.confirmCreate').then((result) => {
+    const message = this.translocoService.translate('participants.confirmCreate');
+    this.notificationService.showConfirmation(message).then((result) => {
       if (result.isConfirmed) {
         this.submitForm();
       }
@@ -778,7 +780,8 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
    */
 
   resetForm(): void {
-    this.notificationService.showConfirmation('participants.confirmReset').then((result) => {
+    const message = this.translocoService.translate('participants.confirmReset');
+    this.notificationService.showConfirmation(message).then((result) => {
       if (result.isConfirmed) {
         this.participantForm.reset();
         this.activeWizardStep = 1;
@@ -832,7 +835,8 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
    */
   cancel(): void {
     if (this.participantForm.dirty) {
-      this.notificationService.showConfirmation('participants.confirmCancel').then((result) => {
+      const message = this.translocoService.translate('participants.confirmCancel');
+      this.notificationService.showConfirmation(message).then((result) => {
         if (result.isConfirmed) {
           this.router.navigate(['/participants']);
         }
