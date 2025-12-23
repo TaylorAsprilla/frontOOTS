@@ -334,7 +334,9 @@
                           </div>
 
                           <div class="col-12 mb-3">
-                            <label class="form-label obligatorio" for="housing">{{ 'cases.housingDescription' | transloco }}</label>
+                            <label class="form-label obligatorio" for="housing">{{
+                              'cases.housingDescription' | transloco
+                            }}</label>
                             <textarea
                               class="form-control"
                               [class.is-invalid]="hasFieldError('bioPsychosocialHistory.housing')"
@@ -352,10 +354,14 @@
 
                       <ul class="list-inline mb-0 wizard">
                         <li class="previous list-inline-item">
-                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">{{ 'cases.previous' | transloco }}</button>
+                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
+                            {{ 'cases.previous' | transloco }}
+                          </button>
                         </li>
                         <li class="next list-inline-item float-end">
-                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">{{ 'cases.next' | transloco }}</button>
+                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">
+                            {{ 'cases.next' | transloco }}
+                          </button>
                         </li>
                       </ul>
                     </ng-template>
@@ -380,7 +386,9 @@
                       </p>
                       <div formGroupName="consultationReason">
                         <div class="row mb-3">
-                          <label class="col-md-3 col-form-label obligatorio">{{ 'cases.consultationReasonLabel' | transloco }}</label>
+                          <label class="col-md-3 col-form-label obligatorio">{{
+                            'cases.consultationReasonLabel' | transloco
+                          }}</label>
                           <div class="col-md-9">
                             <textarea
                               class="form-control"
@@ -398,10 +406,14 @@
 
                       <ul class="list-inline mb-0 wizard">
                         <li class="previous list-inline-item">
-                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">{{ 'cases.previous' | transloco }}</button>
+                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
+                            {{ 'cases.previous' | transloco }}
+                          </button>
                         </li>
                         <li class="next list-inline-item float-end">
-                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">{{ 'cases.next' | transloco }}</button>
+                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">
+                            {{ 'cases.next' | transloco }}
+                          </button>
                         </li>
                       </ul>
                     </ng-template>
@@ -428,7 +440,7 @@
                         <!-- Checkbox list of identified situations -->
                         <div class="row mb-3">
                           <label class="col-md-12 col-form-label obligatorio"
-                            >Seleccione las situaciones identificadas</label
+                            >{{ 'cases.selectIdentifiedSituations' | transloco }}</label
                           >
                           <div class="col-md-12">
                             @if (identifiedSituations.length > 0) {
@@ -452,7 +464,7 @@
                               }
                             </div>
                             } @else {
-                            <div class="text-muted">Cargando situaciones...</div>
+                            <div class="text-muted">{{ 'cases.loadingSituations' | transloco }}</div>
                             } @if (hasFieldError('identifiedSituations.situations')) {
                             <div class="invalid-feedback d-block">
                               <i class="mdi mdi-alert-circle-outline me-1"></i>
