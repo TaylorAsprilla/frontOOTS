@@ -405,7 +405,13 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       }
 
       // 4. Cargar situaciones identificadas
-      if (caseData.identifiedSituations) {
+      if (caseData.participantIdentifiedSituations && Array.isArray(caseData.participantIdentifiedSituations)) {
+        // Extraer los IDs de las situaciones identificadas
+        const situationIds = caseData.participantIdentifiedSituations.map((item: any) => item.identifiedSituationId);
+        this.caseForm.get('identifiedSituations')?.patchValue({
+          situations: situationIds,
+        });
+      } else if (caseData.identifiedSituations) {
         // Si viene como array de IDs
         if (Array.isArray(caseData.identifiedSituations)) {
           this.caseForm.get('identifiedSituations')?.patchValue({
@@ -433,7 +439,22 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       }
 
       // 6. Cargar plan de seguimiento
-      if (caseData.followUpPlan) {
+      if (caseData.followUpPlans && Array.isArray(caseData.followUpPlans) && caseData.followUpPlans.length > 0) {
+        // Tomar el primer elemento del array
+        const followUpData = caseData.followUpPlans[0];
+        
+        this.caseForm.get('followUpPlan')?.patchValue({
+          processCompleted: followUpData.processCompleted || false,
+          servicesCoordinated: !!followUpData.coordinatedService,
+          servicesAgency: followUpData.coordinatedService || '',
+          referralMade: followUpData.referred || false,
+          referralDetails: followUpData.referralDetails || '',
+          appointmentScheduled: followUpData.orientationAppointment || false,
+          appointmentDate: followUpData.appointmentDate || '',
+          appointmentTime: followUpData.appointmentTime || '',
+          otherDetails: followUpData.otherDetails || '',
+        });
+      } else if (caseData.followUpPlan) {
         // Si es un array, tomar el primer elemento
         const followUpData = Array.isArray(caseData.followUpPlan) ? caseData.followUpPlan[0] : caseData.followUpPlan;
 
@@ -453,7 +474,21 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       }
 
       // 7. Cargar condiciones físicas
-      if (caseData.physicalHealthHistory && Array.isArray(caseData.physicalHealthHistory)) {
+      if (caseData.physicalHealthHistories && Array.isArray(caseData.physicalHealthHistories)) {
+        this.physicalConditions.clear();
+        caseData.physicalHealthHistories.forEach((condition: any) => {
+          const conditionGroup = this.formBuilder.group({
+            condition: [condition.currentConditions || ''],
+            receivingTreatment: [!!condition.medications],
+            treatmentDetails: [condition.medications || ''],
+            paternalFamilyHistory: [condition.familyHistoryFather || ''],
+            maternalFamilyHistory: [condition.familyHistoryMother || ''],
+            observations: [condition.observations || ''],
+          });
+          this.physicalConditions.push(conditionGroup);
+        });
+      } else if (caseData.physicalHealthHistory && Array.isArray(caseData.physicalHealthHistory)) {
+        // Compatibilidad con versión anterior (singular)
         this.physicalConditions.clear();
         caseData.physicalHealthHistory.forEach((condition: any) => {
           const conditionGroup = this.formBuilder.group({
@@ -469,7 +504,21 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       }
 
       // 8. Cargar condiciones mentales
-      if (caseData.mentalHealthHistory && Array.isArray(caseData.mentalHealthHistory)) {
+      if (caseData.mentalHealthHistories && Array.isArray(caseData.mentalHealthHistories)) {
+        this.mentalConditions.clear();
+        caseData.mentalHealthHistories.forEach((condition: any) => {
+          const conditionGroup = this.formBuilder.group({
+            condition: [condition.currentConditions || ''],
+            receivingTreatment: [!!condition.medications],
+            treatmentDetails: [condition.medications || ''],
+            paternalFamilyHistory: [condition.familyHistoryFather || ''],
+            maternalFamilyHistory: [condition.familyHistoryMother || ''],
+            observations: [condition.observations || ''],
+          });
+          this.mentalConditions.push(conditionGroup);
+        });
+      } else if (caseData.mentalHealthHistory && Array.isArray(caseData.mentalHealthHistory)) {
+        // Compatibilidad con versión anterior (singular)
         this.mentalConditions.clear();
         caseData.mentalHealthHistory.forEach((condition: any) => {
           const conditionGroup = this.formBuilder.group({
@@ -507,7 +556,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
             timeframe: [intervention.timeline || ''],
             responsiblePerson: [intervention.responsible || ''],
             evaluationCriteria: [
-              intervention.evaluationCriteria || 'Observación subjetiva y objetiva del profesional.',
+              intervention.evaluationCriteria || '',
             ],
             progressNotes: [''],
           });
@@ -722,7 +771,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       activities: [''],
       timeframe: [''],
       responsiblePerson: [''],
-      evaluationCriteria: ['Observación subjetiva y objetiva del profesional.'],
+      evaluationCriteria: [''],
       progressNotes: [''],
     });
     this.interventions.push(interventionGroup);
