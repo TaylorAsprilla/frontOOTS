@@ -439,9 +439,9 @@
                       <div formGroupName="identifiedSituations">
                         <!-- Checkbox list of identified situations -->
                         <div class="row mb-3">
-                          <label class="col-md-12 col-form-label obligatorio"
-                            >{{ 'cases.selectIdentifiedSituations' | transloco }}</label
-                          >
+                          <label class="col-md-12 col-form-label obligatorio">{{
+                            'cases.selectIdentifiedSituations' | transloco
+                          }}</label>
                           <div class="col-md-12">
                             @if (identifiedSituations.length > 0) {
                             <div class="row">
@@ -477,10 +477,14 @@
 
                       <ul class="list-inline mb-0 wizard">
                         <li class="previous list-inline-item">
-                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">Anterior</button>
+                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
+                            {{ 'cases.previous' | transloco }}
+                          </button>
                         </li>
                         <li class="next list-inline-item float-end">
-                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">Siguiente</button>
+                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">
+                            {{ 'cases.next' | transloco }}
+                          </button>
                         </li>
                       </ul>
                     </ng-template>
@@ -490,7 +494,7 @@
                   <li [ngbNavItem]="5">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-clipboard-check me-1"></i>
-                      <span class="d-none d-sm-inline">Intervención</span>
+                      <span class="d-none d-sm-inline">{{ 'cases.interventionTitle' | transloco }}</span>
                     </a>
                     <ng-template ngbNavContent>
                       <p>
@@ -505,14 +509,16 @@
                       </p>
                       <div formGroupName="intervention">
                         <div class="row mb-3">
-                          <label class="col-md-3 col-form-label obligatorio">Intervención</label>
+                          <label class="col-md-3 col-form-label obligatorio">{{
+                            'cases.interventionTitle' | transloco
+                          }}</label>
                           <div class="col-md-9">
                             <textarea
                               class="form-control"
                               [class.is-invalid]="hasFieldError('intervention.action')"
                               formControlName="action"
                               rows="4"
-                              placeholder="Describa la intervención realizada..."
+                              [placeholder]="'cases.interventionDescription' | transloco"
                             ></textarea>
                             @if (hasFieldError('intervention.action')) {
                             <div class="invalid-feedback">{{ getFieldError('intervention.action') }}</div>
@@ -523,10 +529,14 @@
 
                       <ul class="list-inline mb-0 wizard">
                         <li class="previous list-inline-item">
-                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">Anterior</button>
+                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
+                            {{ 'cases.previous' | transloco }}
+                          </button>
                         </li>
                         <li class="next list-inline-item float-end">
-                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">Siguiente</button>
+                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">
+                            {{ 'cases.next' | transloco }}
+                          </button>
                         </li>
                       </ul>
                     </ng-template>
@@ -536,7 +546,7 @@
                   <li [ngbNavItem]="6">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-clipboard-list me-1"></i>
-                      <span class="d-none d-sm-inline">Plan a Seguir</span>
+                      <span class="d-none d-sm-inline">{{ 'cases.followUpPlan.stepTitle' | transloco }}</span>
                     </a>
                     <ng-template ngbNavContent>
                       <p>
@@ -554,9 +564,9 @@
                         <div class="mb-4">
                           <h5 class="text-primary mb-2">
                             <i class="mdi mdi-clipboard-list-outline me-2"></i>
-                            G. PLAN A SEGUIR
+                            {{ 'cases.followUpPlan.title' | transloco }}
                           </h5>
-                          <p class="text-muted small">Seleccione las acciones realizadas o planificadas</p>
+                          <p class="text-muted small">{{ 'cases.followUpPlan.subtitle' | transloco }}</p>
                         </div>
 
                         <!-- Se culminó el proceso de ayuda -->
@@ -571,7 +581,7 @@
                               />
                               <label class="form-check-label fw-semibold" for="processCompleted">
                                 <i class="mdi mdi-check-circle-outline me-1 text-success"></i>
-                                Se culminó el proceso de ayuda
+                                {{ 'cases.followUpPlan.processCompletedLabel' | transloco }}
                               </label>
                             </div>
                           </div>
@@ -589,17 +599,19 @@
                               />
                               <label class="form-check-label fw-semibold" for="servicesCoordinated">
                                 <i class="mdi mdi-account-group-outline me-1 text-info"></i>
-                                Se coordinó servicios en (mencionar agencia)
+                                {{ 'cases.followUpPlan.servicesCoordinatedLabel' | transloco }}
                               </label>
                             </div>
                             @if (caseForm.get('followUpPlan.servicesCoordinated')?.value) {
                             <div class="mt-3 ps-4 border-start border-info border-3">
-                              <label class="form-label small text-muted">Agencia o servicio coordinado:</label>
+                              <label class="form-label small text-muted">{{
+                                'cases.followUpPlan.servicesAgencyLabel' | transloco
+                              }}</label>
                               <textarea
                                 class="form-control"
                                 formControlName="servicesAgency"
                                 rows="2"
-                                placeholder="Ej: Hospital Regional, Centro de Salud Mental..."
+                                [placeholder]="'cases.followUpPlan.servicesAgencyPlaceholder' | transloco"
                               ></textarea>
                             </div>
                             }
@@ -618,17 +630,19 @@
                               />
                               <label class="form-check-label fw-semibold" for="referralMade">
                                 <i class="mdi mdi-share-outline me-1 text-warning"></i>
-                                Se hará un referido (mencionar los referidos y justificar)
+                                {{ 'cases.followUpPlan.referralMadeLabel' | transloco }}
                               </label>
                             </div>
                             @if (caseForm.get('followUpPlan.referralMade')?.value) {
                             <div class="mt-3 ps-4 border-start border-warning border-3">
-                              <label class="form-label small text-muted">Detalles del referido y justificación:</label>
+                              <label class="form-label small text-muted">{{
+                                'cases.followUpPlan.referralDetailsLabel' | transloco
+                              }}</label>
                               <textarea
                                 class="form-control"
                                 formControlName="referralDetails"
                                 rows="3"
-                                placeholder="Describa a quién se refiere, por qué motivo y la justificación del referido..."
+                                [placeholder]="'cases.followUpPlan.referralDetailsPlaceholder' | transloco"
                               ></textarea>
                             </div>
                             }
@@ -647,7 +661,7 @@
                               />
                               <label class="form-check-label fw-semibold" for="appointmentScheduled">
                                 <i class="mdi mdi-calendar-clock me-1 text-primary"></i>
-                                Se coordinó cita para iniciar proceso de orientación
+                                {{ 'cases.followUpPlan.appointmentScheduledLabel' | transloco }}
                               </label>
                             </div>
                             @if (caseForm.get('followUpPlan.appointmentScheduled')?.value) {
@@ -655,13 +669,15 @@
                               <div class="row g-3">
                                 <div class="col-md-6">
                                   <label class="form-label small text-muted">
-                                    <i class="mdi mdi-calendar me-1"></i>Fecha:
+                                    <i class="mdi mdi-calendar me-1"></i
+                                    >{{ 'cases.followUpPlan.appointmentDateLabel' | transloco }}
                                   </label>
                                   <input type="date" class="form-control" formControlName="appointmentDate" />
                                 </div>
                                 <div class="col-md-6">
                                   <label class="form-label small text-muted">
-                                    <i class="mdi mdi-clock-outline me-1"></i>Hora:
+                                    <i class="mdi mdi-clock-outline me-1"></i
+                                    >{{ 'cases.followUpPlan.appointmentTimeLabel' | transloco }}
                                   </label>
                                   <input type="time" class="form-control" formControlName="appointmentTime" />
                                 </div>
@@ -676,15 +692,15 @@
                           <div class="card-body">
                             <label class="form-label fw-semibold">
                               <i class="mdi mdi-text-box-outline me-1 text-secondary"></i>
-                              Otros detalles:
+                              {{ 'cases.followUpPlan.otherDetailsLabel' | transloco }}
                             </label>
                             <textarea
                               class="form-control"
                               formControlName="otherDetails"
                               rows="3"
-                              placeholder="Especifique cualquier otro detalle relevante del plan a seguir..."
+                              [placeholder]="'cases.followUpPlan.otherDetailsPlaceholder' | transloco"
                             ></textarea>
-                            <small class="text-muted">Campo opcional para información adicional</small>
+                            <small class="text-muted">{{ 'cases.followUpPlan.otherDetailsHint' | transloco }}</small>
                           </div>
                         </div>
                       </div>
@@ -692,12 +708,12 @@
                       <ul class="list-inline mb-0 wizard">
                         <li class="previous list-inline-item">
                           <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
-                            <i class="mdi mdi-arrow-left me-1"></i>Anterior
+                            <i class="mdi mdi-arrow-left me-1"></i>{{ 'cases.previous' | transloco }}
                           </button>
                         </li>
                         <li class="next list-inline-item float-end">
                           <button type="button" class="btn btn-primary" (click)="goToNextStep()">
-                            Siguiente<i class="mdi mdi-arrow-right ms-1"></i>
+                            {{ 'cases.next' | transloco }}<i class="mdi mdi-arrow-right ms-1"></i>
                           </button>
                         </li>
                       </ul>
@@ -708,7 +724,7 @@
                   <li [ngbNavItem]="7">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-hospital-box me-1"></i>
-                      <span class="d-none d-sm-inline">Historial de Salud Física</span>
+                      <span class="d-none d-sm-inline">{{ 'cases.physicalHealth.stepTitle' | transloco }}</span>
                     </a>
                     <ng-template ngbNavContent>
                       <p>
@@ -726,9 +742,9 @@
                         <div class="mb-4">
                           <h5 class="text-primary mb-2">
                             <i class="mdi mdi-stethoscope me-2"></i>
-                            E. HISTORIAL DE SALUD FÍSICA
+                            {{ 'cases.physicalHealth.title' | transloco }}
                           </h5>
-                          <p class="text-muted small">Pregunte por los diagnósticos del participante y su familia</p>
+                          <p class="text-muted small">{{ 'cases.physicalHealth.subtitle' | transloco }}</p>
                         </div>
 
                         <!-- Add Condition Button -->
@@ -736,7 +752,7 @@
                         <div class="mb-3">
                           <button type="button" class="btn btn-outline-primary btn-sm" (click)="addPhysicalCondition()">
                             <i class="mdi mdi-plus-circle me-1"></i>
-                            Agregar Condición Física
+                            {{ 'cases.physicalHealth.addConditionButton' | transloco }}
                           </button>
                         </div>
                         }
@@ -748,24 +764,36 @@
                             <table class="table table-bordered table-hover">
                               <thead class="table-light">
                                 <tr>
-                                  <th style="width: 15%">Condiciones físicas del participante</th>
+                                  <th style="width: 15%">{{ 'cases.physicalHealth.conditionColumn' | transloco }}</th>
                                   <th style="width: 20%" colspan="2" class="text-center">
-                                    ¿Actualmente recibe algún tipo de tratamiento?
+                                    {{ 'cases.physicalHealth.treatmentColumn' | transloco }}
                                   </th>
                                   <th style="width: 25%" colspan="2" class="text-center">
-                                    Historial familiar de condiciones
+                                    {{ 'cases.physicalHealth.familyHistoryColumn' | transloco }}
                                   </th>
-                                  <th style="width: 15%">Observaciones</th>
+                                  <th style="width: 15%">
+                                    {{ 'cases.physicalHealth.observationsColumn' | transloco }}
+                                  </th>
                                   @if (!isViewMode) {
-                                  <th style="width: 5%" class="text-center">Acción</th>
+                                  <th style="width: 5%" class="text-center">
+                                    {{ 'cases.physicalHealth.actionColumn' | transloco }}
+                                  </th>
                                   }
                                 </tr>
                                 <tr>
                                   <th></th>
-                                  <th style="width: 8%" class="text-center">No/Sí</th>
-                                  <th style="width: 12%">Medicamentos o terapia</th>
-                                  <th style="width: 12.5%">Familia paterna</th>
-                                  <th style="width: 12.5%">Familia materna</th>
+                                  <th style="width: 8%" class="text-center">
+                                    {{ 'cases.physicalHealth.noYesLabel' | transloco }}
+                                  </th>
+                                  <th style="width: 12%">
+                                    {{ 'cases.physicalHealth.treatmentDetailsColumn' | transloco }}
+                                  </th>
+                                  <th style="width: 12.5%">
+                                    {{ 'cases.physicalHealth.paternalFamilyColumn' | transloco }}
+                                  </th>
+                                  <th style="width: 12.5%">
+                                    {{ 'cases.physicalHealth.maternalFamilyColumn' | transloco }}
+                                  </th>
                                   <th></th>
                                   @if (!isViewMode) {
                                   <th></th>
@@ -780,7 +808,7 @@
                                       class="form-control form-control-sm"
                                       formControlName="condition"
                                       rows="2"
-                                      placeholder="Ej: Diabetes, Hipertensión..."
+                                      [placeholder]="'cases.physicalHealth.conditionPlaceholder' | transloco"
                                     ></textarea>
                                   </td>
                                   <td class="text-center align-middle">
@@ -799,7 +827,7 @@
                                       class="form-control form-control-sm"
                                       formControlName="treatmentDetails"
                                       rows="2"
-                                      placeholder="Detalles del tratamiento..."
+                                      [placeholder]="'cases.physicalHealth.treatmentDetailsPlaceholder' | transloco"
                                     ></textarea>
                                     } @else {
                                     <span class="text-muted small">-</span>
@@ -826,7 +854,7 @@
                                       class="form-control form-control-sm"
                                       formControlName="observations"
                                       rows="2"
-                                      placeholder="Observaciones adicionales..."
+                                      [placeholder]="'cases.physicalHealth.observationsPlaceholder' | transloco"
                                     ></textarea>
                                   </td>
                                   <td class="text-center align-middle">
@@ -835,7 +863,7 @@
                                       type="button"
                                       class="btn btn-danger btn-sm"
                                       (click)="removePhysicalCondition($index)"
-                                      title="Eliminar condición"
+                                      [title]="'cases.physicalHealth.removeConditionTitle' | transloco"
                                     >
                                       <i class="mdi mdi-delete"></i>
                                     </button>
@@ -849,8 +877,7 @@
                           } @else {
                           <div class="alert alert-info">
                             <i class="mdi mdi-information me-2"></i>
-                            No se han agregado condiciones físicas. Haga clic en "Agregar Condición Física" para
-                            comenzar.
+                            {{ 'cases.physicalHealth.noConditionsMessage' | transloco }}
                           </div>
                           }
                         </div>
@@ -859,12 +886,12 @@
                       <ul class="list-inline mb-0 wizard">
                         <li class="previous list-inline-item">
                           <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
-                            <i class="mdi mdi-arrow-left me-1"></i>Anterior
+                            <i class="mdi mdi-arrow-left me-1"></i>{{ 'cases.previous' | transloco }}
                           </button>
                         </li>
                         <li class="next list-inline-item float-end">
                           <button type="button" class="btn btn-primary" (click)="goToNextStep()">
-                            Siguiente<i class="mdi mdi-arrow-right ms-1"></i>
+                            {{ 'cases.next' | transloco }}<i class="mdi mdi-arrow-right ms-1"></i>
                           </button>
                         </li>
                       </ul>
@@ -875,7 +902,7 @@
                   <li [ngbNavItem]="8">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-brain me-1"></i>
-                      <span class="d-none d-sm-inline">Historial de Salud Mental</span>
+                      <span class="d-none d-sm-inline">{{ 'cases.mentalHealth.stepTitle' | transloco }}</span>
                     </a>
                     <ng-template ngbNavContent>
                       <p>
@@ -893,9 +920,9 @@
                         <div class="mb-4">
                           <h5 class="text-primary mb-2">
                             <i class="mdi mdi-head-heart-outline me-2"></i>
-                            F. HISTORIAL DE SALUD MENTAL
+                            {{ 'cases.mentalHealth.title' | transloco }}
                           </h5>
-                          <p class="text-muted small">Pregunte por los diagnósticos del participante y su familia</p>
+                          <p class="text-muted small">{{ 'cases.mentalHealth.subtitle' | transloco }}</p>
                         </div>
 
                         <!-- Add Condition Button -->
@@ -903,7 +930,7 @@
                         <div class="mb-3">
                           <button type="button" class="btn btn-outline-primary btn-sm" (click)="addMentalCondition()">
                             <i class="mdi mdi-plus-circle me-1"></i>
-                            Agregar Condición Mental
+                            {{ 'cases.mentalHealth.addConditionButton' | transloco }}
                           </button>
                         </div>
                         }
@@ -1016,8 +1043,7 @@
                           } @else {
                           <div class="alert alert-info">
                             <i class="mdi mdi-information me-2"></i>
-                            No se han agregado condiciones mentales. Haga clic en "Agregar Condición Mental" para
-                            comenzar.
+                            {{ 'cases.mentalHealth.noConditionsMessage' | transloco }}
                           </div>
                           }
                         </div>
