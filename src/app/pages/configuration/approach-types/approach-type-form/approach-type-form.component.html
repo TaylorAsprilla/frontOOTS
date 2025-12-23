@@ -1,117 +1,119 @@
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="page-title-box">
-                <div class="page-title-right">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item">
-                                <a [routerLink]="['/configuration/approach-types']">
-                                    {{ 'approachType.title' | transloco }}
-                                </a>
-                            </li>
-                            <li class="breadcrumb-item active">
-                                {{ (isEditMode ? 'approachType.edit' : 'approachType.create') | transloco }}
-                            </li>
-                        </ol>
-                    </nav>
-                </div>
-                <h4 class="page-title">
-                    {{ (isEditMode ? 'approachType.editTitle' : 'approachType.createTitle') | transloco }}
-                </h4>
-            </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box">
+        <div class="page-title-right">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb m-0">
+              <li class="breadcrumb-item">
+                <a [routerLink]="['/configuration/approach-types']">
+                  {{ 'approachType.title' | transloco }}
+                </a>
+              </li>
+              <li class="breadcrumb-item active">
+                {{ (isEditMode ? 'approachType.edit' : 'approachType.create') | transloco }}
+              </li>
+            </ol>
+          </nav>
         </div>
+        <h4 class="page-title">
+          {{ (isEditMode ? 'approachType.editTitle' : 'approachType.createTitle') | transloco }}
+        </h4>
+      </div>
     </div>
+  </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <!-- Loading State -->
-                    <div *ngIf="isLoading" class="text-center py-4">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">{{ 'common.loading' | transloco }}</span>
-                        </div>
-                    </div>
-
-                    <!-- Form -->
-                    <form *ngIf="!isLoading" [formGroup]="approachTypeForm" (ngSubmit)="onSubmit()">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <!-- Name Field -->
-                                <div class="mb-3">
-                                    <label for="name" class="form-label">
-                                        {{ 'approachType.name' | transloco }}
-                                        <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="text" id="name" class="form-control" formControlName="name"
-                                        [class.is-invalid]="hasError('name', 'required') || hasError('name', 'minlength') || hasError('name', 'maxlength') || hasBackendError('name')"
-                                        [placeholder]="'approachType.namePlaceholder' | transloco" />
-                                    <div class="invalid-feedback" *ngIf="hasError('name', 'required')">
-                                        {{ 'approachType.validation.nameRequired' | transloco }}
-                                    </div>
-                                    <div class="invalid-feedback" *ngIf="hasError('name', 'minlength')">
-                                        {{ 'approachType.validation.nameMinLength' | transloco }}
-                                    </div>
-                                    <div class="invalid-feedback" *ngIf="hasError('name', 'maxlength')">
-                                        {{ 'approachType.validation.nameMaxLength' | transloco }}
-                                    </div>
-                                    <div class="invalid-feedback" *ngIf="hasBackendError('name')">
-                                        {{ getBackendError('name') }}
-                                    </div>
-                                </div>
-
-                                <!-- Description Field -->
-                                <div class="mb-3">
-                                    <label for="description" class="form-label">
-                                        {{ 'approachType.description' | transloco }}
-                                    </label>
-                                    <textarea id="description" class="form-control" formControlName="description"
-                                        rows="4"
-                                        [class.is-invalid]="hasError('description', 'maxlength') || hasBackendError('description')"
-                                        [placeholder]="'approachType.descriptionPlaceholder' | transloco"></textarea>
-                                    <div class="invalid-feedback" *ngIf="hasError('description', 'maxlength')">
-                                        {{ 'approachType.validation.descriptionMaxLength' | transloco }}
-                                    </div>
-                                    <div class="invalid-feedback" *ngIf="hasBackendError('description')">
-                                        {{ getBackendError('description') }}
-                                    </div>
-                                </div>
-
-                                <!-- Active Status Field -->
-                                <div class="mb-3">
-                                    <div class="form-check form-switch">
-                                        <input type="checkbox" class="form-check-input" id="isActive"
-                                            formControlName="isActive" />
-                                        <label class="form-check-label" for="isActive">
-                                            {{ 'approachType.isActive' | transloco }}
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Form Actions -->
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="d-flex justify-content-end gap-2">
-                                    <button type="button" class="btn btn-secondary" (click)="cancel()"
-                                        [disabled]="isSubmitting">
-                                        <i class="fas fa-times me-1"></i>
-                                        {{ 'common.cancel' | transloco }}
-                                    </button>
-                                    <button type="submit" class="btn btn-primary"
-                                        [disabled]="approachTypeForm.invalid || isSubmitting">
-                                        <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-1"></span>
-                                        <i *ngIf="!isSubmitting" class="fas fa-save me-1"></i>
-                                        {{ (isEditMode ? 'common.update' : 'common.save') | transloco }}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <!-- Loading State -->
+          @if (isLoading) {
+          <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">{{ 'common.loading' | transloco }}</span>
             </div>
+          </div>
+          }
+
+          <!-- Form -->
+          @if (!isLoading) {
+          <form [formGroup]="approachTypeForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6">
+                <!-- Name Field -->
+                <div class="mb-3">
+                  <label for="name" class="form-label">
+                    {{ 'approachType.name' | transloco }}
+                    <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    class="form-control"
+                    formControlName="name"
+                    [class.is-invalid]="
+                      hasError('name', 'required') ||
+                      hasError('name', 'minlength') ||
+                      hasError('name', 'maxlength') ||
+                      hasBackendError('name')
+                    "
+                    [placeholder]="'approachType.namePlaceholder' | transloco"
+                  />
+                  @if (hasError('name', 'required')) {
+                  <div class="invalid-feedback d-block">
+                    {{ 'approachType.validation.nameRequired' | transloco }}
+                  </div>
+                  } @if (hasError('name', 'minlength')) {
+                  <div class="invalid-feedback d-block">
+                    {{ 'approachType.validation.nameMinLength' | transloco }}
+                  </div>
+                  } @if (hasError('name', 'maxlength')) {
+                  <div class="invalid-feedback d-block">
+                    {{ 'approachType.validation.nameMaxLength' | transloco }}
+                  </div>
+                  } @if (hasBackendError('name')) {
+                  <div class="invalid-feedback d-block">
+                    {{ getBackendError('name') }}
+                  </div>
+                  }
+                </div>
+
+                <!-- Active Status Field -->
+                <div class="mb-3">
+                  <div class="form-check form-switch">
+                    <input type="checkbox" class="form-check-input" id="isActive" formControlName="isActive" />
+                    <label class="form-check-label" for="isActive">
+                      {{ 'approachType.isActive' | transloco }}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="row">
+              <div class="col-12">
+                <div class="d-flex justify-content-end gap-2">
+                  <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">
+                    <i class="fas fa-times me-1"></i>
+                    {{ 'common.cancel' | transloco }}
+                  </button>
+                  <button type="submit" class="btn btn-primary" [disabled]="approachTypeForm.invalid || isSubmitting">
+                    @if (isSubmitting) {
+                    <span class="spinner-border spinner-border-sm me-1"></span>
+                    } @if (!isSubmitting) {
+                    <i class="fas fa-save me-1"></i>
+                    }
+                    {{ (isEditMode ? 'common.update' : 'common.save') | transloco }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+          }
         </div>
+      </div>
     </div>
+  </div>
 </div>

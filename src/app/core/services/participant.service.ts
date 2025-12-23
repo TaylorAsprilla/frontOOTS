@@ -192,7 +192,7 @@ export class ParticipantService {
     this.loadingSubject.next(true);
 
     return this.http
-      .put<CreateParticipantResponse>(`${this.apiUrl}/${id}`, participantData, {
+      .patch<CreateParticipantResponse>(`${this.apiUrl}/${id}`, participantData, {
         headers: this.getHeaders(),
       })
       .pipe(

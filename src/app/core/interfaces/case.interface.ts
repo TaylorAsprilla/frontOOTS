@@ -3,6 +3,8 @@
  * Defines the structure for participant cases
  */
 
+import { ProcessType } from 'src/app/pages/configuration/process-types/process-type.interface';
+
 export enum CaseStatus {
   ACTIVE = 'active',
   IN_PROGRESS = 'in_progress',
@@ -18,13 +20,6 @@ export enum ApproachType {
   CALL = 'Ll',
   TELECONSULTATION = 'TC',
   VIRTUAL = 'V',
-}
-
-export enum ProcessType {
-  FOLLOW_UP = 'S',
-  CLOSURE = 'C',
-  TRANSFER = 'T',
-  REFERRAL = 'D',
 }
 
 /**
@@ -206,7 +201,7 @@ export interface ProgressNote {
   id?: number;
   date: string;
   approachType: ApproachType;
-  processType: ProcessType;
+  processType: ProcessType; // Process type name from catalog
   duration: number; // in minutes
   summary: string;
   activities: string[];
@@ -257,6 +252,8 @@ export interface ClosingNote {
  */
 export interface CreateCaseDto {
   participantId: number;
+  familyMembers?: FamilyMemberDto[];
+  bioPsychosocialHistory?: BioPsychosocialHistoryDto;
   consultationReason: string;
   identifiedSituations: number[];
   intervention: string;
@@ -268,6 +265,26 @@ export interface CreateCaseDto {
   progressNotes: ProgressNoteDto[];
   referrals: string;
   closingNote?: ClosingNoteDto;
+}
+
+export interface FamilyMemberDto {
+  name: string;
+  birthDate?: string | null;
+  occupation?: string | null;
+  familyRelationshipId?: number | null;
+  academicLevelId?: number | null;
+}
+
+export interface BioPsychosocialHistoryDto {
+  academicLevelId?: number | null;
+  completedGrade: string;
+  institution: string;
+  profession: string;
+  incomeSourceId?: number | null;
+  incomeLevelId?: number | null;
+  occupationalHistory: string;
+  housingTypeId?: number | null;
+  housing: string;
 }
 
 export interface FollowUpPlanDto {

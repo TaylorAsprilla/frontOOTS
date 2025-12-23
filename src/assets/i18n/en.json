@@ -30,9 +30,11 @@
     "showing": "Showing",
     "to": "to",
     "of": "of",
-    "notAvailable": "Not available"
+    "notAvailable": "Not available",
+    "select": "Select"
   },
   "navigation": {
+    "Navigation": "Navigation",
     "dashboard": "Dashboard",
     "home": "Home",
     "userManagement": "User Management",
@@ -224,6 +226,7 @@
   },
   "participants": {
     "title": "Participants",
+    "Crear Participante": "Create Participant",
     "create": "Create Participant",
     "edit": "Edit Participant",
     "saveParticipant": "Save Participant",
@@ -245,10 +248,13 @@
     "documentNumber": "Document Number",
     "address": "Address",
     "city": "City",
+    "state": "State",
+    "zipCode": "Zip Code",
     "birthDate": "Birth Date",
     "gender": "Gender",
     "maritalStatus": "Marital Status",
     "healthInsurance": "Health Insurance",
+    "customHealthInsurance": "Specify EPS",
     "housingType": "Housing Type",
     "religiousAffiliation": "Religious Affiliation",
     "referralSource": "Referral Source",
@@ -368,6 +374,8 @@
     "enterCity": "Enter city",
     "enterReligiousAffiliation": "Enter religious affiliation",
     "enterReferralSource": "Enter referral source",
+    "enterEpsName": "Enter the EPS name",
+    "documentAlreadyRegistered": "Document number {{documentNumber}} is already registered",
     "selectDocumentType": "Select document type",
     "selectGender": "Select gender",
     "selectMaritalStatus": "Select marital status",
@@ -430,7 +438,7 @@
       "invalidFormat": "Invalid format",
       "invalidPhoneFormat": "Enter a valid phone number (10 digits for Colombia)",
       "maxLength": "Maximum character limit exceeded",
-      "minimumAge": "Participant must be of legal age",
+      "minimumAge": "Participant must be at least 11 years old",
       "documentExists": "This document number is already registered",
       "firstNameRequired": "First name is required",
       "firstLastNameRequired": "First last name is required",
@@ -872,6 +880,41 @@
       "nameMaxLength": "Name cannot exceed 100 characters"
     }
   },
+  "processType": {
+    "title": "Process Types",
+    "createNew": "Create Process Type",
+    "create": "Create Process Type",
+    "createTitle": "Create New Process Type",
+    "edit": "Edit Process Type",
+    "editTitle": "Edit Process Type",
+    "delete": "Delete Process Type",
+    "view": "View Process Type",
+    "list": "Process Types List",
+    "searchPlaceholder": "Search process types...",
+    "filterAll": "All Statuses",
+    "filterActive": "Active",
+    "filterInactive": "Inactive",
+    "clearFilters": "Clear Filters",
+    "noResults": "No process types found",
+    "active": "Active",
+    "inactive": "Inactive",
+    "id": "ID",
+    "name": "Name",
+    "description": "Description",
+    "status": "Status",
+    "actions": "Actions",
+    "isActive": "Active Status",
+    "namePlaceholder": "E.g: In-Person Consultation, Phone Call...",
+    "descriptionPlaceholder": "Process type description...",
+    "showing": "Showing",
+    "of": "of",
+    "validation": {
+      "nameRequired": "Name is required",
+      "nameMinLength": "Name must be at least 2 characters",
+      "nameMaxLength": "Name cannot exceed 100 characters",
+      "descriptionMaxLength": "Description cannot exceed 500 characters"
+    }
+  },
   "maritalStatus": {
     "title": "Marital Statuses",
     "createNew": "Create Marital Status",
@@ -993,6 +1036,11 @@
       "maxLength": "Field cannot exceed {{max}} characters",
       "invalid": "The entered value is not valid"
     }
+  },
+  "footer": {
+    "aboutUs": "About Us",
+    "help": "Help",
+    "contactUs": "Contact Us"
   },
   "ui": {
     "cards": {

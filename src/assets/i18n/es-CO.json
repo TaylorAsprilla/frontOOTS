@@ -30,9 +30,11 @@
     "showing": "Mostrando",
     "to": "a",
     "of": "de",
-    "notAvailable": "No disponible"
+    "notAvailable": "No disponible",
+    "select": "Seleccione"
   },
   "navigation": {
+    "Navigation": "Navegación",
     "dashboard": "Panel de control",
     "home": "Inicio",
     "userManagement": "Gestión de usuarios",
@@ -226,6 +228,7 @@
   },
   "participants": {
     "title": "Participantes",
+    "Crear Participante": "Crear Participante",
     "create": "Crear Participante",
     "edit": "Editar Participante",
     "saveParticipant": "Guardar Participante",
@@ -247,10 +250,13 @@
     "documentNumber": "Número de Documento",
     "address": "Dirección",
     "city": "Ciudad",
+    "state": "Departamento",
+    "zipCode": "Código Postal",
     "birthDate": "Fecha de Nacimiento",
     "gender": "Género",
     "maritalStatus": "Estado Civil",
     "healthInsurance": "EPS",
+    "customHealthInsurance": "Especifique la EPS",
     "housingType": "Tipo de Vivienda",
     "religiousAffiliation": "Afiliación Religiosa",
     "referralSource": "Fuente de Referido",
@@ -370,6 +376,8 @@
     "enterCity": "Ingrese la ciudad",
     "enterReligiousAffiliation": "Ingrese la afiliación religiosa",
     "enterReferralSource": "Ingrese la fuente de referido",
+    "enterEpsName": "Ingrese el nombre de la EPS",
+    "documentAlreadyRegistered": "El número de documento {{documentNumber}} ya está registrado",
     "selectDocumentType": "Seleccione el tipo de documento",
     "selectGender": "Seleccione el género",
     "selectMaritalStatus": "Seleccione el estado civil",
@@ -432,7 +440,7 @@
       "invalidFormat": "Formato inválido",
       "invalidPhoneFormat": "Ingrese un número de teléfono válido (10 dígitos para Colombia)",
       "maxLength": "Ha excedido el número máximo de caracteres",
-      "minimumAge": "El participante debe ser mayor de edad",
+      "minimumAge": "El participante debe ser mayor de 11 años",
       "documentExists": "Este número de documento ya está registrado",
       "firstNameRequired": "El primer nombre es requerido",
       "firstLastNameRequired": "El primer apellido es requerido",
@@ -959,6 +967,41 @@
       "nameMaxLength": "El nombre no puede exceder 100 caracteres"
     }
   },
+  "processType": {
+    "title": "Tipos de Proceso",
+    "createNew": "Crear Tipo de Proceso",
+    "create": "Crear Tipo de Proceso",
+    "createTitle": "Crear Nuevo Tipo de Proceso",
+    "edit": "Editar Tipo de Proceso",
+    "editTitle": "Editar Tipo de Proceso",
+    "delete": "Eliminar Tipo de Proceso",
+    "view": "Ver Tipo de Proceso",
+    "list": "Lista de Tipos de Proceso",
+    "searchPlaceholder": "Buscar tipos de proceso...",
+    "filterAll": "Todos los Estados",
+    "filterActive": "Activos",
+    "filterInactive": "Inactivos",
+    "clearFilters": "Limpiar Filtros",
+    "noResults": "No se encontraron tipos de proceso",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "id": "ID",
+    "name": "Nombre",
+    "description": "Descripción",
+    "status": "Estado",
+    "actions": "Acciones",
+    "isActive": "Estado Activo",
+    "namePlaceholder": "Ej: Consulta Presencial, Llamada telefónica...",
+    "descriptionPlaceholder": "Descripción del tipo de proceso...",
+    "showing": "Mostrando",
+    "of": "de",
+    "validation": {
+      "nameRequired": "El nombre es requerido",
+      "nameMinLength": "El nombre debe tener al menos 2 caracteres",
+      "nameMaxLength": "El nombre no puede exceder 100 caracteres",
+      "descriptionMaxLength": "La descripción no puede exceder 500 caracteres"
+    }
+  },
   "identifiedSituation": {
     "title": "Situaciones Identificadas",
     "createNew": "Crear Situación Identificada",
@@ -1048,6 +1091,11 @@
       "maxLength": "El campo no puede exceder {{max}} caracteres",
       "invalid": "El valor ingresado no es válido"
     }
+  },
+  "footer": {
+    "aboutUs": "Acerca de Nosotros",
+    "help": "Ayuda",
+    "contactUs": "Contáctanos"
   },
   "ui": {
     "cards": {

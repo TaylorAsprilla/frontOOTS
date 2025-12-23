@@ -8,7 +8,7 @@
       <div class="card shadow-sm border-0">
         <div class="card-body p-5">
           <h4 class="card-title text-center mb-4 text-primary">
-            <i class="mdi mdi-account-multiple me-2"></i>Participantes
+            <i class="mdi mdi-account-multiple me-2"></i>{{ 'participants.title' | transloco }}
           </h4>
 
           <!-- Loading Indicator -->
@@ -31,1008 +31,648 @@
                   [(activeId)]="activeWizardStep"
                   class="nav-pills nav-justified bg-light form-wizard-header mb-3"
                 >
-                  <li [ngbNavItem]="1">
+                  <li [ngbNavItem]="1" class="p-3">
                     <a ngbNavLink class="rounded-0 pt-2 pb-2">
                       <i class="mdi mdi-account-circle me-1"></i>
                       <span class="d-none d-sm-inline">{{ 'participants.personalData' | transloco }}</span>
                     </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="33.33"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-                      <div formGroupName="personalData" class="horizontal-form-section">
-                        <div class="two-column-layout">
-                          <!-- Primera columna -->
-                          <div>
-                            <!-- Fila 1 -->
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio" for="firstName">
-                                {{ 'participants.firstName' | transloco }}
-                              </label>
-                              <div class="col-md-8">
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('personalData.firstName')"
-                                  id="firstName"
-                                  name="firstName"
-                                  formControlName="firstName"
-                                />
-                                @if (hasFieldError('personalData.firstName')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.firstName') | transloco }}
-                                </div>
-                                }
+
+                    <div formGroupName="personalData" class="horizontal-form-section">
+                      <div class="two-column-layout">
+                        <!-- Primera columna -->
+                        <div>
+                          <!-- Fila 1 -->
+                          <div class="row mb-3">
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="firstName">
+                              {{ 'participants.firstName' | transloco }}
+                            </label>
+                            <div class="col-md-8">
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.firstName')"
+                                id="firstName"
+                                name="firstName"
+                                formControlName="firstName"
+                              />
+                              @if (hasFieldError('personalData.firstName')) {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.firstName') | transloco }}
                               </div>
-                            </div>
-
-                            <!-- Fila 3 -->
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio" for="firstLastName">
-                                Primer Apellido
-                              </label>
-                              <div class="col-md-8">
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('personalData.firstLastName')"
-                                  id="firstLastName"
-                                  name="firstLastName"
-                                  formControlName="firstLastName"
-                                />
-                                @if (hasFieldError('personalData.firstLastName')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.firstLastName') | transloco }}
-                                </div>
-                                }
-                              </div>
-                            </div>
-
-                            <!-- Fila 5 -->
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio" for="birthDate"
-                                >Fecha de Nacimiento
-                              </label>
-                              <div class="col-md-8">
-                                <input
-                                  type="date"
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('personalData.birthDate')"
-                                  id="birthDate"
-                                  name="birthDate"
-                                  formControlName="birthDate"
-                                />
-                                @if (hasFieldError('personalData.birthDate')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.birthDate') | transloco }}
-                                </div>
-                                }
-                              </div>
-                            </div>
-
-                            <!-- Fila 7 -->
-                            <div class="row mb-3">
-                              <label for="maritalStatusId" class="col-md-4 col-form-label obligatorio">
-                                Estado Civil
-                              </label>
-                              <div class="col-md-8">
-                                <select
-                                  class="form-select"
-                                  [class.is-invalid]="hasFieldError('personalData.maritalStatusId')"
-                                  id="maritalStatusId"
-                                  formControlName="maritalStatusId"
-                                >
-                                  <option value="" disabled selected>Seleccione</option>
-                                  @for (maritalStatus of maritalStatuses; track maritalStatus.id) {
-                                  <option [value]="maritalStatus.id">{{ maritalStatus.name }}</option>
-                                  }
-                                </select>
-                                @if (hasFieldError('personalData.maritalStatusId')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.maritalStatusId') | transloco }}
-                                </div>
-                                }
-                              </div>
-                            </div>
-
-                            <!-- Fila 9 -->
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio" for="documentNumber"
-                                >Número de Documento
-                              </label>
-                              <div class="col-md-8">
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('personalData.documentNumber')"
-                                  id="documentNumber"
-                                  name="documentNumber"
-                                  formControlName="documentNumber"
-                                />
-                                @if (hasFieldError('personalData.documentNumber')) { @if
-                                (participantForm.get('personalData.documentNumber')?.hasError('documentExists')) {
-                                <div class="invalid-feedback">
-                                  El número de documento {{ getDocumentNumberFromError() }} ya está registrado
-                                </div>
-                                } @else {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.documentNumber') | transloco }}
-                                </div>
-                                } }
-                              </div>
-                            </div>
-
-                            <!-- Fila 11 -->
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label" for="email">Email</label>
-                              <div class="col-md-8">
-                                <input
-                                  type="email"
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('personalData.email')"
-                                  id="email"
-                                  name="email"
-                                  formControlName="email"
-                                />
-                                @if (hasFieldError('personalData.email')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.email') | transloco }}
-                                </div>
-                                }
-                              </div>
-                            </div>
-
-                            <!-- Fila 13 -->
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio" for="state">{{ stateLabel }}</label>
-                              <div class="col-md-8">
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('personalData.state')"
-                                  id="state"
-                                  name="state"
-                                  formControlName="state"
-                                />
-                                @if (hasFieldError('personalData.state')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.state') | transloco }}
-                                </div>
-                                }
-                              </div>
-                            </div>
-
-                            <!-- Fila 15 -->
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label" for="zipCode">Código Postal</label>
-                              <div class="col-md-8">
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('personalData.zipCode')"
-                                  id="zipCode"
-                                  name="zipCode"
-                                  formControlName="zipCode"
-                                />
-                                @if (hasFieldError('personalData.zipCode')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.zipCode') | transloco }}
-                                </div>
-                                }
-                              </div>
-                            </div>
-
-                            <!-- Fila 17 -->
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio" for="religiousAffiliation"
-                                >Afiliación Religiosa
-                              </label>
-                              <div class="col-md-8">
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('personalData.religiousAffiliation')"
-                                  id="religiousAffiliation"
-                                  name="religiousAffiliation"
-                                  formControlName="religiousAffiliation"
-                                />
-                                @if (hasFieldError('personalData.religiousAffiliation')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.religiousAffiliation') | transloco }}
-                                </div>
-                                }
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- Segunda columna -->
-                          <div>
-                            <!-- Fila 2 -->
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label" for="secondName">Segundo Nombre</label>
-                              <div class="col-md-8">
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  id="secondName"
-                                  name="secondName"
-                                  formControlName="secondName"
-                                />
-                              </div>
-                            </div>
-
-                            <!-- Fila 4 -->
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label" for="secondLastName"> Segundo Apellido</label>
-                              <div class="col-md-8">
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  id="secondLastName"
-                                  name="secondLastName"
-                                  formControlName="secondLastName"
-                                />
-                              </div>
-                            </div>
-
-                            <!-- Fila 6 -->
-                            <div class="row mb-3">
-                              <label for="genderId" class="col-md-4 col-form-label obligatorio"> Género </label>
-                              <div class="col-md-8">
-                                <select
-                                  class="form-select"
-                                  [class.is-invalid]="hasFieldError('personalData.genderId')"
-                                  id="genderId"
-                                  formControlName="genderId"
-                                >
-                                  <option value="" disabled selected>Seleccione</option>
-                                  @for (gender of genders; track gender.id) {
-                                  <option [value]="gender.id">{{ gender.name }}</option>
-                                  }
-                                </select>
-                                @if (hasFieldError('personalData.genderId')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.genderId') | transloco }}
-                                </div>
-                                }
-                              </div>
-                            </div>
-
-                            <!-- Fila 8 -->
-                            <div class="row mb-3">
-                              <label for="documentTypeId" class="col-md-4 col-form-label obligatorio">
-                                Tipo de Documento
-                              </label>
-                              <div class="col-md-8">
-                                <select
-                                  class="form-select"
-                                  [class.is-invalid]="hasFieldError('personalData.documentTypeId')"
-                                  id="documentTypeId"
-                                  formControlName="documentTypeId"
-                                >
-                                  <option value="" disabled selected>Seleccione</option>
-                                  @for (docType of documentTypes; track docType.id) {
-                                  <option [value]="docType.id">{{ docType.name }}</option>
-                                  }
-                                </select>
-                                @if (hasFieldError('personalData.documentTypeId')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.documentTypeId') | transloco }}
-                                </div>
-                                }
-                              </div>
-                            </div>
-
-                            <!-- Fila 10 -->
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio" for="phoneNumber"> Celular </label>
-                              <div class="col-md-8">
-                                <div
-                                  class="phone-input-wrapper"
-                                  [ngClass]="{
-                                    'has-error': hasFieldError('personalData.phoneNumber'),
-                                    'has-success':
-                                      !hasFieldError('personalData.phoneNumber') &&
-                                      participantForm.get('personalData.phoneNumber')?.value
-                                  }"
-                                >
-                                  <ngx-intl-tel-input
-                                    [cssClass]="'form-control'"
-                                    [preferredCountries]="preferredCountries"
-                                    [enableAutoCountrySelect]="true"
-                                    [enablePlaceholder]="true"
-                                    [searchCountryFlag]="true"
-                                    [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
-                                    [selectFirstCountry]="false"
-                                    [selectedCountryISO]="preferredCountries[0]"
-                                    [maxLength]="15"
-                                    [phoneValidation]="true"
-                                    [separateDialCode]="false"
-                                    [numberFormat]="PhoneNumberFormat.International"
-                                    formControlName="phoneNumber"
-                                    id="phoneNumber"
-                                  >
-                                  </ngx-intl-tel-input>
-                                  @if (hasFieldError('personalData.phoneNumber')) {
-                                  <div class="invalid-feedback d-block">
-                                    <i class="mdi mdi-alert-circle-outline me-1"></i>
-                                    {{ getFieldError('personalData.phoneNumber') | transloco }}
-                                  </div>
-                                  }
-                                </div>
-                              </div>
-                            </div>
-
-                            <!-- Fila 12 -->
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio" for="address">Dirección</label>
-                              <div class="col-md-8">
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('personalData.address')"
-                                  id="address"
-                                  name="address"
-                                  formControlName="address"
-                                />
-                                @if (hasFieldError('personalData.address')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.address') | transloco }}
-                                </div>
-                                }
-                              </div>
-                            </div>
-
-                            <!-- Fila 14 -->
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio" for="city">Ciudad</label>
-                              <div class="col-md-8">
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('personalData.city')"
-                                  id="city"
-                                  name="city"
-                                  formControlName="city"
-                                />
-                                @if (hasFieldError('personalData.city')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.city') | transloco }}
-                                </div>
-                                }
-                              </div>
-                            </div>
-
-                            <!-- Fila 16 -->
-                            <div class="row mb-3">
-                              <label for="healthInsuranceId" class="col-md-4 col-form-label obligatorio">
-                                {{ healthInsuranceLabel }}
-                              </label>
-                              <div class="col-md-8">
-                                <select
-                                  class="form-select"
-                                  [class.is-invalid]="hasFieldError('personalData.healthInsuranceId')"
-                                  id="healthInsuranceId"
-                                  formControlName="healthInsuranceId"
-                                >
-                                  <option value="" disabled selected>Seleccione</option>
-                                  @for (healthInsurance of healthInsurances; track healthInsurance.id) {
-                                  <option [value]="healthInsurance.id">{{ healthInsurance.name }}</option>
-                                  }
-                                  <option value="other">Otro</option>
-                                </select>
-                                @if (hasFieldError('personalData.healthInsuranceId')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.healthInsuranceId') | transloco }}
-                                </div>
-                                }
-                              </div>
-                            </div>
-
-                            <!-- Fila 18 -->
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label" for="referralSource">Fuente Referido</label>
-                              <div class="col-md-8">
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  id="referralSource"
-                                  name="referralSource"
-                                  formControlName="referralSource"
-                                />
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- Campo EPS personalizada ocupa toda la fila -->
-                          @if (participantForm.get('personalData.healthInsuranceId')?.value === 'other') {
-                          <div class="col-span-2">
-                            <div class="row mb-3">
-                              <label class="col-md-2 col-form-label obligatorio" for="customHealthInsurance">
-                                Especifique la EPS
-                              </label>
-                              <div class="col-md-10">
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('personalData.customHealthInsurance')"
-                                  id="customHealthInsurance"
-                                  name="customHealthInsurance"
-                                  formControlName="customHealthInsurance"
-                                  placeholder="Ingrese el nombre de la EPS"
-                                />
-                                @if (hasFieldError('personalData.customHealthInsurance')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.customHealthInsurance') | transloco }}
-                                </div>
-                                }
-                              </div>
-                            </div>
-                          </div>
-                          }
-                        </div>
-
-                        <!-- Contacto de Emergencia -->
-                        <h5 class="mt-4 mb-3 text-muted col-span-2">
-                          <i class="mdi mdi-account-alert me-2"></i>Contacto de Emergencia
-                        </h5>
-
-                        <div class="two-column-layout">
-                          <!-- Primera columna -->
-                          <div>
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio" for="emergencyContactName">
-                                Nombre Completo
-                              </label>
-                              <div class="col-md-8">
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('personalData.emergencyContactName')"
-                                  id="emergencyContactName"
-                                  name="emergencyContactName"
-                                  formControlName="emergencyContactName"
-                                />
-                                @if (hasFieldError('personalData.emergencyContactName')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.emergencyContactName') | transloco }}
-                                </div>
-                                }
-                              </div>
-                            </div>
-
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio" for="emergencyContactEmail"
-                                >Email</label
-                              >
-                              <div class="col-md-8">
-                                <input
-                                  type="email"
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('personalData.emergencyContactEmail')"
-                                  id="emergencyContactEmail"
-                                  name="emergencyContactEmail"
-                                  formControlName="emergencyContactEmail"
-                                />
-                                @if (hasFieldError('personalData.emergencyContactEmail')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.emergencyContactEmail') | transloco }}
-                                </div>
-                                }
-                              </div>
-                            </div>
-
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio" for="emergencyContactCity"
-                                >Ciudad</label
-                              >
-                              <div class="col-md-8">
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('personalData.emergencyContactCity')"
-                                  id="emergencyContactCity"
-                                  name="emergencyContactCity"
-                                  formControlName="emergencyContactCity"
-                                />
-                                @if (hasFieldError('personalData.emergencyContactCity')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.emergencyContactCity') | transloco }}
-                                </div>
-                                }
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- Segunda columna -->
-                          <div>
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio" for="emergencyContactPhone">
-                                Celular
-                              </label>
-                              <div class="col-md-8">
-                                <div
-                                  class="phone-input-wrapper"
-                                  [ngClass]="{
-                                    'has-error': hasFieldError('personalData.emergencyContactPhone'),
-                                    'has-success':
-                                      !hasFieldError('personalData.emergencyContactPhone') &&
-                                      participantForm.get('personalData.emergencyContactPhone')?.value
-                                  }"
-                                >
-                                  <ngx-intl-tel-input
-                                    [cssClass]="'form-control'"
-                                    [preferredCountries]="preferredCountries"
-                                    [enableAutoCountrySelect]="true"
-                                    [enablePlaceholder]="true"
-                                    [searchCountryFlag]="true"
-                                    [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
-                                    [selectFirstCountry]="false"
-                                    [selectedCountryISO]="preferredCountries[0]"
-                                    [maxLength]="15"
-                                    [phoneValidation]="true"
-                                    [separateDialCode]="false"
-                                    [numberFormat]="PhoneNumberFormat.International"
-                                    formControlName="emergencyContactPhone"
-                                    id="emergencyContactPhone"
-                                  >
-                                  </ngx-intl-tel-input>
-                                  @if (hasFieldError('personalData.emergencyContactPhone')) {
-                                  <div class="invalid-feedback d-block">
-                                    <i class="mdi mdi-alert-circle-outline me-1"></i>
-                                    {{ getFieldError('personalData.emergencyContactPhone') | transloco }}
-                                  </div>
-                                  }
-                                </div>
-                              </div>
-                            </div>
-
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio" for="emergencyContactAddress">
-                                Dirección
-                              </label>
-                              <div class="col-md-8">
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('personalData.emergencyContactAddress')"
-                                  id="emergencyContactAddress"
-                                  name="emergencyContactAddress"
-                                  formControlName="emergencyContactAddress"
-                                />
-                                @if (hasFieldError('personalData.emergencyContactAddress')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.emergencyContactAddress') | transloco }}
-                                </div>
-                                }
-                              </div>
-                            </div>
-
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio" for="emergencyContactRelationship">
-                                Parentesco
-                              </label>
-                              <div class="col-md-8">
-                                <select
-                                  class="form-select"
-                                  [class.is-invalid]="hasFieldError('personalData.emergencyContactRelationship')"
-                                  id="emergencyContactRelationship"
-                                  formControlName="emergencyContactRelationship"
-                                >
-                                  <option value="" disabled selected>Seleccione</option>
-                                  @for (relationship of familyRelationships; track relationship.id) {
-                                  <option [value]="relationship.id">{{ relationship.name }}</option>
-                                  }
-                                </select>
-                                @if (hasFieldError('personalData.emergencyContactRelationship')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('personalData.emergencyContactRelationship') | transloco }}
-                                </div>
-                                }
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- end personalData section -->
-                      <ul class="list-inline mb-0 wizard">
-                        <li class="next list-inline-item float-end">
-                          <button type="button" (click)="goToNextStep()" class="btn btn-secondary">Siguiente</button>
-                        </li>
-                      </ul>
-                    </ng-template>
-                  </li>
-                  <li [ngbNavItem]="2">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-face-profile me-1"></i>
-                      <span class="d-none d-sm-inline">{{ 'participants.familyComposition' | transloco }}</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="66"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        >
-                        </ngb-progressbar>
-                      </p>
-                      <div class="row" formArrayName="familyComposition">
-                        <div class="col-12">
-                          <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0"><i class="mdi mdi-account-group me-2"></i>Miembros de la Familia</h5>
-                            <button
-                              type="button"
-                              class="btn btn-primary btn-sm add-family-btn"
-                              (click)="addFamilyMember()"
-                            >
-                              <i class="mdi mdi-plus me-1"></i>Agregar Familiar
-                            </button>
-                          </div>
-
-                          @for (member of familyCompositionArray.controls; track $index; let i = $index) {
-                          <div [formGroupName]="i" class="family-member-card p-3 mb-3 position-relative">
-                            <div class="family-member-header d-flex justify-content-between align-items-center mb-3">
-                              <h6 class="mb-0 text-muted"><i class="mdi mdi-account me-1"></i>Familiar {{ i + 1 }}</h6>
-                              @if (familyCompositionArray.length > 1) {
-                              <button
-                                type="button"
-                                class="btn btn-danger btn-sm remove-family-btn"
-                                (click)="removeFamilyMember(i)"
-                                title="Eliminar familiar"
-                              >
-                                <i class="mdi mdi-delete"></i>
-                              </button>
                               }
                             </div>
+                          </div>
 
-                            <div class="row mb-3">
-                              <label class="col-md-3 col-form-label obligatorio" [for]="'name_' + i"> Nombre</label>
-                              <div class="col-md-9">
-                                <input
-                                  type="text"
-                                  [id]="'name_' + i"
-                                  [name]="'name_' + i"
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('familyComposition.' + i + '.name')"
-                                  formControlName="name"
-                                />
-                                @if (hasFieldError('familyComposition.' + i + '.name')) {
-                                <div class="invalid-feedback">
-                                  {{ getFieldError('familyComposition.' + i + '.name') | transloco }}
+                          <!-- Fila 3 -->
+                          <div class="row mb-3">
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="firstLastName">
+                              {{ 'participants.firstLastName' | transloco }}
+                            </label>
+                            <div class="col-md-8">
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.firstLastName')"
+                                id="firstLastName"
+                                name="firstLastName"
+                                formControlName="firstLastName"
+                              />
+                              @if (hasFieldError('personalData.firstLastName')) {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.firstLastName') | transloco }}
+                              </div>
+                              }
+                            </div>
+                          </div>
+
+                          <!-- Fila 5 -->
+                          <div class="row mb-3">
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="birthDate"
+                              >{{ 'participants.birthDate' | transloco }}
+                            </label>
+                            <div class="col-md-8">
+                              <input
+                                type="date"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.birthDate')"
+                                id="birthDate"
+                                name="birthDate"
+                                formControlName="birthDate"
+                              />
+                              @if (hasFieldError('personalData.birthDate')) {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.birthDate') | transloco }}
+                              </div>
+                              }
+                            </div>
+                          </div>
+
+                          <!-- Fila 7 -->
+                          <div class="row mb-3">
+                            <label for="maritalStatusId" class="col-md-4 col-form-label obligatorio text-start">
+                              {{ 'participants.maritalStatus' | transloco }}
+                            </label>
+                            <div class="col-md-8">
+                              <select
+                                class="form-select"
+                                [class.is-invalid]="hasFieldError('personalData.maritalStatusId')"
+                                id="maritalStatusId"
+                                formControlName="maritalStatusId"
+                              >
+                                <option value="" disabled selected>{{ 'app.select' | transloco }}</option>
+                                @for (maritalStatus of maritalStatuses; track maritalStatus.id) {
+                                <option [value]="maritalStatus.id">{{ maritalStatus.name }}</option>
+                                }
+                              </select>
+                              @if (hasFieldError('personalData.maritalStatusId')) {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.maritalStatusId') | transloco }}
+                              </div>
+                              }
+                            </div>
+                          </div>
+
+                          <!-- Fila 9 -->
+                          <div class="row mb-3">
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="documentNumber"
+                              >{{ 'participants.documentNumber' | transloco }}
+                            </label>
+                            <div class="col-md-8">
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.documentNumber')"
+                                id="documentNumber"
+                                name="documentNumber"
+                                formControlName="documentNumber"
+                                (blur)="onDocumentNumberBlur()"
+                              />
+                              @if (hasFieldError('personalData.documentNumber')) { @if
+                              (participantForm.get('personalData.documentNumber')?.hasError('documentExists')) {
+                              <div class="invalid-feedback">
+                                {{
+                                  'participants.documentAlreadyRegistered'
+                                    | transloco : { documentNumber: getDocumentNumberFromError() }
+                                }}
+                              </div>
+                              } @else {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.documentNumber') | transloco }}
+                              </div>
+                              } }
+                            </div>
+                          </div>
+
+                          <!-- Fila 11 -->
+                          <div class="row mb-3">
+                            <label class="col-md-4 col-form-label text-start" for="email">{{
+                              'participants.email' | transloco
+                            }}</label>
+                            <div class="col-md-8">
+                              <input
+                                type="email"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.email')"
+                                id="email"
+                                name="email"
+                                formControlName="email"
+                              />
+                              @if (hasFieldError('personalData.email')) {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.email') | transloco }}
+                              </div>
+                              }
+                            </div>
+                          </div>
+
+                          <!-- Fila 13 -->
+                          <div class="row mb-3">
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="state">{{
+                              stateLabel
+                            }}</label>
+                            <div class="col-md-8">
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.state')"
+                                id="state"
+                                name="state"
+                                formControlName="state"
+                              />
+                              @if (hasFieldError('personalData.state')) {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.state') | transloco }}
+                              </div>
+                              }
+                            </div>
+                          </div>
+
+                          <!-- Fila 15 -->
+                          <div class="row mb-3">
+                            <label class="col-md-4 col-form-label text-start" for="zipCode">{{
+                              'participants.zipCode' | transloco
+                            }}</label>
+                            <div class="col-md-8">
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.zipCode')"
+                                id="zipCode"
+                                name="zipCode"
+                                formControlName="zipCode"
+                              />
+                              @if (hasFieldError('personalData.zipCode')) {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.zipCode') | transloco }}
+                              </div>
+                              }
+                            </div>
+                          </div>
+
+                          <!-- Fila 17 -->
+                          <div class="row mb-3">
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="religiousAffiliation"
+                              >{{ 'participants.religiousAffiliation' | transloco }}
+                            </label>
+                            <div class="col-md-8">
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.religiousAffiliation')"
+                                id="religiousAffiliation"
+                                name="religiousAffiliation"
+                                formControlName="religiousAffiliation"
+                              />
+                              @if (hasFieldError('personalData.religiousAffiliation')) {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.religiousAffiliation') | transloco }}
+                              </div>
+                              }
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Segunda columna -->
+                        <div>
+                          <!-- Fila 2 -->
+                          <div class="row mb-3">
+                            <label class="col-md-4 col-form-label text-start" for="secondName">{{
+                              'participants.secondName' | transloco
+                            }}</label>
+                            <div class="col-md-8">
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="secondName"
+                                name="secondName"
+                                formControlName="secondName"
+                              />
+                            </div>
+                          </div>
+
+                          <!-- Fila 4 -->
+                          <div class="row mb-3">
+                            <label class="col-md-4 col-form-label text-start" for="secondLastName">{{
+                              'participants.secondLastName' | transloco
+                            }}</label>
+                            <div class="col-md-8">
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="secondLastName"
+                                name="secondLastName"
+                                formControlName="secondLastName"
+                              />
+                            </div>
+                          </div>
+
+                          <!-- Fila 6 -->
+                          <div class="row mb-3">
+                            <label for="genderId" class="col-md-4 col-form-label obligatorio text-start">{{
+                              'participants.gender' | transloco
+                            }}</label>
+                            <div class="col-md-8">
+                              <select
+                                class="form-select"
+                                [class.is-invalid]="hasFieldError('personalData.genderId')"
+                                id="genderId"
+                                formControlName="genderId"
+                              >
+                                <option value="" disabled selected>{{ 'app.select' | transloco }}</option>
+                                @for (gender of genders; track gender.id) {
+                                <option [value]="gender.id">{{ gender.name }}</option>
+                                }
+                              </select>
+                              @if (hasFieldError('personalData.genderId')) {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.genderId') | transloco }}
+                              </div>
+                              }
+                            </div>
+                          </div>
+
+                          <!-- Fila 8 -->
+                          <div class="row mb-3">
+                            <label for="documentTypeId" class="col-md-4 col-form-label obligatorio text-start">
+                              {{ 'participants.documentType' | transloco }}
+                            </label>
+                            <div class="col-md-8">
+                              <select
+                                class="form-select"
+                                [class.is-invalid]="hasFieldError('personalData.documentTypeId')"
+                                id="documentTypeId"
+                                formControlName="documentTypeId"
+                              >
+                                <option value="" disabled selected>{{ 'app.select' | transloco }}</option>
+                                @for (docType of documentTypes; track docType.id) {
+                                <option [value]="docType.id">{{ docType.name }}</option>
+                                }
+                              </select>
+                              @if (hasFieldError('personalData.documentTypeId')) {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.documentTypeId') | transloco }}
+                              </div>
+                              }
+                            </div>
+                          </div>
+
+                          <!-- Fila 10 -->
+                          <div class="row mb-3">
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="phoneNumber">{{
+                              'participants.phoneNumber' | transloco
+                            }}</label>
+                            <div class="col-md-8">
+                              <div
+                                class="phone-input-wrapper"
+                                [ngClass]="{
+                                  'has-error': hasFieldError('personalData.phoneNumber'),
+                                  'has-success':
+                                    !hasFieldError('personalData.phoneNumber') &&
+                                    participantForm.get('personalData.phoneNumber')?.value
+                                }"
+                              >
+                                <ngx-intl-tel-input
+                                  [cssClass]="'form-control'"
+                                  [preferredCountries]="preferredCountries"
+                                  [enableAutoCountrySelect]="true"
+                                  [enablePlaceholder]="true"
+                                  [searchCountryFlag]="true"
+                                  [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                                  [selectFirstCountry]="false"
+                                  [selectedCountryISO]="selectedCountryISO"
+                                  [maxLength]="15"
+                                  [phoneValidation]="true"
+                                  [separateDialCode]="false"
+                                  [numberFormat]="PhoneNumberFormat.International"
+                                  formControlName="phoneNumber"
+                                  id="phoneNumber"
+                                >
+                                </ngx-intl-tel-input>
+                                @if (hasFieldError('personalData.phoneNumber')) {
+                                <div class="invalid-feedback d-block">
+                                  <i class="mdi mdi-alert-circle-outline me-1"></i>
+                                  {{ getFieldError('personalData.phoneNumber') | transloco }}
                                 </div>
                                 }
                               </div>
                             </div>
+                          </div>
 
-                            <div class="row mb-3">
-                              <label class="col-md-3 col-form-label" [for]="'familyBirthDate_' + i">
-                                Fecha de Nacimiento</label
+                          <!-- Fila 12 -->
+                          <div class="row mb-3">
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="address">{{
+                              'participants.address' | transloco
+                            }}</label>
+                            <div class="col-md-8">
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.address')"
+                                id="address"
+                                name="address"
+                                formControlName="address"
+                              />
+                              @if (hasFieldError('personalData.address')) {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.address') | transloco }}
+                              </div>
+                              }
+                            </div>
+                          </div>
+
+                          <!-- Fila 14 -->
+                          <div class="row mb-3">
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="city">{{
+                              'participants.city' | transloco
+                            }}</label>
+                            <div class="col-md-8">
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.city')"
+                                id="city"
+                                name="city"
+                                formControlName="city"
+                              />
+                              @if (hasFieldError('personalData.city')) {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.city') | transloco }}
+                              </div>
+                              }
+                            </div>
+                          </div>
+
+                          <!-- Fila 16 -->
+                          <div class="row mb-3">
+                            <label for="healthInsuranceId" class="col-md-4 col-form-label obligatorio text-start">
+                              {{ healthInsuranceLabel }}
+                            </label>
+                            <div class="col-md-8">
+                              <select
+                                class="form-select"
+                                [class.is-invalid]="hasFieldError('personalData.healthInsuranceId')"
+                                id="healthInsuranceId"
+                                formControlName="healthInsuranceId"
                               >
-                              <div class="col-md-9">
-                                <input
-                                  type="date"
-                                  [id]="'familyBirthDate_' + i"
-                                  [name]="'familyBirthDate_' + i"
-                                  class="form-control"
-                                  formControlName="birthDate"
-                                />
+                                <option value="" disabled selected>{{ 'app.select' | transloco }}</option>
+                                @for (healthInsurance of healthInsurances; track healthInsurance.id) {
+                                <option [value]="healthInsurance.id">{{ healthInsurance.name }}</option>
+                                }
+                                <option value="other">{{ 'participants.other' | transloco }}</option>
+                              </select>
+                              @if (hasFieldError('personalData.healthInsuranceId')) {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.healthInsuranceId') | transloco }}
                               </div>
-                            </div>
-
-                            <div class="row mb-3">
-                              <label class="col-md-3 col-form-label" [for]="'occupation_' + i">Ocupación</label>
-                              <div class="col-md-9">
-                                <input
-                                  type="text"
-                                  [id]="'occupation_' + i"
-                                  [name]="'occupation_' + i"
-                                  class="form-control"
-                                  formControlName="occupation"
-                                />
-                              </div>
-                            </div>
-
-                            <div class="row mb-3">
-                              <label [for]="'relationshipId_' + i" class="col-md-3 col-form-label"> Parentesco </label>
-                              <div class="col-md-9">
-                                <select
-                                  class="form-select"
-                                  [id]="'relationshipId_' + i"
-                                  formControlName="relationshipId"
-                                >
-                                  <option value="" disabled selected>Seleccione el Parentesco</option>
-                                  @for (relationship of familyRelationships; track relationship.id) {
-                                  <option [value]="relationship.id">{{ relationship.name }}</option>
-                                  }
-                                </select>
-                              </div>
-                            </div>
-
-                            <div class="row mb-3">
-                              <label [for]="'academicLevelId_' + i" class="col-md-3 col-form-label">
-                                Grado Académico
-                              </label>
-                              <div class="col-md-9">
-                                <select
-                                  class="form-select"
-                                  [id]="'academicLevelId_' + i"
-                                  formControlName="academicLevelId"
-                                >
-                                  <option value="" disabled selected>Seleccione el Grado Académico</option>
-                                  @for (academicLevel of academicLevels; track academicLevel.id) {
-                                  <option [value]="academicLevel.id">{{ academicLevel.name }}</option>
-                                  }
-                                </select>
-                              </div>
+                              }
                             </div>
                           </div>
-                          } @if (familyCompositionArray.length === 0) {
-                          <div class="empty-family-state text-center py-4">
-                            <div class="text-muted">
-                              <i class="mdi mdi-account-group-outline display-4"></i>
-                              <p class="mt-2">No hay miembros familiares agregados</p>
-                              <button type="button" class="btn btn-primary add-family-btn" (click)="addFamilyMember()">
-                                <i class="mdi mdi-plus me-1"></i>Agregar Primer Familiar
-                              </button>
+
+                          <!-- Fila 18 -->
+                          <div class="row mb-3">
+                            <label class="col-md-4 col-form-label text-start" for="referralSource">{{
+                              'participants.referralSource' | transloco
+                            }}</label>
+                            <div class="col-md-8">
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="referralSource"
+                                name="referralSource"
+                                formControlName="referralSource"
+                              />
                             </div>
                           </div>
-                          }
                         </div>
-                        <!-- end col -->
+
+                        <!-- Campo EPS personalizada ocupa toda la fila -->
+                        @if (participantForm.get('personalData.healthInsuranceId')?.value === 'other') {
+                        <div class="col-span-2">
+                          <div class="row mb-3">
+                            <label class="col-md-2 col-form-label obligatorio text-start" for="customHealthInsurance">
+                              {{ 'participants.customHealthInsurance' | transloco }}
+                            </label>
+                            <div class="col-md-10">
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.customHealthInsurance')"
+                                id="customHealthInsurance"
+                                name="customHealthInsurance"
+                                formControlName="customHealthInsurance"
+                                [placeholder]="'participants.enterEpsName' | transloco"
+                              />
+                              @if (hasFieldError('personalData.customHealthInsurance')) {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.customHealthInsurance') | transloco }}
+                              </div>
+                              }
+                            </div>
+                          </div>
+                        </div>
+                        }
                       </div>
-                      <!-- end row -->
 
-                      <ul class="list-inline mb-0 wizard">
-                        <li class="previous list-inline-item">
-                          <button type="button" (click)="goToPreviousStep()" class="btn btn-secondary">Anterior</button>
-                        </li>
-                        <li class="next list-inline-item float-end">
-                          <button type="button" (click)="goToNextStep()" class="btn btn-secondary">Siguiente</button>
-                        </li>
-                      </ul>
-                    </ng-template>
-                  </li>
-                  <!-- Agrega este nuevo li después del paso 6 existente -->
-                  <li [ngbNavItem]="3">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-school me-1"></i>
-                      <span class="d-none d-sm-inline">{{ 'participants.bioHistory' | transloco }}</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="100"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-                      <div formGroupName="bioPsychosocialHistory" class="horizontal-form-section">
-                        <div class="two-column-layout">
-                          <!-- Primera columna -->
-                          <div>
-                            <div class="row mb-3">
-                              <label for="academicLevelId" class="col-md-4 col-form-label obligatorio">
-                                Nivel Académico
-                              </label>
-                              <div class="col-md-8">
-                                <select
-                                  class="form-select"
-                                  [class.is-invalid]="hasFieldError('bioPsychosocialHistory.academicLevelId')"
-                                  id="academicLevelId"
-                                  formControlName="academicLevelId"
-                                >
-                                  <option value="" disabled selected>Seleccione</option>
-                                  @for (academicLevel of academicLevels; track academicLevel.id) {
-                                  <option [value]="academicLevel.id">{{ academicLevel.name }}</option>
-                                  }
-                                </select>
-                                @if (hasFieldError('bioPsychosocialHistory.academicLevelId')) {
-                                <div class="invalid-feedback">Este campo es requerido</div>
-                                }
+                      <!-- Contacto de Emergencia -->
+                      <h5 class="mt-4 mb-3 text-muted col-span-2">
+                        <i class="mdi mdi-account-alert me-2"></i>{{ 'participants.emergencyContact' | transloco }}
+                      </h5>
+
+                      <div class="two-column-layout">
+                        <!-- Primera columna -->
+                        <div>
+                          <div class="row mb-3">
+                            <label class="col-md-4 col-form-label obligatorio text-start" for="emergencyContactName">
+                              {{ 'participants.fullName' | transloco }}
+                            </label>
+                            <div class="col-md-8">
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.emergencyContactName')"
+                                id="emergencyContactName"
+                                name="emergencyContactName"
+                                formControlName="emergencyContactName"
+                              />
+                              @if (hasFieldError('personalData.emergencyContactName')) {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.emergencyContactName') | transloco }}
                               </div>
+                              }
                             </div>
+                          </div>
 
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio" for="institution"> Institución </label>
-                              <div class="col-md-8">
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('bioPsychosocialHistory.institution')"
-                                  id="institution"
-                                  formControlName="institution"
-                                  placeholder="Ej: Universidad Nacional"
-                                />
-                                @if (hasFieldError('bioPsychosocialHistory.institution')) {
-                                <div class="invalid-feedback">Este campo es requerido</div>
-                                }
+                          <div class="row mb-3">
+                            <label class="col-md-4 col-form-label text-start" for="emergencyContactEmail">{{
+                              'participants.email' | transloco
+                            }}</label>
+                            <div class="col-md-8">
+                              <input
+                                type="email"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.emergencyContactEmail')"
+                                id="emergencyContactEmail"
+                                name="emergencyContactEmail"
+                                formControlName="emergencyContactEmail"
+                              />
+                              @if (hasFieldError('personalData.emergencyContactEmail')) {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.emergencyContactEmail') | transloco }}
                               </div>
+                              }
                             </div>
+                          </div>
 
-                            <div class="row mb-3">
-                              <label for="incomeSourceId" class="col-md-4 col-form-label obligatorio">
-                                Fuente de ingresos
-                              </label>
-                              <div class="col-md-8">
-                                <select
-                                  class="form-select"
-                                  [class.is-invalid]="hasFieldError('bioPsychosocialHistory.incomeSourceId')"
-                                  id="incomeSourceId"
-                                  formControlName="incomeSourceId"
-                                >
-                                  <option value="" disabled selected>Seleccione</option>
-                                  @for (incomeSource of incomeSources; track incomeSource.id) {
-                                  <option [value]="incomeSource.id">{{ incomeSource.name }}</option>
-                                  }
-                                </select>
-                                @if (hasFieldError('bioPsychosocialHistory.incomeSourceId')) {
-                                <div class="invalid-feedback">Este campo es requerido</div>
-                                }
+                          <div class="row mb-3">
+                            <label class="col-md-4 col-form-label text-start" for="emergencyContactCity">{{
+                              'participants.city' | transloco
+                            }}</label>
+                            <div class="col-md-8">
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.emergencyContactCity')"
+                                id="emergencyContactCity"
+                                name="emergencyContactCity"
+                                formControlName="emergencyContactCity"
+                              />
+                              @if (hasFieldError('personalData.emergencyContactCity')) {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.emergencyContactCity') | transloco }}
                               </div>
+                              }
                             </div>
+                          </div>
+                        </div>
 
-                            <div class="row mb-3">
-                              <label for="housingTypeId" class="col-md-4 col-form-label obligatorio">
-                                Tipo de Vivienda
-                              </label>
-                              <div class="col-md-8">
-                                <select
-                                  class="form-select"
-                                  [class.is-invalid]="hasFieldError('bioPsychosocialHistory.housingTypeId')"
-                                  id="housingTypeId"
-                                  formControlName="housingTypeId"
+                        <!-- Segunda columna -->
+                        <div>
+                          <div class="row mb-3">
+                            <label class="col-md-4 col-form-label text-start" for="emergencyContactPhone">{{
+                              'participants.phoneNumber' | transloco
+                            }}</label>
+                            <div class="col-md-8">
+                              <div
+                                class="phone-input-wrapper"
+                                [ngClass]="{
+                                  'has-error': hasFieldError('personalData.emergencyContactPhone'),
+                                  'has-success':
+                                    !hasFieldError('personalData.emergencyContactPhone') &&
+                                    participantForm.get('personalData.emergencyContactPhone')?.value
+                                }"
+                              >
+                                <ngx-intl-tel-input
+                                  [cssClass]="'form-control'"
+                                  [preferredCountries]="preferredCountries"
+                                  [enableAutoCountrySelect]="true"
+                                  [enablePlaceholder]="true"
+                                  [searchCountryFlag]="true"
+                                  [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                                  [selectFirstCountry]="false"
+                                  [selectedCountryISO]="selectedCountryISO"
+                                  [maxLength]="15"
+                                  [phoneValidation]="true"
+                                  [separateDialCode]="false"
+                                  [numberFormat]="PhoneNumberFormat.International"
+                                  formControlName="emergencyContactPhone"
+                                  id="emergencyContactPhone"
                                 >
-                                  <option value="" disabled selected>Seleccione</option>
-                                  @for (housingType of housingTypes; track housingType.id) {
-                                  <option [value]="housingType.id">{{ housingType.name }}</option>
-                                  }
-                                </select>
-                                @if (hasFieldError('bioPsychosocialHistory.housingTypeId')) {
-                                <div class="invalid-feedback">Este campo es requerido</div>
+                                </ngx-intl-tel-input>
+                                @if (hasFieldError('personalData.emergencyContactPhone')) {
+                                <div class="invalid-feedback d-block">
+                                  <i class="mdi mdi-alert-circle-outline me-1"></i>
+                                  {{ getFieldError('personalData.emergencyContactPhone') | transloco }}
+                                </div>
                                 }
                               </div>
                             </div>
                           </div>
 
-                          <!-- Segunda columna -->
-                          <div>
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio" for="completedGrade">
-                                Grado completado
-                              </label>
-                              <div class="col-md-8">
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('bioPsychosocialHistory.completedGrade')"
-                                  id="completedGrade"
-                                  formControlName="completedGrade"
-                                  placeholder="Ej: Profesional Completo"
-                                />
-                                @if (hasFieldError('bioPsychosocialHistory.completedGrade')) {
-                                <div class="invalid-feedback">Este campo es requerido</div>
-                                }
+                          <div class="row mb-3">
+                            <label class="col-md-4 col-form-label text-start" for="emergencyContactAddress">{{
+                              'participants.address' | transloco
+                            }}</label>
+                            <div class="col-md-8">
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('personalData.emergencyContactAddress')"
+                                id="emergencyContactAddress"
+                                name="emergencyContactAddress"
+                                formControlName="emergencyContactAddress"
+                              />
+                              @if (hasFieldError('personalData.emergencyContactAddress')) {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.emergencyContactAddress') | transloco }}
                               </div>
-                            </div>
-
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio" for="profession"> Profesión </label>
-                              <div class="col-md-8">
-                                <input
-                                  type="text"
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('bioPsychosocialHistory.profession')"
-                                  id="profession"
-                                  formControlName="profession"
-                                  placeholder="Ej: Psicóloga Clínica"
-                                />
-                                @if (hasFieldError('bioPsychosocialHistory.profession')) {
-                                <div class="invalid-feedback">Este campo es requerido</div>
-                                }
-                              </div>
-                            </div>
-
-                            <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio" for="incomeLevelId">
-                                Nivel de ingresos
-                              </label>
-                              <div class="col-md-8">
-                                <select
-                                  class="form-select"
-                                  [class.is-invalid]="hasFieldError('bioPsychosocialHistory.incomeLevelId')"
-                                  id="incomeLevelId"
-                                  formControlName="incomeLevelId"
-                                >
-                                  <option value="" disabled selected>Seleccione</option>
-                                  @for (incomeLevel of incomeLevels; track incomeLevel.id) {
-                                  <option [value]="incomeLevel.id">{{ incomeLevel.name }}</option>
-                                  }
-                                </select>
-                                @if (hasFieldError('bioPsychosocialHistory.incomeLevelId')) {
-                                <div class="invalid-feedback">Este campo es requerido</div>
-                                }
-                              </div>
+                              }
                             </div>
                           </div>
 
-                          <!-- Campos que ocupan toda la fila -->
-                          <div class="col-span-2">
-                            <div class="row mb-3">
-                              <label class="col-md-2 col-form-label obligatorio" for="occupationalHistory">
-                                Historial ocupacional
-                              </label>
-                              <div class="col-md-10">
-                                <textarea
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('bioPsychosocialHistory.occupationalHistory')"
-                                  id="occupationalHistory"
-                                  formControlName="occupationalHistory"
-                                  rows="2"
-                                  placeholder="Ej: 5 años como psicóloga clínica en hospital público"
-                                ></textarea>
-                                @if (hasFieldError('bioPsychosocialHistory.occupationalHistory')) {
-                                <div class="invalid-feedback">Este campo es requerido</div>
+                          <div class="row mb-3">
+                            <label
+                              class="col-md-4 col-form-label obligatorio text-start"
+                              for="emergencyContactRelationship"
+                            >
+                              {{ 'participants.relationship' | transloco }}
+                            </label>
+                            <div class="col-md-8">
+                              <select
+                                class="form-select"
+                                [class.is-invalid]="hasFieldError('personalData.emergencyContactRelationship')"
+                                id="emergencyContactRelationship"
+                                formControlName="emergencyContactRelationship"
+                              >
+                                <option value="" disabled selected>{{ 'app.select' | transloco }}</option>
+                                @for (relationship of familyRelationships; track relationship.id) {
+                                <option [value]="relationship.id">{{ relationship.name }}</option>
                                 }
+                              </select>
+                              @if (hasFieldError('personalData.emergencyContactRelationship')) {
+                              <div class="invalid-feedback">
+                                {{ getFieldError('personalData.emergencyContactRelationship') | transloco }}
                               </div>
-                            </div>
-
-                            <div class="row mb-3">
-                              <label class="col-md-2 col-form-label obligatorio" for="housing">
-                                Descripción de la vivienda
-                              </label>
-                              <div class="col-md-10">
-                                <textarea
-                                  class="form-control"
-                                  [class.is-invalid]="hasFieldError('bioPsychosocialHistory.housing')"
-                                  id="housing"
-                                  formControlName="housing"
-                                  rows="2"
-                                  placeholder="Ej: Casa propia de 2 pisos, 3 habitaciones, buen estado"
-                                ></textarea>
-                                @if (hasFieldError('bioPsychosocialHistory.housing')) {
-                                <div class="invalid-feedback">Este campo es requerido</div>
-                                }
-                              </div>
+                              }
                             </div>
                           </div>
                         </div>
                       </div>
-
-                      <ul class="list-inline mb-0 wizard">
-                        <li class="previous list-inline-item">
-                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">Anterior</button>
-                        </li>
-                        <li class="next list-inline-item float-end">
-                          <button type="submit" class="btn btn-success" [disabled]="participantForm.invalid">
-                            <i class="mdi mdi-check-circle me-1"></i>
-                            {{
-                              participantId
-                                ? ('participants.updateParticipant' | transloco)
-                                : ('participants.saveParticipant' | transloco)
-                            }}
-                          </button>
-                        </li>
-                      </ul>
-                    </ng-template>
+                    </div>
                   </li>
                 </ul>
-
-                <div [ngbNavOutlet]="progressWizard" class="b-0 mb-0 pt-0"></div>
               </div>
-              <!-- end #basicwizard-->
+              <!-- end personalData section -->
+              <ul class="list-inline mb-0 wizard">
+                <li class="next list-inline-item float-end">
+                  <button type="submit" class="btn btn-secondary">
+                    {{
+                      participantId
+                        ? ('participants.updateParticipant' | transloco)
+                        : ('participants.saveParticipant' | transloco)
+                    }}
+                  </button>
+                </li>
+              </ul>
             </form>
           </div>
           } @else {

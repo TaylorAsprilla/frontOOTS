@@ -6,7 +6,6 @@ import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule } from '@ngneat/transloco';
 import { ApproachTypeService } from '../approach-type.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
-import { ApproachType } from '../approach-type.interface';
 
 @Component({
   selector: 'app-approach-type-form',
@@ -46,7 +45,6 @@ export class ApproachTypeFormComponent implements OnInit, OnDestroy {
   initializeForm(): void {
     this.approachTypeForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
-      description: ['', [Validators.maxLength(500)]],
       isActive: [true],
     });
   }
@@ -64,17 +62,11 @@ export class ApproachTypeFormComponent implements OnInit, OnDestroy {
   loadApproachType(id: number): void {
     this.isLoading = true;
     this.approachTypeService
-      .getApproachTypeById(id)
+      .getById(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          if (response.statusCode === 200) {
-            this.approachTypeForm.patchValue({
-              name: response.data.name,
-              description: response.data.description,
-              isActive: response.data.isActive,
-            });
-          }
+          this.approachTypeForm.patchValue(response.data);
           this.isLoading = false;
         },
         error: (error) => {
@@ -100,33 +92,21 @@ export class ApproachTypeFormComponent implements OnInit, OnDestroy {
     const formData = this.approachTypeForm.value;
 
     const request = this.isEditMode
-      ? this.approachTypeService.updateApproachType(this.approachTypeId!, formData)
-      : this.approachTypeService.createApproachType(formData);
+      ? this.approachTypeService.update(this.approachTypeId!, formData)
+      : this.approachTypeService.create(formData);
 
     request.pipe(takeUntil(this.destroy$)).subscribe({
-      next: (response) => {
-        if (response.statusCode === 200 || response.statusCode === 201) {
-          const message = this.isEditMode
-            ? 'Tipo de enfoque actualizado exitosamente'
-            : 'Tipo de enfoque creado exitosamente';
-          this.notificationService.showSuccess(message);
-          this.router.navigate(['/configuration/approach-types']);
-        }
+      next: () => {
+        const message = this.isEditMode
+          ? 'Tipo de enfoque actualizado exitosamente'
+          : 'Tipo de enfoque creado exitosamente';
+        this.notificationService.showSuccess(message);
+        this.router.navigate(['/configuration/approach-types']);
         this.isSubmitting = false;
       },
       error: (error) => {
         console.error('Error saving approach type:', error);
-
-        if (error.error?.message) {
-          if (typeof error.error.message === 'object') {
-            this.backendErrors = error.error.message;
-          } else {
-            this.notificationService.showError(error.error.message);
-          }
-        } else {
-          this.notificationService.showError('Error al guardar el tipo de enfoque');
-        }
-
+        this.notificationService.showError('Error al guardar el tipo de enfoque');
         this.isSubmitting = false;
       },
     });

@@ -1,49 +1,76 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
-import {
-  ApproachType,
-  ApproachTypeResponse,
-  ApproachTypeListResponse,
-  CreateApproachTypeDto,
-  UpdateApproachTypeDto,
-} from './approach-type.interface';
-import { TokenStorageService } from 'src/app/core/services/token-storage.service';
+import { environment } from '../../../../environments/environment';
+import { ApproachType, CreateApproachTypeDto, UpdateApproachTypeDto } from './approach-type.interface';
+import { ApiResponse } from '../../../core/interfaces/user.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApproachTypeService {
-  private apiUrl = `${environment.apiUrl}/approach-types`;
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/catalogs/approach-types`;
 
-  constructor(private http: HttpClient, private tokenStorageService: TokenStorageService) {}
+  /**
+   * Get all approach types
+   * @param includeInactive - Include inactive records
+   */
+  getAll(includeInactive: boolean = false): Observable<ApiResponse<ApproachType[]>> {
+    let params = new HttpParams();
+    if (includeInactive) {
+      params = params.set('includeInactive', 'true');
+    }
+    return this.http.get<ApiResponse<ApproachType[]>>(this.apiUrl, { params });
+  }
 
-  private getHeaders(): HttpHeaders {
-    const token = this.tokenStorageService.getToken();
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+  /**
+   * Get only active approach types
+   */
+  getActive(): Observable<ApproachType[]> {
+    return new Observable((observer) => {
+      this.getAll(false).subscribe({
+        next: (response) => {
+          observer.next(response.data);
+          observer.complete();
+        },
+        error: (error) => observer.error(error),
+      });
     });
   }
 
-  getApproachTypes(): Observable<ApproachTypeListResponse> {
-    return this.http.get<ApproachTypeListResponse>(this.apiUrl, { headers: this.getHeaders() });
+  /**
+   * Get approach type by ID
+   */
+  getById(id: number): Observable<ApiResponse<ApproachType>> {
+    return this.http.get<ApiResponse<ApproachType>>(`${this.apiUrl}/${id}`);
   }
 
-  getApproachTypeById(id: number): Observable<ApproachTypeResponse> {
-    return this.http.get<ApproachTypeResponse>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+  /**
+   * Create new approach type
+   */
+  create(dto: CreateApproachTypeDto): Observable<ApiResponse<ApproachType>> {
+    return this.http.post<ApiResponse<ApproachType>>(this.apiUrl, dto);
   }
 
-  createApproachType(data: CreateApproachTypeDto): Observable<ApproachTypeResponse> {
-    return this.http.post<ApproachTypeResponse>(this.apiUrl, data, { headers: this.getHeaders() });
+  /**
+   * Update approach type
+   */
+  update(id: number, dto: UpdateApproachTypeDto): Observable<ApiResponse<ApproachType>> {
+    return this.http.patch<ApiResponse<ApproachType>>(`${this.apiUrl}/${id}`, dto);
   }
 
-  updateApproachType(id: number, data: UpdateApproachTypeDto): Observable<ApproachTypeResponse> {
-    return this.http.patch<ApproachTypeResponse>(`${this.apiUrl}/${id}`, data, { headers: this.getHeaders() });
+  /**
+   * Deactivate approach type (soft delete)
+   */
+  deactivate(id: number): Observable<ApiResponse<ApproachType>> {
+    return this.http.delete<ApiResponse<ApproachType>>(`${this.apiUrl}/${id}`);
   }
 
-  deleteApproachType(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+  /**
+   * Activate approach type
+   */
+  activate(id: number): Observable<ApiResponse<ApproachType>> {
+    return this.update(id, { isActive: true });
   }
 }

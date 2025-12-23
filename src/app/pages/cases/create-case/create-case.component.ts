@@ -19,20 +19,16 @@ import { CaseService } from '../../../core/services/case.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { TokenStorageService } from '../../../core/services/token-storage.service';
 import { IdentifiedSituationService, IdentifiedSituation } from '../../../core/services/identified-situation.service';
+import { FamilyRelationship } from '../../configuration/family-relationship/family-relationship.interface';
+import { AcademicLevel } from '../../../core/interfaces/academic-level.interface';
+import { IncomeSource } from '../../configuration/income-source/income-source.interface';
+import { IncomeLevel } from '../../configuration/income-level/income-level.interface';
+import { HousingType } from '../../configuration/housing-type/housing-type.interface';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
-import {
-  CreateCaseDto,
-  FollowUpPlanDto,
-  PhysicalHealthHistoryDto,
-  MentalHealthHistoryDto,
-  WeighingDto,
-  InterventionPlanDto,
-  ProgressNoteDto,
-  ClosingNoteDto,
-  ApproachType,
-  ProcessType,
-} from '../../../core/interfaces/case.interface';
+import { CreateCaseDto, ApproachType } from '../../../core/interfaces/case.interface';
+import { ProcessType } from '../../configuration/process-types/process-type.interface';
+import { ApproachType as ApproachTypeCatalog } from '../../configuration/approach-types/approach-type.interface';
 
 /**
  * Component for creating and editing cases
@@ -61,28 +57,44 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   participantId!: number;
   caseId?: number;
   isEditMode = false;
+  isViewMode = false;
+  isLoadingCase = false;
 
   // Data
   identifiedSituations: IdentifiedSituation[] = [];
+  familyRelationships: FamilyRelationship[] = [];
+  academicLevels: AcademicLevel[] = [];
+  incomeSources: IncomeSource[] = [];
+  incomeLevels: IncomeLevel[] = [];
+  housingTypes: HousingType[] = [];
+  processTypes: ProcessType[] = [];
+  approachTypes: ApproachTypeCatalog[] = [];
 
   // Breadcrumb
   breadcrumbItems: BreadcrumbItem[] = [];
 
   // Enums for templates
-  approachTypes = Object.values(ApproachType);
-  processTypes = Object.values(ProcessType);
+  approachTypesEnum = Object.values(ApproachType);
 
   ngOnInit(): void {
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.participantId = +params['participantId'];
       this.caseId = params['id'] ? +params['id'] : undefined;
-      this.isEditMode = !!this.caseId;
+      this.isViewMode = this.route.snapshot.data['mode'] === 'view';
+      this.isEditMode = !!this.caseId && !this.isViewMode;
 
       this.setupBreadcrumb();
+      this.loadFamilyRelationshipsFromResolver();
+      this.loadAcademicLevelsFromResolver();
+      this.loadIncomeSourcesFromResolver();
+      this.loadIncomeLevelsFromResolver();
+      this.loadHousingTypesFromResolver();
+      this.loadProcessTypesFromResolver();
+      this.loadApproachTypesFromResolver();
       this.initializeForm();
       this.loadIdentifiedSituations();
 
-      if (this.isEditMode && this.caseId) {
+      if ((this.isEditMode || this.isViewMode) && this.caseId) {
         this.loadCase();
       }
     });
@@ -94,32 +106,132 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   }
 
   private setupBreadcrumb(): void {
-    this.breadcrumbItems = [
-      { label: 'participants.title' },
-      { label: this.isEditMode ? 'cases.edit' : 'cases.create', active: true },
-    ];
+    let label = 'cases.create';
+    if (this.isViewMode) {
+      label = 'cases.detail';
+    } else if (this.isEditMode) {
+      label = 'cases.edit';
+    }
+    this.breadcrumbItems = [{ label: 'participants.title' }, { label: label, active: true }];
+  }
+
+  /**
+   * Load family relationships from route resolver
+   */
+  private loadFamilyRelationshipsFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['familyRelationships'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.familyRelationships = resolvedData;
+    } else {
+      this.familyRelationships = [];
+    }
+  }
+
+  /**
+   * Load academic levels from route resolver
+   */
+  private loadAcademicLevelsFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['academicLevels'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.academicLevels = resolvedData;
+    } else {
+      this.academicLevels = [];
+    }
+  }
+
+  /**
+   * Load income sources from route resolver
+   */
+  private loadIncomeSourcesFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['incomeSources'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.incomeSources = resolvedData;
+    } else {
+      this.incomeSources = [];
+    }
+  }
+
+  /**
+   * Load income levels from route resolver
+   */
+  private loadIncomeLevelsFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['incomeLevels'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.incomeLevels = resolvedData;
+    } else {
+      this.incomeLevels = [];
+    }
+  }
+
+  /**
+   * Load housing types from route resolver
+   */
+  private loadHousingTypesFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['housingTypes'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.housingTypes = resolvedData;
+    } else {
+      this.housingTypes = [];
+    }
+  }
+
+  /**
+   * Load process types from route resolver
+   */
+  private loadProcessTypesFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['processTypes'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.processTypes = resolvedData;
+    } else {
+      this.processTypes = [];
+    }
+  }
+
+  private loadApproachTypesFromResolver(): void {
+    const resolvedData = this.route.snapshot.data['approachTypes'];
+    if (resolvedData && Array.isArray(resolvedData)) {
+      this.approachTypes = resolvedData;
+    } else {
+      this.approachTypes = [];
+    }
   }
 
   private initializeForm(): void {
     this.caseForm = this.formBuilder.group({
-      // Step 1: Consultation Reason
+      // Step 1: Family Members (Composición Familiar)
+      familyMembers: this.formBuilder.array([this.createFamilyMemberForm()]),
+
+      // Step 2: Biopsychosocial History (Historial BioPsicosocial)
+      bioPsychosocialHistory: this.formBuilder.group({
+        academicLevelId: ['', Validators.required],
+        completedGrade: ['', Validators.required],
+        institution: ['', Validators.required],
+        profession: ['', Validators.required],
+        incomeSourceId: ['', Validators.required],
+        incomeLevelId: ['', Validators.required],
+        occupationalHistory: ['', Validators.required],
+        housingTypeId: ['', Validators.required],
+        housing: ['', Validators.required],
+      }),
+
+      // Step 3: Consultation Reason
       consultationReason: this.formBuilder.group({
         reason: ['', Validators.required],
         referredBy: [''],
         observations: [''],
       }),
 
-      // Step 2: Identified Situations
+      // Step 4: Identified Situations
       identifiedSituations: this.formBuilder.group({
         situations: [[], [Validators.required, this.atLeastOneSelectedValidator()]],
       }),
 
-      // Step 3: Intervention
+      // Step 5: Intervention
       intervention: this.formBuilder.group({
         action: ['', Validators.required],
       }),
 
-      // Step 4: Follow-up Plan
+      // Step 6: Follow-up Plan
       followUpPlan: this.formBuilder.group({
         processCompleted: [false],
         servicesCoordinated: [false],
@@ -132,17 +244,17 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
         otherDetails: [''],
       }),
 
-      // Step 5: Physical Health History
+      // Step 7: Physical Health History
       physicalHealthHistory: this.formBuilder.group({
         conditions: this.formBuilder.array([]),
       }),
 
-      // Step 6: Mental Health History
+      // Step 8: Mental Health History
       mentalHealthHistory: this.formBuilder.group({
         conditions: this.formBuilder.array([]),
       }),
 
-      // Step 7: Assessment (Ponderación)
+      // Step 9: Assessment (Ponderación)
       assessment: this.formBuilder.group({
         generalDescription: ['', Validators.required],
         concurrentFactors: ['', Validators.required],
@@ -150,22 +262,22 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
         theoreticalFramework: ['', Validators.required],
       }),
 
-      // Step 8: Intervention Plan
+      // Step 10: Intervention Plan
       interventionPlan: this.formBuilder.group({
         interventions: this.formBuilder.array([]),
       }),
 
-      // Step 9: Progress Notes
+      // Step 11: Progress Notes
       progressNotes: this.formBuilder.group({
         notes: this.formBuilder.array([]),
       }),
 
-      // Step 10: Referrals (Referidos)
+      // Step 12: Referrals (Referidos)
       referrals: this.formBuilder.group({
         referralsJustification: ['', Validators.required],
       }),
 
-      // Step 11: Closing Note (optional, for closing cases)
+      // Step 13: Closing Note (optional, for closing cases)
       closingNote: this.formBuilder.group({
         closureDate: [''],
         closureReason: [''],
@@ -206,18 +318,324 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   private loadCase(): void {
     if (!this.caseId) return;
 
+    this.isLoadingCase = true;
+
     this.caseService
       .getCaseById(this.caseId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.caseForm.patchValue(response.data);
+          const caseData = response.data;
+
+          if (caseData) {
+            // Mapear datos del caso al formulario
+            this.mapCaseDataToForm(caseData);
+
+            // Si es modo vista, deshabilitar formulario después de cargar datos
+            if (this.isViewMode) {
+              this.caseForm.disable();
+            }
+
+            this.notificationService.showSuccess('Caso cargado correctamente');
+          } else {
+            console.error('No se encontraron datos del caso');
+            this.notificationService.showError('No se encontraron datos del caso');
+          }
+
+          this.isLoadingCase = false;
         },
         error: (error) => {
           console.error('Error loading case:', error);
-          this.router.navigate(['/participants']);
+          this.isLoadingCase = false;
+          this.notificationService.showError('Error al cargar el caso: ' + (error.message || 'Error desconocido'));
+          this.router.navigate(['/cases/list']);
         },
       });
+  }
+
+  /**
+   * Map case data from API to form structure
+   */
+  private mapCaseDataToForm(caseData: any): void {
+    try {
+      // 1. Cargar miembros de familia
+      if (caseData.familyMembers && Array.isArray(caseData.familyMembers) && caseData.familyMembers.length > 0) {
+        this.familyMembersArray.clear();
+        caseData.familyMembers.forEach((member: any) => {
+          const memberGroup = this.createFamilyMemberForm();
+          memberGroup.patchValue({
+            name: member.name || '',
+            birthDate: member.birthDate || '',
+            occupation: member.occupation || '',
+            familyRelationshipId: member.familyRelationshipId || '',
+            academicLevelId: member.academicLevelId || '',
+          });
+          this.familyMembersArray.push(memberGroup);
+        });
+      }
+
+      // 2. Cargar historial biopsicosocial
+      if (caseData.bioPsychosocialHistory) {
+        this.caseForm.get('bioPsychosocialHistory')?.patchValue({
+          academicLevelId: caseData.bioPsychosocialHistory.academicLevelId || '',
+          completedGrade: caseData.bioPsychosocialHistory.completedGrade || '',
+          institution: caseData.bioPsychosocialHistory.institution || '',
+          profession: caseData.bioPsychosocialHistory.profession || '',
+          incomeSourceId: caseData.bioPsychosocialHistory.incomeSourceId || '',
+          incomeLevelId: caseData.bioPsychosocialHistory.incomeLevelId || '',
+          occupationalHistory: caseData.bioPsychosocialHistory.occupationalHistory || '',
+          housingTypeId: caseData.bioPsychosocialHistory.housingTypeId || '',
+          housing: caseData.bioPsychosocialHistory.housing || '',
+        });
+      }
+
+      // 3. Cargar motivo de consulta
+      if (caseData.consultationReason) {
+        // Si viene como string simple
+        if (typeof caseData.consultationReason === 'string') {
+          this.caseForm.get('consultationReason')?.patchValue({
+            reason: caseData.consultationReason,
+            referredBy: '',
+            observations: '',
+          });
+        } else {
+          // Si viene como objeto
+          this.caseForm.get('consultationReason')?.patchValue(caseData.consultationReason);
+        }
+      }
+
+      // 4. Cargar situaciones identificadas
+      if (caseData.participantIdentifiedSituations && Array.isArray(caseData.participantIdentifiedSituations)) {
+        // Extraer los IDs de las situaciones identificadas
+        const situationIds = caseData.participantIdentifiedSituations.map((item: any) => item.identifiedSituationId);
+        this.caseForm.get('identifiedSituations')?.patchValue({
+          situations: situationIds,
+        });
+      } else if (caseData.identifiedSituations) {
+        // Si viene como array de IDs
+        if (Array.isArray(caseData.identifiedSituations)) {
+          this.caseForm.get('identifiedSituations')?.patchValue({
+            situations: caseData.identifiedSituations,
+          });
+        } else if (caseData.identifiedSituations.situations) {
+          // Si viene como objeto con propiedad situations
+          this.caseForm.get('identifiedSituations')?.patchValue(caseData.identifiedSituations);
+        }
+      }
+
+      // 5. Cargar intervención
+      if (caseData.intervention) {
+        // Si viene como string simple
+        if (typeof caseData.intervention === 'string') {
+          this.caseForm.get('intervention')?.patchValue({
+            action: caseData.intervention,
+          });
+        } else {
+          // Si viene como objeto
+          this.caseForm.get('intervention')?.patchValue({
+            action: caseData.intervention.description || caseData.intervention.action || '',
+          });
+        }
+      }
+
+      // 6. Cargar plan de seguimiento
+      if (caseData.followUpPlans && Array.isArray(caseData.followUpPlans) && caseData.followUpPlans.length > 0) {
+        // Tomar el primer elemento del array
+        const followUpData = caseData.followUpPlans[0];
+        
+        this.caseForm.get('followUpPlan')?.patchValue({
+          processCompleted: followUpData.processCompleted || false,
+          servicesCoordinated: !!followUpData.coordinatedService,
+          servicesAgency: followUpData.coordinatedService || '',
+          referralMade: followUpData.referred || false,
+          referralDetails: followUpData.referralDetails || '',
+          appointmentScheduled: followUpData.orientationAppointment || false,
+          appointmentDate: followUpData.appointmentDate || '',
+          appointmentTime: followUpData.appointmentTime || '',
+          otherDetails: followUpData.otherDetails || '',
+        });
+      } else if (caseData.followUpPlan) {
+        // Si es un array, tomar el primer elemento
+        const followUpData = Array.isArray(caseData.followUpPlan) ? caseData.followUpPlan[0] : caseData.followUpPlan;
+
+        if (followUpData) {
+          this.caseForm.get('followUpPlan')?.patchValue({
+            processCompleted: followUpData.processCompleted || false,
+            servicesCoordinated: !!followUpData.coordinatedService,
+            servicesAgency: followUpData.coordinatedService || '',
+            referralMade: followUpData.referred || false,
+            referralDetails: followUpData.referralDetails || '',
+            appointmentScheduled: followUpData.orientationAppointment || false,
+            appointmentDate: followUpData.appointmentDate || '',
+            appointmentTime: followUpData.appointmentTime || '',
+            otherDetails: followUpData.otherDetails || '',
+          });
+        }
+      }
+
+      // 7. Cargar condiciones físicas
+      if (caseData.physicalHealthHistories && Array.isArray(caseData.physicalHealthHistories)) {
+        this.physicalConditions.clear();
+        caseData.physicalHealthHistories.forEach((condition: any) => {
+          const conditionGroup = this.formBuilder.group({
+            condition: [condition.currentConditions || ''],
+            receivingTreatment: [!!condition.medications],
+            treatmentDetails: [condition.medications || ''],
+            paternalFamilyHistory: [condition.familyHistoryFather || ''],
+            maternalFamilyHistory: [condition.familyHistoryMother || ''],
+            observations: [condition.observations || ''],
+          });
+          this.physicalConditions.push(conditionGroup);
+        });
+      } else if (caseData.physicalHealthHistory && Array.isArray(caseData.physicalHealthHistory)) {
+        // Compatibilidad con versión anterior (singular)
+        this.physicalConditions.clear();
+        caseData.physicalHealthHistory.forEach((condition: any) => {
+          const conditionGroup = this.formBuilder.group({
+            condition: [condition.currentConditions || ''],
+            receivingTreatment: [!!condition.medications],
+            treatmentDetails: [condition.medications || ''],
+            paternalFamilyHistory: [condition.familyHistoryFather || ''],
+            maternalFamilyHistory: [condition.familyHistoryMother || ''],
+            observations: [condition.observations || ''],
+          });
+          this.physicalConditions.push(conditionGroup);
+        });
+      }
+
+      // 8. Cargar condiciones mentales
+      if (caseData.mentalHealthHistories && Array.isArray(caseData.mentalHealthHistories)) {
+        this.mentalConditions.clear();
+        caseData.mentalHealthHistories.forEach((condition: any) => {
+          const conditionGroup = this.formBuilder.group({
+            condition: [condition.currentConditions || ''],
+            receivingTreatment: [!!condition.medications],
+            treatmentDetails: [condition.medications || ''],
+            paternalFamilyHistory: [condition.familyHistoryFather || ''],
+            maternalFamilyHistory: [condition.familyHistoryMother || ''],
+            observations: [condition.observations || ''],
+          });
+          this.mentalConditions.push(conditionGroup);
+        });
+      } else if (caseData.mentalHealthHistory && Array.isArray(caseData.mentalHealthHistory)) {
+        // Compatibilidad con versión anterior (singular)
+        this.mentalConditions.clear();
+        caseData.mentalHealthHistory.forEach((condition: any) => {
+          const conditionGroup = this.formBuilder.group({
+            condition: [condition.currentConditions || ''],
+            receivingTreatment: [!!condition.medications],
+            treatmentDetails: [condition.medications || ''],
+            paternalFamilyHistory: [condition.familyHistoryFather || ''],
+            maternalFamilyHistory: [condition.familyHistoryMother || ''],
+            observations: [condition.observations || ''],
+          });
+          this.mentalConditions.push(conditionGroup);
+        });
+      }
+
+      // 9. Cargar evaluación (weighing/assessment)
+      if (caseData.weighing) {
+        this.caseForm.get('assessment')?.patchValue({
+          generalDescription: caseData.weighing.reasonConsultation || '',
+          concurrentFactors: caseData.weighing.favorableConditions || '',
+          criticalFactors: caseData.weighing.conditionsNotFavorable || '',
+          theoreticalFramework: caseData.weighing.helpProcess || '',
+        });
+      } else if (caseData.assessment) {
+        this.caseForm.get('assessment')?.patchValue(caseData.assessment);
+      }
+
+      // 10. Cargar plan de intervención
+      if (caseData.interventionPlans && Array.isArray(caseData.interventionPlans)) {
+        this.interventions.clear();
+        caseData.interventionPlans.forEach((intervention: any) => {
+          const interventionGroup = this.formBuilder.group({
+            goals: [intervention.goal || ''],
+            objectives: [intervention.objectives || ''],
+            activities: [intervention.activities || ''],
+            timeframe: [intervention.timeline || ''],
+            responsiblePerson: [intervention.responsible || ''],
+            evaluationCriteria: [
+              intervention.evaluationCriteria || '',
+            ],
+            progressNotes: [''],
+          });
+          this.interventions.push(interventionGroup);
+        });
+      } else if (caseData.interventionPlan?.interventions && Array.isArray(caseData.interventionPlan.interventions)) {
+        this.interventions.clear();
+        caseData.interventionPlan.interventions.forEach((intervention: any) => {
+          const interventionGroup = this.formBuilder.group({
+            goals: [intervention.goals || ''],
+            objectives: [intervention.objectives || ''],
+            activities: [intervention.activities || ''],
+            timeframe: [intervention.timeframe || ''],
+            responsiblePerson: [intervention.responsiblePerson || ''],
+            evaluationCriteria: [
+              intervention.evaluationCriteria || 'Observación subjetiva y objetiva del profesional.',
+            ],
+            progressNotes: [''],
+          });
+          this.interventions.push(interventionGroup);
+        });
+      }
+
+      // 11. Cargar notas de progreso
+      if (caseData.progressNotes && Array.isArray(caseData.progressNotes)) {
+        this.progressNotesArray.clear();
+        caseData.progressNotes.forEach((note: any) => {
+          const noteGroup = this.formBuilder.group({
+            date: [note.sessionDate || note.date || ''],
+            time: [note.time || ''],
+            approachType: [note.sessionType || note.approachType || ''],
+            process: [note.process || ''],
+            interventionSummary: [note.summary || note.interventionSummary || ''],
+            observations: [note.observations || ''],
+            agreements: [note.agreements || ''],
+          });
+          this.progressNotesArray.push(noteGroup);
+        });
+      }
+
+      // 12. Cargar referidos
+      if (caseData.referrals) {
+        // Si viene como string simple
+        if (typeof caseData.referrals === 'string') {
+          this.caseForm.get('referrals')?.patchValue({
+            referralsJustification: caseData.referrals,
+          });
+        } else {
+          this.caseForm.get('referrals')?.patchValue(caseData.referrals);
+        }
+      }
+
+      // 13. Cargar nota de cierre (si existe)
+      if (caseData.closingNote) {
+        this.caseForm.get('closingNote')?.patchValue(caseData.closingNote);
+      }
+
+      // Forzar actualización de la vista
+      this.caseForm.updateValueAndValidity();
+      this.caseForm.markAsPristine();
+      this.caseForm.markAsUntouched();
+    } catch (error) {
+      console.error('Error durante el mapeo de datos:', error);
+      this.notificationService.showError('Error al cargar algunos datos del caso');
+    }
+  }
+
+  /**
+   * Get all validation errors from the form (for debugging)
+   */
+  private getFormValidationErrors(): any[] {
+    const errors: any[] = [];
+    Object.keys(this.caseForm.controls).forEach((key) => {
+      const control = this.caseForm.get(key);
+      if (control && control.errors) {
+        errors.push({ field: key, errors: control.errors });
+      }
+    });
+    return errors;
   }
 
   private loadIdentifiedSituations(): void {
@@ -274,6 +692,31 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
     return situations.includes(situationId);
   }
 
+  // Family Members methods
+  get familyMembersArray(): FormArray {
+    return this.caseForm.get('familyMembers') as FormArray;
+  }
+
+  createFamilyMemberForm(): FormGroup {
+    return this.formBuilder.group({
+      name: ['', Validators.required],
+      birthDate: [''],
+      occupation: ['', Validators.required],
+      familyRelationshipId: ['', Validators.required],
+      academicLevelId: ['', Validators.required],
+    });
+  }
+
+  addFamilyMember(): void {
+    this.familyMembersArray.push(this.createFamilyMemberForm());
+  }
+
+  removeFamilyMember(index: number): void {
+    if (this.familyMembersArray.length > 1) {
+      this.familyMembersArray.removeAt(index);
+    }
+  }
+
   // Physical Health Conditions methods
   get physicalConditions(): FormArray {
     return this.caseForm.get('physicalHealthHistory.conditions') as FormArray;
@@ -328,7 +771,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       activities: [''],
       timeframe: [''],
       responsiblePerson: [''],
-      evaluationCriteria: ['Observación subjetiva y objetiva del profesional.'],
+      evaluationCriteria: [''],
       progressNotes: [''],
     });
     this.interventions.push(interventionGroup);
@@ -363,7 +806,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   // Navigation methods
   goToNextStep(): void {
     if (this.isStepValid(this.activeWizardStep)) {
-      this.activeWizardStep = Math.min(this.activeWizardStep + 1, 11);
+      this.activeWizardStep = Math.min(this.activeWizardStep + 1, 13);
     } else {
       this.notificationService.showWarning('Por favor complete todos los campos requeridos');
     }
@@ -375,17 +818,19 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
   private isStepValid(step: number): boolean {
     const stepControls: { [key: number]: string } = {
-      1: 'consultationReason',
-      2: 'identifiedSituations',
-      3: 'intervention',
-      4: 'followUpPlan',
-      5: 'physicalHealthHistory',
-      6: 'mentalHealthHistory',
-      7: 'assessment',
-      8: 'interventionPlan',
-      9: 'progressNotes',
-      10: 'referrals',
-      11: 'closingNote',
+      1: 'familyMembers',
+      2: 'bioPsychosocialHistory',
+      3: 'consultationReason',
+      4: 'identifiedSituations',
+      5: 'intervention',
+      6: 'followUpPlan',
+      7: 'physicalHealthHistory',
+      8: 'mentalHealthHistory',
+      9: 'assessment',
+      10: 'interventionPlan',
+      11: 'progressNotes',
+      12: 'referrals',
+      13: 'closingNote',
     };
 
     const controlName = stepControls[step];
@@ -397,7 +842,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
   // Submit methods
   onSubmit(): void {
-    if (this.activeWizardStep === 11) {
+    if (this.activeWizardStep === 13) {
       this.confirmSubmission();
     } else {
       this.goToNextStep();
@@ -467,6 +912,32 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
     return {
       participantId: this.participantId,
+      familyMembers: formValue.familyMembers.map((member: any) => ({
+        name: member.name,
+        birthDate: member.birthDate || null,
+        occupation: member.occupation || null,
+        familyRelationshipId: member.familyRelationshipId ? Number(member.familyRelationshipId) : null,
+        academicLevelId: member.academicLevelId ? Number(member.academicLevelId) : null,
+      })),
+      bioPsychosocialHistory: {
+        academicLevelId: formValue.bioPsychosocialHistory.academicLevelId
+          ? Number(formValue.bioPsychosocialHistory.academicLevelId)
+          : null,
+        completedGrade: formValue.bioPsychosocialHistory.completedGrade,
+        institution: formValue.bioPsychosocialHistory.institution,
+        profession: formValue.bioPsychosocialHistory.profession,
+        incomeSourceId: formValue.bioPsychosocialHistory.incomeSourceId
+          ? Number(formValue.bioPsychosocialHistory.incomeSourceId)
+          : null,
+        incomeLevelId: formValue.bioPsychosocialHistory.incomeLevelId
+          ? Number(formValue.bioPsychosocialHistory.incomeLevelId)
+          : null,
+        occupationalHistory: formValue.bioPsychosocialHistory.occupationalHistory,
+        housingTypeId: formValue.bioPsychosocialHistory.housingTypeId
+          ? Number(formValue.bioPsychosocialHistory.housingTypeId)
+          : null,
+        housing: formValue.bioPsychosocialHistory.housing,
+      },
       consultationReason: formValue.consultationReason.reason,
       identifiedSituations: formValue.identifiedSituations.situations,
       intervention: formValue.intervention.action,
@@ -497,8 +968,8 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
         observations: condition.observations,
       })),
       weighing: {
-        reasonConsultation: formValue.assessment.generalDescription,
-        identifiedSituation: formValue.identifiedSituations.description,
+        reasonConsultation: formValue.consultationReason.reason,
+        identifiedSituation: formValue.identifiedSituations.situations.join(', '),
         favorableConditions: formValue.assessment.concurrentFactors,
         conditionsNotFavorable: formValue.assessment.criticalFactors,
         helpProcess: formValue.assessment.theoreticalFramework,
