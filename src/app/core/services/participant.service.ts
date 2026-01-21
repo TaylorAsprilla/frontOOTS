@@ -76,7 +76,7 @@ export class ParticipantService {
         this.loadingSubject.next(false);
         this.notificationService.showError('Failed to load participants');
         return throwError(() => error);
-      })
+      }),
     );
   }
 
@@ -100,7 +100,7 @@ export class ParticipantService {
           this.loadingSubject.next(false);
           this.notificationService.showError('Error al cargar los participantes del usuario');
           return throwError(() => error);
-        })
+        }),
       );
   }
 
@@ -119,7 +119,7 @@ export class ParticipantService {
         this.loadingSubject.next(false);
         this.notificationService.showError('Failed to load participant details');
         return throwError(() => error);
-      })
+      }),
     );
   }
 
@@ -149,7 +149,7 @@ export class ParticipantService {
           const errorMessage = error.error?.message || 'Error al crear el participante';
           this.notificationService.showError(errorMessage);
           return throwError(() => error);
-        })
+        }),
       );
   }
 
@@ -158,7 +158,7 @@ export class ParticipantService {
    */
   updateParticipant(
     id: number | string,
-    participantData: Partial<ParticipantFormData>
+    participantData: Partial<ParticipantFormData>,
   ): Observable<ParticipantResponse> {
     this.loadingSubject.next(true);
 
@@ -178,7 +178,7 @@ export class ParticipantService {
         this.loadingSubject.next(false);
         this.notificationService.showError('Failed to update participant');
         return throwError(() => error);
-      })
+      }),
     );
   }
 
@@ -187,7 +187,7 @@ export class ParticipantService {
    */
   updateParticipantComplete(
     id: number | string,
-    participantData: CreateParticipantDto
+    participantData: CreateParticipantDto,
   ): Observable<CreateParticipantResponse> {
     this.loadingSubject.next(true);
 
@@ -202,7 +202,7 @@ export class ParticipantService {
           // Update local state
           const currentParticipants = this.participantsSubject.value;
           const updatedParticipants = currentParticipants.map((p) =>
-            p.id === Number(id) ? (response.data as any) : p
+            p.id === Number(id) ? (response.data as any) : p,
           );
           this.participantsSubject.next(updatedParticipants);
 
@@ -213,7 +213,7 @@ export class ParticipantService {
           const errorMessage = error.error?.message || 'Error al actualizar el participante';
           this.notificationService.showError(errorMessage);
           return throwError(() => error);
-        })
+        }),
       );
   }
 
@@ -239,7 +239,7 @@ export class ParticipantService {
         this.loadingSubject.next(false);
         this.notificationService.showError('Failed to delete participant');
         return throwError(() => error);
-      })
+      }),
     );
   }
 
@@ -358,7 +358,19 @@ export class ParticipantService {
         catchError((error) => {
           console.error('Error checking participant existence:', error);
           return throwError(() => error);
-        })
+        }),
       );
+  }
+
+  /**
+   * Check if email is already registered
+   */
+  checkEmailExists(email: string): Observable<{ data: { exists: boolean; participant?: any } }> {
+    return this.http.get<{ data: { exists: boolean; participant?: any } }>(`${this.apiUrl}/check-email/${email}`).pipe(
+      catchError((error) => {
+        console.error('Error checking email existence:', error);
+        return throwError(() => error);
+      }),
+    );
   }
 }

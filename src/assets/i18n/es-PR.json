@@ -184,6 +184,7 @@
     "validation": {
       "required": "Este campo es requerido",
       "invalidEmail": "Por favor ingresa un correo electrónico válido",
+      "emailExists": "Este correo electrónico ya está registrado en el sistema",
       "minLength": "El valor ingresado es muy corto",
       "maxLength": "El valor ingresado es muy largo",
       "documentExists": "Este número de documento ya está registrado en el sistema"
@@ -438,6 +439,7 @@
     "housingDetails": "Detalles de Vivienda",
     "validation": {
       "required": "Este campo es requerido",
+      "emailExists": "Este correo electrónico ya está registrado",
       "invalidEmail": "Formato de correo electrónico inválido",
       "invalidFormat": "Formato inválido",
       "invalidPhoneFormat": "Ingrese un número de teléfono válido (10 dígitos para Colombia)",

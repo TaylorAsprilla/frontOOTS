@@ -180,6 +180,7 @@
     "validation": {
       "required": "This field is required",
       "invalidEmail": "Please enter a valid email address",
+      "emailExists": "This email address is already registered in the system",
       "minLength": "The value entered is too short",
       "maxLength": "The value entered is too long",
       "documentExists": "This document number is already registered in the system"
