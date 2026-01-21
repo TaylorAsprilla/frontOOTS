@@ -532,6 +532,19 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Check if email already exists when user leaves the field
+   */
+  onEmailBlur(): void {
+    const emailControl = this.participantForm.get('personalData.email');
+    if (emailControl && emailControl.value && emailControl.valid) {
+      console.log('Email field lost focus, checking existence...', emailControl);
+      const email = emailControl.value.trim();
+
+      this.checkEmailExists(email);
+    }
+  }
+
+  /**
    * Check if document number already exists
    */
   private checkDocumentExists(documentNumber: string): void {
@@ -563,6 +576,37 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Check if email already exists
+   */
+  private checkEmailExists(email: string): void {
+    this.participantService
+      .checkEmailExists(email)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          const emailControl = this.participantForm.get('personalData.email');
+          if (emailControl) {
+            if (response.data.exists) {
+              emailControl.setErrors({ emailExists: true, email: email });
+              emailControl.markAsTouched();
+            } else {
+              // Limpiar el error de emailExists si ya no existe
+              if (emailControl.hasError('emailExists')) {
+                const errors = { ...emailControl.errors };
+                delete errors['emailExists'];
+                delete errors['email'];
+                emailControl.setErrors(Object.keys(errors).length > 0 ? errors : null);
+              }
+            }
+          }
+        },
+        error: (error) => {
+          console.error('Error checking email existence:', error);
+        },
+      });
+  }
+
+  /**
    * Mark all controls in a form group as touched
    */
   private markFormGroupTouched(formGroup: FormGroup | FormArray): void {
@@ -583,6 +627,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
       const errors = control.errors;
 
       if (errors['required']) return 'participants.validation.required';
+      if (errors['emailExists']) return 'participants.validation.emailExists';
       if (errors['email']) return 'participants.validation.invalidEmail';
       if (errors['validatePhoneNumber']) return 'participants.validation.invalidPhoneFormat';
       if (errors['pattern']) {
@@ -606,6 +651,17 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     const control = this.participantForm.get('personalData.documentNumber');
     if (control && control.errors && control.errors['documentNumber']) {
       return control.errors['documentNumber'];
+    }
+    return '';
+  }
+
+  /**
+   * Get the email from error state
+   */
+  getEmailFromError(): string {
+    const control = this.participantForm.get('personalData.email');
+    if (control && control.errors && control.errors['email']) {
+      return control.errors['email'];
     }
     return '';
   }
