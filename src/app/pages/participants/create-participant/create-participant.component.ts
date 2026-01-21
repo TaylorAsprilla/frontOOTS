@@ -719,7 +719,14 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         error: (error) => {
           this.isSubmitting = false;
           console.error('Error creating participant:', error);
-          const errorMessage = error.error?.message || 'Error al crear el participante';
+          let errorMessage = 'Error al crear el participante';
+          if (error.error?.message) {
+            if (Array.isArray(error.error.message)) {
+              errorMessage = error.error.message.join('<br>');
+            } else {
+              errorMessage = error.error.message;
+            }
+          }
           this.notificationService.showError(errorMessage);
         },
       });
@@ -769,7 +776,14 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         error: (error) => {
           this.isSubmitting = false;
           console.error('Error updating participant:', error);
-          const errorMessage = error.error?.message || 'Error al actualizar el participante';
+          let errorMessage = 'Error al actualizar el participante';
+          if (error.error?.message) {
+            if (Array.isArray(error.error.message)) {
+              errorMessage = error.error.message.join('<br>');
+            } else {
+              errorMessage = error.error.message;
+            }
+          }
           this.notificationService.showError(errorMessage);
         },
       });
