@@ -85,11 +85,14 @@ export class NotificationService {
    * Muestra una notificación de error
    */
   showError(message: string, options?: NotificationOptions): Promise<any> {
+    // Detectar si el mensaje contiene HTML
+    const containsHtml = /<[a-z][\s\S]*>/i.test(message);
+
     const config: SweetAlertOptions = {
       ...this.defaultConfig,
       icon: 'error',
       title: options?.title || 'Error',
-      text: message,
+      ...(containsHtml ? { html: message } : { text: message }),
       timer: options?.timer ?? 5000,
       showConfirmButton: true,
       ...options,
@@ -230,7 +233,7 @@ export class NotificationService {
       inputValue?: string;
       inputOptions?: Record<string, string>;
       inputValidator?: (value: string) => string | null;
-    }
+    },
   ): Promise<any> {
     const config: SweetAlertOptions = {
       title: title,

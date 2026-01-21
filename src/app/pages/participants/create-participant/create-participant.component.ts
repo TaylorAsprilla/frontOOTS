@@ -722,7 +722,15 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
           let errorMessage = 'Error al crear el participante';
           if (error.error?.message) {
             if (Array.isArray(error.error.message)) {
-              errorMessage = error.error.message.join('<br>');
+              // Crear una lista HTML para múltiples errores
+              if (error.error.message.length === 1) {
+                errorMessage = error.error.message[0];
+              } else {
+                errorMessage =
+                  '<ul style="text-align: left; margin: 0;">' +
+                  error.error.message.map((msg: string) => `<li>${msg}</li>`).join('') +
+                  '</ul>';
+              }
             } else {
               errorMessage = error.error.message;
             }
@@ -779,7 +787,15 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
           let errorMessage = 'Error al actualizar el participante';
           if (error.error?.message) {
             if (Array.isArray(error.error.message)) {
-              errorMessage = error.error.message.join('<br>');
+              // Crear una lista HTML para múltiples errores
+              if (error.error.message.length === 1) {
+                errorMessage = error.error.message[0];
+              } else {
+                errorMessage =
+                  '<ul style="text-align: left; margin: 0;">' +
+                  error.error.message.map((msg: string) => `<li>${msg}</li>`).join('') +
+                  '</ul>';
+              }
             } else {
               errorMessage = error.error.message;
             }
