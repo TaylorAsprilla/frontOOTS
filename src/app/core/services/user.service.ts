@@ -33,7 +33,7 @@ export class UserService {
         }
         throw new Error('Respuesta inesperada del backend');
       }),
-      catchError((error) => this.handleError(error, 'Error al registrar el usuario'))
+      catchError((error) => this.handleError(error, 'Error al registrar el usuario')),
     );
   }
 
@@ -78,7 +78,7 @@ export class UserService {
 
         return users;
       }),
-      catchError((error) => this.handleError(error, 'Error al obtener los usuarios'))
+      catchError((error) => this.handleError(error, 'Error al obtener los usuarios')),
     );
   }
 
@@ -93,7 +93,7 @@ export class UserService {
 
     return this.http.get<ApiResponse<PaginatedUsersResponse>>(`${this.apiUrl}/paginated`, { params }).pipe(
       map((response) => response.data),
-      catchError((error) => this.handleError(error, 'Error al obtener los usuarios paginados'))
+      catchError((error) => this.handleError(error, 'Error al obtener los usuarios paginados')),
     );
   }
 
@@ -118,7 +118,7 @@ export class UserService {
         const userModel = UserModel.fromBackendResponse(response.data);
         return userModel;
       }),
-      catchError((error) => this.handleError(error, 'Error al obtener el usuario'))
+      catchError((error) => this.handleError(error, 'Error al obtener el usuario')),
     );
   }
 
@@ -134,7 +134,7 @@ export class UserService {
       tap(() => {
         this.notificationService.showSuccess('Usuario actualizado exitosamente');
       }),
-      catchError((error) => this.handleError(error, 'Error al actualizar el usuario'))
+      catchError((error) => this.handleError(error, 'Error al actualizar el usuario')),
     );
   }
 
@@ -149,7 +149,7 @@ export class UserService {
       tap(() => {
         this.notificationService.showSuccess('Usuario eliminado exitosamente');
       }),
-      catchError((error) => this.handleError(error, 'Error al eliminar el usuario'))
+      catchError((error) => this.handleError(error, 'Error al eliminar el usuario')),
     );
   }
 
@@ -168,7 +168,7 @@ export class UserService {
 
     return this.http.get<ApiResponse<UserModel[]>>(`${this.apiUrl}/search`, { params }).pipe(
       map((response) => response.data),
-      catchError((error) => this.handleError(error, 'Error al buscar usuarios'))
+      catchError((error) => this.handleError(error, 'Error al buscar usuarios')),
     );
   }
 
@@ -182,7 +182,7 @@ export class UserService {
 
     return this.http.get<ApiResponse<{ exists: boolean }>>(`${this.apiUrl}/check-email`, { params }).pipe(
       map((response) => response.data.exists),
-      catchError((error) => this.handleError(error, 'Error al verificar el email'))
+      catchError((error) => this.handleError(error, 'Error al verificar el email')),
     );
   }
 
@@ -196,7 +196,7 @@ export class UserService {
 
     return this.http.get<ApiResponse<{ exists: boolean }>>(`${this.apiUrl}/check-document`, { params }).pipe(
       map((response) => response.data.exists),
-      catchError((error) => this.handleError(error, 'Error al verificar el documento'))
+      catchError((error) => this.handleError(error, 'Error al verificar el documento')),
     );
   }
 
@@ -213,7 +213,7 @@ export class UserService {
         const status = isActive ? 'activado' : 'desactivado';
         this.notificationService.showSuccess(`Usuario ${status} exitosamente`);
       }),
-      catchError((error) => this.handleError(error, 'Error al cambiar el estado del usuario'))
+      catchError((error) => this.handleError(error, 'Error al cambiar el estado del usuario')),
     );
   }
 
@@ -224,15 +224,6 @@ export class UserService {
    * @returns Observable que emite el error
    */
   private handleError(error: HttpErrorResponse, defaultMessage: string): Observable<never> {
-    console.group('UserService Error Details');
-    console.error('Error object:', error);
-    console.error('Status:', error.status);
-    console.error('Status text:', error.statusText);
-    console.error('URL:', error.url);
-    console.error('Error body:', error.error);
-    console.error('Headers:', error.headers);
-    console.groupEnd();
-
     let errorMessage = defaultMessage;
 
     if (error.error) {

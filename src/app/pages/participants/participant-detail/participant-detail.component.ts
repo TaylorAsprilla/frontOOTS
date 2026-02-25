@@ -68,7 +68,6 @@ export class ParticipantDetailComponent implements OnInit, OnDestroy {
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('Error loading participant:', error);
           this.notificationService.showError('participants.errorLoading');
           this.isLoading = false;
         },

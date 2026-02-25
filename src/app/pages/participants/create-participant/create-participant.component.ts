@@ -331,7 +331,6 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('Error loading participant:', error);
           this.notificationService.showError('Error al cargar los datos del participante');
           this.isLoading = false;
           this.router.navigate(['/participants/list']);
@@ -356,7 +355,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         firstLastName: ['', [Validators.required, Validators.maxLength(50)]],
         secondLastName: ['', Validators.maxLength(50)],
         phoneNumber: ['', [Validators.required]],
-        email: ['', [Validators.required, Validators.email]],
+        email: ['', [Validators.email]],
         documentTypeId: ['', Validators.required],
         documentNumber: ['', [Validators.required]],
         address: ['', [Validators.required, Validators.maxLength(200)]],
@@ -524,7 +523,6 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   onDocumentNumberBlur(): void {
     const documentControl = this.participantForm.get('personalData.documentNumber');
     if (documentControl && documentControl.value) {
-      console.log('Document number field lost focus, checking existence...', documentControl);
       const documentNumber = documentControl.value.trim();
 
       this.checkDocumentExists(documentNumber);
@@ -536,8 +534,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
    */
   onEmailBlur(): void {
     const emailControl = this.participantForm.get('personalData.email');
-    if (emailControl && emailControl.value && emailControl.valid) {
-      console.log('Email field lost focus, checking existence...', emailControl);
+    if (emailControl && emailControl.value && emailControl.value.trim() !== '' && emailControl.valid) {
       const email = emailControl.value.trim();
 
       this.checkEmailExists(email);
@@ -570,7 +567,17 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
           }
         },
         error: (error) => {
-          console.error('Error checking document existence:', error);
+          let errorMessage = 'No se pudo verificar si el número de documento ya existe. Por favor, intente nuevamente.';
+
+          if (error.error?.message) {
+            if (Array.isArray(error.error.message)) {
+              errorMessage = error.error.message.join(', ');
+            } else {
+              errorMessage = error.error.message;
+            }
+          }
+
+          this.notificationService.showWarning(errorMessage);
         },
       });
   }
@@ -601,7 +608,17 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
           }
         },
         error: (error) => {
-          console.error('Error checking email existence:', error);
+          let errorMessage = 'El correo electrónico ya esta registrado, por favor ingrese otro correo electrónico.';
+
+          if (error.error?.message) {
+            if (Array.isArray(error.error.message)) {
+              errorMessage = error.error.message.join(', ');
+            } else {
+              errorMessage = error.error.message;
+            }
+          }
+
+          this.notificationService.showWarning(errorMessage);
         },
       });
   }
@@ -728,7 +745,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
       firstLastName: personalData.firstLastName,
       secondLastName: personalData.secondLastName || undefined,
       phoneNumber: personalData.phoneNumber?.internationalNumber || undefined,
-      email: personalData.email,
+      email: personalData.email && personalData.email.trim() !== '' ? personalData.email : undefined,
       documentTypeId: personalData.documentTypeId ? Number(personalData.documentTypeId) : null,
       documentNumber: personalData.documentNumber,
       address: personalData.address,
@@ -774,7 +791,6 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           this.isSubmitting = false;
-          console.error('Error creating participant:', error);
           let errorMessage = 'Error al crear el participante';
           if (error.error?.message) {
             if (Array.isArray(error.error.message)) {
@@ -839,7 +855,6 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           this.isSubmitting = false;
-          console.error('Error updating participant:', error);
           let errorMessage = 'Error al actualizar el participante';
           if (error.error?.message) {
             if (Array.isArray(error.error.message)) {
