@@ -126,7 +126,7 @@ export class ParticipantListComponent implements OnInit, OnDestroy {
                 participant.firstLastName?.toLowerCase().includes(searchTerm) ||
                 participant.secondLastName?.toLowerCase().includes(searchTerm) ||
                 participant.email?.toLowerCase().includes(searchTerm) ||
-                participant.documentNumber?.includes(searchTerm)
+                participant.documentNumber?.includes(searchTerm),
             );
           }
 
@@ -147,7 +147,6 @@ export class ParticipantListComponent implements OnInit, OnDestroy {
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('Error loading participants:', error);
           this.participants = [];
           this.filteredParticipants = [];
           this.totalItems = 0;
@@ -181,9 +180,7 @@ export class ParticipantListComponent implements OnInit, OnDestroy {
             next: () => {
               this.loadParticipants();
             },
-            error: (error) => {
-              console.error('Error deleting participant:', error);
-            },
+            error: (error) => {},
           });
       }
     });

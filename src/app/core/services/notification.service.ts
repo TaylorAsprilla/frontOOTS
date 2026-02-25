@@ -110,7 +110,7 @@ export class NotificationService {
       icon: 'warning',
       title: options?.title || 'Advertencia',
       text: message,
-      timer: options?.timer ?? 4000,
+      timer: options?.timer ?? 6000,
       showConfirmButton: true,
       ...options,
     };
