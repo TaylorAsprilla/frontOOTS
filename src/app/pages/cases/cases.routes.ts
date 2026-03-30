@@ -50,6 +50,15 @@ export const CASES_ROUTES: Routes = [
       breadcrumb: 'cases.edit',
       mode: 'edit',
     },
+    resolve: {
+      familyRelationships: familyRelationshipResolver,
+      academicLevels: academicLevelResolver,
+      incomeSources: incomeSourceResolver,
+      incomeLevels: incomeLevelResolver,
+      housingTypes: housingTypeResolver,
+      processTypes: processTypeResolver,
+      approachTypes: approachTypeResolver,
+    },
   },
   {
     path: 'detail/:id',
