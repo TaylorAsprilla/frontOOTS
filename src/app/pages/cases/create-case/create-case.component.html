@@ -750,148 +750,186 @@
                             <p class="text-muted small">{{ 'cases.physicalHealth.subtitle' | transloco }}</p>
                           </div>
 
-                          <!-- Add Condition Button -->
-                          @if (!isViewMode) {
-                            <div class="mb-3">
-                              <button
-                                type="button"
-                                class="btn btn-outline-primary btn-sm"
-                                (click)="addPhysicalCondition()"
-                              >
-                                <i class="mdi mdi-plus-circle me-1"></i>
-                                {{ 'cases.physicalHealth.addConditionButton' | transloco }}
-                              </button>
+                          <!-- ¿Tiene historial de salud física? -->
+                          <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-body">
+                              <p class="fw-semibold mb-3">
+                                <i class="mdi mdi-help-circle-outline me-1 text-primary"></i>
+                                ¿El participante tiene un historial de salud física?
+                              </p>
+                              <div class="d-flex gap-4">
+                                <div class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    id="physicalHistoryNo"
+                                    formControlName="hasPhysicalHistory"
+                                    [value]="false"
+                                  />
+                                  <label class="form-check-label" for="physicalHistoryNo">No</label>
+                                </div>
+                                <div class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    id="physicalHistoryYes"
+                                    formControlName="hasPhysicalHistory"
+                                    [value]="true"
+                                  />
+                                  <label class="form-check-label" for="physicalHistoryYes">Sí</label>
+                                </div>
+                              </div>
                             </div>
-                          }
+                          </div>
 
-                          <!-- Conditions Table -->
-                          <div formArrayName="conditions">
-                            @if (physicalConditions.length > 0) {
-                              <div class="table-responsive">
-                                <table class="table table-bordered table-hover">
-                                  <thead class="table-light">
-                                    <tr>
-                                      <th style="width: 15%">
-                                        {{ 'cases.physicalHealth.conditionColumn' | transloco }}
-                                      </th>
-                                      <th style="width: 20%" colspan="2" class="text-center">
-                                        {{ 'cases.physicalHealth.treatmentColumn' | transloco }}
-                                      </th>
-                                      <th style="width: 25%" colspan="2" class="text-center">
-                                        {{ 'cases.physicalHealth.familyHistoryColumn' | transloco }}
-                                      </th>
-                                      <th style="width: 15%">
-                                        {{ 'cases.physicalHealth.observationsColumn' | transloco }}
-                                      </th>
+                          @if (caseForm.get('physicalHealthHistory.hasPhysicalHistory')?.value) {
+                            <!-- Add Condition Button -->
+                            @if (!isViewMode) {
+                              <div class="mb-3">
+                                <button
+                                  type="button"
+                                  class="btn btn-outline-primary btn-sm"
+                                  (click)="addPhysicalCondition()"
+                                >
+                                  <i class="mdi mdi-plus-circle me-1"></i>
+                                  {{ 'cases.physicalHealth.addConditionButton' | transloco }}
+                                </button>
+                              </div>
+                            }
+
+                            <!-- Conditions List -->
+                            <div formArrayName="conditions">
+                              @if (physicalConditions.length > 0) {
+                                @for (condition of physicalConditions.controls; track $index) {
+                                  <div class="card border-0 shadow-sm mb-3" [formGroupName]="$index">
+                                    <!-- Card Header -->
+                                    <div
+                                      class="card-header bg-opacity-10 border-0 d-flex align-items-center justify-content-between py-2 px-3"
+                                    >
+                                      <span class="fw-semibold text-primary">
+                                        <i class="mdi mdi-medical-bag me-2"></i>
+                                        Condición Física #{{ $index + 1 }}
+                                      </span>
                                       @if (!isViewMode) {
-                                        <th style="width: 5%" class="text-center">
-                                          {{ 'cases.physicalHealth.actionColumn' | transloco }}
-                                        </th>
+                                        <button
+                                          type="button"
+                                          class="btn btn-sm btn-outline-danger"
+                                          (click)="removePhysicalCondition($index)"
+                                          [title]="'cases.physicalHealth.removeConditionTitle' | transloco"
+                                        >
+                                          <i class="mdi mdi-delete-outline me-1"></i>Eliminar
+                                        </button>
                                       }
-                                    </tr>
-                                    <tr>
-                                      <th></th>
-                                      <th style="width: 8%" class="text-center">
-                                        {{ 'cases.physicalHealth.noYesLabel' | transloco }}
-                                      </th>
-                                      <th style="width: 12%">
-                                        {{ 'cases.physicalHealth.treatmentDetailsColumn' | transloco }}
-                                      </th>
-                                      <th style="width: 12.5%">
-                                        {{ 'cases.physicalHealth.paternalFamilyColumn' | transloco }}
-                                      </th>
-                                      <th style="width: 12.5%">
-                                        {{ 'cases.physicalHealth.maternalFamilyColumn' | transloco }}
-                                      </th>
-                                      <th></th>
-                                      @if (!isViewMode) {
-                                        <th></th>
-                                      }
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    @for (condition of physicalConditions.controls; track $index) {
-                                      <tr [formGroupName]="$index">
-                                        <td>
-                                          <textarea
-                                            class="form-control form-control-sm"
-                                            formControlName="condition"
-                                            rows="2"
-                                            [placeholder]="'cases.physicalHealth.conditionPlaceholder' | transloco"
-                                          ></textarea>
-                                        </td>
-                                        <td class="text-center align-middle">
-                                          <div class="form-check form-switch d-flex justify-content-center">
+                                    </div>
+
+                                    <!-- Card Body -->
+                                    <div class="card-body px-3 py-3">
+                                      <!-- Nombre de la condición -->
+                                      <div class="mb-3">
+                                        <label
+                                          class="form-label fw-semibold text-secondary small text-uppercase tracking-wide"
+                                        >
+                                          <i class="mdi mdi-stethoscope me-1"></i>
+                                          {{ 'cases.physicalHealth.conditionColumn' | transloco }}
+                                        </label>
+                                        <textarea
+                                          class="form-control"
+                                          formControlName="condition"
+                                          rows="2"
+                                          [placeholder]="'cases.physicalHealth.conditionPlaceholder' | transloco"
+                                        ></textarea>
+                                      </div>
+
+                                      <!-- Tratamiento -->
+                                      <div class="mb-3 p-3 bg-light rounded">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                          <label
+                                            class="form-label fw-semibold text-secondary small text-uppercase mb-0"
+                                          >
+                                            <i class="mdi mdi-pill me-1"></i>
+                                            {{ 'cases.physicalHealth.treatmentColumn' | transloco }}
+                                          </label>
+                                          <div class="form-check form-switch mb-0">
                                             <input
                                               type="checkbox"
                                               class="form-check-input"
                                               formControlName="receivingTreatment"
                                               [id]="'treatment-' + $index"
                                             />
+                                            <label class="form-check-label small" [for]="'treatment-' + $index">
+                                              {{ condition.get('receivingTreatment')?.value ? 'Sí' : 'No' }}
+                                            </label>
                                           </div>
-                                        </td>
-                                        <td>
-                                          @if (condition.get('receivingTreatment')?.value) {
+                                        </div>
+                                        @if (condition.get('receivingTreatment')?.value) {
+                                          <textarea
+                                            class="form-control"
+                                            formControlName="treatmentDetails"
+                                            rows="2"
+                                            [placeholder]="
+                                              'cases.physicalHealth.treatmentDetailsPlaceholder' | transloco
+                                            "
+                                          ></textarea>
+                                        }
+                                      </div>
+
+                                      <!-- Historial familiar -->
+                                      <div class="mb-3">
+                                        <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                          <i class="mdi mdi-account-group me-1"></i>
+                                          {{ 'cases.physicalHealth.familyHistoryColumn' | transloco }}
+                                        </label>
+                                        <div class="row g-3">
+                                          <div class="col-md-6">
+                                            <label class="form-label small text-muted">
+                                              {{ 'cases.physicalHealth.paternalFamilyColumn' | transloco }}
+                                            </label>
                                             <textarea
-                                              class="form-control form-control-sm"
-                                              formControlName="treatmentDetails"
+                                              class="form-control"
+                                              formControlName="paternalFamilyHistory"
                                               rows="2"
-                                              [placeholder]="
-                                                'cases.physicalHealth.treatmentDetailsPlaceholder' | transloco
-                                              "
+                                              placeholder="Historial paterno..."
                                             ></textarea>
-                                          } @else {
-                                            <span class="text-muted small">-</span>
-                                          }
-                                        </td>
-                                        <td>
-                                          <textarea
-                                            class="form-control form-control-sm"
-                                            formControlName="paternalFamilyHistory"
-                                            rows="2"
-                                            placeholder="Historial paterno..."
-                                          ></textarea>
-                                        </td>
-                                        <td>
-                                          <textarea
-                                            class="form-control form-control-sm"
-                                            formControlName="maternalFamilyHistory"
-                                            rows="2"
-                                            placeholder="Historial materno..."
-                                          ></textarea>
-                                        </td>
-                                        <td>
-                                          <textarea
-                                            class="form-control form-control-sm"
-                                            formControlName="observations"
-                                            rows="2"
-                                            [placeholder]="'cases.physicalHealth.observationsPlaceholder' | transloco"
-                                          ></textarea>
-                                        </td>
-                                        <td class="text-center align-middle">
-                                          @if (!isViewMode) {
-                                            <button
-                                              type="button"
-                                              class="btn btn-danger btn-sm"
-                                              (click)="removePhysicalCondition($index)"
-                                              [title]="'cases.physicalHealth.removeConditionTitle' | transloco"
-                                            >
-                                              <i class="mdi mdi-delete"></i>
-                                            </button>
-                                          }
-                                        </td>
-                                      </tr>
-                                    }
-                                  </tbody>
-                                </table>
-                              </div>
-                            } @else {
-                              <div class="alert alert-info">
-                                <i class="mdi mdi-information me-2"></i>
-                                {{ 'cases.physicalHealth.noConditionsMessage' | transloco }}
-                              </div>
-                            }
-                          </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <label class="form-label small text-muted">
+                                              {{ 'cases.physicalHealth.maternalFamilyColumn' | transloco }}
+                                            </label>
+                                            <textarea
+                                              class="form-control"
+                                              formControlName="maternalFamilyHistory"
+                                              rows="2"
+                                              placeholder="Historial materno..."
+                                            ></textarea>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      <!-- Observaciones -->
+                                      <div class="mb-0">
+                                        <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                          <i class="mdi mdi-note-text-outline me-1"></i>
+                                          {{ 'cases.physicalHealth.observationsColumn' | transloco }}
+                                        </label>
+                                        <textarea
+                                          class="form-control"
+                                          formControlName="observations"
+                                          rows="2"
+                                          [placeholder]="'cases.physicalHealth.observationsPlaceholder' | transloco"
+                                        ></textarea>
+                                      </div>
+                                    </div>
+                                  </div>
+                                }
+                              } @else {
+                                <div class="alert alert-info">
+                                  <i class="mdi mdi-information me-2"></i>
+                                  {{ 'cases.physicalHealth.noConditionsMessage' | transloco }}
+                                </div>
+                              }
+                            </div>
+                          }
+                          <!-- end @if hasPhysicalHistory -->
                         </div>
 
                         <ul class="list-inline mb-0 wizard">
@@ -936,132 +974,178 @@
                             <p class="text-muted small">{{ 'cases.mentalHealth.subtitle' | transloco }}</p>
                           </div>
 
-                          <!-- Add Condition Button -->
-                          @if (!isViewMode) {
-                            <div class="mb-3">
-                              <button
-                                type="button"
-                                class="btn btn-outline-primary btn-sm"
-                                (click)="addMentalCondition()"
-                              >
-                                <i class="mdi mdi-plus-circle me-1"></i>
-                                {{ 'cases.mentalHealth.addConditionButton' | transloco }}
-                              </button>
+                          <!-- ¿Tiene historial de salud mental? -->
+                          <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-body">
+                              <p class="fw-semibold mb-3">
+                                <i class="mdi mdi-help-circle-outline me-1 text-primary"></i>
+                                ¿El participante tiene un historial de salud mental?
+                              </p>
+                              <div class="d-flex gap-4">
+                                <div class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    id="mentalHistoryNo"
+                                    formControlName="hasMentalHistory"
+                                    [value]="false"
+                                  />
+                                  <label class="form-check-label" for="mentalHistoryNo">No</label>
+                                </div>
+                                <div class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    id="mentalHistoryYes"
+                                    formControlName="hasMentalHistory"
+                                    [value]="true"
+                                  />
+                                  <label class="form-check-label" for="mentalHistoryYes">Sí</label>
+                                </div>
+                              </div>
                             </div>
-                          }
+                          </div>
 
-                          <!-- Conditions Table -->
-                          <div formArrayName="conditions">
-                            @if (mentalConditions.length > 0) {
-                              <div class="table-responsive">
-                                <table class="table table-bordered table-hover">
-                                  <thead class="table-light">
-                                    <tr>
-                                      <th style="width: 15%">Historial mental del participante</th>
-                                      <th style="width: 20%" colspan="2" class="text-center">
-                                        ¿Actualmente recibe Tratamiento?
-                                      </th>
-                                      <th style="width: 25%" colspan="2" class="text-center">
-                                        Historial familiar de condiciones
-                                      </th>
-                                      <th style="width: 15%">Observaciones</th>
+                          @if (caseForm.get('mentalHealthHistory.hasMentalHistory')?.value) {
+                            <!-- Add Condition Button -->
+                            @if (!isViewMode) {
+                              <div class="mb-3">
+                                <button
+                                  type="button"
+                                  class="btn btn-outline-primary btn-sm"
+                                  (click)="addMentalCondition()"
+                                >
+                                  <i class="mdi mdi-plus-circle me-1"></i>
+                                  {{ 'cases.mentalHealth.addConditionButton' | transloco }}
+                                </button>
+                              </div>
+                            }
+
+                            <!-- Conditions List -->
+                            <div formArrayName="conditions">
+                              @if (mentalConditions.length > 0) {
+                                @for (condition of mentalConditions.controls; track $index) {
+                                  <div class="card border-0 shadow-sm mb-3" [formGroupName]="$index">
+                                    <!-- Card Header -->
+                                    <div
+                                      class="card-header bg-opacity-10 border-0 d-flex align-items-center justify-content-between py-2 px-3"
+                                    >
+                                      <span class="fw-semibold text-primary">
+                                        <i class="mdi mdi-head-heart-outline me-2"></i>
+                                        Condición Mental #{{ $index + 1 }}
+                                      </span>
                                       @if (!isViewMode) {
-                                        <th style="width: 5%" class="text-center">Acción</th>
+                                        <button
+                                          type="button"
+                                          class="btn btn-sm btn-outline-danger"
+                                          (click)="removeMentalCondition($index)"
+                                          title="Eliminar condición"
+                                        >
+                                          <i class="mdi mdi-delete-outline me-1"></i>Eliminar
+                                        </button>
                                       }
-                                    </tr>
-                                    <tr>
-                                      <th></th>
-                                      <th style="width: 8%" class="text-center">No/Sí</th>
-                                      <th style="width: 12%">Medicamentos y/o terapia</th>
-                                      <th style="width: 12.5%">Familia paterna</th>
-                                      <th style="width: 12.5%">Familia materna</th>
-                                      <th></th>
-                                      @if (!isViewMode) {
-                                        <th></th>
-                                      }
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    @for (condition of mentalConditions.controls; track $index) {
-                                      <tr [formGroupName]="$index">
-                                        <td>
-                                          <textarea
-                                            class="form-control form-control-sm"
-                                            formControlName="condition"
-                                            rows="2"
-                                            placeholder="Ej: Depresión, Ansiedad, Bipolaridad..."
-                                          ></textarea>
-                                        </td>
-                                        <td class="text-center align-middle">
-                                          <div class="form-check form-switch d-flex justify-content-center">
+                                    </div>
+
+                                    <!-- Card Body -->
+                                    <div class="card-body px-3 py-3">
+                                      <!-- Nombre de la condición -->
+                                      <div class="mb-3">
+                                        <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                          <i class="mdi mdi-brain me-1"></i>
+                                          Historial mental del participante
+                                        </label>
+                                        <textarea
+                                          class="form-control"
+                                          formControlName="condition"
+                                          rows="2"
+                                          placeholder="Ej: Depresión, Ansiedad, Bipolaridad..."
+                                        ></textarea>
+                                      </div>
+
+                                      <!-- Tratamiento -->
+                                      <div class="mb-3 p-3 bg-light rounded">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                          <label
+                                            class="form-label fw-semibold text-secondary small text-uppercase mb-0"
+                                          >
+                                            <i class="mdi mdi-pill me-1"></i>
+                                            ¿Actualmente recibe Tratamiento?
+                                          </label>
+                                          <div class="form-check form-switch mb-0">
                                             <input
                                               type="checkbox"
                                               class="form-check-input"
                                               formControlName="receivingTreatment"
                                               [id]="'mental-treatment-' + $index"
                                             />
+                                            <label class="form-check-label small" [for]="'mental-treatment-' + $index">
+                                              {{ condition.get('receivingTreatment')?.value ? 'Sí' : 'No' }}
+                                            </label>
                                           </div>
-                                        </td>
-                                        <td>
-                                          @if (condition.get('receivingTreatment')?.value) {
+                                        </div>
+                                        @if (condition.get('receivingTreatment')?.value) {
+                                          <textarea
+                                            class="form-control"
+                                            formControlName="treatmentDetails"
+                                            rows="2"
+                                            placeholder="Medicamentos y/o terapia..."
+                                          ></textarea>
+                                        }
+                                      </div>
+
+                                      <!-- Historial familiar -->
+                                      <div class="mb-3">
+                                        <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                          <i class="mdi mdi-account-group me-1"></i>
+                                          Historial familiar de condiciones
+                                        </label>
+                                        <div class="row g-3">
+                                          <div class="col-md-6">
+                                            <label class="form-label small text-muted">Familia paterna</label>
                                             <textarea
-                                              class="form-control form-control-sm"
-                                              formControlName="treatmentDetails"
+                                              class="form-control"
+                                              formControlName="paternalFamilyHistory"
                                               rows="2"
-                                              placeholder="Medicamentos y/o terapia..."
+                                              placeholder="Historial paterno..."
                                             ></textarea>
-                                          } @else {
-                                            <span class="text-muted small">-</span>
-                                          }
-                                        </td>
-                                        <td>
-                                          <textarea
-                                            class="form-control form-control-sm"
-                                            formControlName="paternalFamilyHistory"
-                                            rows="2"
-                                            placeholder="Historial paterno..."
-                                          ></textarea>
-                                        </td>
-                                        <td>
-                                          <textarea
-                                            class="form-control form-control-sm"
-                                            formControlName="maternalFamilyHistory"
-                                            rows="2"
-                                            placeholder="Historial materno..."
-                                          ></textarea>
-                                        </td>
-                                        <td>
-                                          <textarea
-                                            class="form-control form-control-sm"
-                                            formControlName="observations"
-                                            rows="2"
-                                            placeholder="Observaciones adicionales..."
-                                          ></textarea>
-                                        </td>
-                                        <td class="text-center align-middle">
-                                          @if (!isViewMode) {
-                                            <button
-                                              type="button"
-                                              class="btn btn-danger btn-sm"
-                                              (click)="removeMentalCondition($index)"
-                                              title="Eliminar condición"
-                                            >
-                                              <i class="mdi mdi-delete"></i>
-                                            </button>
-                                          }
-                                        </td>
-                                      </tr>
-                                    }
-                                  </tbody>
-                                </table>
-                              </div>
-                            } @else {
-                              <div class="alert alert-info">
-                                <i class="mdi mdi-information me-2"></i>
-                                {{ 'cases.mentalHealth.noConditionsMessage' | transloco }}
-                              </div>
-                            }
-                          </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <label class="form-label small text-muted">Familia materna</label>
+                                            <textarea
+                                              class="form-control"
+                                              formControlName="maternalFamilyHistory"
+                                              rows="2"
+                                              placeholder="Historial materno..."
+                                            ></textarea>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      <!-- Observaciones -->
+                                      <div class="mb-0">
+                                        <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                          <i class="mdi mdi-note-text-outline me-1"></i>
+                                          Observaciones
+                                        </label>
+                                        <textarea
+                                          class="form-control"
+                                          formControlName="observations"
+                                          rows="2"
+                                          placeholder="Observaciones adicionales..."
+                                        ></textarea>
+                                      </div>
+                                    </div>
+                                  </div>
+                                }
+                              } @else {
+                                <div class="alert alert-info">
+                                  <i class="mdi mdi-information me-2"></i>
+                                  {{ 'cases.mentalHealth.noConditionsMessage' | transloco }}
+                                </div>
+                              }
+                            </div>
+                          }
+                          <!-- end @if hasMentalHistory -->
                         </div>
 
                         <ul class="list-inline mb-0 wizard">
@@ -1241,116 +1325,149 @@
                               <i class="mdi mdi-calendar-check text-primary me-2"></i>
                               PLAN DE INTERVENCIÓN
                             </h4>
+
+                            <!-- Nota informativa -->
+                            <div class="alert alert-light border-start border-primary border-3 mb-4">
+                              <p class="fw-semibold mb-2">
+                                <i class="mdi mdi-information-outline text-primary me-1"></i>
+                                Cada meta debe contener:
+                              </p>
+                              <ul class="mb-0 ps-3">
+                                <li>Los <strong>objetivos</strong> pueden ser varios</li>
+                                <li><strong>Actividades</strong></li>
+                                <li><strong>Tiempo</strong></li>
+                                <li><strong>Persona responsable</strong></li>
+                                <li><strong>Criterio de Evaluación</strong></li>
+                              </ul>
+                            </div>
+
                             @if (!isViewMode) {
                               <button type="button" class="btn btn-success btn-sm" (click)="addIntervention()">
-                                <i class="mdi mdi-plus-circle me-1"></i>Agregar Intervención
+                                <i class="mdi mdi-plus-circle me-1"></i>Agregar Meta
                               </button>
                             }
                           </div>
 
-                          @if (interventions.length === 0) {
-                            <div class="alert alert-info">
-                              <i class="mdi mdi-information me-2"></i>
-                              No hay intervenciones agregadas. Haga clic en "Agregar Intervención" para comenzar.
-                            </div>
-                          }
+                          <!-- Interventions List -->
+                          <div formArrayName="interventions">
+                            @if (interventions.length > 0) {
+                              @for (intervention of interventions.controls; track $index) {
+                                <div class="card border-0 shadow-sm mb-3" [formGroupName]="$index">
+                                  <!-- Card Header -->
+                                  <div
+                                    class="card-header bg-opacity-10 border-0 d-flex align-items-center justify-content-between py-2 px-3"
+                                  >
+                                    <span class="fw-semibold text-primary">
+                                      <i class="mdi mdi-calendar-check me-2"></i>
+                                      Intervención #{{ $index + 1 }}
+                                    </span>
+                                    @if (!isViewMode) {
+                                      <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-danger"
+                                        (click)="removeIntervention($index)"
+                                        title="Eliminar intervención"
+                                      >
+                                        <i class="mdi mdi-delete-outline me-1"></i>Eliminar
+                                      </button>
+                                    }
+                                  </div>
 
-                          <div class="table-responsive">
-                            <table class="table table-bordered table-hover table-sm" formArrayName="interventions">
-                              <thead class="table-light">
-                                <tr>
-                                  <th style="width: 15%">Meta(s)</th>
-                                  <th style="width: 15%">Objetivos</th>
-                                  <th style="width: 15%">Actividades o técnicas</th>
-                                  <th style="width: 10%">Tiempo</th>
-                                  <th style="width: 12%">Persona Responsable</th>
-                                  <th style="width: 15%">Criterio de Evaluación</th>
-                                  @if (!isViewMode) {
-                                    <th style="width: 5%"></th>
-                                  }
-                                </tr>
-                              </thead>
-                              <tbody>
-                                @for (intervention of interventions.controls; track $index) {
-                                  <tr [formGroupName]="$index">
-                                    <td>
+                                  <!-- Card Body -->
+                                  <div class="card-body px-3 py-3">
+                                    <!-- Meta(s) -->
+                                    <div class="mb-3">
+                                      <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                        <i class="mdi mdi-flag-outline me-1"></i>
+                                        Meta(s)
+                                      </label>
                                       <textarea
                                         formControlName="goals"
-                                        class="form-control form-control-sm"
-                                        rows="3"
+                                        class="form-control"
+                                        rows="2"
                                         placeholder="Metas a alcanzar..."
                                       ></textarea>
-                                    </td>
-                                    <td>
+                                    </div>
+
+                                    <!-- Objetivos -->
+                                    <div class="mb-3">
+                                      <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                        <i class="mdi mdi-target me-1"></i>
+                                        Objetivos
+                                      </label>
                                       <textarea
                                         formControlName="objectives"
-                                        class="form-control form-control-sm"
-                                        rows="3"
+                                        class="form-control"
+                                        rows="2"
                                         placeholder="Objetivos específicos..."
                                       ></textarea>
-                                    </td>
-                                    <td>
+                                    </div>
+
+                                    <!-- Actividades -->
+                                    <div class="mb-3">
+                                      <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                        <i class="mdi mdi-clipboard-list-outline me-1"></i>
+                                        Actividades o técnicas
+                                      </label>
                                       <textarea
                                         formControlName="activities"
-                                        class="form-control form-control-sm"
-                                        rows="3"
+                                        class="form-control"
+                                        rows="2"
                                         placeholder="Actividades o técnicas a implementar..."
                                       ></textarea>
-                                    </td>
-                                    <td>
-                                      <input
-                                        type="text"
-                                        formControlName="timeframe"
-                                        class="form-control form-control-sm"
-                                        placeholder="Ej: 3 meses"
-                                      />
-                                    </td>
-                                    <td>
-                                      <input
-                                        type="text"
-                                        formControlName="responsiblePerson"
-                                        class="form-control form-control-sm"
-                                        placeholder="Nombre del responsable"
-                                      />
-                                    </td>
-                                    <td>
+                                    </div>
+
+                                    <!-- Tiempo y Responsable en fila -->
+                                    <div class="row g-3 mb-3">
+                                      <div class="col-md-6">
+                                        <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                          <i class="mdi mdi-clock-outline me-1"></i>
+                                          Tiempo
+                                        </label>
+                                        <input
+                                          type="text"
+                                          formControlName="timeframe"
+                                          class="form-control"
+                                          placeholder="Ej: 3 meses"
+                                        />
+                                      </div>
+                                      <div class="col-md-6">
+                                        <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                          <i class="mdi mdi-account-outline me-1"></i>
+                                          Persona Responsable
+                                        </label>
+                                        <input
+                                          type="text"
+                                          formControlName="responsiblePerson"
+                                          class="form-control"
+                                          placeholder="Nombre del responsable"
+                                        />
+                                      </div>
+                                    </div>
+
+                                    <!-- Criterio de Evaluación -->
+                                    <div class="mb-0">
+                                      <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                        <i class="mdi mdi-check-circle-outline me-1"></i>
+                                        Criterio de Evaluación
+                                      </label>
                                       <textarea
                                         formControlName="evaluationCriteria"
-                                        class="form-control form-control-sm"
-                                        rows="3"
-                                        placeholder="Criterios para evaluar..."
+                                        class="form-control"
+                                        rows="2"
+                                        placeholder="Criterios para evaluar el progreso..."
                                       ></textarea>
-                                    </td>
-
-                                    <td class="text-center">
-                                      @if (!isViewMode) {
-                                        <button
-                                          type="button"
-                                          class="btn btn-danger btn-sm"
-                                          (click)="removeIntervention($index)"
-                                          title="Eliminar intervención"
-                                        >
-                                          <i class="mdi mdi-delete"></i>
-                                        </button>
-                                      }
-                                    </td>
-                                  </tr>
-                                }
-                              </tbody>
-                            </table>
-                          </div>
-
-                          @if (interventions.length > 0) {
-                            <div class="card shadow-sm mt-3">
-                              <div class="card-body">
-                                <p class="mb-0">
-                                  <i class="mdi mdi-information-outline text-info me-1"></i>
-                                  <strong>Nota:</strong> Cada intervención debe incluir metas claras, objetivos
-                                  específicos y criterios de evaluación para medir el progreso.
-                                </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              }
+                            } @else {
+                              <div class="alert alert-info">
+                                <i class="mdi mdi-information me-2"></i>
+                                No hay intervenciones agregadas. Haga clic en "Agregar Intervención" para comenzar.
                               </div>
-                            </div>
-                          }
+                            }
+                          </div>
                         </div>
 
                         <ul class="list-inline mb-0 wizard mt-4">

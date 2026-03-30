@@ -93,6 +93,9 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       this.loadApproachTypesFromResolver();
       this.initializeForm();
       this.loadIdentifiedSituations();
+      this.addPhysicalCondition();
+      this.addMentalCondition();
+      this.addProgressNote();
 
       if ((this.isEditMode || this.isViewMode) && this.caseId) {
         this.loadCase();
@@ -246,11 +249,13 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
       // Step 7: Physical Health History
       physicalHealthHistory: this.formBuilder.group({
+        hasPhysicalHistory: [false],
         conditions: this.formBuilder.array([]),
       }),
 
       // Step 8: Mental Health History
       mentalHealthHistory: this.formBuilder.group({
+        hasMentalHistory: [false],
         conditions: this.formBuilder.array([]),
       }),
 
@@ -442,7 +447,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       if (caseData.followUpPlans && Array.isArray(caseData.followUpPlans) && caseData.followUpPlans.length > 0) {
         // Tomar el primer elemento del array
         const followUpData = caseData.followUpPlans[0];
-        
+
         this.caseForm.get('followUpPlan')?.patchValue({
           processCompleted: followUpData.processCompleted || false,
           servicesCoordinated: !!followUpData.coordinatedService,
@@ -555,9 +560,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
             activities: [intervention.activities || ''],
             timeframe: [intervention.timeline || ''],
             responsiblePerson: [intervention.responsible || ''],
-            evaluationCriteria: [
-              intervention.evaluationCriteria || '',
-            ],
+            evaluationCriteria: [intervention.evaluationCriteria || ''],
             progressNotes: [''],
           });
           this.interventions.push(interventionGroup);
@@ -787,9 +790,12 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   }
 
   addProgressNote(): void {
+    const now = new Date();
+    const currentDate = now.toISOString().split('T')[0];
+    const currentTime = now.toTimeString().slice(0, 5);
     const noteGroup = this.formBuilder.group({
-      date: [''],
-      time: [''],
+      date: [currentDate],
+      time: [currentTime],
       approachType: [''],
       process: [''],
       interventionSummary: [''],
