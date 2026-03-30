@@ -78,7 +78,7 @@ export class CaseService {
         this.loadingSubject.next(false);
         this.notificationService.showError(error.error?.message || 'Error al cargar los casos');
         return throwError(() => error);
-      })
+      }),
     );
   }
 
@@ -94,7 +94,7 @@ export class CaseService {
         this.loadingSubject.next(false);
         this.notificationService.showError(error.error?.message || 'Error al cargar el caso');
         return throwError(() => error);
-      })
+      }),
     );
   }
 
@@ -111,16 +111,19 @@ export class CaseService {
   getCasesByUserId(userId: number): Observable<CasesByUserResponse> {
     this.loadingSubject.next(true);
 
-    return this.http.get<CasesByUserResponse>(`${this.apiUrl}/by-user/${userId}`, { headers: this.getHeaders() }).pipe(
-      tap((response) => {
-        this.loadingSubject.next(false);
-      }),
-      catchError((error) => {
-        this.loadingSubject.next(false);
-        this.notificationService.showError(error.error?.message || 'Error al cargar los casos del usuario');
-        return throwError(() => error);
-      })
-    );
+    return this.http
+      .get<{ data: CasesByUserResponse }>(`${this.apiUrl}/by-user/${userId}`, { headers: this.getHeaders() })
+      .pipe(
+        map((response) => response.data),
+        tap(() => {
+          this.loadingSubject.next(false);
+        }),
+        catchError((error) => {
+          this.loadingSubject.next(false);
+          this.notificationService.showError(error.error?.message || 'Error al cargar los casos del usuario');
+          return throwError(() => error);
+        }),
+      );
   }
 
   /**
@@ -142,7 +145,7 @@ export class CaseService {
         this.loadingSubject.next(false);
         this.notificationService.showError(error.error?.message || 'Error al crear el caso');
         return throwError(() => error);
-      })
+      }),
     );
   }
 
@@ -152,7 +155,7 @@ export class CaseService {
   updateCase(id: number, caseData: Partial<CreateCaseDto>): Observable<CaseResponse> {
     this.loadingSubject.next(true);
 
-    return this.http.put<CaseResponse>(`${this.apiUrl}/${id}`, caseData, { headers: this.getHeaders() }).pipe(
+    return this.http.patch<CaseResponse>(`${this.apiUrl}/${id}`, caseData, { headers: this.getHeaders() }).pipe(
       tap((response) => {
         this.loadingSubject.next(false);
         this.notificationService.showSuccess('Caso actualizado exitosamente');
@@ -169,7 +172,7 @@ export class CaseService {
         this.loadingSubject.next(false);
         this.notificationService.showError(error.error?.message || 'Error al actualizar el caso');
         return throwError(() => error);
-      })
+      }),
     );
   }
 
@@ -186,7 +189,7 @@ export class CaseService {
         catchError((error) => {
           this.notificationService.showError(error.error?.message || 'Error al cerrar el caso');
           return throwError(() => error);
-        })
+        }),
       );
   }
 
@@ -205,7 +208,7 @@ export class CaseService {
       catchError((error) => {
         this.notificationService.showError(error.error?.message || 'Error al eliminar el caso');
         return throwError(() => error);
-      })
+      }),
     );
   }
 }

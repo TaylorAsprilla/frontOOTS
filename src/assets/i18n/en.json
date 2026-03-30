@@ -1000,6 +1000,7 @@
     "mentalHealthHistory": "Mental Health History",
     "caseNumber": "Case Number",
     "caseId": "ID",
+    "caseNumber": "Case Number",
     "participantName": "Name",
     "status": "Status",
     "openingDate": "Opening Date",

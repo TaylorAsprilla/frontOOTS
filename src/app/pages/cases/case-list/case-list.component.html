@@ -73,7 +73,7 @@
                 <thead class="table-light">
                   <tr>
                     <th class="cursor-pointer" (click)="sortBy('id')">
-                      {{ 'cases.caseId' | transloco }}
+                      {{ 'cases.caseNumber' | transloco }}
                       <i [class]="getSortIcon('id')" class="ms-1"></i>
                     </th>
                     <th class="cursor-pointer" (click)="sortBy('participantName')">
@@ -106,8 +106,15 @@
                         </div>
                       </td>
                       <td>
-                        <span>
-                          {{ caseItem.consultationReason }}
+                        <span
+                          [ngbTooltip]="caseItem.consultationReason?.length > 120 ? caseItem.consultationReason : ''"
+                          placement="top"
+                        >
+                          {{
+                            caseItem.consultationReason?.length > 120
+                              ? (caseItem.consultationReason | slice: 0 : 120) + '…'
+                              : caseItem.consultationReason
+                          }}
                         </span>
                       </td>
                       <td>

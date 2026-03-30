@@ -1055,6 +1055,7 @@
     "mentalHealthHistory": "Historial de Salud Mental",
     "caseNumber": "Número de Caso",
     "caseId": "ID",
+    "caseNumber": "Número de caso",
     "participantName": "Nombre",
     "status": "Estado",
     "openingDate": "Fecha de Apertura",

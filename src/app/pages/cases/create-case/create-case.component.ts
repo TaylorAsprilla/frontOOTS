@@ -389,7 +389,6 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
             academicLevelId,
           });
           this.familyMembersArray.push(memberGroup);
-          console.log('Family members loaded into form:', member);
         });
       }
 
