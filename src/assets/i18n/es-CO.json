@@ -566,6 +566,9 @@
     "backToLoginText": "Volver a",
     "login": {
       "title": "Iniciar Sesión",
+      "appName": "Mi OOTS",
+      "description": "Sistema especializado en la gestión y documentación de casos, asegurando orden y confidencialidad.",
+      "slogan": "Cada caso importa, cada dato cuenta.",
       "subtitle": "Ingrese su dirección de correo electrónico y contraseña para acceder al panel de administración.",
       "email": "Correo Electrónico",
       "emailPlaceholder": "Ingrese su correo electrónico",

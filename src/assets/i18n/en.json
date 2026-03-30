@@ -511,6 +511,9 @@
     "changePassword": "Change Password",
     "login": {
       "title": "Sign In",
+      "appName": "Mi OOTS",
+      "description": "Specialized system for case management and documentation, ensuring order and confidentiality.",
+      "slogan": "Every case matters, every detail counts.",
       "subtitle": "Enter your email address and password to access the admin panel.",
       "email": "Email Address",
       "emailPlaceholder": "Enter your email",
