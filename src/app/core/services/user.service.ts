@@ -180,10 +180,12 @@ export class UserService {
   checkEmailExists(email: string): Observable<boolean> {
     const params = new HttpParams().set('email', email);
 
-    return this.http.get<ApiResponse<{ exists: boolean }>>(`${this.apiUrl}/check-email`, { params }).pipe(
-      map((response) => response.data.exists),
-      catchError((error) => this.handleError(error, 'Error al verificar el email')),
-    );
+    return this.http
+      .get<ApiResponse<{ available: boolean }>>(`${this.apiUrlRegister}/auth/check-email`, { params })
+      .pipe(
+        map((response) => !response.data.available),
+        catchError((error) => this.handleError(error, 'Error al verificar el email')),
+      );
   }
 
   /**

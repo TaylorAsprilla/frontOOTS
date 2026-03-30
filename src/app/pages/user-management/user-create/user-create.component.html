@@ -76,6 +76,8 @@
                         formControlName="email"
                         [placeholder]="'user.enterEmail' | transloco"
                         [class.is-invalid]="isFieldInvalid('email')"
+                        (blur)="validateEmail()"
+                        (keydown.enter)="validateEmail()"
                       />
                       @if (isFieldInvalid('email')) {
                         <div class="invalid-feedback d-block">

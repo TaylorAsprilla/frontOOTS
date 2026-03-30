@@ -203,6 +203,35 @@ export class UserCreateComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Triggered on blur or Enter key — validates email against the API
+   */
+  validateEmail(): void {
+    const emailControl = this.userForm.get('email');
+    const value = emailControl?.value;
+    if (value && emailControl?.valid) {
+      this.userService
+        .checkEmailExists(value)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (exists) => {
+            if (emailControl) {
+              if (exists) {
+                emailControl.setErrors({ emailExists: true });
+              } else if (emailControl.hasError('emailExists')) {
+                const errors = { ...emailControl.errors };
+                delete errors['emailExists'];
+                emailControl.setErrors(Object.keys(errors).length ? errors : null);
+              }
+            }
+          },
+          error: (error) => {
+            console.error('Error checking email existence:', error);
+          },
+        });
+    }
+  }
+
+  /**
    * Triggered on blur or Enter key — validates document number against the API
    */
   validateDocumentNumber(): void {
@@ -250,6 +279,7 @@ export class UserCreateComponent implements OnInit, OnDestroy {
 
       if (errors['required']) return 'user.validation.required';
       if (errors['email']) return 'user.validation.invalidEmail';
+      if (errors['emailExists']) return 'user.validation.emailExists';
       if (errors['minlength']) return 'user.validation.minLength';
       if (errors['maxlength']) return 'user.validation.maxLength';
       if (errors['documentExists']) return 'user.validation.documentExists';
