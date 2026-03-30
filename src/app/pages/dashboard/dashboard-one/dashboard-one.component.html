@@ -5,8 +5,17 @@
       <div class="page-title-right">
         <form class="d-flex align-items-center mb-3">
           <div class="input-group input-group-sm">
-            <input type="text" name="datepicker" id="dash-datepicker" class="form-control border" [(ngModel)]="date"
-              ngbDatepicker #datepicker="ngbDatepicker" (click)="datepicker.toggle()" autoClose="'outside'" />
+            <input
+              type="text"
+              name="datepicker"
+              id="dash-datepicker"
+              class="form-control border"
+              [(ngModel)]="date"
+              ngbDatepicker
+              #datepicker="ngbDatepicker"
+              (click)="datepicker.toggle()"
+              autoClose="'outside'"
+            />
 
             <span class="input-group-text bg-blue border-blue text-white">
               <i class="mdi mdi-calendar-range"></i>
@@ -28,17 +37,17 @@
 
 <div class="row">
   @if (statisticsCardData.length === 0) {
-  <div class="col-12 text-center py-5">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">{{ 'app.loading' | transloco }}</span>
+    <div class="col-12 text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">{{ 'app.loading' | transloco }}</span>
+      </div>
+      <p class="mt-2 text-muted">{{ 'dashboard.loading' | transloco }}</p>
     </div>
-    <p class="mt-2 text-muted">{{ 'dashboard.loading' | transloco }}</p>
-  </div>
   }
   @for (item of statisticsCardData; track item.id) {
-  <div class="col-md-6 col-xl-3">
-    <app-widget-statistics-card1 [statisticsCardData]="item"></app-widget-statistics-card1>
-  </div>
+    <div class="col-md-6 col-xl-3">
+      <app-widget-statistics-card1 [statisticsCardData]="item"></app-widget-statistics-card1>
+    </div>
   }
   <!-- end col-->
 </div>
@@ -68,11 +77,15 @@
 
         <div class="widget-chart text-center" dir="ltr">
           <div id="total-revenue" class="mt-0">
-            <apx-chart class="apex-charts" [series]="revenuChart.series!" [chart]="revenuChart.chart!"
-              [plotOptions]="revenuChart.plotOptions!" [colors]="revenuChart.colors!"
-              [labels]="revenuChart.labels!"></apx-chart>
+            <apx-chart
+              class="apex-charts"
+              [series]="revenuChart.series!"
+              [chart]="revenuChart.chart!"
+              [plotOptions]="revenuChart.plotOptions!"
+              [colors]="revenuChart.colors!"
+              [labels]="revenuChart.labels!"
+            ></apx-chart>
           </div>
-
 
           <div class="row">
             <div class="col-6">
@@ -87,9 +100,9 @@
           <div class="mt-2">
             <p class="text-muted mb-0">
               <small>
-                <span>{{ 'dashboard.charts.average' | transloco }}:</span> {{ totalParticipants > 0 ? (totalCases /
-                totalParticipants).toFixed(2) : '0' }} <span>{{ 'dashboard.charts.casesPerParticipant' | transloco
-                  }}</span>
+                <span>{{ 'dashboard.charts.average' | transloco }}:</span>
+                {{ totalParticipants > 0 ? (totalCases / totalParticipants).toFixed(2) : '0' }}
+                <span>{{ 'dashboard.charts.casesPerParticipant' | transloco }}</span>
               </small>
             </p>
           </div>
@@ -122,12 +135,21 @@
 
         <div dir="ltr">
           <div id="sales-analytics" class="mt-4">
-            <apx-chart class="apex-charts" [series]="salesAnalyticsChart.series!" [chart]="salesAnalyticsChart.chart!"
-              [plotOptions]="salesAnalyticsChart.plotOptions!" [dataLabels]="salesAnalyticsChart.dataLabels!"
-              [yaxis]="salesAnalyticsChart.yaxis!" [legend]="salesAnalyticsChart.legend!"
-              [grid]="salesAnalyticsChart.grid!" [fill]="salesAnalyticsChart.fill!"
-              [colors]="salesAnalyticsChart.colors!" [labels]="salesAnalyticsChart.labels!"
-              [xaxis]="salesAnalyticsChart.xaxis!" [stroke]="salesAnalyticsChart.stroke!"></apx-chart>
+            <apx-chart
+              class="apex-charts"
+              [series]="salesAnalyticsChart.series!"
+              [chart]="salesAnalyticsChart.chart!"
+              [plotOptions]="salesAnalyticsChart.plotOptions!"
+              [dataLabels]="salesAnalyticsChart.dataLabels!"
+              [yaxis]="salesAnalyticsChart.yaxis!"
+              [legend]="salesAnalyticsChart.legend!"
+              [grid]="salesAnalyticsChart.grid!"
+              [fill]="salesAnalyticsChart.fill!"
+              [colors]="salesAnalyticsChart.colors!"
+              [labels]="salesAnalyticsChart.labels!"
+              [xaxis]="salesAnalyticsChart.xaxis!"
+              [stroke]="salesAnalyticsChart.stroke!"
+            ></apx-chart>
           </div>
         </div>
       </div>
@@ -171,37 +193,42 @@
             </thead>
             <tbody>
               @if (recentParticipants.length === 0) {
-              <tr>
-                <td colspan="6" class="text-center text-muted">
-                  <p class="mt-3 mb-3">{{ 'dashboard.tables.noParticipants' | transloco }}</p>
-                </td>
-              </tr>
+                <tr>
+                  <td colspan="6" class="text-center text-muted">
+                    <p class="mt-3 mb-3">{{ 'dashboard.tables.noParticipants' | transloco }}</p>
+                  </td>
+                </tr>
               }
               @for (participant of recentParticipants; track participant.id) {
-              <tr (click)="viewParticipant(participant)" style="cursor: pointer;">
-                <td style="width: 36px">
-                  <div
-                    class="avatar-sm bg-primary rounded-circle d-flex align-items-center justify-content-center text-white fw-bold">
-                    {{ getInitials(participant.fullName || participant.firstName + ' ' + participant.firstLastName) }}
-                  </div>
-                </td>
-                <td>
-                  <h5 class="m-0 fw-normal">{{ participant.fullName || participant.firstName + ' ' +
-                    participant.firstLastName }}</h5>
-                  <p class="mb-0 text-muted">
-                    <small>{{ participant.createdAt | date : 'MMMM - yyyy' }}</small>
-                  </p>
-                </td>
-                <td>{{ participant.documentNumber }}</td>
-                <td>{{ participant.email }}</td>
-                <td>{{ participant.createdAt | date : 'dd/MM/yyyy' }}</td>
-                <td (click)="$event.stopPropagation()">
-                  <a [routerLink]="['/participants/detail', participant.id]" class="btn btn-xs btn-light"
-                    title="Ver detalles">
-                    <i class="mdi mdi-eye"></i>
-                  </a>
-                </td>
-              </tr>
+                <tr (click)="viewParticipant(participant)" style="cursor: pointer">
+                  <td style="width: 36px">
+                    <div
+                      class="avatar-sm bg-primary rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
+                    >
+                      {{ getInitials(participant.fullName || participant.firstName + ' ' + participant.firstLastName) }}
+                    </div>
+                  </td>
+                  <td>
+                    <h5 class="m-0 fw-normal">
+                      {{ participant.fullName || participant.firstName + ' ' + participant.firstLastName }}
+                    </h5>
+                    <p class="mb-0 text-muted">
+                      <small>{{ participant.createdAt | localizedDate: 'MMMM - yyyy' }}</small>
+                    </p>
+                  </td>
+                  <td>{{ participant.documentNumber }}</td>
+                  <td>{{ participant.email }}</td>
+                  <td>{{ participant.createdAt | localizedDate: 'dd/MM/yyyy' }}</td>
+                  <td (click)="$event.stopPropagation()">
+                    <a
+                      [routerLink]="['/participants/detail', participant.id]"
+                      class="btn btn-xs btn-light"
+                      title="Ver detalles"
+                    >
+                      <i class="mdi mdi-eye"></i>
+                    </a>
+                  </td>
+                </tr>
               }
             </tbody>
           </table>
@@ -243,33 +270,33 @@
             </thead>
             <tbody>
               @if (recentCases.length === 0) {
-              <tr>
-                <td colspan="5" class="text-center text-muted">
-                  <p class="mt-3 mb-3">{{ 'dashboard.tables.noCases' | transloco }}</p>
-                </td>
-              </tr>
+                <tr>
+                  <td colspan="5" class="text-center text-muted">
+                    <p class="mt-3 mb-3">{{ 'dashboard.tables.noCases' | transloco }}</p>
+                  </td>
+                </tr>
               }
               @for (caseItem of recentCases; track caseItem.id) {
-              <tr>
-                <td>
-                  <h5 class="m-0 fw-normal">{{ caseItem.participant.fullName }}</h5>
-                  <p class="mb-0 text-muted">
-                    <small>{{ caseItem.participant.documentNumber }}</small>
-                  </p>
-                </td>
-                <td>{{ caseItem.caseNumber }}</td>
-                <td>{{ caseItem.createdAt | date : 'MMM dd, y' }}</td>
-                <td>
-                  <span [class]="getCaseStatusClass(caseItem.status)">
-                    {{ getCaseStatusLabel(caseItem.status) }}
-                  </span>
-                </td>
-                <td>
-                  <a [routerLink]="['/apps/cases', caseItem.id]" class="btn btn-xs btn-light" title="Ver detalles">
-                    <i class="mdi mdi-eye"></i>
-                  </a>
-                </td>
-              </tr>
+                <tr>
+                  <td>
+                    <h5 class="m-0 fw-normal">{{ caseItem.participant.fullName }}</h5>
+                    <p class="mb-0 text-muted">
+                      <small>{{ caseItem.participant.documentNumber }}</small>
+                    </p>
+                  </td>
+                  <td>{{ caseItem.caseNumber }}</td>
+                  <td>{{ caseItem.createdAt | localizedDate: 'MMM dd, y' }}</td>
+                  <td>
+                    <span [class]="getCaseStatusClass(caseItem.status)">
+                      {{ getCaseStatusLabel(caseItem.status) }}
+                    </span>
+                  </td>
+                  <td>
+                    <a [routerLink]="['/cases/detail', caseItem.id]" class="btn btn-xs btn-light" title="Ver detalles">
+                      <i class="mdi mdi-eye"></i>
+                    </a>
+                  </td>
+                </tr>
               }
             </tbody>
           </table>

@@ -4,15 +4,15 @@ import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { NgbPaginationModule, NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { Subject, takeUntil, debounceTime, distinctUntilChanged, forkJoin } from 'rxjs';
+import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 
 import { CaseService } from '../../../core/services/case.service';
-import { ParticipantService } from '../../../core/services/participant.service';
+import { TokenStorageService } from '../../../core/services/token-storage.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
-import { Case, CaseStatus } from '../../../core/interfaces/case.interface';
-import { Participant } from '../../../core/interfaces/participant-create.interface';
+import { CaseStatus } from '../../../core/interfaces/case.interface';
+import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
 
 @Component({
   selector: 'app-case-list',
@@ -26,22 +26,23 @@ import { Participant } from '../../../core/interfaces/participant-create.interfa
     NgbTooltipModule,
     TranslocoModule,
     PageTitleComponent,
+    LocalizedDatePipe,
   ],
   templateUrl: './case-list.component.html',
   styleUrls: ['./case-list.component.scss'],
 })
 export class CaseListComponent implements OnInit, OnDestroy {
   private readonly caseService = inject(CaseService);
-  private readonly participantService = inject(ParticipantService);
+  private readonly tokenStorageService = inject(TokenStorageService);
   private readonly notificationService = inject(NotificationService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly translocoService = inject(TranslocoService);
   private readonly destroy$ = new Subject<void>();
 
   // Data and state
-  cases: Case[] = [];
-  filteredCases: Case[] = [];
-  participantsMap: Map<number, Participant> = new Map();
+  cases: any[] = [];
+  filteredCases: any[] = [];
+  private allCasesFromApi: any[] = [];
   isLoading = false;
 
   // Pagination
@@ -63,6 +64,7 @@ export class CaseListComponent implements OnInit, OnDestroy {
   // Status options
   statusOptions: Array<{ value: CaseStatus | 'all'; label: string }> = [
     { value: 'all', label: 'cases.allStatuses' },
+    { value: CaseStatus.OPEN, label: 'cases.open' },
     { value: CaseStatus.ACTIVE, label: 'cases.active' },
     { value: CaseStatus.IN_PROGRESS, label: 'cases.inProgress' },
     { value: CaseStatus.CLOSED, label: 'cases.closed' },
@@ -96,51 +98,94 @@ export class CaseListComponent implements OnInit, OnDestroy {
       ?.valueChanges.pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe(() => {
         this.currentPage = 1;
-        this.loadCases();
+        this.applyFiltersAndPagination();
       });
   }
 
   loadCases(): void {
     this.isLoading = true;
 
-    const filters = {
-      page: this.currentPage,
-      limit: this.pageSize,
-      status: this.statusFilter !== 'all' ? this.statusFilter : undefined,
-    };
+    const userId = this.tokenStorageService.getUser()?.id;
+    if (!userId) {
+      this.isLoading = false;
+      this.notificationService.showError('No se pudo identificar al usuario en sesión');
+      return;
+    }
 
     this.caseService
-      .getCases(filters)
+      .getCasesByUserId(userId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.cases = response.data;
-          this.filteredCases = response.data;
-          this.totalItems = response.pagination?.total || 0;
-          this.loadParticipantsForCases(response.data);
-          // Apply sorting after loading data
-          if (this.sortColumn) {
-            this.applySorting();
-          }
+          this.allCasesFromApi = response.cases;
+          this.isLoading = false;
+          this.applyFiltersAndPagination();
         },
-        error: (error) => {
+        error: () => {
           this.isLoading = false;
         },
       });
   }
 
+  private applyFiltersAndPagination(): void {
+    let filtered = [...this.allCasesFromApi];
+
+    const searchTerm = (this.searchForm.get('searchTerm')?.value ?? '').toLowerCase().trim();
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (c) =>
+          c.participant?.fullName?.toLowerCase().includes(searchTerm) ||
+          c.caseNumber?.toLowerCase().includes(searchTerm) ||
+          c.consultationReason?.toLowerCase().includes(searchTerm),
+      );
+    }
+
+    if (this.statusFilter !== 'all') {
+      filtered = filtered.filter((c) => c.status === this.statusFilter);
+    }
+
+    this.totalItems = filtered.length;
+
+    if (this.sortColumn) {
+      this.applySortingOn(filtered);
+    }
+
+    const start = (this.currentPage - 1) * this.pageSize;
+    this.filteredCases = filtered.slice(start, start + this.pageSize);
+    this.cases = this.filteredCases;
+  }
+
   onStatusFilterChange(status: CaseStatus | 'all'): void {
     this.statusFilter = status;
     this.currentPage = 1;
-    this.loadCases();
+    this.applyFiltersAndPagination();
   }
 
   onPageChange(page: number): void {
     this.currentPage = page;
-    this.loadCases();
+    this.applyFiltersAndPagination();
   }
 
-  deleteCase(caseItem: Case): void {
+  downloadPdf(caseItem: any): void {
+    this.caseService
+      .downloadCasePdf(caseItem.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (blob: Blob) => {
+          const url = URL.createObjectURL(blob);
+          const anchor = document.createElement('a');
+          anchor.href = url;
+          anchor.download = `caso-${caseItem.caseNumber || caseItem.id}.pdf`;
+          anchor.click();
+          URL.revokeObjectURL(url);
+        },
+        error: () => {
+          this.notificationService.showError('Error al descargar el PDF del caso');
+        },
+      });
+  }
+
+  deleteCase(caseItem: any): void {
     if (!caseItem.id) return;
 
     const participantName = this.getParticipantName(caseItem);
@@ -183,44 +228,9 @@ export class CaseListComponent implements OnInit, OnDestroy {
     return option?.label || 'cases.unknown';
   }
 
-  /**
-   * Load participants data for all cases
-   */
-  private loadParticipantsForCases(cases: Case[]): void {
-    const uniqueParticipantIds = [...new Set(cases.map((c) => c.participantId).filter((id) => id))];
-
-    if (uniqueParticipantIds.length === 0) {
-      this.isLoading = false;
-      return;
-    }
-
-    const participantRequests = uniqueParticipantIds.map((id) =>
-      this.participantService.getParticipantById(id).pipe(takeUntil(this.destroy$)),
-    );
-
-    forkJoin(participantRequests).subscribe({
-      next: (responses) => {
-        responses.forEach((response) => {
-          if (response.data) {
-            this.participantsMap.set(response.data.id!, response.data);
-          }
-        });
-        this.isLoading = false;
-        // Re-apply sorting after participants are loaded (for name sorting)
-        if (this.sortColumn === 'participantName') {
-          this.applySorting();
-        }
-      },
-      error: (error) => {
-        this.isLoading = false;
-      },
-    });
-  }
-
-  getParticipantName(caseItem: Case): string {
-    const participant = this.participantsMap.get(caseItem.participantId);
-    if (participant) {
-      return `${participant.firstName} ${participant.firstLastName}`;
+  getParticipantName(caseItem: any): string {
+    if (caseItem?.participant?.fullName) {
+      return caseItem.participant.fullName;
     }
     return this.translocoService.translate('cases.loadingParticipant');
   }
@@ -237,26 +247,24 @@ export class CaseListComponent implements OnInit, OnDestroy {
    */
   sortBy(column: 'id' | 'participantName' | 'status' | 'createdAt'): void {
     if (this.sortColumn === column) {
-      // Toggle direction if same column
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
-      // New column, default to ascending
       this.sortColumn = column;
       this.sortDirection = 'asc';
     }
 
-    this.applySorting();
+    this.applyFiltersAndPagination();
   }
 
   /**
-   * Apply sorting to filtered cases
+   * Apply sorting to a given array in-place
    */
-  private applySorting(): void {
+  private applySortingOn(list: any[]): void {
     if (!this.sortColumn) {
       return;
     }
 
-    this.filteredCases.sort((a, b) => {
+    list.sort((a, b) => {
       let valueA: any;
       let valueB: any;
 
@@ -266,8 +274,8 @@ export class CaseListComponent implements OnInit, OnDestroy {
           valueB = b.id || 0;
           break;
         case 'participantName':
-          valueA = this.getParticipantName(a).toLowerCase();
-          valueB = this.getParticipantName(b).toLowerCase();
+          valueA = (a.participant?.fullName || '').toLowerCase();
+          valueB = (b.participant?.fullName || '').toLowerCase();
           break;
         case 'status':
           valueA = a.status || '';

@@ -11,6 +11,8 @@ export interface CreateParticipantDto {
   documentNumber: string;
   address: string;
   city: string;
+  state?: string;
+  zipCode?: string;
   birthDate: string;
   religiousAffiliation?: string;
   genderId: number;
@@ -36,6 +38,8 @@ export interface CreateEmergencyContactDto {
   email: string;
   address: string;
   city: string;
+  state?: string;
+  zipCode?: string;
   relationshipId: number;
 }
 
@@ -179,6 +183,8 @@ export interface EmergencyContact {
   email: string;
   address: string;
   city: string;
+  state?: string;
+  zipCode?: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -12,6 +12,7 @@ import { AuthenticationService } from '../../../core/services/auth.service';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { Participant, ParticipantStatus } from '../../../core/interfaces/participant.interface';
+import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
 
 @Component({
   selector: 'app-participant-list',
@@ -25,6 +26,7 @@ import { Participant, ParticipantStatus } from '../../../core/interfaces/partici
     NgbTooltipModule,
     TranslocoModule,
     PageTitleComponent,
+    LocalizedDatePipe,
   ],
   templateUrl: './participant-list.component.html',
   styleUrls: ['./participant-list.component.scss'],

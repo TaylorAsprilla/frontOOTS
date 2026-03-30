@@ -568,14 +568,44 @@
                                 }
                               </div>
                             </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label text-start" for="emergencyContactState">{{
+                                'participants.state' | transloco
+                              }}</label>
+                              <div class="col-md-8">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  id="emergencyContactState"
+                                  name="emergencyContactState"
+                                  formControlName="emergencyContactState"
+                                />
+                              </div>
+                            </div>
+
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label text-start" for="emergencyContactZipCode">{{
+                                'participants.zipCode' | transloco
+                              }}</label>
+                              <div class="col-md-8">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  id="emergencyContactZipCode"
+                                  name="emergencyContactZipCode"
+                                  formControlName="emergencyContactZipCode"
+                                />
+                              </div>
+                            </div>
                           </div>
 
                           <!-- Segunda columna -->
                           <div>
                             <div class="row mb-3">
-                              <label class="col-md-4 col-form-label text-start" for="emergencyContactPhone">{{
-                                'participants.phoneNumber' | transloco
-                              }}</label>
+                              <label class="col-md-4 col-form-label text-start" for="emergencyContactPhone"
+                                >{{ 'participants.phoneNumber' | transloco }} <span class="text-danger">*</span></label
+                              >
                               <div class="col-md-8">
                                 <div
                                   class="phone-input-wrapper"

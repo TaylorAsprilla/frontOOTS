@@ -43,7 +43,6 @@ export class UserCreateComponent implements OnInit, OnDestroy {
     this.setupPageTitle();
     this.loadDocumentTypesFromResolver();
     this.initializeForm();
-    this.setupDocumentValidation();
   }
 
   ngOnDestroy(): void {
@@ -80,7 +79,7 @@ export class UserCreateComponent implements OnInit, OnDestroy {
       email: ['', [Validators.required, Validators.email]],
       phoneNumber: ['', [Validators.required, Validators.maxLength(20)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
-      documentNumber: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(15)]],
+      documentNumber: ['', [Validators.required, Validators.minLength(6)]],
       address: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]],
       city: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       birthDate: ['', [Validators.required]],
@@ -203,17 +202,84 @@ export class UserCreateComponent implements OnInit, OnDestroy {
     });
   }
 
+  onPhoneBlur(event: FocusEvent): void {
+    const wrapper = event.currentTarget as HTMLElement;
+    if (!wrapper.contains(event.relatedTarget as Node)) {
+      this.validatePhoneNumber();
+    }
+  }
+
   /**
-   * Setup document validation to check for duplicates
+   * Triggered on blur — validates phone number against the API
    */
-  private setupDocumentValidation(): void {
+  validatePhoneNumber(): void {
+    const phoneControl = this.userForm.get('phoneNumber');
+    const value = phoneControl?.value;
+
+    console.log('Validating phone number:', value);
+    if (value && phoneControl?.valid) {
+      // value.number respects [numberFormat]="PhoneNumberFormat.International" → e.g. "+57 300 123 4567"
+      const internationalNumber = (value.internationalNumber as string) ?? '';
+      if (!internationalNumber) return;
+      this.userService
+        .checkPhoneExists(internationalNumber)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (exists) => {
+            if (phoneControl) {
+              if (exists) {
+                phoneControl.setErrors({ phoneExists: true });
+              } else if (phoneControl.hasError('phoneExists')) {
+                const errors = { ...phoneControl.errors };
+                delete errors['phoneExists'];
+                phoneControl.setErrors(Object.keys(errors).length ? errors : null);
+              }
+            }
+          },
+          error: (error) => {
+            console.error('Error checking phone existence:', error);
+          },
+        });
+    }
+  }
+
+  /**
+   * Triggered on blur or Enter key — validates email against the API
+   */
+  validateEmail(): void {
+    const emailControl = this.userForm.get('email');
+    const value = emailControl?.value;
+    if (value && emailControl?.valid) {
+      this.userService
+        .checkEmailExists(value)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (exists) => {
+            if (emailControl) {
+              if (exists) {
+                emailControl.setErrors({ emailExists: true });
+              } else if (emailControl.hasError('emailExists')) {
+                const errors = { ...emailControl.errors };
+                delete errors['emailExists'];
+                emailControl.setErrors(Object.keys(errors).length ? errors : null);
+              }
+            }
+          },
+          error: (error) => {
+            console.error('Error checking email existence:', error);
+          },
+        });
+    }
+  }
+
+  /**
+   * Triggered on blur or Enter key — validates document number against the API
+   */
+  validateDocumentNumber(): void {
     const documentControl = this.userForm.get('documentNumber');
-    if (documentControl) {
-      documentControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
-        if (value && value.length >= 6) {
-          this.checkDocumentExists(value);
-        }
-      });
+    const value = documentControl?.value;
+    if (value && value.length >= 6) {
+      this.checkDocumentExists(value);
     }
   }
 
@@ -254,6 +320,8 @@ export class UserCreateComponent implements OnInit, OnDestroy {
 
       if (errors['required']) return 'user.validation.required';
       if (errors['email']) return 'user.validation.invalidEmail';
+      if (errors['emailExists']) return 'user.validation.emailExists';
+      if (errors['phoneExists']) return 'user.validation.phoneExists';
       if (errors['minlength']) return 'user.validation.minLength';
       if (errors['maxlength']) return 'user.validation.maxLength';
       if (errors['documentExists']) return 'user.validation.documentExists';

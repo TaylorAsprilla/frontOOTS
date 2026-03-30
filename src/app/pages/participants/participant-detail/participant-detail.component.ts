@@ -9,11 +9,12 @@ import { NotificationService } from '../../../core/services/notification.service
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { Participant } from '../../../core/interfaces/participant-create.interface';
+import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
 
 @Component({
   selector: 'app-participant-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslocoModule, PageTitleComponent],
+  imports: [CommonModule, RouterModule, TranslocoModule, PageTitleComponent, LocalizedDatePipe],
   templateUrl: './participant-detail.component.html',
   styleUrls: ['./participant-detail.component.scss'],
 })

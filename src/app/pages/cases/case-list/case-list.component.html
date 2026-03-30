@@ -73,7 +73,7 @@
                 <thead class="table-light">
                   <tr>
                     <th class="cursor-pointer" (click)="sortBy('id')">
-                      {{ 'cases.caseId' | transloco }}
+                      {{ 'cases.caseNumber' | transloco }}
                       <i [class]="getSortIcon('id')" class="ms-1"></i>
                     </th>
                     <th class="cursor-pointer" (click)="sortBy('participantName')">
@@ -106,8 +106,15 @@
                         </div>
                       </td>
                       <td>
-                        <span>
-                          {{ caseItem.consultationReason }}
+                        <span
+                          [ngbTooltip]="caseItem.consultationReason?.length > 120 ? caseItem.consultationReason : ''"
+                          placement="top"
+                        >
+                          {{
+                            caseItem.consultationReason?.length > 120
+                              ? (caseItem.consultationReason | slice: 0 : 120) + '…'
+                              : caseItem.consultationReason
+                          }}
                         </span>
                       </td>
                       <td>
@@ -117,7 +124,7 @@
                       </td>
                       <td>
                         @if (caseItem.createdAt) {
-                          <span>{{ caseItem.createdAt | date: 'short' }}</span>
+                          <span>{{ caseItem.createdAt | localizedDate: 'short' }}</span>
                         } @else {
                           <span class="text-muted">{{ 'app.notAvailable' | transloco }}</span>
                         }
@@ -140,6 +147,15 @@
                           >
                             <i class="mdi mdi-pencil text-primary"></i>
                           </a>
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-light btn-icon"
+                            [ngbTooltip]="'cases.downloadPdf' | transloco"
+                            placement="top"
+                            (click)="downloadPdf(caseItem)"
+                          >
+                            <i class="mdi mdi-file-pdf-box text-danger"></i>
+                          </button>
                           <button
                             type="button"
                             class="btn btn-sm btn-light btn-icon"

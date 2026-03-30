@@ -325,6 +325,8 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
             emergencyContactEmail: emergencyContact?.emergencyContact?.email || '',
             emergencyContactAddress: emergencyContact?.emergencyContact?.address || '',
             emergencyContactCity: emergencyContact?.emergencyContact?.city || '',
+            emergencyContactState: emergencyContact?.emergencyContact?.state || '',
+            emergencyContactZipCode: emergencyContact?.emergencyContact?.zipCode || '',
             emergencyContactRelationship: emergencyContact?.relationshipId || '',
           });
 
@@ -333,7 +335,6 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         error: (error) => {
           this.notificationService.showError('Error al cargar los datos del participante');
           this.isLoading = false;
-          this.router.navigate(['/participants/list']);
         },
       });
   }
@@ -375,6 +376,8 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         emergencyContactEmail: ['', [Validators.email]],
         emergencyContactAddress: [''],
         emergencyContactCity: [''],
+        emergencyContactState: [''],
+        emergencyContactZipCode: [''],
         emergencyContactRelationship: ['', Validators.required],
       }),
     });
@@ -732,6 +735,8 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         email: personalData.emergencyContactEmail,
         address: personalData.emergencyContactAddress,
         city: personalData.emergencyContactCity,
+        state: personalData.emergencyContactState || undefined,
+        zipCode: personalData.emergencyContactZipCode || undefined,
         relationshipId: personalData.emergencyContactRelationship
           ? Number(personalData.emergencyContactRelationship)
           : null,

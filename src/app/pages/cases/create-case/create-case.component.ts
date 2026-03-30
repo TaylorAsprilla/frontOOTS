@@ -93,6 +93,9 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       this.loadApproachTypesFromResolver();
       this.initializeForm();
       this.loadIdentifiedSituations();
+      this.addPhysicalCondition();
+      this.addMentalCondition();
+      this.addProgressNote();
 
       if ((this.isEditMode || this.isViewMode) && this.caseId) {
         this.loadCase();
@@ -246,11 +249,13 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
       // Step 7: Physical Health History
       physicalHealthHistory: this.formBuilder.group({
+        hasPhysicalHistory: [false],
         conditions: this.formBuilder.array([]),
       }),
 
       // Step 8: Mental Health History
       mentalHealthHistory: this.formBuilder.group({
+        hasMentalHistory: [false],
         conditions: this.formBuilder.array([]),
       }),
 
@@ -327,6 +332,8 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
         next: (response) => {
           const caseData = response.data;
 
+          console.log('Case data loaded from API:', caseData);
+
           if (caseData) {
             // Mapear datos del caso al formulario
             this.mapCaseDataToForm(caseData);
@@ -363,12 +370,23 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
         this.familyMembersArray.clear();
         caseData.familyMembers.forEach((member: any) => {
           const memberGroup = this.createFamilyMemberForm();
+          // The API may return a nested object (familyRelationship.id) or a flat ID (familyRelationshipId)
+          const familyRelationshipId = member.familyRelationshipId
+            ? Number(member.familyRelationshipId)
+            : member.familyRelationship?.id
+              ? Number(member.familyRelationship.id)
+              : '';
+          const academicLevelId = member.academicLevelId
+            ? Number(member.academicLevelId)
+            : member.academicLevel?.id
+              ? Number(member.academicLevel.id)
+              : '';
           memberGroup.patchValue({
             name: member.name || '',
             birthDate: member.birthDate || '',
             occupation: member.occupation || '',
-            familyRelationshipId: member.familyRelationshipId || '',
-            academicLevelId: member.academicLevelId || '',
+            familyRelationshipId,
+            academicLevelId,
           });
           this.familyMembersArray.push(memberGroup);
         });
@@ -376,16 +394,17 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
       // 2. Cargar historial biopsicosocial
       if (caseData.bioPsychosocialHistory) {
+        const bio = caseData.bioPsychosocialHistory;
         this.caseForm.get('bioPsychosocialHistory')?.patchValue({
-          academicLevelId: caseData.bioPsychosocialHistory.academicLevelId || '',
-          completedGrade: caseData.bioPsychosocialHistory.completedGrade || '',
-          institution: caseData.bioPsychosocialHistory.institution || '',
-          profession: caseData.bioPsychosocialHistory.profession || '',
-          incomeSourceId: caseData.bioPsychosocialHistory.incomeSourceId || '',
-          incomeLevelId: caseData.bioPsychosocialHistory.incomeLevelId || '',
-          occupationalHistory: caseData.bioPsychosocialHistory.occupationalHistory || '',
-          housingTypeId: caseData.bioPsychosocialHistory.housingTypeId || '',
-          housing: caseData.bioPsychosocialHistory.housing || '',
+          academicLevelId: bio.academicLevelId ? Number(bio.academicLevelId) : '',
+          completedGrade: bio.completedGrade || '',
+          institution: bio.institution || '',
+          profession: bio.profession || '',
+          incomeSourceId: bio.incomeSourceId ? Number(bio.incomeSourceId) : '',
+          incomeLevelId: bio.incomeLevelId ? Number(bio.incomeLevelId) : '',
+          occupationalHistory: bio.occupationalHistory || '',
+          housingTypeId: bio.housingTypeId ? Number(bio.housingTypeId) : '',
+          housing: bio.housing || '',
         });
       }
 
@@ -442,7 +461,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       if (caseData.followUpPlans && Array.isArray(caseData.followUpPlans) && caseData.followUpPlans.length > 0) {
         // Tomar el primer elemento del array
         const followUpData = caseData.followUpPlans[0];
-        
+
         this.caseForm.get('followUpPlan')?.patchValue({
           processCompleted: followUpData.processCompleted || false,
           servicesCoordinated: !!followUpData.coordinatedService,
@@ -451,7 +470,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
           referralDetails: followUpData.referralDetails || '',
           appointmentScheduled: followUpData.orientationAppointment || false,
           appointmentDate: followUpData.appointmentDate || '',
-          appointmentTime: followUpData.appointmentTime || '',
+          appointmentTime: followUpData.appointmentTime ? followUpData.appointmentTime.slice(0, 5) : '',
           otherDetails: followUpData.otherDetails || '',
         });
       } else if (caseData.followUpPlan) {
@@ -467,7 +486,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
             referralDetails: followUpData.referralDetails || '',
             appointmentScheduled: followUpData.orientationAppointment || false,
             appointmentDate: followUpData.appointmentDate || '',
-            appointmentTime: followUpData.appointmentTime || '',
+            appointmentTime: followUpData.appointmentTime ? followUpData.appointmentTime.slice(0, 5) : '',
             otherDetails: followUpData.otherDetails || '',
           });
         }
@@ -476,6 +495,9 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       // 7. Cargar condiciones físicas
       if (caseData.physicalHealthHistories && Array.isArray(caseData.physicalHealthHistories)) {
         this.physicalConditions.clear();
+        if (caseData.physicalHealthHistories.length > 0) {
+          this.caseForm.get('physicalHealthHistory.hasPhysicalHistory')?.setValue(true);
+        }
         caseData.physicalHealthHistories.forEach((condition: any) => {
           const conditionGroup = this.formBuilder.group({
             condition: [condition.currentConditions || ''],
@@ -506,6 +528,9 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       // 8. Cargar condiciones mentales
       if (caseData.mentalHealthHistories && Array.isArray(caseData.mentalHealthHistories)) {
         this.mentalConditions.clear();
+        if (caseData.mentalHealthHistories.length > 0) {
+          this.caseForm.get('mentalHealthHistory.hasMentalHistory')?.setValue(true);
+        }
         caseData.mentalHealthHistories.forEach((condition: any) => {
           const conditionGroup = this.formBuilder.group({
             condition: [condition.currentConditions || ''],
@@ -555,9 +580,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
             activities: [intervention.activities || ''],
             timeframe: [intervention.timeline || ''],
             responsiblePerson: [intervention.responsible || ''],
-            evaluationCriteria: [
-              intervention.evaluationCriteria || '',
-            ],
+            evaluationCriteria: [intervention.evaluationCriteria || ''],
             progressNotes: [''],
           });
           this.interventions.push(interventionGroup);
@@ -611,7 +634,15 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
       // 13. Cargar nota de cierre (si existe)
       if (caseData.closingNote) {
-        this.caseForm.get('closingNote')?.patchValue(caseData.closingNote);
+        const cn = caseData.closingNote;
+        this.caseForm.get('closingNote')?.patchValue({
+          closureDate: cn.closingDate || cn.closureDate || '',
+          closureReason: cn.reason || cn.closureReason || '',
+          achievements: cn.achievements || '',
+          recommendations: cn.recommendations || '',
+          observations: cn.observations || '',
+          followUpSuggestions: cn.followUpSuggestions || '',
+        });
       }
 
       // Forzar actualización de la vista
@@ -787,9 +818,12 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   }
 
   addProgressNote(): void {
+    const now = new Date();
+    const currentDate = now.toISOString().split('T')[0];
+    const currentTime = now.toTimeString().slice(0, 5);
     const noteGroup = this.formBuilder.group({
-      date: [''],
-      time: [''],
+      date: [currentDate],
+      time: [currentTime],
       approachType: [''],
       process: [''],
       interventionSummary: [''],

@@ -1,133 +1,101 @@
 <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-    <!-- Alert de éxito -->
-    <div class="alert alert-success alert-dismissible fade show" role="alert" *ngIf="successMessage">
-        <i class="mdi mdi-check-circle me-2"></i>
-        {{ successMessage }}
-        <button type="button" class="btn-close" (click)="successMessage = ''"></button>
-    </div>
+  <!-- Alert de éxito -->
+  <div class="alert alert-success alert-dismissible fade show" role="alert" *ngIf="successMessage">
+    <i class="mdi mdi-check-circle me-2"></i>
+    {{ successMessage }}
+    <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+  </div>
 
-    <!-- Alert de error -->
-    <div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="errorMessage">
-        <i class="mdi mdi-alert-circle me-2"></i>
-        {{ errorMessage }}
-        <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
-    </div>
+  <!-- Alert de error -->
+  <div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="errorMessage">
+    <i class="mdi mdi-alert-circle me-2"></i>
+    {{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+  </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label for="firstname" class="form-label">{{ 'profile.firstName' | transloco }} <span
-                        class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="firstname"
-                    [placeholder]="'profile.firstNamePlaceholder' | transloco" required formControlName="firstName"
-                    [class.is-invalid]="profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched">
-                <div class="invalid-feedback"
-                    *ngIf="profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched">
-                    {{ 'profile.firstNameRequired' | transloco }}
-                </div>
-            </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="mb-3">
+        <label for="firstname" class="form-label"
+          >{{ 'profile.firstName' | transloco }} <span class="text-danger">*</span></label
+        >
+        <input
+          type="text"
+          class="form-control"
+          id="firstname"
+          [placeholder]="'profile.firstNamePlaceholder' | transloco"
+          required
+          formControlName="firstName"
+          [class.is-invalid]="profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched"
+        />
+        <div
+          class="invalid-feedback"
+          *ngIf="profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched"
+        >
+          {{ 'profile.firstNameRequired' | transloco }}
         </div>
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label for="lastname" class="form-label">{{ 'profile.lastName' | transloco }} <span
-                        class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="lastname"
-                    [placeholder]="'profile.lastNamePlaceholder' | transloco" required formControlName="lastName"
-                    [class.is-invalid]="profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched">
-                <div class="invalid-feedback"
-                    *ngIf="profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched">
-                    {{ 'profile.lastNameRequired' | transloco }}
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
-
-    <div class="row">
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label for="phoneNumber" class="form-label">{{ 'profile.phoneNumber' | transloco }}</label>
-                <input type="text" class="form-control" id="phoneNumber"
-                    [placeholder]="'profile.phoneNumberPlaceholder' | transloco" formControlName="phoneNumber">
-            </div>
+    <div class="col-md-6">
+      <div class="mb-3">
+        <label for="lastname" class="form-label"
+          >{{ 'profile.lastName' | transloco }} <span class="text-danger">*</span></label
+        >
+        <input
+          type="text"
+          class="form-control"
+          id="lastname"
+          [placeholder]="'profile.lastNamePlaceholder' | transloco"
+          required
+          formControlName="lastName"
+          [class.is-invalid]="profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched"
+        />
+        <div
+          class="invalid-feedback"
+          *ngIf="profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched"
+        >
+          {{ 'profile.lastNameRequired' | transloco }}
         </div>
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label for="position" class="form-label">{{ 'profile.position' | transloco }}</label>
-                <input type="text" class="form-control" id="position"
-                    [placeholder]="'profile.positionPlaceholder' | transloco" formControlName="position">
-            </div>
-        </div>
+      </div>
     </div>
+  </div>
 
-    <h5 class="mb-3 mt-4 text-uppercase bg-light p-2"><i class="mdi mdi-earth me-1"></i> {{ 'profile.socialNetworks' |
-        transloco }}</h5>
-
-    <div class="row">
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label for="facebook" class="form-label">{{ 'profile.facebook' | transloco }}</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="mdi mdi-facebook"></i></span>
-                    <input type="text" class="form-control" id="facebook"
-                        [placeholder]="'profile.facebookPlaceholder' | transloco" formControlName="facebook">
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label for="twitter" class="form-label">{{ 'profile.twitter' | transloco }}</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="mdi mdi-twitter"></i></span>
-                    <input type="text" class="form-control" id="twitter"
-                        [placeholder]="'profile.twitterPlaceholder' | transloco" formControlName="twitter">
-                </div>
-            </div>
-        </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="mb-3">
+        <label for="phoneNumber" class="form-label">{{ 'profile.phoneNumber' | transloco }}</label>
+        <input
+          type="text"
+          class="form-control"
+          id="phoneNumber"
+          [placeholder]="'profile.phoneNumberPlaceholder' | transloco"
+          formControlName="phoneNumber"
+        />
+      </div>
     </div>
-
-    <div class="row">
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label for="instagram" class="form-label">{{ 'profile.instagram' | transloco }}</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="mdi mdi-instagram"></i></span>
-                    <input type="text" class="form-control" id="instagram"
-                        [placeholder]="'profile.instagramPlaceholder' | transloco" formControlName="instagram">
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label for="linkedin" class="form-label">{{ 'profile.linkedin' | transloco }}</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="mdi mdi-linkedin"></i></span>
-                    <input type="text" class="form-control" id="linkedin"
-                        [placeholder]="'profile.linkedinPlaceholder' | transloco" formControlName="linkedin">
-                </div>
-            </div>
-        </div>
+    <div class="col-md-6">
+      <div class="mb-3">
+        <label for="position" class="form-label">{{ 'profile.position' | transloco }}</label>
+        <input
+          type="text"
+          class="form-control"
+          id="position"
+          [placeholder]="'profile.positionPlaceholder' | transloco"
+          formControlName="position"
+        />
+      </div>
     </div>
+  </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label for="github" class="form-label">{{ 'profile.github' | transloco }}</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="mdi mdi-github"></i></span>
-                    <input type="text" class="form-control" id="github"
-                        [placeholder]="'profile.githubPlaceholder' | transloco" formControlName="github">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="text-end">
-        <button type="submit" class="btn btn-success waves-effect waves-light mt-2"
-            [disabled]="profileForm.invalid || isLoading">
-            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1" role="status"
-                aria-hidden="true"></span>
-            <i class="mdi mdi-content-save" *ngIf="!isLoading"></i>
-            {{ (isLoading ? 'profile.saving' : 'profile.saveChanges') | transloco }}
-        </button>
-    </div>
+  <div class="text-end">
+    <button
+      type="submit"
+      class="btn btn-success waves-effect waves-light mt-2"
+      [disabled]="profileForm.invalid || isLoading"
+    >
+      <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+      <i class="mdi mdi-content-save" *ngIf="!isLoading"></i>
+      {{ (isLoading ? 'profile.saving' : 'profile.saveChanges') | transloco }}
+    </button>
+  </div>
 </form>

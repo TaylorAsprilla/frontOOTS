@@ -26,8 +26,77 @@
 
 .obligatorio::after {
   content: ' *';
-  color: var(--bs-danger);
+  color: #dc3545;
 }
+
+/* ─── Form typography & controls ─── */
+
+// Labels
+.form-label,
+.col-form-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.35rem;
+}
+
+// Section sub-labels (small uppercase inside cards)
+.form-label.small.text-uppercase,
+label.form-label.fw-semibold.text-secondary.small.text-uppercase {
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+}
+
+// Inputs, selects and textareas
+.form-control,
+.form-select {
+  font-size: 0.97rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 0.45rem;
+  color: #1f2937;
+  border-color: #d1d5db;
+
+  &::placeholder {
+    color: #9ca3af;
+    font-size: 0.9rem;
+  }
+
+  &:focus {
+    border-color: #00acc1;
+    box-shadow: 0 0 0 0.2rem rgba(0, 172, 193, 0.2);
+  }
+}
+
+textarea.form-control {
+  line-height: 1.6;
+}
+
+// Card headers inside form steps
+.card-header.bg-primary.bg-opacity-10 {
+  span.fw-semibold.text-primary {
+    font-size: 1rem;
+  }
+}
+
+// Step headings (h4, h5)
+h4,
+h5 {
+  letter-spacing: -0.01em;
+}
+
+// Form-check labels
+.form-check-label {
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+// Small helper text
+.text-muted.small,
+small.text-muted {
+  font-size: 0.82rem;
+}
+
+/* ─── end form typography ─── */
 
 .btn-group-custom {
   display: flex;

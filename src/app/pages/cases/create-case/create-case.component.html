@@ -11,1687 +11,1821 @@
       <div class="card">
         <div class="card-body">
           @if (isLoadingCase) {
-          <div class="text-center py-5">
-            <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">{{ 'common.loading' | transloco }}</span>
+            <div class="text-center py-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">{{ 'common.loading' | transloco }}</span>
+              </div>
+              <p class="mt-3 text-muted">{{ 'cases.loadingInfo' | transloco }}</p>
             </div>
-            <p class="mt-3 text-muted">{{ 'cases.loadingInfo' | transloco }}</p>
-          </div>
           } @else if (caseForm) {
-          <div class="wizard-container">
-            <form [formGroup]="caseForm" (ngSubmit)="onSubmit()" novalidate>
-              <div id="caseWizard">
-                <ul
-                  ngbNav
-                  #caseWizard="ngbNav"
-                  [(activeId)]="activeWizardStep"
-                  class="nav-pills nav-justified bg-light form-wizard-header mb-3"
-                >
-                  <!-- Step 1: Family Members -->
-                  <li [ngbNavItem]="1">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-account-group me-1"></i>
-                      <span class="d-none d-sm-inline">{{ 'cases.familyComposition' | transloco }}</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="7.7"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-                      <div class="row" formArrayName="familyMembers">
-                        <div class="col-12">
-                          <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0">
-                              <i class="mdi mdi-account-group me-2"></i>{{ 'cases.familyMembers' | transloco }}
-                            </h5>
-                            @if (!isViewMode) {
-                            <button type="button" class="btn btn-primary btn-sm" (click)="addFamilyMember()">
-                              <i class="mdi mdi-plus me-1"></i>{{ 'cases.addFamilyMember' | transloco }}
+            <div class="wizard-container">
+              <form [formGroup]="caseForm" (ngSubmit)="onSubmit()" novalidate>
+                <div id="caseWizard">
+                  <ul
+                    ngbNav
+                    #caseWizard="ngbNav"
+                    [(activeId)]="activeWizardStep"
+                    class="nav-pills nav-justified bg-light form-wizard-header mb-3"
+                  >
+                    <!-- Step 1: Family Members -->
+                    <li [ngbNavItem]="1">
+                      <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                        <i class="mdi mdi-account-group me-1"></i>
+                        <span class="d-none d-sm-inline">{{ 'cases.familyComposition' | transloco }}</span>
+                      </a>
+                      <ng-template ngbNavContent>
+                        <p>
+                          <ngb-progressbar
+                            type="success"
+                            [value]="7.7"
+                            [striped]="true"
+                            [animated]="true"
+                            class="mb-3"
+                            height="7px"
+                          ></ngb-progressbar>
+                        </p>
+                        <div class="row" formArrayName="familyMembers">
+                          <div class="col-12">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                              <h5 class="mb-0">
+                                <i class="mdi mdi-account-group me-2"></i>{{ 'cases.familyMembers' | transloco }}
+                              </h5>
+                              @if (!isViewMode) {
+                                <button type="button" class="btn btn-primary btn-sm" (click)="addFamilyMember()">
+                                  <i class="mdi mdi-plus me-1"></i>{{ 'cases.addFamilyMember' | transloco }}
+                                </button>
+                              }
+                            </div>
+
+                            @for (member of familyMembersArray.controls; track $index; let i = $index) {
+                              <div [formGroupName]="i" class="family-member-card p-3 mb-3 position-relative">
+                                <div
+                                  class="family-member-header d-flex justify-content-between align-items-center mb-3"
+                                >
+                                  <h6 class="mb-0 text-muted">
+                                    <i class="mdi mdi-account me-1"></i>{{ 'cases.family' | transloco }} {{ i + 1 }}
+                                  </h6>
+                                  @if (familyMembersArray.length > 1 && !isViewMode) {
+                                    <button
+                                      type="button"
+                                      class="btn btn-danger btn-sm"
+                                      (click)="removeFamilyMember(i)"
+                                      [title]="'cases.removeFamilyMember' | transloco"
+                                    >
+                                      <i class="mdi mdi-delete"></i>
+                                    </button>
+                                  }
+                                </div>
+
+                                <div class="row mb-3">
+                                  <label class="col-md-3 col-form-label obligatorio" [for]="'name_' + i">{{
+                                    'cases.name' | transloco
+                                  }}</label>
+                                  <div class="col-md-9">
+                                    <input type="text" [id]="'name_' + i" class="form-control" formControlName="name" />
+                                  </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                  <label class="col-md-3 col-form-label" [for]="'birthDate_' + i">{{
+                                    'cases.birthDate' | transloco
+                                  }}</label>
+                                  <div class="col-md-9">
+                                    <input
+                                      type="date"
+                                      [id]="'birthDate_' + i"
+                                      class="form-control"
+                                      formControlName="birthDate"
+                                    />
+                                  </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                  <label class="col-md-3 col-form-label obligatorio" [for]="'occupation_' + i">{{
+                                    'cases.occupation' | transloco
+                                  }}</label>
+                                  <div class="col-md-9">
+                                    <input
+                                      type="text"
+                                      [id]="'occupation_' + i"
+                                      class="form-control"
+                                      formControlName="occupation"
+                                    />
+                                  </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                  <label [for]="'relationshipId_' + i" class="col-md-3 col-form-label obligatorio">{{
+                                    'cases.relationship' | transloco
+                                  }}</label>
+                                  <div class="col-md-9">
+                                    <select
+                                      class="form-select"
+                                      [id]="'relationshipId_' + i"
+                                      formControlName="familyRelationshipId"
+                                    >
+                                      <option value="" disabled selected>
+                                        {{ 'cases.selectRelationship' | transloco }}
+                                      </option>
+                                      @for (relationship of familyRelationships; track relationship.id) {
+                                        <option [value]="relationship.id">{{ relationship.name }}</option>
+                                      }
+                                    </select>
+                                  </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                  <label [for]="'academicLevelId_' + i" class="col-md-3 col-form-label obligatorio">{{
+                                    'cases.academicGrade' | transloco
+                                  }}</label>
+                                  <div class="col-md-9">
+                                    <select
+                                      class="form-select"
+                                      [id]="'academicLevelId_' + i"
+                                      formControlName="academicLevelId"
+                                    >
+                                      <option value="" disabled selected>
+                                        {{ 'cases.selectAcademicGrade' | transloco }}
+                                      </option>
+                                      @for (academicLevel of academicLevels; track academicLevel.id) {
+                                        <option [value]="academicLevel.id">{{ academicLevel.name }}</option>
+                                      }
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+                            }
+                          </div>
+                        </div>
+
+                        <ul class="list-inline mb-0 wizard">
+                          <li class="next list-inline-item float-end">
+                            <button type="button" class="btn btn-primary" (click)="goToNextStep()">
+                              {{ 'cases.next' | transloco }}
                             </button>
-                            }
-                          </div>
+                          </li>
+                        </ul>
+                      </ng-template>
+                    </li>
 
-                          @for (member of familyMembersArray.controls; track $index; let i = $index) {
-                          <div [formGroupName]="i" class="family-member-card p-3 mb-3 position-relative">
-                            <div class="family-member-header d-flex justify-content-between align-items-center mb-3">
-                              <h6 class="mb-0 text-muted">
-                                <i class="mdi mdi-account me-1"></i>{{ 'cases.family' | transloco }} {{ i + 1 }}
-                              </h6>
-                              @if (familyMembersArray.length > 1 && !isViewMode) {
-                              <button
-                                type="button"
-                                class="btn btn-danger btn-sm"
-                                (click)="removeFamilyMember(i)"
-                                [title]="'cases.removeFamilyMember' | transloco"
+                    <!-- Step 2: Biopsychosocial History -->
+                    <li [ngbNavItem]="2">
+                      <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                        <i class="mdi mdi-school me-1"></i>
+                        <span class="d-none d-sm-inline">{{ 'cases.bioPsychosocialHistory' | transloco }}</span>
+                      </a>
+                      <ng-template ngbNavContent>
+                        <p>
+                          <ngb-progressbar
+                            type="success"
+                            [value]="15.4"
+                            [striped]="true"
+                            [animated]="true"
+                            class="mb-3"
+                            height="7px"
+                          ></ngb-progressbar>
+                        </p>
+                        <div formGroupName="bioPsychosocialHistory">
+                          <div class="row">
+                            <div class="col-md-6 mb-3">
+                              <label for="academicLevelId" class="form-label obligatorio">{{
+                                'cases.academicLevel' | transloco
+                              }}</label>
+                              <select
+                                class="form-select"
+                                [class.is-invalid]="hasFieldError('bioPsychosocialHistory.academicLevelId')"
+                                id="academicLevelId"
+                                formControlName="academicLevelId"
                               >
-                                <i class="mdi mdi-delete"></i>
-                              </button>
-                              }
-                            </div>
-
-                            <div class="row mb-3">
-                              <label class="col-md-3 col-form-label obligatorio" [for]="'name_' + i">{{
-                                'cases.name' | transloco
-                              }}</label>
-                              <div class="col-md-9">
-                                <input type="text" [id]="'name_' + i" class="form-control" formControlName="name" />
-                              </div>
-                            </div>
-
-                            <div class="row mb-3">
-                              <label class="col-md-3 col-form-label" [for]="'birthDate_' + i">{{
-                                'cases.birthDate' | transloco
-                              }}</label>
-                              <div class="col-md-9">
-                                <input
-                                  type="date"
-                                  [id]="'birthDate_' + i"
-                                  class="form-control"
-                                  formControlName="birthDate"
-                                />
-                              </div>
-                            </div>
-
-                            <div class="row mb-3">
-                              <label class="col-md-3 col-form-label obligatorio" [for]="'occupation_' + i">{{
-                                'cases.occupation' | transloco
-                              }}</label>
-                              <div class="col-md-9">
-                                <input
-                                  type="text"
-                                  [id]="'occupation_' + i"
-                                  class="form-control"
-                                  formControlName="occupation"
-                                />
-                              </div>
-                            </div>
-
-                            <div class="row mb-3">
-                              <label [for]="'relationshipId_' + i" class="col-md-3 col-form-label obligatorio">{{
-                                'cases.relationship' | transloco
-                              }}</label>
-                              <div class="col-md-9">
-                                <select
-                                  class="form-select"
-                                  [id]="'relationshipId_' + i"
-                                  formControlName="familyRelationshipId"
-                                >
-                                  <option value="" disabled selected>
-                                    {{ 'cases.selectRelationship' | transloco }}
-                                  </option>
-                                  @for (relationship of familyRelationships; track relationship.id) {
-                                  <option [value]="relationship.id">{{ relationship.name }}</option>
-                                  }
-                                </select>
-                              </div>
-                            </div>
-
-                            <div class="row mb-3">
-                              <label [for]="'academicLevelId_' + i" class="col-md-3 col-form-label obligatorio">{{
-                                'cases.academicGrade' | transloco
-                              }}</label>
-                              <div class="col-md-9">
-                                <select
-                                  class="form-select"
-                                  [id]="'academicLevelId_' + i"
-                                  formControlName="academicLevelId"
-                                >
-                                  <option value="" disabled selected>
-                                    {{ 'cases.selectAcademicGrade' | transloco }}
-                                  </option>
-                                  @for (academicLevel of academicLevels; track academicLevel.id) {
+                                <option value="" disabled selected>{{ 'cases.select' | transloco }}</option>
+                                @for (academicLevel of academicLevels; track academicLevel.id) {
                                   <option [value]="academicLevel.id">{{ academicLevel.name }}</option>
+                                }
+                              </select>
+                              @if (hasFieldError('bioPsychosocialHistory.academicLevelId')) {
+                                <div class="invalid-feedback">{{ 'cases.requiredField' | transloco }}</div>
+                              }
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                              <label class="form-label obligatorio" for="completedGrade">{{
+                                'cases.completedGrade' | transloco
+                              }}</label>
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('bioPsychosocialHistory.completedGrade')"
+                                id="completedGrade"
+                                formControlName="completedGrade"
+                                [placeholder]="'cases.completedGradePlaceholder' | transloco"
+                              />
+                              @if (hasFieldError('bioPsychosocialHistory.completedGrade')) {
+                                <div class="invalid-feedback">{{ 'cases.requiredField' | transloco }}</div>
+                              }
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                              <label class="form-label obligatorio" for="institution">{{
+                                'cases.institution' | transloco
+                              }}</label>
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('bioPsychosocialHistory.institution')"
+                                id="institution"
+                                formControlName="institution"
+                                [placeholder]="'cases.institutionPlaceholder' | transloco"
+                              />
+                              @if (hasFieldError('bioPsychosocialHistory.institution')) {
+                                <div class="invalid-feedback">{{ 'cases.requiredField' | transloco }}</div>
+                              }
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                              <label class="form-label obligatorio" for="profession">{{
+                                'cases.profession' | transloco
+                              }}</label>
+                              <input
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('bioPsychosocialHistory.profession')"
+                                id="profession"
+                                formControlName="profession"
+                                [placeholder]="'cases.professionPlaceholder' | transloco"
+                              />
+                              @if (hasFieldError('bioPsychosocialHistory.profession')) {
+                                <div class="invalid-feedback">{{ 'cases.requiredField' | transloco }}</div>
+                              }
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                              <label for="incomeSourceId" class="form-label obligatorio">{{
+                                'cases.incomeSource' | transloco
+                              }}</label>
+                              <select
+                                class="form-select"
+                                [class.is-invalid]="hasFieldError('bioPsychosocialHistory.incomeSourceId')"
+                                id="incomeSourceId"
+                                formControlName="incomeSourceId"
+                              >
+                                <option value="" disabled selected>{{ 'cases.select' | transloco }}</option>
+                                @for (incomeSource of incomeSources; track incomeSource.id) {
+                                  <option [value]="incomeSource.id">{{ incomeSource.name }}</option>
+                                }
+                              </select>
+                              @if (hasFieldError('bioPsychosocialHistory.incomeSourceId')) {
+                                <div class="invalid-feedback">{{ 'cases.requiredField' | transloco }}</div>
+                              }
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                              <label class="form-label obligatorio" for="incomeLevelId">{{
+                                'cases.incomeLevel' | transloco
+                              }}</label>
+                              <select
+                                class="form-select"
+                                [class.is-invalid]="hasFieldError('bioPsychosocialHistory.incomeLevelId')"
+                                id="incomeLevelId"
+                                formControlName="incomeLevelId"
+                              >
+                                <option value="" disabled selected>{{ 'cases.select' | transloco }}</option>
+                                @for (incomeLevel of incomeLevels; track incomeLevel.id) {
+                                  <option [value]="incomeLevel.id">{{ incomeLevel.name }}</option>
+                                }
+                              </select>
+                              @if (hasFieldError('bioPsychosocialHistory.incomeLevelId')) {
+                                <div class="invalid-feedback">{{ 'cases.requiredField' | transloco }}</div>
+                              }
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                              <label for="housingTypeId" class="form-label obligatorio">{{
+                                'cases.housingType' | transloco
+                              }}</label>
+                              <select
+                                class="form-select"
+                                [class.is-invalid]="hasFieldError('bioPsychosocialHistory.housingTypeId')"
+                                id="housingTypeId"
+                                formControlName="housingTypeId"
+                              >
+                                <option value="" disabled selected>{{ 'cases.select' | transloco }}</option>
+                                @for (housingType of housingTypes; track housingType.id) {
+                                  <option [value]="housingType.id">{{ housingType.name }}</option>
+                                }
+                              </select>
+                              @if (hasFieldError('bioPsychosocialHistory.housingTypeId')) {
+                                <div class="invalid-feedback">{{ 'cases.requiredField' | transloco }}</div>
+                              }
+                            </div>
+
+                            <div class="col-12 mb-3">
+                              <label class="form-label obligatorio" for="occupationalHistory">{{
+                                'cases.occupationalHistory' | transloco
+                              }}</label>
+                              <textarea
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('bioPsychosocialHistory.occupationalHistory')"
+                                id="occupationalHistory"
+                                formControlName="occupationalHistory"
+                                rows="2"
+                                [placeholder]="'cases.occupationalHistoryPlaceholder' | transloco"
+                              ></textarea>
+                              @if (hasFieldError('bioPsychosocialHistory.occupationalHistory')) {
+                                <div class="invalid-feedback">{{ 'cases.requiredField' | transloco }}</div>
+                              }
+                            </div>
+
+                            <div class="col-12 mb-3">
+                              <label class="form-label obligatorio" for="housing">{{
+                                'cases.housingDescription' | transloco
+                              }}</label>
+                              <textarea
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('bioPsychosocialHistory.housing')"
+                                id="housing"
+                                formControlName="housing"
+                                rows="2"
+                                [placeholder]="'cases.housingDescriptionPlaceholder' | transloco"
+                              ></textarea>
+                              @if (hasFieldError('bioPsychosocialHistory.housing')) {
+                                <div class="invalid-feedback">{{ 'cases.requiredField' | transloco }}</div>
+                              }
+                            </div>
+                          </div>
+                        </div>
+
+                        <ul class="list-inline mb-0 wizard">
+                          <li class="previous list-inline-item">
+                            <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
+                              {{ 'cases.previous' | transloco }}
+                            </button>
+                          </li>
+                          <li class="next list-inline-item float-end">
+                            <button type="button" class="btn btn-primary" (click)="goToNextStep()">
+                              {{ 'cases.next' | transloco }}
+                            </button>
+                          </li>
+                        </ul>
+                      </ng-template>
+                    </li>
+
+                    <!-- Step 3: Consultation Reason -->
+                    <li [ngbNavItem]="3">
+                      <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                        <i class="mdi mdi-clipboard-text me-1"></i>
+                        <span class="d-none d-sm-inline">{{ 'cases.consultationReasonTitle' | transloco }}</span>
+                      </a>
+                      <ng-template ngbNavContent>
+                        <p>
+                          <ngb-progressbar
+                            type="success"
+                            [value]="23.1"
+                            [striped]="true"
+                            [animated]="true"
+                            class="mb-3"
+                            height="7px"
+                          ></ngb-progressbar>
+                        </p>
+                        <div formGroupName="consultationReason">
+                          <div class="row mb-3">
+                            <label class="col-md-3 col-form-label obligatorio">{{
+                              'cases.consultationReasonLabel' | transloco
+                            }}</label>
+                            <div class="col-md-9">
+                              <textarea
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('consultationReason.reason')"
+                                formControlName="reason"
+                                rows="4"
+                                [placeholder]="'cases.consultationReasonDescription' | transloco"
+                              ></textarea>
+                              @if (hasFieldError('consultationReason.reason')) {
+                                <div class="invalid-feedback">{{ getFieldError('consultationReason.reason') }}</div>
+                              }
+                            </div>
+                          </div>
+                        </div>
+
+                        <ul class="list-inline mb-0 wizard">
+                          <li class="previous list-inline-item">
+                            <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
+                              {{ 'cases.previous' | transloco }}
+                            </button>
+                          </li>
+                          <li class="next list-inline-item float-end">
+                            <button type="button" class="btn btn-primary" (click)="goToNextStep()">
+                              {{ 'cases.next' | transloco }}
+                            </button>
+                          </li>
+                        </ul>
+                      </ng-template>
+                    </li>
+
+                    <!-- Step 4: Identified Situations -->
+                    <li [ngbNavItem]="4">
+                      <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                        <i class="mdi mdi-alert-circle me-1"></i>
+                        <span class="d-none d-sm-inline">{{ 'cases.situations' | transloco }}</span>
+                      </a>
+                      <ng-template ngbNavContent>
+                        <p>
+                          <ngb-progressbar
+                            type="success"
+                            [value]="30.8"
+                            [striped]="true"
+                            [animated]="true"
+                            class="mb-3"
+                            height="7px"
+                          ></ngb-progressbar>
+                        </p>
+                        <div formGroupName="identifiedSituations">
+                          <!-- Checkbox list of identified situations -->
+                          <div class="row mb-3">
+                            <label class="col-md-12 col-form-label obligatorio">{{
+                              'cases.selectIdentifiedSituations' | transloco
+                            }}</label>
+                            <div class="col-md-12">
+                              @if (identifiedSituations.length > 0) {
+                                <div class="row">
+                                  @for (situation of identifiedSituations; track situation.id) {
+                                    <div class="col-md-6 col-lg-4 mb-2">
+                                      <div class="form-check">
+                                        <input
+                                          type="checkbox"
+                                          class="form-check-input"
+                                          [id]="'situation-' + situation.id"
+                                          [value]="situation.id"
+                                          [checked]="isSituationSelected(situation.id)"
+                                          (change)="onSituationChange($event, situation.id)"
+                                        />
+                                        <label class="form-check-label" [for]="'situation-' + situation.id">
+                                          {{ situation.name }}
+                                        </label>
+                                      </div>
+                                    </div>
                                   }
-                                </select>
+                                </div>
+                              } @else {
+                                <div class="text-muted">{{ 'cases.loadingSituations' | transloco }}</div>
+                              }
+                              @if (hasFieldError('identifiedSituations.situations')) {
+                                <div class="invalid-feedback d-block">
+                                  <i class="mdi mdi-alert-circle-outline me-1"></i>
+                                  {{ getFieldError('identifiedSituations.situations') }}
+                                </div>
+                              }
+                            </div>
+                          </div>
+                        </div>
+
+                        <ul class="list-inline mb-0 wizard">
+                          <li class="previous list-inline-item">
+                            <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
+                              {{ 'cases.previous' | transloco }}
+                            </button>
+                          </li>
+                          <li class="next list-inline-item float-end">
+                            <button type="button" class="btn btn-primary" (click)="goToNextStep()">
+                              {{ 'cases.next' | transloco }}
+                            </button>
+                          </li>
+                        </ul>
+                      </ng-template>
+                    </li>
+
+                    <!-- Step 5: Intervention -->
+                    <li [ngbNavItem]="5">
+                      <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                        <i class="mdi mdi-clipboard-check me-1"></i>
+                        <span class="d-none d-sm-inline">{{ 'cases.interventionTitle' | transloco }}</span>
+                      </a>
+                      <ng-template ngbNavContent>
+                        <p>
+                          <ngb-progressbar
+                            type="success"
+                            [value]="38.5"
+                            [striped]="true"
+                            [animated]="true"
+                            class="mb-3"
+                            height="7px"
+                          ></ngb-progressbar>
+                        </p>
+                        <div formGroupName="intervention">
+                          <div class="row mb-3">
+                            <label class="col-md-3 col-form-label obligatorio">{{
+                              'cases.interventionTitle' | transloco
+                            }}</label>
+                            <div class="col-md-9">
+                              <textarea
+                                class="form-control"
+                                [class.is-invalid]="hasFieldError('intervention.action')"
+                                formControlName="action"
+                                rows="4"
+                                [placeholder]="'cases.interventionDescription' | transloco"
+                              ></textarea>
+                              @if (hasFieldError('intervention.action')) {
+                                <div class="invalid-feedback">{{ getFieldError('intervention.action') }}</div>
+                              }
+                            </div>
+                          </div>
+                        </div>
+
+                        <ul class="list-inline mb-0 wizard">
+                          <li class="previous list-inline-item">
+                            <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
+                              {{ 'cases.previous' | transloco }}
+                            </button>
+                          </li>
+                          <li class="next list-inline-item float-end">
+                            <button type="button" class="btn btn-primary" (click)="goToNextStep()">
+                              {{ 'cases.next' | transloco }}
+                            </button>
+                          </li>
+                        </ul>
+                      </ng-template>
+                    </li>
+
+                    <!-- Step 6: Follow-up Plan -->
+                    <li [ngbNavItem]="6">
+                      <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                        <i class="mdi mdi-clipboard-list me-1"></i>
+                        <span class="d-none d-sm-inline">{{ 'cases.followUpPlan.stepTitle' | transloco }}</span>
+                      </a>
+                      <ng-template ngbNavContent>
+                        <p>
+                          <ngb-progressbar
+                            type="success"
+                            [value]="46.2"
+                            [striped]="true"
+                            [animated]="true"
+                            class="mb-3"
+                            height="7px"
+                          ></ngb-progressbar>
+                        </p>
+                        <div formGroupName="followUpPlan">
+                          <!-- Header Section -->
+                          <div class="mb-4">
+                            <h5 class="text-primary mb-2">
+                              <i class="mdi mdi-clipboard-list-outline me-2"></i>
+                              {{ 'cases.followUpPlan.title' | transloco }}
+                            </h5>
+                            <p class="text-muted small">{{ 'cases.followUpPlan.subtitle' | transloco }}</p>
+                          </div>
+
+                          <!-- Se culminó el proceso de ayuda -->
+                          <div class="card border-0 shadow-sm mb-3">
+                            <div class="card-body">
+                              <div class="form-check">
+                                <input
+                                  type="checkbox"
+                                  class="form-check-input"
+                                  id="processCompleted"
+                                  formControlName="processCompleted"
+                                />
+                                <label class="form-check-label fw-semibold" for="processCompleted">
+                                  <i class="mdi mdi-check-circle-outline me-1 text-success"></i>
+                                  {{ 'cases.followUpPlan.processCompletedLabel' | transloco }}
+                                </label>
                               </div>
                             </div>
                           </div>
-                          }
-                        </div>
-                      </div>
 
-                      <ul class="list-inline mb-0 wizard">
-                        <li class="next list-inline-item float-end">
-                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">
-                            {{ 'cases.next' | transloco }}
-                          </button>
-                        </li>
-                      </ul>
-                    </ng-template>
-                  </li>
-
-                  <!-- Step 2: Biopsychosocial History -->
-                  <li [ngbNavItem]="2">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-school me-1"></i>
-                      <span class="d-none d-sm-inline">{{ 'cases.bioPsychosocialHistory' | transloco }}</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="15.4"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-                      <div formGroupName="bioPsychosocialHistory">
-                        <div class="row">
-                          <div class="col-md-6 mb-3">
-                            <label for="academicLevelId" class="form-label obligatorio">{{
-                              'cases.academicLevel' | transloco
-                            }}</label>
-                            <select
-                              class="form-select"
-                              [class.is-invalid]="hasFieldError('bioPsychosocialHistory.academicLevelId')"
-                              id="academicLevelId"
-                              formControlName="academicLevelId"
-                            >
-                              <option value="" disabled selected>{{ 'cases.select' | transloco }}</option>
-                              @for (academicLevel of academicLevels; track academicLevel.id) {
-                              <option [value]="academicLevel.id">{{ academicLevel.name }}</option>
+                          <!-- Se coordinó servicios -->
+                          <div class="card border-0 shadow-sm mb-3">
+                            <div class="card-body">
+                              <div class="form-check mb-2">
+                                <input
+                                  type="checkbox"
+                                  class="form-check-input"
+                                  id="servicesCoordinated"
+                                  formControlName="servicesCoordinated"
+                                />
+                                <label class="form-check-label fw-semibold" for="servicesCoordinated">
+                                  <i class="mdi mdi-account-group-outline me-1 text-info"></i>
+                                  {{ 'cases.followUpPlan.servicesCoordinatedLabel' | transloco }}
+                                </label>
+                              </div>
+                              @if (caseForm.get('followUpPlan.servicesCoordinated')?.value) {
+                                <div class="mt-3 ps-4 border-start border-info border-3">
+                                  <label class="form-label small text-muted">{{
+                                    'cases.followUpPlan.servicesAgencyLabel' | transloco
+                                  }}</label>
+                                  <textarea
+                                    class="form-control"
+                                    formControlName="servicesAgency"
+                                    rows="2"
+                                    [placeholder]="'cases.followUpPlan.servicesAgencyPlaceholder' | transloco"
+                                  ></textarea>
+                                </div>
                               }
-                            </select>
-                            @if (hasFieldError('bioPsychosocialHistory.academicLevelId')) {
-                            <div class="invalid-feedback">{{ 'cases.requiredField' | transloco }}</div>
-                            }
+                            </div>
                           </div>
 
-                          <div class="col-md-6 mb-3">
-                            <label class="form-label obligatorio" for="completedGrade">{{
-                              'cases.completedGrade' | transloco
-                            }}</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              [class.is-invalid]="hasFieldError('bioPsychosocialHistory.completedGrade')"
-                              id="completedGrade"
-                              formControlName="completedGrade"
-                              [placeholder]="'cases.completedGradePlaceholder' | transloco"
-                            />
-                            @if (hasFieldError('bioPsychosocialHistory.completedGrade')) {
-                            <div class="invalid-feedback">{{ 'cases.requiredField' | transloco }}</div>
-                            }
-                          </div>
-
-                          <div class="col-md-6 mb-3">
-                            <label class="form-label obligatorio" for="institution">{{
-                              'cases.institution' | transloco
-                            }}</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              [class.is-invalid]="hasFieldError('bioPsychosocialHistory.institution')"
-                              id="institution"
-                              formControlName="institution"
-                              [placeholder]="'cases.institutionPlaceholder' | transloco"
-                            />
-                            @if (hasFieldError('bioPsychosocialHistory.institution')) {
-                            <div class="invalid-feedback">{{ 'cases.requiredField' | transloco }}</div>
-                            }
-                          </div>
-
-                          <div class="col-md-6 mb-3">
-                            <label class="form-label obligatorio" for="profession">{{
-                              'cases.profession' | transloco
-                            }}</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              [class.is-invalid]="hasFieldError('bioPsychosocialHistory.profession')"
-                              id="profession"
-                              formControlName="profession"
-                              [placeholder]="'cases.professionPlaceholder' | transloco"
-                            />
-                            @if (hasFieldError('bioPsychosocialHistory.profession')) {
-                            <div class="invalid-feedback">{{ 'cases.requiredField' | transloco }}</div>
-                            }
-                          </div>
-
-                          <div class="col-md-6 mb-3">
-                            <label for="incomeSourceId" class="form-label obligatorio">{{
-                              'cases.incomeSource' | transloco
-                            }}</label>
-                            <select
-                              class="form-select"
-                              [class.is-invalid]="hasFieldError('bioPsychosocialHistory.incomeSourceId')"
-                              id="incomeSourceId"
-                              formControlName="incomeSourceId"
-                            >
-                              <option value="" disabled selected>{{ 'cases.select' | transloco }}</option>
-                              @for (incomeSource of incomeSources; track incomeSource.id) {
-                              <option [value]="incomeSource.id">{{ incomeSource.name }}</option>
+                          <!-- Se hará un referido -->
+                          <div class="card border-0 shadow-sm mb-3">
+                            <div class="card-body">
+                              <div class="form-check mb-2">
+                                <input
+                                  type="checkbox"
+                                  class="form-check-input"
+                                  id="referralMade"
+                                  formControlName="referralMade"
+                                />
+                                <label class="form-check-label fw-semibold" for="referralMade">
+                                  <i class="mdi mdi-share-outline me-1 text-warning"></i>
+                                  {{ 'cases.followUpPlan.referralMadeLabel' | transloco }}
+                                </label>
+                              </div>
+                              @if (caseForm.get('followUpPlan.referralMade')?.value) {
+                                <div class="mt-3 ps-4 border-start border-warning border-3">
+                                  <label class="form-label small text-muted">{{
+                                    'cases.followUpPlan.referralDetailsLabel' | transloco
+                                  }}</label>
+                                  <textarea
+                                    class="form-control"
+                                    formControlName="referralDetails"
+                                    rows="3"
+                                    [placeholder]="'cases.followUpPlan.referralDetailsPlaceholder' | transloco"
+                                  ></textarea>
+                                </div>
                               }
-                            </select>
-                            @if (hasFieldError('bioPsychosocialHistory.incomeSourceId')) {
-                            <div class="invalid-feedback">{{ 'cases.requiredField' | transloco }}</div>
-                            }
+                            </div>
                           </div>
 
-                          <div class="col-md-6 mb-3">
-                            <label class="form-label obligatorio" for="incomeLevelId">{{
-                              'cases.incomeLevel' | transloco
-                            }}</label>
-                            <select
-                              class="form-select"
-                              [class.is-invalid]="hasFieldError('bioPsychosocialHistory.incomeLevelId')"
-                              id="incomeLevelId"
-                              formControlName="incomeLevelId"
-                            >
-                              <option value="" disabled selected>{{ 'cases.select' | transloco }}</option>
-                              @for (incomeLevel of incomeLevels; track incomeLevel.id) {
-                              <option [value]="incomeLevel.id">{{ incomeLevel.name }}</option>
+                          <!-- Se coordinó cita -->
+                          <div class="card border-0 shadow-sm mb-3">
+                            <div class="card-body">
+                              <div class="form-check mb-2">
+                                <input
+                                  type="checkbox"
+                                  class="form-check-input"
+                                  id="appointmentScheduled"
+                                  formControlName="appointmentScheduled"
+                                />
+                                <label class="form-check-label fw-semibold" for="appointmentScheduled">
+                                  <i class="mdi mdi-calendar-clock me-1 text-primary"></i>
+                                  {{ 'cases.followUpPlan.appointmentScheduledLabel' | transloco }}
+                                </label>
+                              </div>
+                              @if (caseForm.get('followUpPlan.appointmentScheduled')?.value) {
+                                <div class="mt-3 ps-4 border-start border-primary border-3">
+                                  <div class="row g-3">
+                                    <div class="col-md-6">
+                                      <label class="form-label small text-muted">
+                                        <i class="mdi mdi-calendar me-1"></i
+                                        >{{ 'cases.followUpPlan.appointmentDateLabel' | transloco }}
+                                      </label>
+                                      <input type="date" class="form-control" formControlName="appointmentDate" />
+                                    </div>
+                                    <div class="col-md-6">
+                                      <label class="form-label small text-muted">
+                                        <i class="mdi mdi-clock-outline me-1"></i
+                                        >{{ 'cases.followUpPlan.appointmentTimeLabel' | transloco }}
+                                      </label>
+                                      <input type="time" class="form-control" formControlName="appointmentTime" />
+                                    </div>
+                                  </div>
+                                </div>
                               }
-                            </select>
-                            @if (hasFieldError('bioPsychosocialHistory.incomeLevelId')) {
-                            <div class="invalid-feedback">{{ 'cases.requiredField' | transloco }}</div>
-                            }
+                            </div>
                           </div>
 
-                          <div class="col-md-6 mb-3">
-                            <label for="housingTypeId" class="form-label obligatorio">{{
-                              'cases.housingType' | transloco
-                            }}</label>
-                            <select
-                              class="form-select"
-                              [class.is-invalid]="hasFieldError('bioPsychosocialHistory.housingTypeId')"
-                              id="housingTypeId"
-                              formControlName="housingTypeId"
-                            >
-                              <option value="" disabled selected>{{ 'cases.select' | transloco }}</option>
-                              @for (housingType of housingTypes; track housingType.id) {
-                              <option [value]="housingType.id">{{ housingType.name }}</option>
-                              }
-                            </select>
-                            @if (hasFieldError('bioPsychosocialHistory.housingTypeId')) {
-                            <div class="invalid-feedback">{{ 'cases.requiredField' | transloco }}</div>
-                            }
-                          </div>
-
-                          <div class="col-12 mb-3">
-                            <label class="form-label obligatorio" for="occupationalHistory">{{
-                              'cases.occupationalHistory' | transloco
-                            }}</label>
-                            <textarea
-                              class="form-control"
-                              [class.is-invalid]="hasFieldError('bioPsychosocialHistory.occupationalHistory')"
-                              id="occupationalHistory"
-                              formControlName="occupationalHistory"
-                              rows="2"
-                              [placeholder]="'cases.occupationalHistoryPlaceholder' | transloco"
-                            ></textarea>
-                            @if (hasFieldError('bioPsychosocialHistory.occupationalHistory')) {
-                            <div class="invalid-feedback">{{ 'cases.requiredField' | transloco }}</div>
-                            }
-                          </div>
-
-                          <div class="col-12 mb-3">
-                            <label class="form-label obligatorio" for="housing">{{
-                              'cases.housingDescription' | transloco
-                            }}</label>
-                            <textarea
-                              class="form-control"
-                              [class.is-invalid]="hasFieldError('bioPsychosocialHistory.housing')"
-                              id="housing"
-                              formControlName="housing"
-                              rows="2"
-                              [placeholder]="'cases.housingDescriptionPlaceholder' | transloco"
-                            ></textarea>
-                            @if (hasFieldError('bioPsychosocialHistory.housing')) {
-                            <div class="invalid-feedback">{{ 'cases.requiredField' | transloco }}</div>
-                            }
+                          <!-- Otros -->
+                          <div class="card border-0 shadow-sm mb-3">
+                            <div class="card-body">
+                              <label class="form-label fw-semibold">
+                                <i class="mdi mdi-text-box-outline me-1 text-secondary"></i>
+                                {{ 'cases.followUpPlan.otherDetailsLabel' | transloco }}
+                              </label>
+                              <textarea
+                                class="form-control"
+                                formControlName="otherDetails"
+                                rows="3"
+                                [placeholder]="'cases.followUpPlan.otherDetailsPlaceholder' | transloco"
+                              ></textarea>
+                              <small class="text-muted">{{ 'cases.followUpPlan.otherDetailsHint' | transloco }}</small>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <ul class="list-inline mb-0 wizard">
-                        <li class="previous list-inline-item">
-                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
-                            {{ 'cases.previous' | transloco }}
-                          </button>
-                        </li>
-                        <li class="next list-inline-item float-end">
-                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">
-                            {{ 'cases.next' | transloco }}
-                          </button>
-                        </li>
-                      </ul>
-                    </ng-template>
-                  </li>
+                        <ul class="list-inline mb-0 wizard">
+                          <li class="previous list-inline-item">
+                            <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
+                              <i class="mdi mdi-arrow-left me-1"></i>{{ 'cases.previous' | transloco }}
+                            </button>
+                          </li>
+                          <li class="next list-inline-item float-end">
+                            <button type="button" class="btn btn-primary" (click)="goToNextStep()">
+                              {{ 'cases.next' | transloco }}<i class="mdi mdi-arrow-right ms-1"></i>
+                            </button>
+                          </li>
+                        </ul>
+                      </ng-template>
+                    </li>
 
-                  <!-- Step 3: Consultation Reason -->
-                  <li [ngbNavItem]="3">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-clipboard-text me-1"></i>
-                      <span class="d-none d-sm-inline">{{ 'cases.consultationReasonTitle' | transloco }}</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="23.1"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-                      <div formGroupName="consultationReason">
-                        <div class="row mb-3">
-                          <label class="col-md-3 col-form-label obligatorio">{{
-                            'cases.consultationReasonLabel' | transloco
-                          }}</label>
-                          <div class="col-md-9">
-                            <textarea
-                              class="form-control"
-                              [class.is-invalid]="hasFieldError('consultationReason.reason')"
-                              formControlName="reason"
-                              rows="4"
-                              [placeholder]="'cases.consultationReasonDescription' | transloco"
-                            ></textarea>
-                            @if (hasFieldError('consultationReason.reason')) {
-                            <div class="invalid-feedback">{{ getFieldError('consultationReason.reason') }}</div>
-                            }
+                    <!-- Step 7: Physical Health History -->
+                    <li [ngbNavItem]="7">
+                      <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                        <i class="mdi mdi-hospital-box me-1"></i>
+                        <span class="d-none d-sm-inline">{{ 'cases.physicalHealth.stepTitle' | transloco }}</span>
+                      </a>
+                      <ng-template ngbNavContent>
+                        <p>
+                          <ngb-progressbar
+                            type="success"
+                            [value]="53.9"
+                            [striped]="true"
+                            [animated]="true"
+                            class="mb-3"
+                            height="7px"
+                          ></ngb-progressbar>
+                        </p>
+                        <div formGroupName="physicalHealthHistory">
+                          <!-- Header Section -->
+                          <div class="mb-4">
+                            <h5 class="text-primary mb-2">
+                              <i class="mdi mdi-stethoscope me-2"></i>
+                              {{ 'cases.physicalHealth.title' | transloco }}
+                            </h5>
+                            <p class="text-muted small">{{ 'cases.physicalHealth.subtitle' | transloco }}</p>
                           </div>
-                        </div>
-                      </div>
 
-                      <ul class="list-inline mb-0 wizard">
-                        <li class="previous list-inline-item">
-                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
-                            {{ 'cases.previous' | transloco }}
-                          </button>
-                        </li>
-                        <li class="next list-inline-item float-end">
-                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">
-                            {{ 'cases.next' | transloco }}
-                          </button>
-                        </li>
-                      </ul>
-                    </ng-template>
-                  </li>
-
-                  <!-- Step 4: Identified Situations -->
-                  <li [ngbNavItem]="4">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-alert-circle me-1"></i>
-                      <span class="d-none d-sm-inline">{{ 'cases.situations' | transloco }}</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="30.8"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-                      <div formGroupName="identifiedSituations">
-                        <!-- Checkbox list of identified situations -->
-                        <div class="row mb-3">
-                          <label class="col-md-12 col-form-label obligatorio">{{
-                            'cases.selectIdentifiedSituations' | transloco
-                          }}</label>
-                          <div class="col-md-12">
-                            @if (identifiedSituations.length > 0) {
-                            <div class="row">
-                              @for (situation of identifiedSituations; track situation.id) {
-                              <div class="col-md-6 col-lg-4 mb-2">
+                          <!-- ¿Tiene historial de salud física? -->
+                          <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-body">
+                              <p class="fw-semibold mb-3">
+                                <i class="mdi mdi-help-circle-outline me-1 text-primary"></i>
+                                ¿El participante tiene un historial de salud física?
+                              </p>
+                              <div class="d-flex gap-4">
                                 <div class="form-check">
                                   <input
-                                    type="checkbox"
                                     class="form-check-input"
-                                    [id]="'situation-' + situation.id"
-                                    [value]="situation.id"
-                                    [checked]="isSituationSelected(situation.id)"
-                                    (change)="onSituationChange($event, situation.id)"
+                                    type="radio"
+                                    id="physicalHistoryNo"
+                                    formControlName="hasPhysicalHistory"
+                                    [value]="false"
                                   />
-                                  <label class="form-check-label" [for]="'situation-' + situation.id">
-                                    {{ situation.name }}
-                                  </label>
+                                  <label class="form-check-label" for="physicalHistoryNo">No</label>
                                 </div>
-                              </div>
-                              }
-                            </div>
-                            } @else {
-                            <div class="text-muted">{{ 'cases.loadingSituations' | transloco }}</div>
-                            } @if (hasFieldError('identifiedSituations.situations')) {
-                            <div class="invalid-feedback d-block">
-                              <i class="mdi mdi-alert-circle-outline me-1"></i>
-                              {{ getFieldError('identifiedSituations.situations') }}
-                            </div>
-                            }
-                          </div>
-                        </div>
-                      </div>
-
-                      <ul class="list-inline mb-0 wizard">
-                        <li class="previous list-inline-item">
-                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
-                            {{ 'cases.previous' | transloco }}
-                          </button>
-                        </li>
-                        <li class="next list-inline-item float-end">
-                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">
-                            {{ 'cases.next' | transloco }}
-                          </button>
-                        </li>
-                      </ul>
-                    </ng-template>
-                  </li>
-
-                  <!-- Step 5: Intervention -->
-                  <li [ngbNavItem]="5">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-clipboard-check me-1"></i>
-                      <span class="d-none d-sm-inline">{{ 'cases.interventionTitle' | transloco }}</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="38.5"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-                      <div formGroupName="intervention">
-                        <div class="row mb-3">
-                          <label class="col-md-3 col-form-label obligatorio">{{
-                            'cases.interventionTitle' | transloco
-                          }}</label>
-                          <div class="col-md-9">
-                            <textarea
-                              class="form-control"
-                              [class.is-invalid]="hasFieldError('intervention.action')"
-                              formControlName="action"
-                              rows="4"
-                              [placeholder]="'cases.interventionDescription' | transloco"
-                            ></textarea>
-                            @if (hasFieldError('intervention.action')) {
-                            <div class="invalid-feedback">{{ getFieldError('intervention.action') }}</div>
-                            }
-                          </div>
-                        </div>
-                      </div>
-
-                      <ul class="list-inline mb-0 wizard">
-                        <li class="previous list-inline-item">
-                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
-                            {{ 'cases.previous' | transloco }}
-                          </button>
-                        </li>
-                        <li class="next list-inline-item float-end">
-                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">
-                            {{ 'cases.next' | transloco }}
-                          </button>
-                        </li>
-                      </ul>
-                    </ng-template>
-                  </li>
-
-                  <!-- Step 6: Follow-up Plan -->
-                  <li [ngbNavItem]="6">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-clipboard-list me-1"></i>
-                      <span class="d-none d-sm-inline">{{ 'cases.followUpPlan.stepTitle' | transloco }}</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="46.2"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-                      <div formGroupName="followUpPlan">
-                        <!-- Header Section -->
-                        <div class="mb-4">
-                          <h5 class="text-primary mb-2">
-                            <i class="mdi mdi-clipboard-list-outline me-2"></i>
-                            {{ 'cases.followUpPlan.title' | transloco }}
-                          </h5>
-                          <p class="text-muted small">{{ 'cases.followUpPlan.subtitle' | transloco }}</p>
-                        </div>
-
-                        <!-- Se culminó el proceso de ayuda -->
-                        <div class="card border-0 shadow-sm mb-3">
-                          <div class="card-body">
-                            <div class="form-check">
-                              <input
-                                type="checkbox"
-                                class="form-check-input"
-                                id="processCompleted"
-                                formControlName="processCompleted"
-                              />
-                              <label class="form-check-label fw-semibold" for="processCompleted">
-                                <i class="mdi mdi-check-circle-outline me-1 text-success"></i>
-                                {{ 'cases.followUpPlan.processCompletedLabel' | transloco }}
-                              </label>
-                            </div>
-                          </div>
-                        </div>
-
-                        <!-- Se coordinó servicios -->
-                        <div class="card border-0 shadow-sm mb-3">
-                          <div class="card-body">
-                            <div class="form-check mb-2">
-                              <input
-                                type="checkbox"
-                                class="form-check-input"
-                                id="servicesCoordinated"
-                                formControlName="servicesCoordinated"
-                              />
-                              <label class="form-check-label fw-semibold" for="servicesCoordinated">
-                                <i class="mdi mdi-account-group-outline me-1 text-info"></i>
-                                {{ 'cases.followUpPlan.servicesCoordinatedLabel' | transloco }}
-                              </label>
-                            </div>
-                            @if (caseForm.get('followUpPlan.servicesCoordinated')?.value) {
-                            <div class="mt-3 ps-4 border-start border-info border-3">
-                              <label class="form-label small text-muted">{{
-                                'cases.followUpPlan.servicesAgencyLabel' | transloco
-                              }}</label>
-                              <textarea
-                                class="form-control"
-                                formControlName="servicesAgency"
-                                rows="2"
-                                [placeholder]="'cases.followUpPlan.servicesAgencyPlaceholder' | transloco"
-                              ></textarea>
-                            </div>
-                            }
-                          </div>
-                        </div>
-
-                        <!-- Se hará un referido -->
-                        <div class="card border-0 shadow-sm mb-3">
-                          <div class="card-body">
-                            <div class="form-check mb-2">
-                              <input
-                                type="checkbox"
-                                class="form-check-input"
-                                id="referralMade"
-                                formControlName="referralMade"
-                              />
-                              <label class="form-check-label fw-semibold" for="referralMade">
-                                <i class="mdi mdi-share-outline me-1 text-warning"></i>
-                                {{ 'cases.followUpPlan.referralMadeLabel' | transloco }}
-                              </label>
-                            </div>
-                            @if (caseForm.get('followUpPlan.referralMade')?.value) {
-                            <div class="mt-3 ps-4 border-start border-warning border-3">
-                              <label class="form-label small text-muted">{{
-                                'cases.followUpPlan.referralDetailsLabel' | transloco
-                              }}</label>
-                              <textarea
-                                class="form-control"
-                                formControlName="referralDetails"
-                                rows="3"
-                                [placeholder]="'cases.followUpPlan.referralDetailsPlaceholder' | transloco"
-                              ></textarea>
-                            </div>
-                            }
-                          </div>
-                        </div>
-
-                        <!-- Se coordinó cita -->
-                        <div class="card border-0 shadow-sm mb-3">
-                          <div class="card-body">
-                            <div class="form-check mb-2">
-                              <input
-                                type="checkbox"
-                                class="form-check-input"
-                                id="appointmentScheduled"
-                                formControlName="appointmentScheduled"
-                              />
-                              <label class="form-check-label fw-semibold" for="appointmentScheduled">
-                                <i class="mdi mdi-calendar-clock me-1 text-primary"></i>
-                                {{ 'cases.followUpPlan.appointmentScheduledLabel' | transloco }}
-                              </label>
-                            </div>
-                            @if (caseForm.get('followUpPlan.appointmentScheduled')?.value) {
-                            <div class="mt-3 ps-4 border-start border-primary border-3">
-                              <div class="row g-3">
-                                <div class="col-md-6">
-                                  <label class="form-label small text-muted">
-                                    <i class="mdi mdi-calendar me-1"></i
-                                    >{{ 'cases.followUpPlan.appointmentDateLabel' | transloco }}
-                                  </label>
-                                  <input type="date" class="form-control" formControlName="appointmentDate" />
-                                </div>
-                                <div class="col-md-6">
-                                  <label class="form-label small text-muted">
-                                    <i class="mdi mdi-clock-outline me-1"></i
-                                    >{{ 'cases.followUpPlan.appointmentTimeLabel' | transloco }}
-                                  </label>
-                                  <input type="time" class="form-control" formControlName="appointmentTime" />
+                                <div class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    id="physicalHistoryYes"
+                                    formControlName="hasPhysicalHistory"
+                                    [value]="true"
+                                  />
+                                  <label class="form-check-label" for="physicalHistoryYes">Sí</label>
                                 </div>
                               </div>
                             </div>
+                          </div>
+
+                          @if (caseForm.get('physicalHealthHistory.hasPhysicalHistory')?.value) {
+                            <!-- Add Condition Button -->
+                            @if (!isViewMode) {
+                              <div class="mb-3">
+                                <button
+                                  type="button"
+                                  class="btn btn-outline-primary btn-sm"
+                                  (click)="addPhysicalCondition()"
+                                >
+                                  <i class="mdi mdi-plus-circle me-1"></i>
+                                  {{ 'cases.physicalHealth.addConditionButton' | transloco }}
+                                </button>
+                              </div>
                             }
-                          </div>
-                        </div>
 
-                        <!-- Otros -->
-                        <div class="card border-0 shadow-sm mb-3">
-                          <div class="card-body">
-                            <label class="form-label fw-semibold">
-                              <i class="mdi mdi-text-box-outline me-1 text-secondary"></i>
-                              {{ 'cases.followUpPlan.otherDetailsLabel' | transloco }}
-                            </label>
-                            <textarea
-                              class="form-control"
-                              formControlName="otherDetails"
-                              rows="3"
-                              [placeholder]="'cases.followUpPlan.otherDetailsPlaceholder' | transloco"
-                            ></textarea>
-                            <small class="text-muted">{{ 'cases.followUpPlan.otherDetailsHint' | transloco }}</small>
-                          </div>
-                        </div>
-                      </div>
-
-                      <ul class="list-inline mb-0 wizard">
-                        <li class="previous list-inline-item">
-                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
-                            <i class="mdi mdi-arrow-left me-1"></i>{{ 'cases.previous' | transloco }}
-                          </button>
-                        </li>
-                        <li class="next list-inline-item float-end">
-                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">
-                            {{ 'cases.next' | transloco }}<i class="mdi mdi-arrow-right ms-1"></i>
-                          </button>
-                        </li>
-                      </ul>
-                    </ng-template>
-                  </li>
-
-                  <!-- Step 7: Physical Health History -->
-                  <li [ngbNavItem]="7">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-hospital-box me-1"></i>
-                      <span class="d-none d-sm-inline">{{ 'cases.physicalHealth.stepTitle' | transloco }}</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="53.9"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-                      <div formGroupName="physicalHealthHistory">
-                        <!-- Header Section -->
-                        <div class="mb-4">
-                          <h5 class="text-primary mb-2">
-                            <i class="mdi mdi-stethoscope me-2"></i>
-                            {{ 'cases.physicalHealth.title' | transloco }}
-                          </h5>
-                          <p class="text-muted small">{{ 'cases.physicalHealth.subtitle' | transloco }}</p>
-                        </div>
-
-                        <!-- Add Condition Button -->
-                        @if (!isViewMode) {
-                        <div class="mb-3">
-                          <button type="button" class="btn btn-outline-primary btn-sm" (click)="addPhysicalCondition()">
-                            <i class="mdi mdi-plus-circle me-1"></i>
-                            {{ 'cases.physicalHealth.addConditionButton' | transloco }}
-                          </button>
-                        </div>
-                        }
-
-                        <!-- Conditions Table -->
-                        <div formArrayName="conditions">
-                          @if (physicalConditions.length > 0) {
-                          <div class="table-responsive">
-                            <table class="table table-bordered table-hover">
-                              <thead class="table-light">
-                                <tr>
-                                  <th style="width: 15%">{{ 'cases.physicalHealth.conditionColumn' | transloco }}</th>
-                                  <th style="width: 20%" colspan="2" class="text-center">
-                                    {{ 'cases.physicalHealth.treatmentColumn' | transloco }}
-                                  </th>
-                                  <th style="width: 25%" colspan="2" class="text-center">
-                                    {{ 'cases.physicalHealth.familyHistoryColumn' | transloco }}
-                                  </th>
-                                  <th style="width: 15%">
-                                    {{ 'cases.physicalHealth.observationsColumn' | transloco }}
-                                  </th>
-                                  @if (!isViewMode) {
-                                  <th style="width: 5%" class="text-center">
-                                    {{ 'cases.physicalHealth.actionColumn' | transloco }}
-                                  </th>
-                                  }
-                                </tr>
-                                <tr>
-                                  <th></th>
-                                  <th style="width: 8%" class="text-center">
-                                    {{ 'cases.physicalHealth.noYesLabel' | transloco }}
-                                  </th>
-                                  <th style="width: 12%">
-                                    {{ 'cases.physicalHealth.treatmentDetailsColumn' | transloco }}
-                                  </th>
-                                  <th style="width: 12.5%">
-                                    {{ 'cases.physicalHealth.paternalFamilyColumn' | transloco }}
-                                  </th>
-                                  <th style="width: 12.5%">
-                                    {{ 'cases.physicalHealth.maternalFamilyColumn' | transloco }}
-                                  </th>
-                                  <th></th>
-                                  @if (!isViewMode) {
-                                  <th></th>
-                                  }
-                                </tr>
-                              </thead>
-                              <tbody>
+                            <!-- Conditions List -->
+                            <div formArrayName="conditions">
+                              @if (physicalConditions.length > 0) {
                                 @for (condition of physicalConditions.controls; track $index) {
-                                <tr [formGroupName]="$index">
-                                  <td>
-                                    <textarea
-                                      class="form-control form-control-sm"
-                                      formControlName="condition"
-                                      rows="2"
-                                      [placeholder]="'cases.physicalHealth.conditionPlaceholder' | transloco"
-                                    ></textarea>
-                                  </td>
-                                  <td class="text-center align-middle">
-                                    <div class="form-check form-switch d-flex justify-content-center">
-                                      <input
-                                        type="checkbox"
-                                        class="form-check-input"
-                                        formControlName="receivingTreatment"
-                                        [id]="'treatment-' + $index"
-                                      />
-                                    </div>
-                                  </td>
-                                  <td>
-                                    @if (condition.get('receivingTreatment')?.value) {
-                                    <textarea
-                                      class="form-control form-control-sm"
-                                      formControlName="treatmentDetails"
-                                      rows="2"
-                                      [placeholder]="'cases.physicalHealth.treatmentDetailsPlaceholder' | transloco"
-                                    ></textarea>
-                                    } @else {
-                                    <span class="text-muted small">-</span>
-                                    }
-                                  </td>
-                                  <td>
-                                    <textarea
-                                      class="form-control form-control-sm"
-                                      formControlName="paternalFamilyHistory"
-                                      rows="2"
-                                      placeholder="Historial paterno..."
-                                    ></textarea>
-                                  </td>
-                                  <td>
-                                    <textarea
-                                      class="form-control form-control-sm"
-                                      formControlName="maternalFamilyHistory"
-                                      rows="2"
-                                      placeholder="Historial materno..."
-                                    ></textarea>
-                                  </td>
-                                  <td>
-                                    <textarea
-                                      class="form-control form-control-sm"
-                                      formControlName="observations"
-                                      rows="2"
-                                      [placeholder]="'cases.physicalHealth.observationsPlaceholder' | transloco"
-                                    ></textarea>
-                                  </td>
-                                  <td class="text-center align-middle">
-                                    @if (!isViewMode) {
-                                    <button
-                                      type="button"
-                                      class="btn btn-danger btn-sm"
-                                      (click)="removePhysicalCondition($index)"
-                                      [title]="'cases.physicalHealth.removeConditionTitle' | transloco"
+                                  <div class="card border-0 shadow-sm mb-3" [formGroupName]="$index">
+                                    <!-- Card Header -->
+                                    <div
+                                      class="card-header bg-opacity-10 border-0 d-flex align-items-center justify-content-between py-2 px-3"
                                     >
-                                      <i class="mdi mdi-delete"></i>
-                                    </button>
-                                    }
-                                  </td>
-                                </tr>
+                                      <span class="fw-semibold text-primary">
+                                        <i class="mdi mdi-medical-bag me-2"></i>
+                                        Condición Física #{{ $index + 1 }}
+                                      </span>
+                                      @if (!isViewMode) {
+                                        <button
+                                          type="button"
+                                          class="btn btn-sm btn-outline-danger"
+                                          (click)="removePhysicalCondition($index)"
+                                          [title]="'cases.physicalHealth.removeConditionTitle' | transloco"
+                                        >
+                                          <i class="mdi mdi-delete-outline me-1"></i>Eliminar
+                                        </button>
+                                      }
+                                    </div>
+
+                                    <!-- Card Body -->
+                                    <div class="card-body px-3 py-3">
+                                      <!-- Nombre de la condición -->
+                                      <div class="mb-3">
+                                        <label
+                                          class="form-label fw-semibold text-secondary small text-uppercase tracking-wide"
+                                        >
+                                          <i class="mdi mdi-stethoscope me-1"></i>
+                                          {{ 'cases.physicalHealth.conditionColumn' | transloco }}
+                                        </label>
+                                        <textarea
+                                          class="form-control"
+                                          formControlName="condition"
+                                          rows="2"
+                                          [placeholder]="'cases.physicalHealth.conditionPlaceholder' | transloco"
+                                        ></textarea>
+                                      </div>
+
+                                      <!-- Tratamiento -->
+                                      <div class="mb-3 p-3 bg-light rounded">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                          <label
+                                            class="form-label fw-semibold text-secondary small text-uppercase mb-0"
+                                          >
+                                            <i class="mdi mdi-pill me-1"></i>
+                                            {{ 'cases.physicalHealth.treatmentColumn' | transloco }}
+                                          </label>
+                                          <div class="form-check form-switch mb-0">
+                                            <input
+                                              type="checkbox"
+                                              class="form-check-input"
+                                              formControlName="receivingTreatment"
+                                              [id]="'treatment-' + $index"
+                                            />
+                                            <label class="form-check-label small" [for]="'treatment-' + $index">
+                                              {{ condition.get('receivingTreatment')?.value ? 'Sí' : 'No' }}
+                                            </label>
+                                          </div>
+                                        </div>
+                                        @if (condition.get('receivingTreatment')?.value) {
+                                          <textarea
+                                            class="form-control"
+                                            formControlName="treatmentDetails"
+                                            rows="2"
+                                            [placeholder]="
+                                              'cases.physicalHealth.treatmentDetailsPlaceholder' | transloco
+                                            "
+                                          ></textarea>
+                                        }
+                                      </div>
+
+                                      <!-- Historial familiar -->
+                                      <div class="mb-3">
+                                        <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                          <i class="mdi mdi-account-group me-1"></i>
+                                          {{ 'cases.physicalHealth.familyHistoryColumn' | transloco }}
+                                        </label>
+                                        <div class="row g-3">
+                                          <div class="col-md-6">
+                                            <label class="form-label small text-muted">
+                                              {{ 'cases.physicalHealth.paternalFamilyColumn' | transloco }}
+                                            </label>
+                                            <textarea
+                                              class="form-control"
+                                              formControlName="paternalFamilyHistory"
+                                              rows="2"
+                                              placeholder="Historial paterno..."
+                                            ></textarea>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <label class="form-label small text-muted">
+                                              {{ 'cases.physicalHealth.maternalFamilyColumn' | transloco }}
+                                            </label>
+                                            <textarea
+                                              class="form-control"
+                                              formControlName="maternalFamilyHistory"
+                                              rows="2"
+                                              placeholder="Historial materno..."
+                                            ></textarea>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      <!-- Observaciones -->
+                                      <div class="mb-0">
+                                        <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                          <i class="mdi mdi-note-text-outline me-1"></i>
+                                          {{ 'cases.physicalHealth.observationsColumn' | transloco }}
+                                        </label>
+                                        <textarea
+                                          class="form-control"
+                                          formControlName="observations"
+                                          rows="2"
+                                          [placeholder]="'cases.physicalHealth.observationsPlaceholder' | transloco"
+                                        ></textarea>
+                                      </div>
+                                    </div>
+                                  </div>
                                 }
-                              </tbody>
-                            </table>
-                          </div>
-                          } @else {
-                          <div class="alert alert-info">
-                            <i class="mdi mdi-information me-2"></i>
-                            {{ 'cases.physicalHealth.noConditionsMessage' | transloco }}
-                          </div>
+                              } @else {
+                                <div class="alert alert-info">
+                                  <i class="mdi mdi-information me-2"></i>
+                                  {{ 'cases.physicalHealth.noConditionsMessage' | transloco }}
+                                </div>
+                              }
+                            </div>
                           }
-                        </div>
-                      </div>
-
-                      <ul class="list-inline mb-0 wizard">
-                        <li class="previous list-inline-item">
-                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
-                            <i class="mdi mdi-arrow-left me-1"></i>{{ 'cases.previous' | transloco }}
-                          </button>
-                        </li>
-                        <li class="next list-inline-item float-end">
-                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">
-                            {{ 'cases.next' | transloco }}<i class="mdi mdi-arrow-right ms-1"></i>
-                          </button>
-                        </li>
-                      </ul>
-                    </ng-template>
-                  </li>
-
-                  <!-- Step 8: Mental Health History -->
-                  <li [ngbNavItem]="8">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-brain me-1"></i>
-                      <span class="d-none d-sm-inline">{{ 'cases.mentalHealth.stepTitle' | transloco }}</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="61.6"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-                      <div formGroupName="mentalHealthHistory">
-                        <!-- Header Section -->
-                        <div class="mb-4">
-                          <h5 class="text-primary mb-2">
-                            <i class="mdi mdi-head-heart-outline me-2"></i>
-                            {{ 'cases.mentalHealth.title' | transloco }}
-                          </h5>
-                          <p class="text-muted small">{{ 'cases.mentalHealth.subtitle' | transloco }}</p>
+                          <!-- end @if hasPhysicalHistory -->
                         </div>
 
-                        <!-- Add Condition Button -->
-                        @if (!isViewMode) {
-                        <div class="mb-3">
-                          <button type="button" class="btn btn-outline-primary btn-sm" (click)="addMentalCondition()">
-                            <i class="mdi mdi-plus-circle me-1"></i>
-                            {{ 'cases.mentalHealth.addConditionButton' | transloco }}
-                          </button>
-                        </div>
-                        }
+                        <ul class="list-inline mb-0 wizard">
+                          <li class="previous list-inline-item">
+                            <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
+                              <i class="mdi mdi-arrow-left me-1"></i>{{ 'cases.previous' | transloco }}
+                            </button>
+                          </li>
+                          <li class="next list-inline-item float-end">
+                            <button type="button" class="btn btn-primary" (click)="goToNextStep()">
+                              {{ 'cases.next' | transloco }}<i class="mdi mdi-arrow-right ms-1"></i>
+                            </button>
+                          </li>
+                        </ul>
+                      </ng-template>
+                    </li>
 
-                        <!-- Conditions Table -->
-                        <div formArrayName="conditions">
-                          @if (mentalConditions.length > 0) {
+                    <!-- Step 8: Mental Health History -->
+                    <li [ngbNavItem]="8">
+                      <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                        <i class="mdi mdi-brain me-1"></i>
+                        <span class="d-none d-sm-inline">{{ 'cases.mentalHealth.stepTitle' | transloco }}</span>
+                      </a>
+                      <ng-template ngbNavContent>
+                        <p>
+                          <ngb-progressbar
+                            type="success"
+                            [value]="61.6"
+                            [striped]="true"
+                            [animated]="true"
+                            class="mb-3"
+                            height="7px"
+                          ></ngb-progressbar>
+                        </p>
+                        <div formGroupName="mentalHealthHistory">
+                          <!-- Header Section -->
+                          <div class="mb-4">
+                            <h5 class="text-primary mb-2">
+                              <i class="mdi mdi-head-heart-outline me-2"></i>
+                              {{ 'cases.mentalHealth.title' | transloco }}
+                            </h5>
+                            <p class="text-muted small">{{ 'cases.mentalHealth.subtitle' | transloco }}</p>
+                          </div>
+
+                          <!-- ¿Tiene historial de salud mental? -->
+                          <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-body">
+                              <p class="fw-semibold mb-3">
+                                <i class="mdi mdi-help-circle-outline me-1 text-primary"></i>
+                                ¿El participante tiene un historial de salud mental?
+                              </p>
+                              <div class="d-flex gap-4">
+                                <div class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    id="mentalHistoryNo"
+                                    formControlName="hasMentalHistory"
+                                    [value]="false"
+                                  />
+                                  <label class="form-check-label" for="mentalHistoryNo">No</label>
+                                </div>
+                                <div class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    id="mentalHistoryYes"
+                                    formControlName="hasMentalHistory"
+                                    [value]="true"
+                                  />
+                                  <label class="form-check-label" for="mentalHistoryYes">Sí</label>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          @if (caseForm.get('mentalHealthHistory.hasMentalHistory')?.value) {
+                            <!-- Add Condition Button -->
+                            @if (!isViewMode) {
+                              <div class="mb-3">
+                                <button
+                                  type="button"
+                                  class="btn btn-outline-primary btn-sm"
+                                  (click)="addMentalCondition()"
+                                >
+                                  <i class="mdi mdi-plus-circle me-1"></i>
+                                  {{ 'cases.mentalHealth.addConditionButton' | transloco }}
+                                </button>
+                              </div>
+                            }
+
+                            <!-- Conditions List -->
+                            <div formArrayName="conditions">
+                              @if (mentalConditions.length > 0) {
+                                @for (condition of mentalConditions.controls; track $index) {
+                                  <div class="card border-0 shadow-sm mb-3" [formGroupName]="$index">
+                                    <!-- Card Header -->
+                                    <div
+                                      class="card-header bg-opacity-10 border-0 d-flex align-items-center justify-content-between py-2 px-3"
+                                    >
+                                      <span class="fw-semibold text-primary">
+                                        <i class="mdi mdi-head-heart-outline me-2"></i>
+                                        Condición Mental #{{ $index + 1 }}
+                                      </span>
+                                      @if (!isViewMode) {
+                                        <button
+                                          type="button"
+                                          class="btn btn-sm btn-outline-danger"
+                                          (click)="removeMentalCondition($index)"
+                                          title="Eliminar condición"
+                                        >
+                                          <i class="mdi mdi-delete-outline me-1"></i>Eliminar
+                                        </button>
+                                      }
+                                    </div>
+
+                                    <!-- Card Body -->
+                                    <div class="card-body px-3 py-3">
+                                      <!-- Nombre de la condición -->
+                                      <div class="mb-3">
+                                        <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                          <i class="mdi mdi-brain me-1"></i>
+                                          Historial mental del participante
+                                        </label>
+                                        <textarea
+                                          class="form-control"
+                                          formControlName="condition"
+                                          rows="2"
+                                          placeholder="Ej: Depresión, Ansiedad, Bipolaridad..."
+                                        ></textarea>
+                                      </div>
+
+                                      <!-- Tratamiento -->
+                                      <div class="mb-3 p-3 bg-light rounded">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                          <label
+                                            class="form-label fw-semibold text-secondary small text-uppercase mb-0"
+                                          >
+                                            <i class="mdi mdi-pill me-1"></i>
+                                            ¿Actualmente recibe Tratamiento?
+                                          </label>
+                                          <div class="form-check form-switch mb-0">
+                                            <input
+                                              type="checkbox"
+                                              class="form-check-input"
+                                              formControlName="receivingTreatment"
+                                              [id]="'mental-treatment-' + $index"
+                                            />
+                                            <label class="form-check-label small" [for]="'mental-treatment-' + $index">
+                                              {{ condition.get('receivingTreatment')?.value ? 'Sí' : 'No' }}
+                                            </label>
+                                          </div>
+                                        </div>
+                                        @if (condition.get('receivingTreatment')?.value) {
+                                          <textarea
+                                            class="form-control"
+                                            formControlName="treatmentDetails"
+                                            rows="2"
+                                            placeholder="Medicamentos y/o terapia..."
+                                          ></textarea>
+                                        }
+                                      </div>
+
+                                      <!-- Historial familiar -->
+                                      <div class="mb-3">
+                                        <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                          <i class="mdi mdi-account-group me-1"></i>
+                                          Historial familiar de condiciones
+                                        </label>
+                                        <div class="row g-3">
+                                          <div class="col-md-6">
+                                            <label class="form-label small text-muted">Familia paterna</label>
+                                            <textarea
+                                              class="form-control"
+                                              formControlName="paternalFamilyHistory"
+                                              rows="2"
+                                              placeholder="Historial paterno..."
+                                            ></textarea>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <label class="form-label small text-muted">Familia materna</label>
+                                            <textarea
+                                              class="form-control"
+                                              formControlName="maternalFamilyHistory"
+                                              rows="2"
+                                              placeholder="Historial materno..."
+                                            ></textarea>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      <!-- Observaciones -->
+                                      <div class="mb-0">
+                                        <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                          <i class="mdi mdi-note-text-outline me-1"></i>
+                                          Observaciones
+                                        </label>
+                                        <textarea
+                                          class="form-control"
+                                          formControlName="observations"
+                                          rows="2"
+                                          placeholder="Observaciones adicionales..."
+                                        ></textarea>
+                                      </div>
+                                    </div>
+                                  </div>
+                                }
+                              } @else {
+                                <div class="alert alert-info">
+                                  <i class="mdi mdi-information me-2"></i>
+                                  {{ 'cases.mentalHealth.noConditionsMessage' | transloco }}
+                                </div>
+                              }
+                            </div>
+                          }
+                          <!-- end @if hasMentalHistory -->
+                        </div>
+
+                        <ul class="list-inline mb-0 wizard">
+                          <li class="previous list-inline-item">
+                            <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
+                              <i class="mdi mdi-arrow-left me-1"></i>Anterior
+                            </button>
+                          </li>
+                          <li class="next list-inline-item float-end">
+                            <button type="button" class="btn btn-primary" (click)="goToNextStep()">
+                              Siguiente<i class="mdi mdi-arrow-right ms-1"></i>
+                            </button>
+                          </li>
+                        </ul>
+                      </ng-template>
+                    </li>
+
+                    <!-- Step 9: Assessment (Ponderación) -->
+                    <li [ngbNavItem]="9">
+                      <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                        <i class="mdi mdi-clipboard-text-multiple me-1"></i>
+                        <span class="d-none d-sm-inline">Ponderación</span>
+                      </a>
+                      <ng-template ngbNavContent>
+                        <p>
+                          <ngb-progressbar
+                            type="success"
+                            [value]="69.3"
+                            [striped]="true"
+                            [animated]="true"
+                            class="mb-3"
+                            height="7px"
+                          ></ngb-progressbar>
+                        </p>
+
+                        <div formGroupName="assessment">
+                          <div class="mb-4">
+                            <h4 class="mb-3">
+                              <i class="mdi mdi-scale-balance text-primary me-2"></i>
+                              PONDERACIÓN
+                            </h4>
+                          </div>
+
+                          <!-- A. General Description -->
+                          <div class="card shadow-sm mb-4">
+                            <div class="card-body">
+                              <label class="form-label fw-semibold obligatorio">
+                                <i class="mdi mdi-text-box-outline text-info me-1"></i>
+                                DESCRIPCIÓN GENERAL DEL MOTIVO DE CONSULTA
+                              </label>
+                              <p class="text-muted small mb-2">Describa la situación identificada</p>
+                              <textarea
+                                formControlName="generalDescription"
+                                class="form-control"
+                                rows="5"
+                                placeholder="Describa de manera detallada la situación que motivó la consulta..."
+                                [class.is-invalid]="hasFieldError('assessment.generalDescription')"
+                              ></textarea>
+                              @if (hasFieldError('assessment.generalDescription')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('assessment.generalDescription') }}
+                                </div>
+                              }
+                            </div>
+                          </div>
+
+                          <!-- B. Concurrent Factors -->
+                          <div class="card shadow-sm mb-4 border-start border-success border-3">
+                            <div class="card-body">
+                              <label class="form-label fw-semibold obligatorio">
+                                <i class="mdi mdi-thumb-up-outline text-success me-1"></i>
+                                FACTORES CONCURRENTES
+                              </label>
+                              <p class="text-muted small mb-2">Describa las condiciones favorables que identifica</p>
+                              <textarea
+                                formControlName="concurrentFactors"
+                                class="form-control"
+                                rows="5"
+                                placeholder="Factores positivos: apoyo familiar, recursos disponibles, fortalezas personales..."
+                                [class.is-invalid]="hasFieldError('assessment.concurrentFactors')"
+                              ></textarea>
+                              @if (hasFieldError('assessment.concurrentFactors')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('assessment.concurrentFactors') }}
+                                </div>
+                              }
+                            </div>
+                          </div>
+
+                          <!-- C. Critical Factors -->
+                          <div class="card shadow-sm mb-4 border-start border-danger border-3">
+                            <div class="card-body">
+                              <label class="form-label fw-semibold obligatorio">
+                                <i class="mdi mdi-alert-circle-outline text-danger me-1"></i>
+                                FACTORES CRÍTICOS
+                              </label>
+                              <p class="text-muted small mb-2">
+                                Describa condiciones que no favorecen el proceso de ayuda
+                              </p>
+                              <textarea
+                                formControlName="criticalFactors"
+                                class="form-control"
+                                rows="5"
+                                placeholder="Obstáculos identificados: falta de recursos, resistencia al cambio, situaciones de riesgo..."
+                                [class.is-invalid]="hasFieldError('assessment.criticalFactors')"
+                              ></textarea>
+                              @if (hasFieldError('assessment.criticalFactors')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('assessment.criticalFactors') }}
+                                </div>
+                              }
+                            </div>
+                          </div>
+
+                          <!-- D. Theoretical Framework -->
+                          <div class="card shadow-sm mb-4 border-start border-primary border-3">
+                            <div class="card-body">
+                              <label class="form-label fw-semibold obligatorio">
+                                <i class="mdi mdi-book-open-variant text-primary me-1"></i>
+                                ANÁLISIS DEL PROBLEMA DESDE UN MARCO TEÓRICO
+                              </label>
+                              <p class="text-muted small mb-2">
+                                Indique el enfoque teórico desde el cual abordará el proceso de ayuda
+                              </p>
+                              <textarea
+                                formControlName="theoreticalFramework"
+                                class="form-control"
+                                rows="5"
+                                placeholder="Marco teórico de referencia: enfoque sistémico, cognitivo-conductual, humanista, etc..."
+                                [class.is-invalid]="hasFieldError('assessment.theoreticalFramework')"
+                              ></textarea>
+                              @if (hasFieldError('assessment.theoreticalFramework')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('assessment.theoreticalFramework') }}
+                                </div>
+                              }
+                            </div>
+                          </div>
+                        </div>
+
+                        <ul class="list-inline mb-0 wizard">
+                          <li class="previous list-inline-item">
+                            <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
+                              <i class="mdi mdi-arrow-left me-1"></i>Anterior
+                            </button>
+                          </li>
+                          <li class="next list-inline-item float-end">
+                            <button type="button" class="btn btn-primary" (click)="goToNextStep()">
+                              Siguiente<i class="mdi mdi-arrow-right ms-1"></i>
+                            </button>
+                          </li>
+                        </ul>
+                      </ng-template>
+                    </li>
+
+                    <!-- Step 10: Intervention Plan -->
+                    <li [ngbNavItem]="10">
+                      <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                        <i class="mdi mdi-clipboard-list-outline me-1"></i>
+                        <span class="d-none d-sm-inline">Plan de Intervención</span>
+                      </a>
+                      <ng-template ngbNavContent>
+                        <p>
+                          <ngb-progressbar
+                            type="success"
+                            [value]="77.0"
+                            [striped]="true"
+                            [animated]="true"
+                            class="mb-3"
+                            height="7px"
+                          ></ngb-progressbar>
+                        </p>
+
+                        <div formGroupName="interventionPlan">
+                          <div class="mb-4">
+                            <h4 class="mb-3">
+                              <i class="mdi mdi-calendar-check text-primary me-2"></i>
+                              PLAN DE INTERVENCIÓN
+                            </h4>
+
+                            <!-- Nota informativa -->
+                            <div class="alert alert-light border-start border-primary border-3 mb-4">
+                              <p class="fw-semibold mb-2">
+                                <i class="mdi mdi-information-outline text-primary me-1"></i>
+                                Cada meta debe contener:
+                              </p>
+                              <ul class="mb-0 ps-3">
+                                <li>Los <strong>objetivos</strong> pueden ser varios</li>
+                                <li><strong>Actividades</strong></li>
+                                <li><strong>Tiempo</strong></li>
+                                <li><strong>Persona responsable</strong></li>
+                                <li><strong>Criterio de Evaluación</strong></li>
+                              </ul>
+                            </div>
+
+                            @if (!isViewMode) {
+                              <button type="button" class="btn btn-success btn-sm" (click)="addIntervention()">
+                                <i class="mdi mdi-plus-circle me-1"></i>Agregar Meta
+                              </button>
+                            }
+                          </div>
+
+                          <!-- Interventions List -->
+                          <div formArrayName="interventions">
+                            @if (interventions.length > 0) {
+                              @for (intervention of interventions.controls; track $index) {
+                                <div class="card border-0 shadow-sm mb-3" [formGroupName]="$index">
+                                  <!-- Card Header -->
+                                  <div
+                                    class="card-header bg-opacity-10 border-0 d-flex align-items-center justify-content-between py-2 px-3"
+                                  >
+                                    <span class="fw-semibold text-primary">
+                                      <i class="mdi mdi-calendar-check me-2"></i>
+                                      Intervención #{{ $index + 1 }}
+                                    </span>
+                                    @if (!isViewMode) {
+                                      <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-danger"
+                                        (click)="removeIntervention($index)"
+                                        title="Eliminar intervención"
+                                      >
+                                        <i class="mdi mdi-delete-outline me-1"></i>Eliminar
+                                      </button>
+                                    }
+                                  </div>
+
+                                  <!-- Card Body -->
+                                  <div class="card-body px-3 py-3">
+                                    <!-- Meta(s) -->
+                                    <div class="mb-3">
+                                      <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                        <i class="mdi mdi-flag-outline me-1"></i>
+                                        Meta(s)
+                                      </label>
+                                      <textarea
+                                        formControlName="goals"
+                                        class="form-control"
+                                        rows="2"
+                                        placeholder="Metas a alcanzar..."
+                                      ></textarea>
+                                    </div>
+
+                                    <!-- Objetivos -->
+                                    <div class="mb-3">
+                                      <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                        <i class="mdi mdi-target me-1"></i>
+                                        Objetivos
+                                      </label>
+                                      <textarea
+                                        formControlName="objectives"
+                                        class="form-control"
+                                        rows="2"
+                                        placeholder="Objetivos específicos..."
+                                      ></textarea>
+                                    </div>
+
+                                    <!-- Actividades -->
+                                    <div class="mb-3">
+                                      <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                        <i class="mdi mdi-clipboard-list-outline me-1"></i>
+                                        Actividades o técnicas
+                                      </label>
+                                      <textarea
+                                        formControlName="activities"
+                                        class="form-control"
+                                        rows="2"
+                                        placeholder="Actividades o técnicas a implementar..."
+                                      ></textarea>
+                                    </div>
+
+                                    <!-- Tiempo y Responsable en fila -->
+                                    <div class="row g-3 mb-3">
+                                      <div class="col-md-6">
+                                        <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                          <i class="mdi mdi-clock-outline me-1"></i>
+                                          Tiempo
+                                        </label>
+                                        <input
+                                          type="text"
+                                          formControlName="timeframe"
+                                          class="form-control"
+                                          placeholder="Ej: 3 meses"
+                                        />
+                                      </div>
+                                      <div class="col-md-6">
+                                        <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                          <i class="mdi mdi-account-outline me-1"></i>
+                                          Persona Responsable
+                                        </label>
+                                        <input
+                                          type="text"
+                                          formControlName="responsiblePerson"
+                                          class="form-control"
+                                          placeholder="Nombre del responsable"
+                                        />
+                                      </div>
+                                    </div>
+
+                                    <!-- Criterio de Evaluación -->
+                                    <div class="mb-0">
+                                      <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                        <i class="mdi mdi-check-circle-outline me-1"></i>
+                                        Criterio de Evaluación
+                                      </label>
+                                      <textarea
+                                        formControlName="evaluationCriteria"
+                                        class="form-control"
+                                        rows="2"
+                                        placeholder="Criterios para evaluar el progreso..."
+                                      ></textarea>
+                                    </div>
+                                  </div>
+                                </div>
+                              }
+                            } @else {
+                              <div class="alert alert-info">
+                                <i class="mdi mdi-information me-2"></i>
+                                No hay intervenciones agregadas. Haga clic en "Agregar Intervención" para comenzar.
+                              </div>
+                            }
+                          </div>
+                        </div>
+
+                        <ul class="list-inline mb-0 wizard mt-4">
+                          <li class="previous list-inline-item">
+                            <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
+                              <i class="mdi mdi-arrow-left me-1"></i>Anterior
+                            </button>
+                          </li>
+                          <li class="next list-inline-item float-end">
+                            <button type="button" class="btn btn-primary" (click)="goToNextStep()">
+                              Siguiente<i class="mdi mdi-arrow-right ms-1"></i>
+                            </button>
+                          </li>
+                        </ul>
+                      </ng-template>
+                    </li>
+
+                    <!-- Step 11: Progress Notes -->
+                    <li [ngbNavItem]="11">
+                      <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                        <i class="mdi mdi-file-document-edit me-1"></i>
+                        <span class="d-none d-sm-inline">Notas de Progreso</span>
+                      </a>
+                      <ng-template ngbNavContent>
+                        <p>
+                          <ngb-progressbar
+                            type="success"
+                            [value]="84.7"
+                            [striped]="true"
+                            [animated]="true"
+                            class="mb-3"
+                            height="7px"
+                          ></ngb-progressbar>
+                        </p>
+
+                        <div formGroupName="progressNotes">
+                          <div class="mb-4">
+                            <h4 class="mb-3">
+                              <i class="mdi mdi-clipboard-text text-primary me-2"></i>
+                              IV. NOTAS DE PROGRESO
+                            </h4>
+                            <p class="text-muted mb-3">Registre las intervenciones realizadas</p>
+                            @if (!isViewMode) {
+                              <button type="button" class="btn btn-success btn-sm" (click)="addProgressNote()">
+                                <i class="mdi mdi-plus-circle me-1"></i>Agregar Nota de Progreso
+                              </button>
+                            }
+                          </div>
+
+                          @if (progressNotesArray.length === 0) {
+                            <div class="alert alert-info">
+                              <i class="mdi mdi-information me-2"></i>
+                              No hay notas de progreso agregadas. Haga clic en "Agregar Nota de Progreso" para comenzar.
+                            </div>
+                          }
+
                           <div class="table-responsive">
-                            <table class="table table-bordered table-hover">
+                            <table class="table table-bordered table-hover table-sm" formArrayName="notes">
                               <thead class="table-light">
                                 <tr>
-                                  <th style="width: 15%">Historial mental del participante</th>
-                                  <th style="width: 20%" colspan="2" class="text-center">
-                                    ¿Actualmente recibe Tratamiento?
-                                  </th>
-                                  <th style="width: 25%" colspan="2" class="text-center">
-                                    Historial familiar de condiciones
-                                  </th>
-                                  <th style="width: 15%">Observaciones</th>
+                                  <th style="width: 10%">FECHA</th>
+                                  <th style="width: 8%">HORA</th>
+                                  <th style="width: 12%">TIPO DE ABORDAJE</th>
+                                  <th style="width: 12%">PROCESO</th>
+                                  <th style="width: 18%">RESUMEN DE INTERVENCIÓN</th>
+                                  <th style="width: 15%">OBSERVACIONES</th>
+                                  <th style="width: 15%">ACUERDOS</th>
                                   @if (!isViewMode) {
-                                  <th style="width: 5%" class="text-center">Acción</th>
-                                  }
-                                </tr>
-                                <tr>
-                                  <th></th>
-                                  <th style="width: 8%" class="text-center">No/Sí</th>
-                                  <th style="width: 12%">Medicamentos y/o terapia</th>
-                                  <th style="width: 12.5%">Familia paterna</th>
-                                  <th style="width: 12.5%">Familia materna</th>
-                                  <th></th>
-                                  @if (!isViewMode) {
-                                  <th></th>
+                                    <th style="width: 5%"></th>
                                   }
                                 </tr>
                               </thead>
                               <tbody>
-                                @for (condition of mentalConditions.controls; track $index) {
-                                <tr [formGroupName]="$index">
-                                  <td>
-                                    <textarea
-                                      class="form-control form-control-sm"
-                                      formControlName="condition"
-                                      rows="2"
-                                      placeholder="Ej: Depresión, Ansiedad, Bipolaridad..."
-                                    ></textarea>
-                                  </td>
-                                  <td class="text-center align-middle">
-                                    <div class="form-check form-switch d-flex justify-content-center">
-                                      <input
-                                        type="checkbox"
-                                        class="form-check-input"
-                                        formControlName="receivingTreatment"
-                                        [id]="'mental-treatment-' + $index"
-                                      />
-                                    </div>
-                                  </td>
-                                  <td>
-                                    @if (condition.get('receivingTreatment')?.value) {
-                                    <textarea
-                                      class="form-control form-control-sm"
-                                      formControlName="treatmentDetails"
-                                      rows="2"
-                                      placeholder="Medicamentos y/o terapia..."
-                                    ></textarea>
-                                    } @else {
-                                    <span class="text-muted small">-</span>
-                                    }
-                                  </td>
-                                  <td>
-                                    <textarea
-                                      class="form-control form-control-sm"
-                                      formControlName="paternalFamilyHistory"
-                                      rows="2"
-                                      placeholder="Historial paterno..."
-                                    ></textarea>
-                                  </td>
-                                  <td>
-                                    <textarea
-                                      class="form-control form-control-sm"
-                                      formControlName="maternalFamilyHistory"
-                                      rows="2"
-                                      placeholder="Historial materno..."
-                                    ></textarea>
-                                  </td>
-                                  <td>
-                                    <textarea
-                                      class="form-control form-control-sm"
-                                      formControlName="observations"
-                                      rows="2"
-                                      placeholder="Observaciones adicionales..."
-                                    ></textarea>
-                                  </td>
-                                  <td class="text-center align-middle">
-                                    @if (!isViewMode) {
-                                    <button
-                                      type="button"
-                                      class="btn btn-danger btn-sm"
-                                      (click)="removeMentalCondition($index)"
-                                      title="Eliminar condición"
-                                    >
-                                      <i class="mdi mdi-delete"></i>
-                                    </button>
-                                    }
-                                  </td>
-                                </tr>
+                                @for (note of progressNotesArray.controls; track $index) {
+                                  <tr [formGroupName]="$index">
+                                    <td>
+                                      <input type="date" formControlName="date" class="form-control form-control-sm" />
+                                    </td>
+                                    <td>
+                                      <input type="time" formControlName="time" class="form-control form-control-sm" />
+                                    </td>
+                                    <td>
+                                      <select formControlName="approachType" class="form-select form-select-sm">
+                                        <option value="" disabled selected>Seleccione un tipo de abordaje</option>
+                                        @for (approachType of approachTypes; track approachType.id) {
+                                          <option [value]="approachType.name">{{ approachType.name }}</option>
+                                        }
+                                      </select>
+                                    </td>
+                                    <td>
+                                      <select formControlName="process" class="form-select form-select-sm">
+                                        <option value="" disabled selected>Seleccione un proceso</option>
+                                        @for (processType of processTypes; track processType.id) {
+                                          <option [value]="processType.name">{{ processType.name }}</option>
+                                        }
+                                      </select>
+                                    </td>
+                                    <td>
+                                      <textarea
+                                        formControlName="interventionSummary"
+                                        class="form-control form-control-sm"
+                                        rows="2"
+                                        placeholder="Resumen de la intervención realizada..."
+                                      ></textarea>
+                                    </td>
+                                    <td>
+                                      <textarea
+                                        formControlName="observations"
+                                        class="form-control form-control-sm"
+                                        rows="2"
+                                        placeholder="Observaciones..."
+                                      ></textarea>
+                                    </td>
+                                    <td>
+                                      <textarea
+                                        formControlName="agreements"
+                                        class="form-control form-control-sm"
+                                        rows="2"
+                                        placeholder="Acuerdos establecidos..."
+                                      ></textarea>
+                                    </td>
+                                    <td class="text-center">
+                                      @if (!isViewMode) {
+                                        <button
+                                          type="button"
+                                          class="btn btn-danger btn-sm"
+                                          (click)="removeProgressNote($index)"
+                                          title="Eliminar nota"
+                                        >
+                                          <i class="mdi mdi-delete"></i>
+                                        </button>
+                                      }
+                                    </td>
+                                  </tr>
                                 }
                               </tbody>
                             </table>
                           </div>
-                          } @else {
-                          <div class="alert alert-info">
-                            <i class="mdi mdi-information me-2"></i>
-                            {{ 'cases.mentalHealth.noConditionsMessage' | transloco }}
-                          </div>
-                          }
-                        </div>
-                      </div>
 
-                      <ul class="list-inline mb-0 wizard">
-                        <li class="previous list-inline-item">
-                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
-                            <i class="mdi mdi-arrow-left me-1"></i>Anterior
-                          </button>
-                        </li>
-                        <li class="next list-inline-item float-end">
-                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">
-                            Siguiente<i class="mdi mdi-arrow-right ms-1"></i>
-                          </button>
-                        </li>
-                      </ul>
-                    </ng-template>
-                  </li>
-
-                  <!-- Step 9: Assessment (Ponderación) -->
-                  <li [ngbNavItem]="9">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-clipboard-text-multiple me-1"></i>
-                      <span class="d-none d-sm-inline">Ponderación</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="69.3"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-
-                      <div formGroupName="assessment">
-                        <div class="mb-4">
-                          <h4 class="mb-3">
-                            <i class="mdi mdi-scale-balance text-primary me-2"></i>
-                            PONDERACIÓN
-                          </h4>
-                        </div>
-
-                        <!-- A. General Description -->
-                        <div class="card shadow-sm mb-4">
-                          <div class="card-body">
-                            <label class="form-label fw-semibold">
-                              <i class="mdi mdi-text-box-outline text-info me-1"></i>
-                              DESCRIPCIÓN GENERAL DEL MOTIVO DE CONSULTA
-                            </label>
-                            <p class="text-muted small mb-2">Describa la situación identificada</p>
-                            <textarea
-                              formControlName="generalDescription"
-                              class="form-control"
-                              rows="5"
-                              placeholder="Describa de manera detallada la situación que motivó la consulta..."
-                              [class.is-invalid]="hasFieldError('assessment.generalDescription')"
-                            ></textarea>
-                            @if (hasFieldError('assessment.generalDescription')) {
-                            <div class="invalid-feedback">
-                              {{ getFieldError('assessment.generalDescription') }}
+                          @if (progressNotesArray.length > 0) {
+                            <div class="card shadow-sm mt-3">
+                              <div class="card-body">
+                                <p class="mb-0">
+                                  <i class="mdi mdi-information-outline text-info me-1"></i>
+                                  <strong>Nota:</strong> Registre cada intervención de manera cronológica, incluyendo la
+                                  fecha, hora y detalles relevantes del proceso.
+                                </p>
+                              </div>
                             </div>
-                            }
-                          </div>
-                        </div>
-
-                        <!-- B. Concurrent Factors -->
-                        <div class="card shadow-sm mb-4 border-start border-success border-3">
-                          <div class="card-body">
-                            <label class="form-label fw-semibold">
-                              <i class="mdi mdi-thumb-up-outline text-success me-1"></i>
-                              FACTORES CONCURRENTES
-                            </label>
-                            <p class="text-muted small mb-2">Describa las condiciones favorables que identifica</p>
-                            <textarea
-                              formControlName="concurrentFactors"
-                              class="form-control"
-                              rows="5"
-                              placeholder="Factores positivos: apoyo familiar, recursos disponibles, fortalezas personales..."
-                              [class.is-invalid]="hasFieldError('assessment.concurrentFactors')"
-                            ></textarea>
-                            @if (hasFieldError('assessment.concurrentFactors')) {
-                            <div class="invalid-feedback">
-                              {{ getFieldError('assessment.concurrentFactors') }}
-                            </div>
-                            }
-                          </div>
-                        </div>
-
-                        <!-- C. Critical Factors -->
-                        <div class="card shadow-sm mb-4 border-start border-danger border-3">
-                          <div class="card-body">
-                            <label class="form-label fw-semibold">
-                              <i class="mdi mdi-alert-circle-outline text-danger me-1"></i>
-                              FACTORES CRÍTICOS
-                            </label>
-                            <p class="text-muted small mb-2">
-                              Describa condiciones que no favorecen el proceso de ayuda
-                            </p>
-                            <textarea
-                              formControlName="criticalFactors"
-                              class="form-control"
-                              rows="5"
-                              placeholder="Obstáculos identificados: falta de recursos, resistencia al cambio, situaciones de riesgo..."
-                              [class.is-invalid]="hasFieldError('assessment.criticalFactors')"
-                            ></textarea>
-                            @if (hasFieldError('assessment.criticalFactors')) {
-                            <div class="invalid-feedback">
-                              {{ getFieldError('assessment.criticalFactors') }}
-                            </div>
-                            }
-                          </div>
-                        </div>
-
-                        <!-- D. Theoretical Framework -->
-                        <div class="card shadow-sm mb-4 border-start border-primary border-3">
-                          <div class="card-body">
-                            <label class="form-label fw-semibold">
-                              <i class="mdi mdi-book-open-variant text-primary me-1"></i>
-                              ANÁLISIS DEL PROBLEMA DESDE UN MARCO TEÓRICO
-                            </label>
-                            <p class="text-muted small mb-2">
-                              Indique el enfoque teórico desde el cual abordará el proceso de ayuda
-                            </p>
-                            <textarea
-                              formControlName="theoreticalFramework"
-                              class="form-control"
-                              rows="5"
-                              placeholder="Marco teórico de referencia: enfoque sistémico, cognitivo-conductual, humanista, etc..."
-                              [class.is-invalid]="hasFieldError('assessment.theoreticalFramework')"
-                            ></textarea>
-                            @if (hasFieldError('assessment.theoreticalFramework')) {
-                            <div class="invalid-feedback">
-                              {{ getFieldError('assessment.theoreticalFramework') }}
-                            </div>
-                            }
-                          </div>
-                        </div>
-                      </div>
-
-                      <ul class="list-inline mb-0 wizard">
-                        <li class="previous list-inline-item">
-                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
-                            <i class="mdi mdi-arrow-left me-1"></i>Anterior
-                          </button>
-                        </li>
-                        <li class="next list-inline-item float-end">
-                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">
-                            Siguiente<i class="mdi mdi-arrow-right ms-1"></i>
-                          </button>
-                        </li>
-                      </ul>
-                    </ng-template>
-                  </li>
-
-                  <!-- Step 10: Intervention Plan -->
-                  <li [ngbNavItem]="10">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-clipboard-list-outline me-1"></i>
-                      <span class="d-none d-sm-inline">Plan de Intervención</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="77.0"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-
-                      <div formGroupName="interventionPlan">
-                        <div class="mb-4">
-                          <h4 class="mb-3">
-                            <i class="mdi mdi-calendar-check text-primary me-2"></i>
-                            PLAN DE INTERVENCIÓN
-                          </h4>
-                          @if (!isViewMode) {
-                          <button type="button" class="btn btn-success btn-sm" (click)="addIntervention()">
-                            <i class="mdi mdi-plus-circle me-1"></i>Agregar Intervención
-                          </button>
                           }
                         </div>
 
-                        @if (interventions.length === 0) {
-                        <div class="alert alert-info">
-                          <i class="mdi mdi-information me-2"></i>
-                          No hay intervenciones agregadas. Haga clic en "Agregar Intervención" para comenzar.
-                        </div>
-                        }
+                        <ul class="list-inline mb-0 wizard mt-4">
+                          <li class="previous list-inline-item">
+                            <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
+                              <i class="mdi mdi-arrow-left me-1"></i>Anterior
+                            </button>
+                          </li>
+                          <li class="next list-inline-item float-end">
+                            <button type="button" class="btn btn-primary" (click)="goToNextStep()">
+                              Siguiente<i class="mdi mdi-arrow-right ms-1"></i>
+                            </button>
+                          </li>
+                        </ul>
+                      </ng-template>
+                    </li>
 
-                        <div class="table-responsive">
-                          <table class="table table-bordered table-hover table-sm" formArrayName="interventions">
-                            <thead class="table-light">
-                              <tr>
-                                <th style="width: 15%">Meta(s)</th>
-                                <th style="width: 15%">Objetivos</th>
-                                <th style="width: 15%">Actividades o técnicas</th>
-                                <th style="width: 10%">Tiempo</th>
-                                <th style="width: 12%">Persona Responsable</th>
-                                <th style="width: 15%">Criterio de Evaluación</th>
-                                @if (!isViewMode) {
-                                <th style="width: 5%"></th>
-                                }
-                              </tr>
-                            </thead>
-                            <tbody>
-                              @for (intervention of interventions.controls; track $index) {
-                              <tr [formGroupName]="$index">
-                                <td>
-                                  <textarea
-                                    formControlName="goals"
-                                    class="form-control form-control-sm"
-                                    rows="3"
-                                    placeholder="Metas a alcanzar..."
-                                  ></textarea>
-                                </td>
-                                <td>
-                                  <textarea
-                                    formControlName="objectives"
-                                    class="form-control form-control-sm"
-                                    rows="3"
-                                    placeholder="Objetivos específicos..."
-                                  ></textarea>
-                                </td>
-                                <td>
-                                  <textarea
-                                    formControlName="activities"
-                                    class="form-control form-control-sm"
-                                    rows="3"
-                                    placeholder="Actividades o técnicas a implementar..."
-                                  ></textarea>
-                                </td>
-                                <td>
-                                  <input
-                                    type="text"
-                                    formControlName="timeframe"
-                                    class="form-control form-control-sm"
-                                    placeholder="Ej: 3 meses"
-                                  />
-                                </td>
-                                <td>
-                                  <input
-                                    type="text"
-                                    formControlName="responsiblePerson"
-                                    class="form-control form-control-sm"
-                                    placeholder="Nombre del responsable"
-                                  />
-                                </td>
-                                <td>
-                                  <textarea
-                                    formControlName="evaluationCriteria"
-                                    class="form-control form-control-sm"
-                                    rows="3"
-                                    placeholder="Criterios para evaluar..."
-                                  ></textarea>
-                                </td>
+                    <!-- Step 12: Referrals -->
+                    <li [ngbNavItem]="12">
+                      <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                        <i class="mdi mdi-share-variant me-1"></i>
+                        <span class="d-none d-sm-inline">Referidos</span>
+                      </a>
+                      <ng-template ngbNavContent>
+                        <p>
+                          <ngb-progressbar
+                            type="success"
+                            [value]="92.4"
+                            [striped]="true"
+                            [animated]="true"
+                            class="mb-3"
+                            height="7px"
+                          ></ngb-progressbar>
+                        </p>
 
-                                <td class="text-center">
-                                  @if (!isViewMode) {
-                                  <button
-                                    type="button"
-                                    class="btn btn-danger btn-sm"
-                                    (click)="removeIntervention($index)"
-                                    title="Eliminar intervención"
-                                  >
-                                    <i class="mdi mdi-delete"></i>
-                                  </button>
-                                  }
-                                </td>
-                              </tr>
+                        <div formGroupName="referrals">
+                          <div class="mb-4">
+                            <h4 class="mb-3">
+                              <i class="mdi mdi-account-arrow-right text-primary me-2"></i>
+                              MENCIONAR Y JUSTIFICAR LOS REFERIDOS QUE SE REALIZARÁN
+                            </h4>
+                          </div>
+
+                          <div class="card shadow-sm">
+                            <div class="card-body">
+                              <label class="form-label fw-semibold">
+                                <i class="mdi mdi-text-box-multiple text-info me-1"></i>
+                                Descripción de los Referidos y su Justificación
+                              </label>
+                              <p class="text-muted small mb-2">
+                                Especifique a qué instituciones, organizaciones o profesionales se realizarán los
+                                referidos y explique las razones que justifican cada uno.
+                              </p>
+                              <textarea
+                                formControlName="referralsJustification"
+                                class="form-control"
+                                rows="8"
+                                placeholder="Describa los referidos que se realizarán y la justificación de cada uno. "
+                                [class.is-invalid]="hasFieldError('referrals.referralsJustification')"
+                              ></textarea>
+                              @if (hasFieldError('referrals.referralsJustification')) {
+                                <div class="invalid-feedback">
+                                  {{ getFieldError('referrals.referralsJustification') }}
+                                </div>
                               }
-                            </tbody>
-                          </table>
-                        </div>
-
-                        @if (interventions.length > 0) {
-                        <div class="card shadow-sm mt-3">
-                          <div class="card-body">
-                            <p class="mb-0">
-                              <i class="mdi mdi-information-outline text-info me-1"></i>
-                              <strong>Nota:</strong> Cada intervención debe incluir metas claras, objetivos específicos
-                              y criterios de evaluación para medir el progreso.
-                            </p>
-                          </div>
-                        </div>
-                        }
-                      </div>
-
-                      <ul class="list-inline mb-0 wizard mt-4">
-                        <li class="previous list-inline-item">
-                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
-                            <i class="mdi mdi-arrow-left me-1"></i>Anterior
-                          </button>
-                        </li>
-                        <li class="next list-inline-item float-end">
-                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">
-                            Siguiente<i class="mdi mdi-arrow-right ms-1"></i>
-                          </button>
-                        </li>
-                      </ul>
-                    </ng-template>
-                  </li>
-
-                  <!-- Step 11: Progress Notes -->
-                  <li [ngbNavItem]="11">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-file-document-edit me-1"></i>
-                      <span class="d-none d-sm-inline">Notas de Progreso</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="84.7"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-
-                      <div formGroupName="progressNotes">
-                        <div class="mb-4">
-                          <h4 class="mb-3">
-                            <i class="mdi mdi-clipboard-text text-primary me-2"></i>
-                            IV. NOTAS DE PROGRESO
-                          </h4>
-                          <p class="text-muted mb-3">Registre las intervenciones realizadas</p>
-                          @if (!isViewMode) {
-                          <button type="button" class="btn btn-success btn-sm" (click)="addProgressNote()">
-                            <i class="mdi mdi-plus-circle me-1"></i>Agregar Nota de Progreso
-                          </button>
-                          }
-                        </div>
-
-                        @if (progressNotesArray.length === 0) {
-                        <div class="alert alert-info">
-                          <i class="mdi mdi-information me-2"></i>
-                          No hay notas de progreso agregadas. Haga clic en "Agregar Nota de Progreso" para comenzar.
-                        </div>
-                        }
-
-                        <div class="table-responsive">
-                          <table class="table table-bordered table-hover table-sm" formArrayName="notes">
-                            <thead class="table-light">
-                              <tr>
-                                <th style="width: 10%">FECHA</th>
-                                <th style="width: 8%">HORA</th>
-                                <th style="width: 12%">TIPO DE ABORDAJE</th>
-                                <th style="width: 12%">PROCESO</th>
-                                <th style="width: 18%">RESUMEN DE INTERVENCIÓN</th>
-                                <th style="width: 15%">OBSERVACIONES</th>
-                                <th style="width: 15%">ACUERDOS</th>
-                                @if (!isViewMode) {
-                                <th style="width: 5%"></th>
-                                }
-                              </tr>
-                            </thead>
-                            <tbody>
-                              @for (note of progressNotesArray.controls; track $index) {
-                              <tr [formGroupName]="$index">
-                                <td>
-                                  <input type="date" formControlName="date" class="form-control form-control-sm" />
-                                </td>
-                                <td>
-                                  <input type="time" formControlName="time" class="form-control form-control-sm" />
-                                </td>
-                                <td>
-                                  <select formControlName="approachType" class="form-select form-select-sm">
-                                    <option value="" disabled selected>Seleccione un tipo de abordaje</option>
-                                    @for (approachType of approachTypes; track approachType.id) {
-                                    <option [value]="approachType.name">{{ approachType.name }}</option>
-                                    }
-                                  </select>
-                                </td>
-                                <td>
-                                  <select formControlName="process" class="form-select form-select-sm">
-                                    <option value="" disabled selected>Seleccione un proceso</option>
-                                    @for (processType of processTypes; track processType.id) {
-                                    <option [value]="processType.name">{{ processType.name }}</option>
-                                    }
-                                  </select>
-                                </td>
-                                <td>
-                                  <textarea
-                                    formControlName="interventionSummary"
-                                    class="form-control form-control-sm"
-                                    rows="2"
-                                    placeholder="Resumen de la intervención realizada..."
-                                  ></textarea>
-                                </td>
-                                <td>
-                                  <textarea
-                                    formControlName="observations"
-                                    class="form-control form-control-sm"
-                                    rows="2"
-                                    placeholder="Observaciones..."
-                                  ></textarea>
-                                </td>
-                                <td>
-                                  <textarea
-                                    formControlName="agreements"
-                                    class="form-control form-control-sm"
-                                    rows="2"
-                                    placeholder="Acuerdos establecidos..."
-                                  ></textarea>
-                                </td>
-                                <td class="text-center">
-                                  @if (!isViewMode) {
-                                  <button
-                                    type="button"
-                                    class="btn btn-danger btn-sm"
-                                    (click)="removeProgressNote($index)"
-                                    title="Eliminar nota"
-                                  >
-                                    <i class="mdi mdi-delete"></i>
-                                  </button>
-                                  }
-                                </td>
-                              </tr>
-                              }
-                            </tbody>
-                          </table>
-                        </div>
-
-                        @if (progressNotesArray.length > 0) {
-                        <div class="card shadow-sm mt-3">
-                          <div class="card-body">
-                            <p class="mb-0">
-                              <i class="mdi mdi-information-outline text-info me-1"></i>
-                              <strong>Nota:</strong> Registre cada intervención de manera cronológica, incluyendo la
-                              fecha, hora y detalles relevantes del proceso.
-                            </p>
-                          </div>
-                        </div>
-                        }
-                      </div>
-
-                      <ul class="list-inline mb-0 wizard mt-4">
-                        <li class="previous list-inline-item">
-                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
-                            <i class="mdi mdi-arrow-left me-1"></i>Anterior
-                          </button>
-                        </li>
-                        <li class="next list-inline-item float-end">
-                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">
-                            Siguiente<i class="mdi mdi-arrow-right ms-1"></i>
-                          </button>
-                        </li>
-                      </ul>
-                    </ng-template>
-                  </li>
-
-                  <!-- Step 12: Referrals -->
-                  <li [ngbNavItem]="12">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-share-variant me-1"></i>
-                      <span class="d-none d-sm-inline">Referidos</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="92.4"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-
-                      <div formGroupName="referrals">
-                        <div class="mb-4">
-                          <h4 class="mb-3">
-                            <i class="mdi mdi-account-arrow-right text-primary me-2"></i>
-                            MENCIONAR Y JUSTIFICAR LOS REFERIDOS QUE SE REALIZARÁN
-                          </h4>
-                        </div>
-
-                        <div class="card shadow-sm">
-                          <div class="card-body">
-                            <label class="form-label fw-semibold">
-                              <i class="mdi mdi-text-box-multiple text-info me-1"></i>
-                              Descripción de los Referidos y su Justificación
-                            </label>
-                            <p class="text-muted small mb-2">
-                              Especifique a qué instituciones, organizaciones o profesionales se realizarán los
-                              referidos y explique las razones que justifican cada uno.
-                            </p>
-                            <textarea
-                              formControlName="referralsJustification"
-                              class="form-control"
-                              rows="8"
-                              placeholder="Describa los referidos que se realizarán y la justificación de cada uno. "
-                              [class.is-invalid]="hasFieldError('referrals.referralsJustification')"
-                            ></textarea>
-                            @if (hasFieldError('referrals.referralsJustification')) {
-                            <div class="invalid-feedback">
-                              {{ getFieldError('referrals.referralsJustification') }}
                             </div>
-                            }
+                          </div>
+
+                          <div class="card shadow-sm border-start border-primary border-3 mt-3">
+                            <div class="card-body">
+                              <h6 class="mb-2">
+                                <i class="mdi mdi-lightbulb-on text-warning me-1"></i>
+                                Recomendaciones
+                              </h6>
+                              <ul class="mb-0 small">
+                                <li>Sea específico con el nombre de la institución o profesional</li>
+                                <li>Justifique claramente por qué cada referido es necesario</li>
+                                <li>Mencione qué necesidades del participante se atenderán</li>
+                                <li>Indique si hay coordinación previa o contacto establecido</li>
+                              </ul>
+                            </div>
                           </div>
                         </div>
 
-                        <div class="card shadow-sm border-start border-primary border-3 mt-3">
-                          <div class="card-body">
-                            <h6 class="mb-2">
-                              <i class="mdi mdi-lightbulb-on text-warning me-1"></i>
-                              Recomendaciones
+                        <ul class="list-inline mb-0 wizard mt-4">
+                          <li class="previous list-inline-item">
+                            <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
+                              <i class="mdi mdi-arrow-left me-1"></i>Anterior
+                            </button>
+                          </li>
+                          <li class="next list-inline-item float-end">
+                            <button type="button" class="btn btn-primary" (click)="goToNextStep()">
+                              Siguiente<i class="mdi mdi-arrow-right ms-1"></i>
+                            </button>
+                          </li>
+                        </ul>
+                      </ng-template>
+                    </li>
+
+                    <!-- Step 13: Closing Note -->
+                    <li [ngbNavItem]="13">
+                      <a ngbNavLink class="rounded-0 pt-2 pb-2">
+                        <i class="mdi mdi-bookmark-check me-1"></i>
+                        <span class="d-none d-sm-inline">Nota de Cierre</span>
+                      </a>
+                      <ng-template ngbNavContent>
+                        <p>
+                          <ngb-progressbar
+                            type="success"
+                            [value]="100"
+                            [striped]="true"
+                            [animated]="true"
+                            class="mb-3"
+                            height="7px"
+                          ></ngb-progressbar>
+                        </p>
+                        <div formGroupName="closingNote">
+                          <div class="alert alert-warning">
+                            <h6 class="alert-heading mb-2">
+                              <i class="mdi mdi-information me-1"></i>Nota de Cierre (Opcional)
                             </h6>
-                            <ul class="mb-0 small">
-                              <li>Sea específico con el nombre de la institución o profesional</li>
-                              <li>Justifique claramente por qué cada referido es necesario</li>
-                              <li>Mencione qué necesidades del participante se atenderán</li>
-                              <li>Indique si hay coordinación previa o contacto establecido</li>
-                            </ul>
+                            <p class="mb-0 small">Complete esta sección solo si está cerrando el caso.</p>
                           </div>
-                        </div>
-                      </div>
 
-                      <ul class="list-inline mb-0 wizard mt-4">
-                        <li class="previous list-inline-item">
-                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
-                            <i class="mdi mdi-arrow-left me-1"></i>Anterior
-                          </button>
-                        </li>
-                        <li class="next list-inline-item float-end">
-                          <button type="button" class="btn btn-primary" (click)="goToNextStep()">
-                            Siguiente<i class="mdi mdi-arrow-right ms-1"></i>
-                          </button>
-                        </li>
-                      </ul>
-                    </ng-template>
-                  </li>
-
-                  <!-- Step 13: Closing Note -->
-                  <li [ngbNavItem]="13">
-                    <a ngbNavLink class="rounded-0 pt-2 pb-2">
-                      <i class="mdi mdi-bookmark-check me-1"></i>
-                      <span class="d-none d-sm-inline">Nota de Cierre</span>
-                    </a>
-                    <ng-template ngbNavContent>
-                      <p>
-                        <ngb-progressbar
-                          type="success"
-                          [value]="100"
-                          [striped]="true"
-                          [animated]="true"
-                          class="mb-3"
-                          height="7px"
-                        ></ngb-progressbar>
-                      </p>
-                      <div formGroupName="closingNote">
-                        <div class="alert alert-warning">
-                          <h6 class="alert-heading mb-2">
-                            <i class="mdi mdi-information me-1"></i>Nota de Cierre (Opcional)
-                          </h6>
-                          <p class="mb-0 small">Complete esta sección solo si está cerrando el caso.</p>
-                        </div>
-
-                        <div class="row mb-3">
-                          <label class="col-md-3 col-form-label">Fecha de cierre</label>
-                          <div class="col-md-9">
-                            <input type="date" class="form-control" formControlName="closureDate" />
+                          <div class="row mb-3">
+                            <label class="col-md-3 col-form-label">Fecha de cierre</label>
+                            <div class="col-md-9">
+                              <input type="date" class="form-control" formControlName="closureDate" />
+                            </div>
                           </div>
-                        </div>
 
-                        <div class="row mb-3">
-                          <label class="col-md-3 col-form-label">Motivo de cierre</label>
-                          <div class="col-md-9">
-                            <textarea
-                              class="form-control"
-                              formControlName="closureReason"
-                              rows="3"
-                              placeholder="Describa el motivo del cierre..."
-                            ></textarea>
+                          <div class="row mb-3">
+                            <label class="col-md-3 col-form-label">Motivo de cierre</label>
+                            <div class="col-md-9">
+                              <textarea
+                                class="form-control"
+                                formControlName="closureReason"
+                                rows="3"
+                                placeholder="Describa el motivo del cierre..."
+                              ></textarea>
+                            </div>
+                          </div>
+
+                          <div class="row mb-3">
+                            <label class="col-md-3 col-form-label">Logros alcanzados</label>
+                            <div class="col-md-9">
+                              <textarea
+                                class="form-control"
+                                formControlName="achievements"
+                                rows="4"
+                                placeholder="Enumere los logros alcanzados durante el proceso..."
+                              ></textarea>
+                            </div>
+                          </div>
+
+                          <div class="row mb-3">
+                            <label class="col-md-3 col-form-label">Recomendaciones</label>
+                            <div class="col-md-9">
+                              <textarea
+                                class="form-control"
+                                formControlName="recommendations"
+                                rows="4"
+                                placeholder="Recomendaciones para el participante..."
+                              ></textarea>
+                            </div>
+                          </div>
+
+                          <div class="row mb-3">
+                            <label class="col-md-3 col-form-label">Sugerencias de seguimiento</label>
+                            <div class="col-md-9">
+                              <textarea
+                                class="form-control"
+                                formControlName="followUpSuggestions"
+                                rows="3"
+                                placeholder="Sugerencias de seguimiento..."
+                              ></textarea>
+                            </div>
                           </div>
                         </div>
 
-                        <div class="row mb-3">
-                          <label class="col-md-3 col-form-label">Logros alcanzados</label>
-                          <div class="col-md-9">
-                            <textarea
-                              class="form-control"
-                              formControlName="achievements"
-                              rows="4"
-                              placeholder="Enumere los logros alcanzados durante el proceso..."
-                            ></textarea>
-                          </div>
-                        </div>
+                        <ul class="list-inline mb-0 wizard">
+                          <li class="previous list-inline-item">
+                            <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">
+                              Anterior
+                            </button>
+                          </li>
+                          @if (!isViewMode) {
+                            <li class="next list-inline-item float-end">
+                              <button type="submit" class="btn btn-success" [disabled]="caseForm.invalid">
+                                <i class="mdi mdi-check-circle me-1"></i>
+                                {{ isEditMode ? 'Actualizar Caso' : 'Crear Caso' }}
+                              </button>
+                            </li>
+                          }
+                        </ul>
+                      </ng-template>
+                    </li>
+                  </ul>
 
-                        <div class="row mb-3">
-                          <label class="col-md-3 col-form-label">Recomendaciones</label>
-                          <div class="col-md-9">
-                            <textarea
-                              class="form-control"
-                              formControlName="recommendations"
-                              rows="4"
-                              placeholder="Recomendaciones para el participante..."
-                            ></textarea>
-                          </div>
-                        </div>
-
-                        <div class="row mb-3">
-                          <label class="col-md-3 col-form-label">Sugerencias de seguimiento</label>
-                          <div class="col-md-9">
-                            <textarea
-                              class="form-control"
-                              formControlName="followUpSuggestions"
-                              rows="3"
-                              placeholder="Sugerencias de seguimiento..."
-                            ></textarea>
-                          </div>
-                        </div>
-                      </div>
-
-                      <ul class="list-inline mb-0 wizard">
-                        <li class="previous list-inline-item">
-                          <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()">Anterior</button>
-                        </li>
-                        @if (!isViewMode) {
-                        <li class="next list-inline-item float-end">
-                          <button type="submit" class="btn btn-success" [disabled]="caseForm.invalid">
-                            <i class="mdi mdi-check-circle me-1"></i>
-                            {{ isEditMode ? 'Actualizar Caso' : 'Crear Caso' }}
-                          </button>
-                        </li>
-                        }
-                      </ul>
-                    </ng-template>
-                  </li>
-                </ul>
-
-                <div [ngbNavOutlet]="caseWizard" class="b-0 mb-0 pt-0"></div>
-              </div>
-            </form>
-          </div>
+                  <div [ngbNavOutlet]="caseWizard" class="b-0 mb-0 pt-0"></div>
+                </div>
+              </form>
+            </div>
           } @else {
-          <div class="alert alert-danger">
-            <h5>Error: Formulario no inicializado</h5>
-            <p>El formulario no se ha podido inicializar correctamente. Por favor, recarga la página.</p>
-          </div>
+            <div class="alert alert-danger">
+              <h5>Error: Formulario no inicializado</h5>
+              <p>El formulario no se ha podido inicializar correctamente. Por favor, recarga la página.</p>
+            </div>
           }
         </div>
       </div>
