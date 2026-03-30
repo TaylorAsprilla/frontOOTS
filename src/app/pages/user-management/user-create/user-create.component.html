@@ -96,6 +96,7 @@
                     <div class="col-md-8">
                       <div
                         class="phone-input-wrapper"
+                        (focusout)="onPhoneBlur($event)"
                         [ngClass]="{
                           'has-error': isFieldInvalid('phoneNumber'),
                           'has-success': !isFieldInvalid('phoneNumber') && userForm.get('phoneNumber')?.value,
@@ -121,7 +122,7 @@
                         @if (isFieldInvalid('phoneNumber')) {
                           <div class="invalid-feedback d-block">
                             <i class="mdi mdi-alert-circle-outline me-1"></i>
-                            {{ 'user.validPhoneRequired' | transloco }}
+                            {{ getFieldError('phoneNumber') || 'user.validPhoneRequired' | transloco }}
                           </div>
                         }
                       </div>

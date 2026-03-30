@@ -202,6 +202,47 @@ export class UserCreateComponent implements OnInit, OnDestroy {
     });
   }
 
+  onPhoneBlur(event: FocusEvent): void {
+    const wrapper = event.currentTarget as HTMLElement;
+    if (!wrapper.contains(event.relatedTarget as Node)) {
+      this.validatePhoneNumber();
+    }
+  }
+
+  /**
+   * Triggered on blur — validates phone number against the API
+   */
+  validatePhoneNumber(): void {
+    const phoneControl = this.userForm.get('phoneNumber');
+    const value = phoneControl?.value;
+
+    console.log('Validating phone number:', value);
+    if (value && phoneControl?.valid) {
+      // value.number respects [numberFormat]="PhoneNumberFormat.International" → e.g. "+57 300 123 4567"
+      const internationalNumber = (value.internationalNumber as string) ?? '';
+      if (!internationalNumber) return;
+      this.userService
+        .checkPhoneExists(internationalNumber)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (exists) => {
+            if (phoneControl) {
+              if (exists) {
+                phoneControl.setErrors({ phoneExists: true });
+              } else if (phoneControl.hasError('phoneExists')) {
+                const errors = { ...phoneControl.errors };
+                delete errors['phoneExists'];
+                phoneControl.setErrors(Object.keys(errors).length ? errors : null);
+              }
+            }
+          },
+          error: (error) => {
+            console.error('Error checking phone existence:', error);
+          },
+        });
+    }
+  }
+
   /**
    * Triggered on blur or Enter key — validates email against the API
    */
@@ -280,6 +321,7 @@ export class UserCreateComponent implements OnInit, OnDestroy {
       if (errors['required']) return 'user.validation.required';
       if (errors['email']) return 'user.validation.invalidEmail';
       if (errors['emailExists']) return 'user.validation.emailExists';
+      if (errors['phoneExists']) return 'user.validation.phoneExists';
       if (errors['minlength']) return 'user.validation.minLength';
       if (errors['maxlength']) return 'user.validation.maxLength';
       if (errors['documentExists']) return 'user.validation.documentExists';

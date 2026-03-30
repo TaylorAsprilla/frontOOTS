@@ -189,6 +189,22 @@ export class UserService {
   }
 
   /**
+   * Verifica si un número de teléfono ya está registrado
+   * @param phoneNumber - Número de teléfono a verificar
+   * @returns Observable<boolean>
+   */
+  checkPhoneExists(phoneNumber: string): Observable<boolean> {
+    const params = new HttpParams().set('phoneNumber', phoneNumber);
+
+    return this.http
+      .get<ApiResponse<{ available: boolean }>>(`${this.apiUrlRegister}/auth/check-phone`, { params })
+      .pipe(
+        map((response) => !response.data.available),
+        catchError((error) => this.handleError(error, 'Error al verificar el teléfono')),
+      );
+  }
+
+  /**
    * Verifica si un número de documento ya está registrado
    * @param documentNumber - Número de documento a verificar
    * @returns Observable<boolean>
