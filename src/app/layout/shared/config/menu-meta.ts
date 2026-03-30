@@ -91,41 +91,41 @@ const MENU_ITEMS: MenuItem[] = [
     ],
   },
 
-  { key: 'apps', label: 'navigation.appointments', isTitle: true },
-  {
-    key: 'apps-calendar',
-    label: 'navigation.agenda',
-    isTitle: false,
-    icon: 'calendar',
-    link: '/apps/calendar',
-  },
-  {
-    key: 'apps-tasks',
-    label: 'navigation.tasks',
-    isTitle: false,
-    icon: 'clipboard',
-    collapsed: true,
-    children: [
-      // {
-      //   key: "task-list",
-      //   label: "List",
-      //   link: "/apps/tasks/list",
-      //   parentKey: "apps-tasks",
-      // },
-      // {
-      //   key: "task-details",
-      //   label: "Details",
-      //   link: "/apps/tasks/details",
-      //   parentKey: "apps-tasks",
-      // },
-      {
-        key: 'task-kanban',
-        label: 'navigation.tasksList',
-        link: '/apps/tasks/kanban',
-        parentKey: 'apps-tasks',
-      },
-    ],
-  },
+  // { key: 'apps', label: 'navigation.appointments', isTitle: true },
+  // {
+  //   key: 'apps-calendar',
+  //   label: 'navigation.agenda',
+  //   isTitle: false,
+  //   icon: 'calendar',
+  //   link: '/apps/calendar',
+  // },
+  // {
+  //   key: 'apps-tasks',
+  //   label: 'navigation.tasks',
+  //   isTitle: false,
+  //   icon: 'clipboard',
+  //   collapsed: true,
+  //   children: [
+  //     // {
+  //     //   key: "task-list",
+  //     //   label: "List",
+  //     //   link: "/apps/tasks/list",
+  //     //   parentKey: "apps-tasks",
+  //     // },
+  //     // {
+  //     //   key: "task-details",
+  //     //   label: "Details",
+  //     //   link: "/apps/tasks/details",
+  //     //   parentKey: "apps-tasks",
+  //     // },
+  //     {
+  //       key: 'task-kanban',
+  //       label: 'navigation.tasksList',
+  //       link: '/apps/tasks/kanban',
+  //       parentKey: 'apps-tasks',
+  //     },
+  //   ],
+  // },
 
   { key: 'configuration', label: 'configuration.title', isTitle: true },
   {

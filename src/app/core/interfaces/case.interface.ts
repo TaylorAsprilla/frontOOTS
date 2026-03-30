@@ -6,6 +6,7 @@
 import { ProcessType } from 'src/app/pages/configuration/process-types/process-type.interface';
 
 export enum CaseStatus {
+  OPEN = 'open',
   ACTIVE = 'active',
   IN_PROGRESS = 'in_progress',
   CLOSED = 'closed',

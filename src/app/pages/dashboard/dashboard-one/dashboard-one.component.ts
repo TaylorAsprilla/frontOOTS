@@ -147,9 +147,15 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
             .slice(0, 5);
 
           // Count open and closed cases
-          this.openCases = cases.filter((c) => c.status === 'in_progress' || c.status === 'active').length;
+          this.openCases = cases.filter((c) => {
+            const s = (c.status || '').toLowerCase().replace(/[-\s]/g, '_');
+            return s === 'in_progress' || s === 'active' || s === 'open';
+          }).length;
 
-          this.closedCases = cases.filter((c) => c.status === 'closed').length;
+          this.closedCases = cases.filter((c) => {
+            const s = (c.status || '').toLowerCase().replace(/[-\s]/g, '_');
+            return s === 'closed';
+          }).length;
 
           // Process cases by month for chart
           this.processCasesByMonth(cases);
@@ -352,6 +358,7 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
     switch (status) {
       case 'in_progress':
       case 'active':
+      case 'open':
         return 'badge bg-soft-warning text-warning';
       case 'closed':
         return 'badge bg-soft-success text-success';
@@ -373,6 +380,8 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
         return 'En Progreso';
       case 'active':
         return 'Activo';
+      case 'open':
+        return 'Abierto';
       case 'closed':
         return 'Cerrado';
       case 'transferred':

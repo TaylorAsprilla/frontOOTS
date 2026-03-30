@@ -62,6 +62,7 @@ export class CaseListComponent implements OnInit, OnDestroy {
   // Status options
   statusOptions: Array<{ value: CaseStatus | 'all'; label: string }> = [
     { value: 'all', label: 'cases.allStatuses' },
+    { value: CaseStatus.OPEN, label: 'cases.open' },
     { value: CaseStatus.ACTIVE, label: 'cases.active' },
     { value: CaseStatus.IN_PROGRESS, label: 'cases.inProgress' },
     { value: CaseStatus.CLOSED, label: 'cases.closed' },
