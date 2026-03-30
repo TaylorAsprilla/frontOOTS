@@ -23,14 +23,19 @@
                       {{ 'user.firstName' | transloco }}
                     </label>
                     <div class="col-md-8">
-                      <input type="text" class="form-control" id="firstName" formControlName="firstName"
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="firstName"
+                        formControlName="firstName"
                         [placeholder]="'user.enterFirstName' | transloco"
-                        [class.is-invalid]="isFieldInvalid('firstName')" />
+                        [class.is-invalid]="isFieldInvalid('firstName')"
+                      />
                       @if (isFieldInvalid('firstName')) {
-                      <div class="invalid-feedback d-block">
-                        <i class="mdi mdi-alert-circle-outline me-1"></i>
-                        {{ getFieldError('firstName') | transloco }}
-                      </div>
+                        <div class="invalid-feedback d-block">
+                          <i class="mdi mdi-alert-circle-outline me-1"></i>
+                          {{ getFieldError('firstName') | transloco }}
+                        </div>
                       }
                     </div>
                   </div>
@@ -41,14 +46,19 @@
                       {{ 'user.firstLastName' | transloco }}
                     </label>
                     <div class="col-md-8">
-                      <input type="text" class="form-control" id="firstLastName" formControlName="firstLastName"
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="firstLastName"
+                        formControlName="firstLastName"
                         [placeholder]="'user.enterFirstLastName' | transloco"
-                        [class.is-invalid]="isFieldInvalid('firstLastName')" />
+                        [class.is-invalid]="isFieldInvalid('firstLastName')"
+                      />
                       @if (isFieldInvalid('firstLastName')) {
-                      <div class="invalid-feedback d-block">
-                        <i class="mdi mdi-alert-circle-outline me-1"></i>
-                        {{ getFieldError('firstLastName') | transloco }}
-                      </div>
+                        <div class="invalid-feedback d-block">
+                          <i class="mdi mdi-alert-circle-outline me-1"></i>
+                          {{ getFieldError('firstLastName') | transloco }}
+                        </div>
                       }
                     </div>
                   </div>
@@ -59,13 +69,19 @@
                       {{ 'user.email' | transloco }}
                     </label>
                     <div class="col-md-8">
-                      <input type="email" class="form-control" id="email" formControlName="email"
-                        [placeholder]="'user.enterEmail' | transloco" [class.is-invalid]="isFieldInvalid('email')" />
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="email"
+                        formControlName="email"
+                        [placeholder]="'user.enterEmail' | transloco"
+                        [class.is-invalid]="isFieldInvalid('email')"
+                      />
                       @if (isFieldInvalid('email')) {
-                      <div class="invalid-feedback d-block">
-                        <i class="mdi mdi-alert-circle-outline me-1"></i>
-                        {{ getFieldError('email') | transloco }}
-                      </div>
+                        <div class="invalid-feedback d-block">
+                          <i class="mdi mdi-alert-circle-outline me-1"></i>
+                          {{ getFieldError('email') | transloco }}
+                        </div>
                       }
                     </div>
                   </div>
@@ -76,24 +92,35 @@
                       {{ 'user.phone' | transloco }}
                     </label>
                     <div class="col-md-8">
-                      <div class="phone-input-wrapper" [ngClass]="{
-                        'has-error': isFieldInvalid('phoneNumber'),
-                        'has-success': !isFieldInvalid('phoneNumber') && userForm.get('phoneNumber')?.value
-                      }">
-                        <ngx-intl-tel-input [cssClass]="'form-control'"
+                      <div
+                        class="phone-input-wrapper"
+                        [ngClass]="{
+                          'has-error': isFieldInvalid('phoneNumber'),
+                          'has-success': !isFieldInvalid('phoneNumber') && userForm.get('phoneNumber')?.value,
+                        }"
+                      >
+                        <ngx-intl-tel-input
+                          [cssClass]="'form-control'"
                           [preferredCountries]="[CountryISO.Colombia, CountryISO.UnitedStates]"
-                          [enableAutoCountrySelect]="true" [enablePlaceholder]="true" [searchCountryFlag]="true"
+                          [enableAutoCountrySelect]="true"
+                          [enablePlaceholder]="true"
+                          [searchCountryFlag]="true"
                           [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
-                          [selectFirstCountry]="false" [selectedCountryISO]="CountryISO.Colombia" [maxLength]="15"
-                          [phoneValidation]="true" [separateDialCode]="false"
-                          [numberFormat]="PhoneNumberFormat.International" formControlName="phoneNumber"
-                          id="phoneNumber">
+                          [selectFirstCountry]="false"
+                          [selectedCountryISO]="CountryISO.Colombia"
+                          [maxLength]="15"
+                          [phoneValidation]="true"
+                          [separateDialCode]="false"
+                          [numberFormat]="PhoneNumberFormat.International"
+                          formControlName="phoneNumber"
+                          id="phoneNumber"
+                        >
                         </ngx-intl-tel-input>
                         @if (isFieldInvalid('phoneNumber')) {
-                        <div class="invalid-feedback d-block">
-                          <i class="mdi mdi-alert-circle-outline me-1"></i>
-                          {{ 'user.validPhoneRequired' | transloco }}
-                        </div>
+                          <div class="invalid-feedback d-block">
+                            <i class="mdi mdi-alert-circle-outline me-1"></i>
+                            {{ 'user.validPhoneRequired' | transloco }}
+                          </div>
                         }
                       </div>
                     </div>
@@ -105,18 +132,22 @@
                       {{ 'user.documentType' | transloco }}
                     </label>
                     <div class="col-md-8">
-                      <select class="form-select" id="documentTypeId" formControlName="documentTypeId"
-                        [class.is-invalid]="isFieldInvalid('documentTypeId')">
+                      <select
+                        class="form-select"
+                        id="documentTypeId"
+                        formControlName="documentTypeId"
+                        [class.is-invalid]="isFieldInvalid('documentTypeId')"
+                      >
                         <option value="" disabled selected>Seleccione</option>
                         @for (docType of documentTypes; track docType.id) {
-                        <option [ngValue]="docType.id">{{ docType.name }}</option>
+                          <option [ngValue]="docType.id">{{ docType.name }}</option>
                         }
                       </select>
                       @if (isFieldInvalid('documentTypeId')) {
-                      <div class="invalid-feedback d-block">
-                        <i class="mdi mdi-alert-circle-outline me-1"></i>
-                        {{ getFieldError('documentTypeId') | transloco }}
-                      </div>
+                        <div class="invalid-feedback d-block">
+                          <i class="mdi mdi-alert-circle-outline me-1"></i>
+                          {{ getFieldError('documentTypeId') | transloco }}
+                        </div>
                       }
                     </div>
                   </div>
@@ -127,14 +158,19 @@
                       {{ 'user.address' | transloco }}
                     </label>
                     <div class="col-md-8">
-                      <input type="text" class="form-control" id="address" formControlName="address"
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="address"
+                        formControlName="address"
                         [placeholder]="'user.enterAddress' | transloco"
-                        [class.is-invalid]="isFieldInvalid('address')" />
+                        [class.is-invalid]="isFieldInvalid('address')"
+                      />
                       @if (isFieldInvalid('address')) {
-                      <div class="invalid-feedback d-block">
-                        <i class="mdi mdi-alert-circle-outline me-1"></i>
-                        {{ getFieldError('address') | transloco }}
-                      </div>
+                        <div class="invalid-feedback d-block">
+                          <i class="mdi mdi-alert-circle-outline me-1"></i>
+                          {{ getFieldError('address') | transloco }}
+                        </div>
                       }
                     </div>
                   </div>
@@ -145,14 +181,19 @@
                       {{ 'user.position' | transloco }}
                     </label>
                     <div class="col-md-8">
-                      <input type="text" class="form-control" id="position" formControlName="position"
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="position"
+                        formControlName="position"
                         [placeholder]="'user.enterPosition' | transloco"
-                        [class.is-invalid]="isFieldInvalid('position')" />
+                        [class.is-invalid]="isFieldInvalid('position')"
+                      />
                       @if (isFieldInvalid('position')) {
-                      <div class="invalid-feedback d-block">
-                        <i class="mdi mdi-alert-circle-outline me-1"></i>
-                        {{ getFieldError('position') | transloco }}
-                      </div>
+                        <div class="invalid-feedback d-block">
+                          <i class="mdi mdi-alert-circle-outline me-1"></i>
+                          {{ getFieldError('position') | transloco }}
+                        </div>
                       }
                     </div>
                   </div>
@@ -166,8 +207,13 @@
                       {{ 'user.secondName' | transloco }}
                     </label>
                     <div class="col-md-8">
-                      <input type="text" class="form-control" id="secondName" formControlName="secondName"
-                        [placeholder]="'user.enterSecondName' | transloco" />
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="secondName"
+                        formControlName="secondName"
+                        [placeholder]="'user.enterSecondName' | transloco"
+                      />
                     </div>
                   </div>
 
@@ -177,8 +223,13 @@
                       {{ 'user.secondLastName' | transloco }}
                     </label>
                     <div class="col-md-8">
-                      <input type="text" class="form-control" id="secondLastName" formControlName="secondLastName"
-                        [placeholder]="'user.enterSecondLastName' | transloco" />
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="secondLastName"
+                        formControlName="secondLastName"
+                        [placeholder]="'user.enterSecondLastName' | transloco"
+                      />
                     </div>
                   </div>
 
@@ -189,19 +240,28 @@
                     </label>
                     <div class="col-md-8">
                       <div class="input-group">
-                        <input type="password" class="form-control" id="password" formControlName="password"
+                        <input
+                          type="password"
+                          class="form-control"
+                          id="password"
+                          formControlName="password"
                           [placeholder]="'user.enterPassword' | transloco"
-                          [class.is-invalid]="isFieldInvalid('password')" />
-                        <button type="button" class="btn btn-outline-secondary" (click)="onGeneratePassword()"
-                          title="Generar contraseña automáticamente">
+                          [class.is-invalid]="isFieldInvalid('password')"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary"
+                          (click)="onGeneratePassword()"
+                          title="Generar contraseña automáticamente"
+                        >
                           <i class="mdi mdi-refresh"></i> Generar
                         </button>
                       </div>
                       @if (isFieldInvalid('password')) {
-                      <div class="invalid-feedback d-block">
-                        <i class="mdi mdi-alert-circle-outline me-1"></i>
-                        {{ getFieldError('password') | transloco }}
-                      </div>
+                        <div class="invalid-feedback d-block">
+                          <i class="mdi mdi-alert-circle-outline me-1"></i>
+                          {{ getFieldError('password') | transloco }}
+                        </div>
                       }
                     </div>
                   </div>
@@ -212,14 +272,21 @@
                       {{ 'user.documentNumber' | transloco }}
                     </label>
                     <div class="col-md-8">
-                      <input type="text" class="form-control" id="documentNumber" formControlName="documentNumber"
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="documentNumber"
+                        formControlName="documentNumber"
                         [placeholder]="'user.enterDocumentNumber' | transloco"
-                        [class.is-invalid]="isFieldInvalid('documentNumber')" />
+                        [class.is-invalid]="isFieldInvalid('documentNumber')"
+                        (blur)="validateDocumentNumber()"
+                        (keydown.enter)="validateDocumentNumber()"
+                      />
                       @if (isFieldInvalid('documentNumber')) {
-                      <div class="invalid-feedback d-block">
-                        <i class="mdi mdi-alert-circle-outline me-1"></i>
-                        {{ getFieldError('documentNumber') | transloco }}
-                      </div>
+                        <div class="invalid-feedback d-block">
+                          <i class="mdi mdi-alert-circle-outline me-1"></i>
+                          {{ getFieldError('documentNumber') | transloco }}
+                        </div>
                       }
                     </div>
                   </div>
@@ -230,13 +297,19 @@
                       {{ 'user.city' | transloco }}
                     </label>
                     <div class="col-md-8">
-                      <input type="text" class="form-control" id="city" formControlName="city"
-                        [placeholder]="'user.enterCity' | transloco" [class.is-invalid]="isFieldInvalid('city')" />
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="city"
+                        formControlName="city"
+                        [placeholder]="'user.enterCity' | transloco"
+                        [class.is-invalid]="isFieldInvalid('city')"
+                      />
                       @if (isFieldInvalid('city')) {
-                      <div class="invalid-feedback d-block">
-                        <i class="mdi mdi-alert-circle-outline me-1"></i>
-                        {{ getFieldError('city') | transloco }}
-                      </div>
+                        <div class="invalid-feedback d-block">
+                          <i class="mdi mdi-alert-circle-outline me-1"></i>
+                          {{ getFieldError('city') | transloco }}
+                        </div>
                       }
                     </div>
                   </div>
@@ -247,13 +320,18 @@
                       {{ 'user.birthDate' | transloco }}
                     </label>
                     <div class="col-md-8">
-                      <input type="date" class="form-control" id="birthDate" formControlName="birthDate"
-                        [class.is-invalid]="isFieldInvalid('birthDate')" />
+                      <input
+                        type="date"
+                        class="form-control"
+                        id="birthDate"
+                        formControlName="birthDate"
+                        [class.is-invalid]="isFieldInvalid('birthDate')"
+                      />
                       @if (isFieldInvalid('birthDate')) {
-                      <div class="invalid-feedback d-block">
-                        <i class="mdi mdi-alert-circle-outline me-1"></i>
-                        {{ getFieldError('birthDate') | transloco }}
-                      </div>
+                        <div class="invalid-feedback d-block">
+                          <i class="mdi mdi-alert-circle-outline me-1"></i>
+                          {{ getFieldError('birthDate') | transloco }}
+                        </div>
                       }
                     </div>
                   </div>
@@ -264,14 +342,19 @@
                       {{ 'user.headquarters' | transloco }}
                     </label>
                     <div class="col-md-8">
-                      <input type="text" class="form-control" id="headquarters" formControlName="headquarters"
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="headquarters"
+                        formControlName="headquarters"
                         [placeholder]="'user.enterHeadquarters' | transloco"
-                        [class.is-invalid]="isFieldInvalid('headquarters')" />
+                        [class.is-invalid]="isFieldInvalid('headquarters')"
+                      />
                       @if (isFieldInvalid('headquarters')) {
-                      <div class="invalid-feedback d-block">
-                        <i class="mdi mdi-alert-circle-outline me-1"></i>
-                        {{ getFieldError('headquarters') | transloco }}
-                      </div>
+                        <div class="invalid-feedback d-block">
+                          <i class="mdi mdi-alert-circle-outline me-1"></i>
+                          {{ getFieldError('headquarters') | transloco }}
+                        </div>
                       }
                     </div>
                   </div>
@@ -301,3 +384,4 @@
       </div>
     </div>
   </div>
+</div>

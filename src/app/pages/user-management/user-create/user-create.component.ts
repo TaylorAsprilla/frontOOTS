@@ -43,7 +43,6 @@ export class UserCreateComponent implements OnInit, OnDestroy {
     this.setupPageTitle();
     this.loadDocumentTypesFromResolver();
     this.initializeForm();
-    this.setupDocumentValidation();
   }
 
   ngOnDestroy(): void {
@@ -80,7 +79,7 @@ export class UserCreateComponent implements OnInit, OnDestroy {
       email: ['', [Validators.required, Validators.email]],
       phoneNumber: ['', [Validators.required, Validators.maxLength(20)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
-      documentNumber: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(15)]],
+      documentNumber: ['', [Validators.required, Validators.minLength(6)]],
       address: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]],
       city: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       birthDate: ['', [Validators.required]],
@@ -204,16 +203,13 @@ export class UserCreateComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Setup document validation to check for duplicates
+   * Triggered on blur or Enter key — validates document number against the API
    */
-  private setupDocumentValidation(): void {
+  validateDocumentNumber(): void {
     const documentControl = this.userForm.get('documentNumber');
-    if (documentControl) {
-      documentControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
-        if (value && value.length >= 6) {
-          this.checkDocumentExists(value);
-        }
-      });
+    const value = documentControl?.value;
+    if (value && value.length >= 6) {
+      this.checkDocumentExists(value);
     }
   }
 
