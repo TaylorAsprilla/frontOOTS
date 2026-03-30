@@ -194,6 +194,15 @@ export class CaseService {
   }
 
   /**
+   * Download case PDF report
+   */
+  downloadCasePdf(id: number): Observable<Blob> {
+    const token = this.tokenStorageService.getToken();
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    return this.http.get(`${this.apiUrl}/${id}/pdf`, { headers, responseType: 'blob' });
+  }
+
+  /**
    * Delete a case
    */
   deleteCase(id: number): Observable<void> {

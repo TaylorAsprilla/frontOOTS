@@ -1074,6 +1074,7 @@
     "noCasesMessage": "No hay casos registrados en el sistema",
     "cases": "casos",
     "deleteConfirmation": "Caso de",
+    "downloadPdf": "Descargar PDF",
     "unknown": "Desconocido",
     "loadingInfo": "Cargando información del caso...",
     "familyComposition": "Composición Familiar",

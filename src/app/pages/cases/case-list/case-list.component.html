@@ -150,6 +150,15 @@
                           <button
                             type="button"
                             class="btn btn-sm btn-light btn-icon"
+                            [ngbTooltip]="'cases.downloadPdf' | transloco"
+                            placement="top"
+                            (click)="downloadPdf(caseItem)"
+                          >
+                            <i class="mdi mdi-file-pdf-box text-danger"></i>
+                          </button>
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-light btn-icon"
                             [ngbTooltip]="'app.delete' | transloco"
                             placement="top"
                             (click)="deleteCase(caseItem)"

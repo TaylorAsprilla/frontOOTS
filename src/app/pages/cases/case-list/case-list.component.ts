@@ -166,6 +166,25 @@ export class CaseListComponent implements OnInit, OnDestroy {
     this.applyFiltersAndPagination();
   }
 
+  downloadPdf(caseItem: any): void {
+    this.caseService
+      .downloadCasePdf(caseItem.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (blob: Blob) => {
+          const url = URL.createObjectURL(blob);
+          const anchor = document.createElement('a');
+          anchor.href = url;
+          anchor.download = `caso-${caseItem.caseNumber || caseItem.id}.pdf`;
+          anchor.click();
+          URL.revokeObjectURL(url);
+        },
+        error: () => {
+          this.notificationService.showError('Error al descargar el PDF del caso');
+        },
+      });
+  }
+
   deleteCase(caseItem: any): void {
     if (!caseItem.id) return;
 

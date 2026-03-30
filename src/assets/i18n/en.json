@@ -1019,6 +1019,7 @@
     "noCasesMessage": "No cases registered in the system",
     "cases": "cases",
     "deleteConfirmation": "Case of",
+    "downloadPdf": "Download PDF",
     "unknown": "Unknown",
     "loadingInfo": "Loading case information...",
     "familyComposition": "Family Composition",
