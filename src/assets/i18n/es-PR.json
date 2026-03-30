@@ -100,6 +100,7 @@
     "phone": "Teléfono",
     "cellphone": "Celular",
     "documentNumber": "Número de Documento",
+    "documentType": "Tipo de Documento",
     "address": "Dirección",
     "city": "Ciudad",
     "birthDate": "Fecha de Nacimiento",
