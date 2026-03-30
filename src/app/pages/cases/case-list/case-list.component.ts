@@ -12,6 +12,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { CaseStatus } from '../../../core/interfaces/case.interface';
+import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
 
 @Component({
   selector: 'app-case-list',
@@ -25,6 +26,7 @@ import { CaseStatus } from '../../../core/interfaces/case.interface';
     NgbTooltipModule,
     TranslocoModule,
     PageTitleComponent,
+    LocalizedDatePipe,
   ],
   templateUrl: './case-list.component.html',
   styleUrls: ['./case-list.component.scss'],

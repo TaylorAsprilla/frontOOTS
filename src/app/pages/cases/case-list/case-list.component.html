@@ -124,7 +124,7 @@
                       </td>
                       <td>
                         @if (caseItem.createdAt) {
-                          <span>{{ caseItem.createdAt | date: 'short' }}</span>
+                          <span>{{ caseItem.createdAt | localizedDate: 'short' }}</span>
                         } @else {
                           <span class="text-muted">{{ 'app.notAvailable' | transloco }}</span>
                         }
