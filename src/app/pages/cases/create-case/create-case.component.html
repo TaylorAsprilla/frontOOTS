@@ -873,38 +873,6 @@
                                         }
                                       </div>
 
-                                      <!-- Historial familiar -->
-                                      <div class="mb-3">
-                                        <label class="form-label fw-semibold text-secondary small text-uppercase">
-                                          <i class="mdi mdi-account-group me-1"></i>
-                                          {{ 'cases.physicalHealth.familyHistoryColumn' | transloco }}
-                                        </label>
-                                        <div class="row g-3">
-                                          <div class="col-md-6">
-                                            <label class="form-label small text-muted">
-                                              {{ 'cases.physicalHealth.paternalFamilyColumn' | transloco }}
-                                            </label>
-                                            <textarea
-                                              class="form-control"
-                                              formControlName="paternalFamilyHistory"
-                                              rows="2"
-                                              placeholder="Historial paterno..."
-                                            ></textarea>
-                                          </div>
-                                          <div class="col-md-6">
-                                            <label class="form-label small text-muted">
-                                              {{ 'cases.physicalHealth.maternalFamilyColumn' | transloco }}
-                                            </label>
-                                            <textarea
-                                              class="form-control"
-                                              formControlName="maternalFamilyHistory"
-                                              rows="2"
-                                              placeholder="Historial materno..."
-                                            ></textarea>
-                                          </div>
-                                        </div>
-                                      </div>
-
                                       <!-- Observaciones -->
                                       <div class="mb-0">
                                         <label class="form-label fw-semibold text-secondary small text-uppercase">
@@ -930,6 +898,41 @@
                             </div>
                           }
                           <!-- end @if hasPhysicalHistory -->
+                        </div>
+
+                        <!-- Historial Familiar de Condiciones Físicas (independiente) -->
+                        <div class="card border-0 shadow-sm mb-4" [formGroup]="familyHealthHistoryGroup">
+                          <div class="card-header bg-opacity-10 border-0 py-2 px-3">
+                            <span class="fw-semibold text-primary">
+                              <i class="mdi mdi-account-group me-2"></i>
+                              Historial Familiar de Condiciones Físicas
+                            </span>
+                          </div>
+                          <div class="card-body px-3 py-3">
+                            <p class="text-muted small mb-3">
+                              Este historial se registra una sola vez para el participante.
+                            </p>
+                            <div class="row g-3">
+                              <div class="col-md-6">
+                                <label class="form-label small text-muted">Familia paterna</label>
+                                <textarea
+                                  class="form-control"
+                                  formControlName="physicalFamilyHistoryFather"
+                                  rows="3"
+                                  placeholder="Ej: Padre con diabetes tipo 2..."
+                                ></textarea>
+                              </div>
+                              <div class="col-md-6">
+                                <label class="form-label small text-muted">Familia materna</label>
+                                <textarea
+                                  class="form-control"
+                                  formControlName="physicalFamilyHistoryMother"
+                                  rows="3"
+                                  placeholder="Ej: Madre con hipertensión..."
+                                ></textarea>
+                              </div>
+                            </div>
+                          </div>
                         </div>
 
                         <ul class="list-inline mb-0 wizard">
@@ -1093,34 +1096,6 @@
                                         }
                                       </div>
 
-                                      <!-- Historial familiar -->
-                                      <div class="mb-3">
-                                        <label class="form-label fw-semibold text-secondary small text-uppercase">
-                                          <i class="mdi mdi-account-group me-1"></i>
-                                          Historial familiar de condiciones
-                                        </label>
-                                        <div class="row g-3">
-                                          <div class="col-md-6">
-                                            <label class="form-label small text-muted">Familia paterna</label>
-                                            <textarea
-                                              class="form-control"
-                                              formControlName="paternalFamilyHistory"
-                                              rows="2"
-                                              placeholder="Historial paterno..."
-                                            ></textarea>
-                                          </div>
-                                          <div class="col-md-6">
-                                            <label class="form-label small text-muted">Familia materna</label>
-                                            <textarea
-                                              class="form-control"
-                                              formControlName="maternalFamilyHistory"
-                                              rows="2"
-                                              placeholder="Historial materno..."
-                                            ></textarea>
-                                          </div>
-                                        </div>
-                                      </div>
-
                                       <!-- Observaciones -->
                                       <div class="mb-0">
                                         <label class="form-label fw-semibold text-secondary small text-uppercase">
@@ -1146,6 +1121,41 @@
                             </div>
                           }
                           <!-- end @if hasMentalHistory -->
+                        </div>
+
+                        <!-- Historial Familiar de Condiciones Mentales (independiente) -->
+                        <div class="card border-0 shadow-sm mb-4" [formGroup]="familyHealthHistoryGroup">
+                          <div class="card-header bg-opacity-10 border-0 py-2 px-3">
+                            <span class="fw-semibold text-primary">
+                              <i class="mdi mdi-account-group me-2"></i>
+                              Historial Familiar de Condiciones Mentales
+                            </span>
+                          </div>
+                          <div class="card-body px-3 py-3">
+                            <p class="text-muted small mb-3">
+                              Este historial se registra una sola vez para el participante.
+                            </p>
+                            <div class="row g-3">
+                              <div class="col-md-6">
+                                <label class="form-label small text-muted">Familia paterna</label>
+                                <textarea
+                                  class="form-control"
+                                  formControlName="mentalFamilyHistoryFather"
+                                  rows="3"
+                                  placeholder="Ej: Padre con tendencia al aislamiento social..."
+                                ></textarea>
+                              </div>
+                              <div class="col-md-6">
+                                <label class="form-label small text-muted">Familia materna</label>
+                                <textarea
+                                  class="form-control"
+                                  formControlName="mentalFamilyHistoryMother"
+                                  rows="3"
+                                  placeholder="Ej: Madre con episodios de depresión..."
+                                ></textarea>
+                              </div>
+                            </div>
+                          </div>
                         </div>
 
                         <ul class="list-inline mb-0 wizard">

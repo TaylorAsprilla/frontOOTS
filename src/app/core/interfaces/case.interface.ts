@@ -261,6 +261,7 @@ export interface CreateCaseDto {
   followUpPlan: FollowUpPlanDto[];
   physicalHealthHistory: PhysicalHealthHistoryDto[];
   mentalHealthHistory: MentalHealthHistoryDto[];
+  family_health_history: FamilyHealthHistoryDto[];
   weighing: WeighingDto;
   interventionPlans: InterventionPlanDto[];
   progressNotes: ProgressNoteDto[];
@@ -302,17 +303,19 @@ export interface FollowUpPlanDto {
 export interface PhysicalHealthHistoryDto {
   currentConditions: string;
   medications: string | null;
-  familyHistoryFather: string;
-  familyHistoryMother: string;
   observations: string;
 }
 
 export interface MentalHealthHistoryDto {
   currentConditions: string;
   medications: string | null;
-  familyHistoryFather: string;
-  familyHistoryMother: string;
   observations: string;
+}
+
+export interface FamilyHealthHistoryDto {
+  history_type: 'physical' | 'mental';
+  familyHistoryFather: string | null;
+  familyHistoryMother: string | null;
 }
 
 export interface WeighingDto {

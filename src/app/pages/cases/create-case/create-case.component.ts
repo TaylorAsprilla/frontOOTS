@@ -259,6 +259,14 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
         conditions: this.formBuilder.array([]),
       }),
 
+      // Family Health History (independent – filled once for both physical and mental)
+      familyHealthHistory: this.formBuilder.group({
+        physicalFamilyHistoryFather: [''],
+        physicalFamilyHistoryMother: [''],
+        mentalFamilyHistoryFather: [''],
+        mentalFamilyHistoryMother: [''],
+      }),
+
       // Step 9: Assessment (Ponderación)
       assessment: this.formBuilder.group({
         generalDescription: ['', Validators.required],
@@ -503,8 +511,6 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
             condition: [condition.currentConditions || ''],
             receivingTreatment: [!!condition.medications],
             treatmentDetails: [condition.medications || ''],
-            paternalFamilyHistory: [condition.familyHistoryFather || ''],
-            maternalFamilyHistory: [condition.familyHistoryMother || ''],
             observations: [condition.observations || ''],
           });
           this.physicalConditions.push(conditionGroup);
@@ -517,8 +523,6 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
             condition: [condition.currentConditions || ''],
             receivingTreatment: [!!condition.medications],
             treatmentDetails: [condition.medications || ''],
-            paternalFamilyHistory: [condition.familyHistoryFather || ''],
-            maternalFamilyHistory: [condition.familyHistoryMother || ''],
             observations: [condition.observations || ''],
           });
           this.physicalConditions.push(conditionGroup);
@@ -536,8 +540,6 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
             condition: [condition.currentConditions || ''],
             receivingTreatment: [!!condition.medications],
             treatmentDetails: [condition.medications || ''],
-            paternalFamilyHistory: [condition.familyHistoryFather || ''],
-            maternalFamilyHistory: [condition.familyHistoryMother || ''],
             observations: [condition.observations || ''],
           });
           this.mentalConditions.push(conditionGroup);
@@ -550,11 +552,25 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
             condition: [condition.currentConditions || ''],
             receivingTreatment: [!!condition.medications],
             treatmentDetails: [condition.medications || ''],
-            paternalFamilyHistory: [condition.familyHistoryFather || ''],
-            maternalFamilyHistory: [condition.familyHistoryMother || ''],
             observations: [condition.observations || ''],
           });
           this.mentalConditions.push(conditionGroup);
+        });
+      }
+
+      // 8b. Cargar historial familiar de condiciones
+      if (caseData.familyHealthHistories && Array.isArray(caseData.familyHealthHistories)) {
+        const physicalFH = caseData.familyHealthHistories.find(
+          (h: any) => h.historyType === 'physical' || h.history_type === 'physical',
+        );
+        const mentalFH = caseData.familyHealthHistories.find(
+          (h: any) => h.historyType === 'mental' || h.history_type === 'mental',
+        );
+        this.caseForm.get('familyHealthHistory')?.patchValue({
+          physicalFamilyHistoryFather: physicalFH?.familyHistoryFather || '',
+          physicalFamilyHistoryMother: physicalFH?.familyHistoryMother || '',
+          mentalFamilyHistoryFather: mentalFH?.familyHistoryFather || '',
+          mentalFamilyHistoryMother: mentalFH?.familyHistoryMother || '',
         });
       }
 
@@ -758,8 +774,6 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       condition: [''],
       receivingTreatment: [false],
       treatmentDetails: [''],
-      paternalFamilyHistory: [''],
-      maternalFamilyHistory: [''],
       observations: [''],
     });
     this.physicalConditions.push(conditionGroup);
@@ -779,8 +793,6 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       condition: [''],
       receivingTreatment: [false],
       treatmentDetails: [''],
-      paternalFamilyHistory: [''],
-      maternalFamilyHistory: [''],
       observations: [''],
     });
     this.mentalConditions.push(conditionGroup);
@@ -788,6 +800,10 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
   removeMentalCondition(index: number): void {
     this.mentalConditions.removeAt(index);
+  }
+
+  get familyHealthHistoryGroup(): FormGroup {
+    return this.caseForm.get('familyHealthHistory') as FormGroup;
   }
 
   // Step 8: Intervention Plan methods
@@ -990,17 +1006,25 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       physicalHealthHistory: formValue.physicalHealthHistory.conditions.map((condition: any) => ({
         currentConditions: condition.condition,
         medications: condition.receivingTreatment ? condition.treatmentDetails : null,
-        familyHistoryFather: condition.paternalFamilyHistory,
-        familyHistoryMother: condition.maternalFamilyHistory,
         observations: condition.observations,
       })),
       mentalHealthHistory: formValue.mentalHealthHistory.conditions.map((condition: any) => ({
         currentConditions: condition.condition,
         medications: condition.receivingTreatment ? condition.treatmentDetails : null,
-        familyHistoryFather: condition.paternalFamilyHistory,
-        familyHistoryMother: condition.maternalFamilyHistory,
         observations: condition.observations,
       })),
+      family_health_history: [
+        {
+          history_type: 'physical',
+          familyHistoryFather: formValue.familyHealthHistory.physicalFamilyHistoryFather || null,
+          familyHistoryMother: formValue.familyHealthHistory.physicalFamilyHistoryMother || null,
+        },
+        {
+          history_type: 'mental',
+          familyHistoryFather: formValue.familyHealthHistory.mentalFamilyHistoryFather || null,
+          familyHistoryMother: formValue.familyHealthHistory.mentalFamilyHistoryMother || null,
+        },
+      ],
       weighing: {
         reasonConsultation: formValue.consultationReason.reason,
         identifiedSituation: formValue.identifiedSituations.situations.join(', '),
