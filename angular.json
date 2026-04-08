@@ -146,8 +146,7 @@
               "vendorChunk": false,
               "buildOptimizer": true,
               "outputPath": "dist/oots-pr",
-              "baseHref": "/oots/",
-              "deployUrl": "/oots/",
+              "baseHref": "/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
