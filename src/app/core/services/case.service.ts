@@ -177,6 +177,20 @@ export class CaseService {
   }
 
   /**
+   * Update case status via dedicated endpoint
+   */
+  updateCaseStatus(id: number, status: CaseStatus): Observable<CaseResponse> {
+    return this.http
+      .patch<CaseResponse>(`${this.apiUrl}/${id}/status`, { status }, { headers: this.getHeaders() })
+      .pipe(
+        catchError((error) => {
+          this.notificationService.showError(error.error?.message || 'Error al cambiar el estado del caso');
+          return throwError(() => error);
+        }),
+      );
+  }
+
+  /**
    * Close a case
    */
   closeCase(id: number, closingNote: any): Observable<CaseResponse> {

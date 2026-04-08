@@ -26,7 +26,7 @@ import { IncomeLevel } from '../../configuration/income-level/income-level.inter
 import { HousingType } from '../../configuration/housing-type/housing-type.interface';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
-import { CreateCaseDto, ApproachType } from '../../../core/interfaces/case.interface';
+import { CreateCaseDto, ApproachType, CaseStatus } from '../../../core/interfaces/case.interface';
 import { ProcessType } from '../../configuration/process-types/process-type.interface';
 import { ApproachType as ApproachTypeCatalog } from '../../configuration/approach-types/approach-type.interface';
 
@@ -47,7 +47,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   private readonly notificationService = inject(NotificationService);
   private readonly tokenStorageService = inject(TokenStorageService);
   private readonly identifiedSituationService = inject(IdentifiedSituationService);
-  private readonly router = inject(Router);
+  readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly destroy$ = new Subject<void>();
 
@@ -59,6 +59,8 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   isEditMode = false;
   isViewMode = false;
   isLoadingCase = false;
+  isCreatingCase = false;
+  isCaseClosed = false;
 
   // Data
   identifiedSituations: IdentifiedSituation[] = [];
@@ -360,7 +362,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
           this.isLoadingCase = false;
         },
         error: (error) => {
-          console.error('Error loading case:', error);
+          console.error('Error al cargar el caso:', error);
           this.isLoadingCase = false;
           this.notificationService.showError('Error al cargar el caso: ' + (error.message || 'Error desconocido'));
           this.router.navigate(['/cases/list']);
@@ -853,6 +855,36 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
   // Navigation methods
   goToNextStep(): void {
+    // Step 4 with no case yet → create
+    if (this.activeWizardStep === 4 && !this.isEditMode && !this.caseId) {
+      this.createInitialCase();
+      return;
+    }
+
+    // Steps 5-12 with an existing caseId → auto-save current step then advance
+    if (this.caseId && this.activeWizardStep >= 5 && this.activeWizardStep <= 12) {
+      // Step 6: if processCompleted is checked, close the case instead of advancing
+      if (this.activeWizardStep === 6 && this.caseForm.get('followUpPlan.processCompleted')?.value) {
+        this.closeCaseOnProcessCompleted();
+        return;
+      }
+      const partial = this.mapStepDataToDto(this.activeWizardStep);
+      if (partial) {
+        this.caseService
+          .updateCase(this.caseId, partial)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {
+              this.activeWizardStep = Math.min(this.activeWizardStep + 1, 13);
+            },
+            error: (error) => {
+              console.error('Error al guardar el paso', this.activeWizardStep, error);
+            },
+          });
+        return;
+      }
+    }
+
     if (this.isStepValid(this.activeWizardStep)) {
       this.activeWizardStep = Math.min(this.activeWizardStep + 1, 13);
     } else {
@@ -925,6 +957,205 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
     }
   }
 
+  downloadCasePdf(): void {
+    if (!this.caseId) return;
+    this.caseService
+      .downloadCasePdf(this.caseId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (blob: Blob) => {
+          const url = URL.createObjectURL(blob);
+          const anchor = document.createElement('a');
+          anchor.href = url;
+          anchor.download = `caso-${this.caseId}.pdf`;
+          anchor.click();
+          URL.revokeObjectURL(url);
+        },
+        error: () => this.notificationService.showError('Error al descargar el PDF del caso'),
+      });
+  }
+
+  private closeCaseOnProcessCompleted(): void {
+    if (!this.caseId) return;
+    this.caseService
+      .updateCaseStatus(this.caseId, CaseStatus.CLOSED)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isCaseClosed = true;
+          this.caseForm.disable();
+          this.notificationService.showSuccess('El proceso de ayuda ha sido culminado. El caso está cerrado.');
+        },
+        error: (err) => console.error('Error al cerrar el caso:', err),
+      });
+  }
+
+  private createInitialCase(): void {
+    // Validate steps 1-4
+    const stepsToValidate = ['familyMembers', 'bioPsychosocialHistory', 'consultationReason', 'identifiedSituations'];
+    const allValid = stepsToValidate.every((key) => this.caseForm.get(key)?.valid);
+    if (!allValid) {
+      this.notificationService.showWarning('Por favor complete todos los campos requeridos en los pasos anteriores');
+      return;
+    }
+
+    const formValue = this.caseForm.getRawValue();
+    const caseDto: CreateCaseDto = {
+      participantId: this.participantId,
+      familyMembers: formValue.familyMembers.map((member: any) => ({
+        name: member.name,
+        birthDate: member.birthDate || null,
+        occupation: member.occupation || null,
+        familyRelationshipId: member.familyRelationshipId ? Number(member.familyRelationshipId) : null,
+        academicLevelId: member.academicLevelId ? Number(member.academicLevelId) : null,
+      })),
+      bioPsychosocialHistory: {
+        academicLevelId: formValue.bioPsychosocialHistory.academicLevelId
+          ? Number(formValue.bioPsychosocialHistory.academicLevelId)
+          : null,
+        completedGrade: formValue.bioPsychosocialHistory.completedGrade,
+        institution: formValue.bioPsychosocialHistory.institution,
+        profession: formValue.bioPsychosocialHistory.profession,
+        incomeSourceId: formValue.bioPsychosocialHistory.incomeSourceId
+          ? Number(formValue.bioPsychosocialHistory.incomeSourceId)
+          : null,
+        incomeLevelId: formValue.bioPsychosocialHistory.incomeLevelId
+          ? Number(formValue.bioPsychosocialHistory.incomeLevelId)
+          : null,
+        occupationalHistory: formValue.bioPsychosocialHistory.occupationalHistory,
+        housingTypeId: formValue.bioPsychosocialHistory.housingTypeId
+          ? Number(formValue.bioPsychosocialHistory.housingTypeId)
+          : null,
+        housing: formValue.bioPsychosocialHistory.housing,
+      },
+      consultationReason: formValue.consultationReason.reason,
+      identifiedSituations: formValue.identifiedSituations.situations,
+      intervention: '',
+      followUpPlan: [],
+      physicalHealthHistory: [],
+      mentalHealthHistory: [],
+      family_health_history: [
+        { history_type: 'physical', familyHistoryFather: null, familyHistoryMother: null },
+        { history_type: 'mental', familyHistoryFather: null, familyHistoryMother: null },
+      ],
+      weighing: {
+        reasonConsultation: '',
+        identifiedSituation: '',
+        favorableConditions: '',
+        conditionsNotFavorable: '',
+        helpProcess: '',
+      },
+      interventionPlans: [],
+      progressNotes: [],
+      referrals: '',
+    };
+
+    this.isCreatingCase = true;
+    this.caseService
+      .createCase(caseDto)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.caseId = response.data.id;
+          this.isEditMode = true;
+          this.isCreatingCase = false;
+          this.activeWizardStep = 5;
+        },
+        error: () => {
+          this.isCreatingCase = false;
+        },
+      });
+  }
+
+  private mapStepDataToDto(step: number): Partial<CreateCaseDto> | null {
+    const formValue = this.caseForm.getRawValue();
+    switch (step) {
+      case 5:
+        return { intervention: formValue.intervention.action };
+      case 6:
+        return {
+          followUpPlan: [
+            {
+              processCompleted: formValue.followUpPlan.processCompleted,
+              coordinatedService: formValue.followUpPlan.servicesCoordinated
+                ? formValue.followUpPlan.servicesAgency
+                : null,
+              referred: formValue.followUpPlan.referralMade,
+              referralDetails: formValue.followUpPlan.referralDetails || null,
+              orientationAppointment: formValue.followUpPlan.appointmentScheduled,
+              appointmentDate: formValue.followUpPlan.appointmentDate || null,
+              appointmentTime: formValue.followUpPlan.appointmentTime || null,
+              otherDetails: formValue.followUpPlan.otherDetails || null,
+            },
+          ],
+        };
+      case 7:
+        return {
+          physicalHealthHistory: formValue.physicalHealthHistory.conditions.map((c: any) => ({
+            currentConditions: c.condition,
+            medications: c.receivingTreatment ? c.treatmentDetails : null,
+            observations: c.observations,
+          })),
+          family_health_history: [
+            {
+              history_type: 'physical' as const,
+              familyHistoryFather: formValue.familyHealthHistory.physicalFamilyHistoryFather || null,
+              familyHistoryMother: formValue.familyHealthHistory.physicalFamilyHistoryMother || null,
+            },
+          ],
+        };
+      case 8:
+        return {
+          mentalHealthHistory: formValue.mentalHealthHistory.conditions.map((c: any) => ({
+            currentConditions: c.condition,
+            medications: c.receivingTreatment ? c.treatmentDetails : null,
+            observations: c.observations,
+          })),
+          family_health_history: [
+            {
+              history_type: 'mental' as const,
+              familyHistoryFather: formValue.familyHealthHistory.mentalFamilyHistoryFather || null,
+              familyHistoryMother: formValue.familyHealthHistory.mentalFamilyHistoryMother || null,
+            },
+          ],
+        };
+      case 9:
+        return {
+          weighing: {
+            reasonConsultation: formValue.consultationReason.reason,
+            identifiedSituation: formValue.identifiedSituations.situations.join(', '),
+            favorableConditions: formValue.assessment.concurrentFactors,
+            conditionsNotFavorable: formValue.assessment.criticalFactors,
+            helpProcess: formValue.assessment.theoreticalFramework,
+          },
+        };
+      case 10:
+        return {
+          interventionPlans: formValue.interventionPlan.interventions.map((i: any) => ({
+            goal: i.goals,
+            objectives: i.objectives,
+            activities: i.activities,
+            timeline: i.timeframe,
+            responsible: i.responsiblePerson,
+            evaluationCriteria: i.evaluationCriteria,
+          })),
+        };
+      case 11:
+        return {
+          progressNotes: formValue.progressNotes.notes.map((n: any) => ({
+            sessionDate: n.date,
+            sessionType: n.approachType,
+            summary: n.interventionSummary,
+            agreements: n.agreements,
+          })),
+        };
+      case 12:
+        return { referrals: formValue.referrals.referralsJustification };
+      default:
+        return null;
+    }
+  }
+
   private createCase(caseDto: CreateCaseDto): void {
     this.caseService
       .createCase(caseDto)
@@ -934,12 +1165,12 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
           this.router.navigate(['/participants/detail', this.participantId]);
         },
         error: (error) => {
-          console.error('Error creating case:', error);
+          console.error('Error al crear el caso:', error);
         },
       });
   }
 
-  private updateCase(caseDto: CreateCaseDto): void {
+  private updateCase(caseDto: Partial<CreateCaseDto>): void {
     if (!this.caseId) return;
 
     this.caseService
@@ -950,7 +1181,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
           this.router.navigate(['/participants/detail', this.participantId]);
         },
         error: (error) => {
-          console.error('Error updating case:', error);
+          console.error('Error al actualizar el caso:', error);
         },
       });
   }

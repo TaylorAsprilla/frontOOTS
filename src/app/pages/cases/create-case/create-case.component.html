@@ -563,6 +563,38 @@
                           ></ngb-progressbar>
                         </p>
                         <div formGroupName="followUpPlan">
+                          <!-- Caso cerrado banner -->
+                          @if (isCaseClosed) {
+                            <div class="alert alert-warning mb-4">
+                              <div class="d-flex align-items-center mb-3">
+                                <i class="mdi mdi-lock-outline fs-4 me-3"></i>
+                                <div>
+                                  <strong>Caso cerrado</strong> — El proceso de ayuda fue culminado. No se puede
+                                  continuar con el registro.
+                                </div>
+                              </div>
+                              <div class="d-flex gap-2 flex-wrap">
+                                <button
+                                  type="button"
+                                  class="btn btn-secondary btn-sm"
+                                  (click)="router.navigate(['/dashboard'])"
+                                >
+                                  <i class="mdi mdi-home-outline me-1"></i>Volver al inicio
+                                </button>
+                                <button
+                                  type="button"
+                                  class="btn btn-info btn-sm"
+                                  (click)="router.navigate(['/cases/detail', caseId])"
+                                >
+                                  <i class="mdi mdi-eye-outline me-1"></i>Ver el caso
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" (click)="downloadCasePdf()">
+                                  <i class="mdi mdi-file-pdf-box me-1"></i>Descargar PDF
+                                </button>
+                              </div>
+                            </div>
+                          }
+
                           <!-- Header Section -->
                           <div class="mb-4">
                             <h5 class="text-primary mb-2">
@@ -715,7 +747,12 @@
                             </button>
                           </li>
                           <li class="next list-inline-item float-end">
-                            <button type="button" class="btn btn-primary" (click)="goToNextStep()">
+                            <button
+                              type="button"
+                              class="btn btn-primary"
+                              (click)="goToNextStep()"
+                              [disabled]="isCaseClosed"
+                            >
                               {{ 'cases.next' | transloco }}<i class="mdi mdi-arrow-right ms-1"></i>
                             </button>
                           </li>

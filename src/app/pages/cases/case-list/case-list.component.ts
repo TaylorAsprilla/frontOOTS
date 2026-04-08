@@ -65,11 +65,8 @@ export class CaseListComponent implements OnInit, OnDestroy {
   statusOptions: Array<{ value: CaseStatus | 'all'; label: string }> = [
     { value: 'all', label: 'cases.allStatuses' },
     { value: CaseStatus.OPEN, label: 'cases.open' },
-    { value: CaseStatus.ACTIVE, label: 'cases.active' },
     { value: CaseStatus.IN_PROGRESS, label: 'cases.inProgress' },
     { value: CaseStatus.CLOSED, label: 'cases.closed' },
-    { value: CaseStatus.TRANSFERRED, label: 'cases.transferred' },
-    { value: CaseStatus.SUSPENDED, label: 'cases.suspended' },
   ];
 
   // Math utility for templates
@@ -208,16 +205,12 @@ export class CaseListComponent implements OnInit, OnDestroy {
 
   getStatusBadgeClass(status?: CaseStatus): string {
     switch (status) {
-      case CaseStatus.ACTIVE:
+      case CaseStatus.OPEN:
         return 'badge bg-success';
       case CaseStatus.IN_PROGRESS:
         return 'badge bg-primary';
       case CaseStatus.CLOSED:
         return 'badge bg-secondary';
-      case CaseStatus.TRANSFERRED:
-        return 'badge bg-info';
-      case CaseStatus.SUSPENDED:
-        return 'badge bg-warning';
       default:
         return 'badge bg-light text-dark';
     }

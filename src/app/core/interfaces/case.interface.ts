@@ -7,11 +7,8 @@ import { ProcessType } from 'src/app/pages/configuration/process-types/process-t
 
 export enum CaseStatus {
   OPEN = 'open',
-  ACTIVE = 'active',
   IN_PROGRESS = 'in_progress',
   CLOSED = 'closed',
-  TRANSFERRED = 'transferred',
-  SUSPENDED = 'suspended',
 }
 
 export enum ApproachType {
