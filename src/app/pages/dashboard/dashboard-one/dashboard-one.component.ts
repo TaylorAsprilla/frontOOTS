@@ -1,5 +1,5 @@
 import { Component, Injectable, OnInit, inject, OnDestroy } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { NgbDatepickerModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
@@ -66,7 +66,6 @@ export class CustomDateParserFormatter extends NgbDateParserFormatter {
     NgbDropdownModule,
     NgApexchartsModule,
     StatisticsCardComponent,
-    DatePipe,
     TranslocoModule,
     LocalizedDatePipe,
   ],
