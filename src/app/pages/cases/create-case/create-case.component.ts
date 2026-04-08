@@ -629,7 +629,6 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
             approachType: [note.sessionType || note.approachType || ''],
             process: [note.process || ''],
             interventionSummary: [note.summary || note.interventionSummary || ''],
-            observations: [note.observations || ''],
             agreements: [note.agreements || ''],
           });
           this.progressNotesArray.push(noteGroup);
@@ -843,7 +842,6 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       approachType: [''],
       process: [''],
       interventionSummary: [''],
-      observations: [''],
       agreements: [''],
     });
     this.progressNotesArray.push(noteGroup);
@@ -1044,7 +1042,6 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
         sessionDate: note.date,
         sessionType: note.approachType,
         summary: note.interventionSummary,
-        observations: note.observations,
         agreements: note.agreements,
       })),
       referrals: formValue.referrals.referralsJustification,

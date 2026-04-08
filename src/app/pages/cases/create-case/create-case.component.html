@@ -1369,7 +1369,7 @@
                                   >
                                     <span class="fw-semibold text-primary">
                                       <i class="mdi mdi-calendar-check me-2"></i>
-                                      Intervención #{{ $index + 1 }}
+                                      Meta #{{ $index + 1 }}
                                     </span>
                                     @if (!isViewMode) {
                                       <button
@@ -1389,7 +1389,7 @@
                                     <div class="mb-3">
                                       <label class="form-label fw-semibold text-secondary small text-uppercase">
                                         <i class="mdi mdi-flag-outline me-1"></i>
-                                        Meta(s)
+                                        Meta
                                       </label>
                                       <textarea
                                         formControlName="goals"
@@ -1534,87 +1534,94 @@
                             </div>
                           }
 
-                          <div class="table-responsive">
-                            <table class="table table-bordered table-hover table-sm" formArrayName="notes">
-                              <thead class="table-light">
-                                <tr>
-                                  <th style="width: 10%">FECHA</th>
-                                  <th style="width: 8%">HORA</th>
-                                  <th style="width: 12%">TIPO DE ABORDAJE</th>
-                                  <th style="width: 12%">PROCESO</th>
-                                  <th style="width: 18%">RESUMEN DE INTERVENCIÓN</th>
-                                  <th style="width: 15%">OBSERVACIONES</th>
-                                  <th style="width: 15%">ACUERDOS</th>
+                          <div formArrayName="notes">
+                            @for (note of progressNotesArray.controls; track $index) {
+                              <div class="card border-0 shadow-sm mb-3" [formGroupName]="$index">
+                                <div
+                                  class="card-header bg-opacity-10 border-0 d-flex align-items-center justify-content-between py-2 px-3"
+                                >
+                                  <span class="fw-semibold text-primary">
+                                    <i class="mdi mdi-file-document-edit me-2"></i>
+                                    Nota de Progreso #{{ $index + 1 }}
+                                  </span>
                                   @if (!isViewMode) {
-                                    <th style="width: 5%"></th>
+                                    <button
+                                      type="button"
+                                      class="btn btn-sm btn-outline-danger"
+                                      (click)="removeProgressNote($index)"
+                                      title="Eliminar nota"
+                                    >
+                                      <i class="mdi mdi-delete-outline me-1"></i>Eliminar
+                                    </button>
                                   }
-                                </tr>
-                              </thead>
-                              <tbody>
-                                @for (note of progressNotesArray.controls; track $index) {
-                                  <tr [formGroupName]="$index">
-                                    <td>
-                                      <input type="date" formControlName="date" class="form-control form-control-sm" />
-                                    </td>
-                                    <td>
-                                      <input type="time" formControlName="time" class="form-control form-control-sm" />
-                                    </td>
-                                    <td>
-                                      <select formControlName="approachType" class="form-select form-select-sm">
+                                </div>
+                                <div class="card-body px-3 py-3">
+                                  <div class="row mb-3">
+                                    <div class="col-md-6">
+                                      <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                        <i class="mdi mdi-calendar me-1"></i>Fecha
+                                      </label>
+                                      <input type="date" formControlName="date" class="form-control" />
+                                    </div>
+                                    <div class="col-md-6">
+                                      <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                        <i class="mdi mdi-clock-outline me-1"></i>Hora
+                                      </label>
+                                      <input type="time" formControlName="time" class="form-control" />
+                                    </div>
+                                  </div>
+
+                                  <div class="row mb-3">
+                                    <div class="col-md-6">
+                                      <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                        <i class="mdi mdi-tag-outline me-1"></i>Tipo de Abordaje
+                                      </label>
+                                      <select formControlName="approachType" class="form-select">
                                         <option value="" disabled selected>Seleccione un tipo de abordaje</option>
                                         @for (approachType of approachTypes; track approachType.id) {
                                           <option [value]="approachType.name">{{ approachType.name }}</option>
                                         }
                                       </select>
-                                    </td>
-                                    <td>
-                                      <select formControlName="process" class="form-select form-select-sm">
+                                    </div>
+                                    <div class="col-md-6">
+                                      <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                        <i class="mdi mdi-cog-outline me-1"></i>Proceso
+                                      </label>
+                                      <select formControlName="process" class="form-select">
                                         <option value="" disabled selected>Seleccione un proceso</option>
                                         @for (processType of processTypes; track processType.id) {
                                           <option [value]="processType.name">{{ processType.name }}</option>
                                         }
                                       </select>
-                                    </td>
-                                    <td>
-                                      <textarea
-                                        formControlName="interventionSummary"
-                                        class="form-control form-control-sm"
-                                        rows="2"
-                                        placeholder="Resumen de la intervención realizada..."
-                                      ></textarea>
-                                    </td>
-                                    <td>
-                                      <textarea
-                                        formControlName="observations"
-                                        class="form-control form-control-sm"
-                                        rows="2"
-                                        placeholder="Observaciones..."
-                                      ></textarea>
-                                    </td>
-                                    <td>
-                                      <textarea
-                                        formControlName="agreements"
-                                        class="form-control form-control-sm"
-                                        rows="2"
-                                        placeholder="Acuerdos establecidos..."
-                                      ></textarea>
-                                    </td>
-                                    <td class="text-center">
-                                      @if (!isViewMode) {
-                                        <button
-                                          type="button"
-                                          class="btn btn-danger btn-sm"
-                                          (click)="removeProgressNote($index)"
-                                          title="Eliminar nota"
-                                        >
-                                          <i class="mdi mdi-delete"></i>
-                                        </button>
-                                      }
-                                    </td>
-                                  </tr>
-                                }
-                              </tbody>
-                            </table>
+                                    </div>
+                                  </div>
+
+                                  <div class="mb-3">
+                                    <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                      <i class="mdi mdi-text me-1"></i>Resumen de Intervención
+                                    </label>
+                                    <textarea
+                                      formControlName="interventionSummary"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Resumen de la intervención realizada..."
+                                    ></textarea>
+                                  </div>
+
+                                  <div class="mb-0">
+                                    <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                      <i class="mdi mdi-handshake me-1"></i>Acuerdos
+                                    </label>
+                                    <textarea
+                                      formControlName="agreements"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Acuerdos establecidos..."
+                                    ></textarea>
+                                  </div>
+                                </div>
+                              </div>
+                            }
                           </div>
 
                           @if (progressNotesArray.length > 0) {
