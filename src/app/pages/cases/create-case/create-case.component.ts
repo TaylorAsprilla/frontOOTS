@@ -1166,13 +1166,18 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
         return { intervention: formValue.intervention.action };
       case 6:
         return null; // followUpPlan no es aceptado por el endpoint PATCH /cases/:id
-      case 7:
+      case 7: {
+        const hasPhysical = formValue.physicalHealthHistory.hasPhysicalHistory;
         return {
-          physicalHealthHistory: formValue.physicalHealthHistory.conditions.map((c: any) => ({
-            currentConditions: c.condition,
-            medications: c.receivingTreatment ? c.treatmentDetails : null,
-            observations: c.observations,
-          })),
+          physicalHealthHistory: hasPhysical
+            ? formValue.physicalHealthHistory.conditions
+                .filter((c: any) => c.condition || c.observations || (c.receivingTreatment && c.treatmentDetails))
+                .map((c: any) => ({
+                  currentConditions: c.condition || null,
+                  medications: c.receivingTreatment ? c.treatmentDetails || null : null,
+                  observations: c.observations || null,
+                }))
+            : [],
           family_health_history: [
             {
               history_type: 'physical' as const,
@@ -1181,13 +1186,19 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
             },
           ],
         };
-      case 8:
+      }
+      case 8: {
+        const hasMental = formValue.mentalHealthHistory.hasMentalHistory;
         return {
-          mentalHealthHistory: formValue.mentalHealthHistory.conditions.map((c: any) => ({
-            currentConditions: c.condition,
-            medications: c.receivingTreatment ? c.treatmentDetails : null,
-            observations: c.observations,
-          })),
+          mentalHealthHistory: hasMental
+            ? formValue.mentalHealthHistory.conditions
+                .filter((c: any) => c.condition || c.observations || (c.receivingTreatment && c.treatmentDetails))
+                .map((c: any) => ({
+                  currentConditions: c.condition || null,
+                  medications: c.receivingTreatment ? c.treatmentDetails || null : null,
+                  observations: c.observations || null,
+                }))
+            : [],
           family_health_history: [
             {
               history_type: 'mental' as const,
@@ -1196,6 +1207,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
             },
           ],
         };
+      }
       case 9:
         return {
           weighing: {
