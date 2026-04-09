@@ -355,8 +355,6 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
         next: (response) => {
           const caseData = response.data;
 
-          console.log('Case data loaded from API:', caseData);
-
           if (caseData) {
             // Mapear datos del caso al formulario
             this.mapCaseDataToForm(caseData);

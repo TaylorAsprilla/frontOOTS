@@ -1,7 +1,6 @@
 export const environment = {
   production: false,
   demo: 'default',
-  GOOGLE_MAPS_API_KEY: 'AIzaSyDpgQMpcfx1QU-8SM-ljcgjG4xrYtIYby4',
   apiUrl: 'http://localhost:3001/api/v1',
   apiTimeout: 30000, // 30 seconds
   enableLogging: true,

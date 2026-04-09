@@ -242,7 +242,6 @@ export class UserCreateComponent implements OnInit, OnDestroy {
     const phoneControl = this.userForm.get('phoneNumber');
     const value = phoneControl?.value;
 
-    console.log('Validating phone number:', value);
     if (value && phoneControl?.valid) {
       // value.number respects [numberFormat]="PhoneNumberFormat.International" → e.g. "+57 300 123 4567"
       const internationalNumber = (value.internationalNumber as string) ?? '';

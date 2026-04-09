@@ -1,9 +1,6 @@
 <div class="container-fluid">
   <!-- Page Title -->
-  <app-page-title
-    [breadcrumbItems]="breadcrumbItems"
-    [title]="(isEditMode ? 'cases.editCase' : 'cases.createCase') | transloco"
-  >
+  <app-page-title [breadcrumbItems]="breadcrumbItems" [title]="isEditMode ? 'cases.editCase' : 'cases.createCase'">
   </app-page-title>
 
   <div class="row">

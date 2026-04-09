@@ -18,6 +18,7 @@
     "delete": "Delete",
     "create": "Create",
     "actions": "Actions",
+    "all": "All",
     "refresh": "Refresh",
     "tryAgain": "Try again",
     "noData": "No data",
@@ -1464,9 +1465,5 @@
       "dateFrom": "From",
       "dateTo": "To"
     }
-  },
-  "app": {
-    "all": "All",
-    "refresh": "Refresh"
   }
 }
