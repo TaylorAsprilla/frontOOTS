@@ -17,6 +17,10 @@ import {
   PasswordResponse,
   UpdateProfileDto,
   UpdateProfileResponse,
+  RefreshTokenResponse,
+  LogoutResponse,
+  ActiveSession,
+  LoginHistoryResponse,
 } from '../interfaces/auth.interface';
 import { TokenStorageService } from './token-storage.service';
 import { environment } from 'src/environments/environment';
@@ -25,7 +29,10 @@ import { environment } from 'src/environments/environment';
 export class AuthenticationService {
   private readonly API_URL = environment.apiUrl;
 
-  constructor(private http: HttpClient, private tokenStorage: TokenStorageService) {}
+  constructor(
+    private http: HttpClient,
+    private tokenStorage: TokenStorageService,
+  ) {}
 
   /**
    * Returns the current authenticated user
@@ -64,13 +71,18 @@ export class AuthenticationService {
           firstName: data.user.firstName,
           firstLastName: data.user.firstLastName,
           email: data.user.email,
+          role: data.user.role,
+          status: data.user.status,
           token: data.access_token,
+          refreshToken: data.refresh_token,
           tokenType: data.token_type,
           expiresAt: expiresAt,
         };
 
-        // Guardar en localStorage
+        // Guardar access token + datos de usuario
         this.tokenStorage.saveUser(authenticatedUser);
+        // Guardar refresh token por separado
+        this.tokenStorage.saveRefreshToken(data.refresh_token);
 
         return authenticatedUser;
       }),
@@ -90,7 +102,7 @@ export class AuthenticationService {
         }
 
         return throwError(() => errorMessage);
-      })
+      }),
     );
   }
 
@@ -105,10 +117,58 @@ export class AuthenticationService {
   }
 
   /**
-   * Logout the user and clear stored data
+   * Limpia la sesión local (sin llamar al backend).
+   * Útil para inicializar la pantalla de login.
    */
   logout(): void {
-    this.tokenStorage.clearUser();
+    this.tokenStorage.clearSession();
+  }
+
+  /**
+   * Cierra sesión en el backend (revoca el refresh token) y limpia storage.
+   */
+  logoutRemote(): Observable<LogoutResponse> {
+    const refreshToken = this.tokenStorage.getRefreshToken();
+    const body = refreshToken ? { refresh_token: refreshToken } : {};
+    return this.http.post<LogoutResponse>(`${this.API_URL}/auth/logout`, body).pipe(
+      map((res) => {
+        this.tokenStorage.clearSession();
+        return res;
+      }),
+      catchError((error) => {
+        // Aunque falle, limpiar la sesión local
+        this.tokenStorage.clearSession();
+        return throwError(() => error);
+      }),
+    );
+  }
+
+  /**
+   * Renueva el access token usando el refresh token
+   */
+  refreshToken(refreshToken: string): Observable<RefreshTokenResponse> {
+    return this.http
+      .post<RefreshTokenResponse>(`${this.API_URL}/auth/refresh-token`, { refresh_token: refreshToken })
+      .pipe(
+        map((response) => {
+          this.tokenStorage.updateTokens(response.access_token, response.refresh_token, response.expires_in);
+          return response;
+        }),
+      );
+  }
+
+  /**
+   * Obtiene las sesiones activas del usuario autenticado
+   */
+  getActiveSessions(): Observable<ActiveSession[]> {
+    return this.http.get<ActiveSession[]>(`${this.API_URL}/auth/sessions`);
+  }
+
+  /**
+   * Obtiene el historial de inicios de sesión
+   */
+  getLoginHistory(page = 1, limit = 20): Observable<LoginHistoryResponse> {
+    return this.http.get<LoginHistoryResponse>(`${this.API_URL}/auth/login-history?page=${page}&limit=${limit}`);
   }
 
   /**
@@ -173,7 +233,7 @@ export class AuthenticationService {
         }
 
         return throwError(() => errorMessage);
-      })
+      }),
     );
   }
 
@@ -211,7 +271,7 @@ export class AuthenticationService {
         }
 
         return throwError(() => errorMessage);
-      })
+      }),
     );
   }
 
@@ -239,7 +299,7 @@ export class AuthenticationService {
         }
 
         return throwError(() => errorMessage);
-      })
+      }),
     );
   }
 
@@ -270,7 +330,7 @@ export class AuthenticationService {
         }
 
         return throwError(() => errorMessage);
-      })
+      }),
     );
   }
 
@@ -314,7 +374,7 @@ export class AuthenticationService {
         }
 
         return throwError(() => errorMessage);
-      })
+      }),
     );
   }
 }

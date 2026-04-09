@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { documentTypesResolver } from '../../core/resolvers/document-types.resolver';
+import { roleGuard } from '../../core/guards/role.guard';
 
 /**
  * Rutas escalables para el módulo de gestión de usuarios
@@ -48,6 +49,25 @@ export const USER_MANAGEMENT_ROUTES: Routes = [
     data: {
       breadcrumb: 'Mi Perfil',
     },
+  },
+  {
+    path: 'sessions',
+    title: 'Sesiones Activas',
+    loadComponent: () => import('./active-sessions/active-sessions.component').then((c) => c.ActiveSessionsComponent),
+    data: { breadcrumb: 'Sesiones Activas' },
+  },
+  {
+    path: 'login-history',
+    title: 'Historial de Accesos',
+    loadComponent: () => import('./login-history/login-history.component').then((c) => c.LoginHistoryComponent),
+    data: { breadcrumb: 'Historial de Accesos' },
+  },
+  {
+    path: 'audit-logs',
+    title: 'Registro de Auditoría',
+    canActivate: [roleGuard(['ADMIN', 'COORDINADOR', 'SUPERVISOR'])],
+    loadComponent: () => import('./audit-logs/audit-logs.component').then((c) => c.AuditLogsComponent),
+    data: { breadcrumb: 'Auditoría' },
   },
 
   {

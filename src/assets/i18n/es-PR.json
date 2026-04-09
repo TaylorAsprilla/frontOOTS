@@ -458,6 +458,13 @@
     }
   },
   "dashboard": {
+    "home": "Inicio",
+    "loading": "Cargando estadísticas...",
+    "salesReport": "Reporte de Ventas",
+    "exportReport": "Exportar Reporte",
+    "profit": "Ganancias",
+    "action": "Acción",
+    "editReport": "Editar Reporte",
     "stats": {
       "participants": "Participantes",
       "openCases": "Casos Abiertos",
@@ -564,6 +571,9 @@
     "backToLoginText": "Volver a",
     "login": {
       "title": "Iniciar Sesión",
+      "appName": "Mi OOTS",
+      "description": "Sistema especializado en la gestión y documentación de casos, asegurando orden y confidencialidad.",
+      "slogan": "Cada caso importa, cada dato cuenta.",
       "subtitle": "Ingrese su dirección de correo electrónico y contraseña para acceder al panel de administración.",
       "email": "Correo Electrónico",
       "emailPlaceholder": "Ingrese su correo electrónico",
@@ -581,6 +591,31 @@
         "serverError": "Error en el servidor. Por favor, intente más tarde.",
         "connectionError": "No se pudo conectar con el servidor. Verifique su conexión.",
         "unknownError": "Error al iniciar sesión. Por favor, intente nuevamente."
+      }
+    },
+    "sessions": {
+      "title": "Sesiones Activas",
+      "subtitle": "Dispositivos donde tienes la sesión iniciada",
+      "ip": "IP",
+      "location": "Ubicación",
+      "device": "Dispositivo",
+      "browser": "Navegador",
+      "os": "Sistema Operativo",
+      "lastActivity": "Última actividad",
+      "createdAt": "Iniciada",
+      "noSessions": "No hay sesiones activas",
+      "unknown": "Desconocido"
+    },
+    "loginHistory": {
+      "title": "Historial de Accesos",
+      "subtitle": "Registro de inicios de sesión recientes",
+      "riskLabel": "Riesgo",
+      "newLocation": "Nueva ubicación",
+      "noHistory": "No hay registros de acceso",
+      "risk": {
+        "LOW": "Bajo",
+        "MEDIUM": "Medio",
+        "HIGH": "Alto"
       }
     }
   },
@@ -1096,6 +1131,7 @@
     "noCasesCreateHint": "Abre la ficha de un participante y crea su primer caso.",
     "cases": "casos",
     "deleteConfirmation": "Caso de",
+    "downloadPdf": "Descargar PDF",
     "unknown": "Desconocido",
     "loadingInfo": "Cargando información del caso...",
     "appointmentOverdue": "Cita vencida — acción requerida",
@@ -1395,5 +1431,41 @@
     "cards": {
       "navigation": "Navegación"
     }
+  },
+  "audit": {
+    "title": "Registro de Auditoría",
+    "subtitle": "Historial de operaciones del sistema",
+    "userEmail": "Usuario",
+    "action": "Acción",
+    "endpoint": "Endpoint",
+    "method": "Método",
+    "status": "Estado",
+    "ip": "IP",
+    "duration": "Duración",
+    "date": "Fecha",
+    "totalRecords": "registros",
+    "noLogs": "No hay registros de auditoría",
+    "actions": {
+      "CREATE": "Crear",
+      "UPDATE": "Actualizar",
+      "DELETE": "Eliminar",
+      "LOGIN": "Inicio de sesión",
+      "LOGOUT": "Cierre de sesión",
+      "PASSWORD_CHANGE": "Cambio de contraseña",
+      "PASSWORD_RESET": "Restablecimiento",
+      "STATUS_CHANGE": "Cambio de estado"
+    },
+    "filters": {
+      "title": "Filtros",
+      "userId": "ID de Usuario",
+      "action": "Acción",
+      "endpoint": "Endpoint",
+      "dateFrom": "Desde",
+      "dateTo": "Hasta"
+    }
+  },
+  "app": {
+    "all": "Todos",
+    "refresh": "Actualizar"
   }
 }

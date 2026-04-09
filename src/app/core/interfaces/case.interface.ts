@@ -375,14 +375,12 @@ export interface CaseResponse {
 }
 
 export interface CaseListResponse {
-  success: boolean;
   data: Case[];
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  success?: boolean;
   message?: string;
 }
 

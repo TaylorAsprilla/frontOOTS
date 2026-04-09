@@ -1,0 +1,77 @@
+<app-page-title [title]="'auth.sessions.title' | transloco" [breadcrumbItems]="breadcrumbItems"></app-page-title>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <h5 class="card-title mb-0">{{ 'auth.sessions.title' | transloco }}</h5>
+        <button class="btn btn-sm btn-outline-primary" (click)="loadSessions()">
+          <i class="mdi mdi-refresh me-1"></i>{{ 'app.refresh' | transloco }}
+        </button>
+      </div>
+      <div class="card-body p-0">
+        <!-- Loading -->
+        <div *ngIf="isLoading" class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div *ngIf="!isLoading && sessions.length === 0" class="text-center py-5">
+          <i class="mdi mdi-monitor-multiple text-muted" style="font-size: 3rem"></i>
+          <p class="text-muted mt-2">{{ 'auth.sessions.noSessions' | transloco }}</p>
+        </div>
+
+        <!-- Table -->
+        <div *ngIf="!isLoading && sessions.length > 0" class="table-responsive">
+          <table class="table table-hover table-centered mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>{{ 'auth.sessions.device' | transloco }}</th>
+                <th>{{ 'auth.sessions.browser' | transloco }}</th>
+                <th>{{ 'auth.sessions.os' | transloco }}</th>
+                <th>{{ 'auth.sessions.ip' | transloco }}</th>
+                <th>{{ 'auth.sessions.location' | transloco }}</th>
+                <th>{{ 'auth.sessions.lastActivity' | transloco }}</th>
+                <th>{{ 'auth.sessions.createdAt' | transloco }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let session of sessions">
+                <td>
+                  <i
+                    class="mdi me-1"
+                    [class.mdi-monitor]="session.deviceType === 'Desktop'"
+                    [class.mdi-cellphone]="session.deviceType === 'Mobile'"
+                    [class.mdi-tablet]="session.deviceType === 'Tablet'"
+                    [class.mdi-devices]="
+                      session.deviceType !== 'Desktop' &&
+                      session.deviceType !== 'Mobile' &&
+                      session.deviceType !== 'Tablet'
+                    "
+                  >
+                  </i>
+                  {{ session.deviceType || ('auth.sessions.unknown' | transloco) }}
+                </td>
+                <td>{{ session.browser || ('auth.sessions.unknown' | transloco) }}</td>
+                <td>{{ session.os || ('auth.sessions.unknown' | transloco) }}</td>
+                <td>
+                  <code>{{ session.ipAddress }}</code>
+                </td>
+                <td>
+                  <span *ngIf="session.city || session.country">
+                    {{ session.city }}<span *ngIf="session.city && session.country">, </span>{{ session.country }}
+                  </span>
+                  <span *ngIf="!session.city && !session.country">{{ 'auth.sessions.unknown' | transloco }}</span>
+                </td>
+                <td>{{ session.lastActivity | date: 'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ session.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

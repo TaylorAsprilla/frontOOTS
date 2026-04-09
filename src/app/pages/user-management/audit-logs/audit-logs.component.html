@@ -1,0 +1,121 @@
+<app-page-title [title]="'audit.title' | transloco" [breadcrumbItems]="breadcrumbItems"></app-page-title>
+
+<!-- Filters -->
+<div class="card mb-3">
+  <div class="card-header">
+    <h6 class="card-title mb-0">{{ 'audit.filters.title' | transloco }}</h6>
+  </div>
+  <div class="card-body">
+    <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+      <div class="row g-2 align-items-end">
+        <div class="col-sm-2">
+          <label class="form-label">{{ 'audit.filters.userId' | transloco }}</label>
+          <input type="number" class="form-control form-control-sm" formControlName="userId" min="1" />
+        </div>
+        <div class="col-sm-2">
+          <label class="form-label">{{ 'audit.filters.action' | transloco }}</label>
+          <select class="form-select form-select-sm" formControlName="action">
+            <option value="">— {{ 'app.all' | transloco }} —</option>
+            <option *ngFor="let a of actionOptions" [value]="a">
+              {{ 'audit.actions.' + a | transloco }}
+            </option>
+          </select>
+        </div>
+        <div class="col-sm-3">
+          <label class="form-label">{{ 'audit.filters.endpoint' | transloco }}</label>
+          <input type="text" class="form-control form-control-sm" formControlName="endpoint" />
+        </div>
+        <div class="col-sm-2">
+          <label class="form-label">{{ 'audit.filters.dateFrom' | transloco }}</label>
+          <input type="date" class="form-control form-control-sm" formControlName="dateFrom" />
+        </div>
+        <div class="col-sm-2">
+          <label class="form-label">{{ 'audit.filters.dateTo' | transloco }}</label>
+          <input type="date" class="form-control form-control-sm" formControlName="dateTo" />
+        </div>
+        <div class="col-sm-1 d-flex gap-1">
+          <button type="submit" class="btn btn-primary btn-sm">
+            <i class="mdi mdi-magnify"></i>
+          </button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="clearFilters()">
+            <i class="mdi mdi-close"></i>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Table -->
+<div class="card">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <h5 class="card-title mb-0">{{ 'audit.title' | transloco }}</h5>
+    <span class="badge bg-secondary">{{ totalItems }} {{ 'audit.totalRecords' | transloco }}</span>
+  </div>
+  <div class="card-body p-0">
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div *ngIf="!isLoading" class="table-responsive">
+      <table class="table table-hover table-sm table-centered mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>{{ 'audit.date' | transloco }}</th>
+            <th>{{ 'audit.userEmail' | transloco }}</th>
+            <th>{{ 'audit.action' | transloco }}</th>
+            <th>{{ 'audit.method' | transloco }}</th>
+            <th>{{ 'audit.endpoint' | transloco }}</th>
+            <th>{{ 'audit.status' | transloco }}</th>
+            <th>{{ 'audit.ip' | transloco }}</th>
+            <th>{{ 'audit.duration' | transloco }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let log of logs">
+            <td class="text-nowrap">{{ log.createdAt | date: 'dd/MM/yy HH:mm' }}</td>
+            <td>{{ log.userEmail }}</td>
+            <td>
+              <span class="badge" [ngClass]="getActionBadgeClass(log.action)">
+                {{ 'audit.actions.' + log.action | transloco }}
+              </span>
+            </td>
+            <td>
+              <code>{{ log.httpMethod }}</code>
+            </td>
+            <td class="text-truncate" style="max-width: 200px" [title]="log.endpoint">{{ log.endpoint }}</td>
+            <td>
+              <span class="badge" [ngClass]="getStatusBadgeClass(log.responseStatus)">{{ log.responseStatus }}</span>
+            </td>
+            <td>
+              <code class="text-muted">{{ log.ipAddress }}</code>
+            </td>
+            <td class="text-muted">{{ log.durationMs }}ms</td>
+          </tr>
+          <tr *ngIf="logs.length === 0">
+            <td colspan="8" class="text-center text-muted py-4">
+              <i class="mdi mdi-clipboard-list-outline" style="font-size: 2rem"></i>
+              <p class="mb-0 mt-1">{{ 'audit.noLogs' | transloco }}</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- Pagination -->
+  <div *ngIf="!isLoading && totalItems > pageSize" class="card-footer d-flex justify-content-end">
+    <ngb-pagination
+      [collectionSize]="totalItems"
+      [(page)]="currentPage"
+      [pageSize]="pageSize"
+      [maxSize]="5"
+      [rotate]="true"
+      (pageChange)="onPageChange($event)"
+    >
+    </ngb-pagination>
+  </div>
+</div>

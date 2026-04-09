@@ -592,6 +592,31 @@
         "connectionError": "No se pudo conectar con el servidor. Verifique su conexión.",
         "unknownError": "Error al iniciar sesión. Por favor, intente nuevamente."
       }
+    },
+    "sessions": {
+      "title": "Sesiones Activas",
+      "subtitle": "Dispositivos donde tienes la sesión iniciada",
+      "ip": "IP",
+      "location": "Ubicación",
+      "device": "Dispositivo",
+      "browser": "Navegador",
+      "os": "Sistema Operativo",
+      "lastActivity": "Última actividad",
+      "createdAt": "Iniciada",
+      "noSessions": "No hay sesiones activas",
+      "unknown": "Desconocido"
+    },
+    "loginHistory": {
+      "title": "Historial de Accesos",
+      "subtitle": "Registro de inicios de sesión recientes",
+      "riskLabel": "Riesgo",
+      "newLocation": "Nueva ubicación",
+      "noHistory": "No hay registros de acceso",
+      "risk": {
+        "LOW": "Bajo",
+        "MEDIUM": "Medio",
+        "HIGH": "Alto"
+      }
     }
   },
   "profile": {
@@ -1407,5 +1432,41 @@
     "cards": {
       "navigation": "Navegación"
     }
+  },
+  "audit": {
+    "title": "Registro de Auditoría",
+    "subtitle": "Historial de operaciones del sistema",
+    "userEmail": "Usuario",
+    "action": "Acción",
+    "endpoint": "Endpoint",
+    "method": "Método",
+    "status": "Estado",
+    "ip": "IP",
+    "duration": "Duración",
+    "date": "Fecha",
+    "totalRecords": "registros",
+    "noLogs": "No hay registros de auditoría",
+    "actions": {
+      "CREATE": "Crear",
+      "UPDATE": "Actualizar",
+      "DELETE": "Eliminar",
+      "LOGIN": "Inicio de sesión",
+      "LOGOUT": "Cierre de sesión",
+      "PASSWORD_CHANGE": "Cambio de contraseña",
+      "PASSWORD_RESET": "Restablecimiento",
+      "STATUS_CHANGE": "Cambio de estado"
+    },
+    "filters": {
+      "title": "Filtros",
+      "userId": "ID de Usuario",
+      "action": "Acción",
+      "endpoint": "Endpoint",
+      "dateFrom": "Desde",
+      "dateTo": "Hasta"
+    }
+  },
+  "app": {
+    "all": "Todos",
+    "refresh": "Actualizar"
   }
 }
