@@ -8,6 +8,7 @@ import { NgxIntlTelInputModule, SearchCountryField, CountryISO, PhoneNumberForma
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { UserService } from '../../../core/services/user.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { LanguageService, SupportedLanguage } from '../../../core/services/language.service';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { DocumentType } from '../../configuration/document-types/document-type.interface';
 
@@ -25,6 +26,7 @@ export class UserCreateComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly userService = inject(UserService);
   private readonly notificationService = inject(NotificationService);
+  private readonly languageService = inject(LanguageService);
   private readonly destroy$ = new Subject<void>();
 
   pageTitle: BreadcrumbItem[] = [];
@@ -39,7 +41,18 @@ export class UserCreateComponent implements OnInit, OnDestroy {
   CountryISO = CountryISO;
   PhoneNumberFormat = PhoneNumberFormat;
 
+  /** Maps each supported language to its default phone country */
+  private readonly langToCountry: Record<SupportedLanguage, CountryISO> = {
+    'es-CO': CountryISO.Colombia,
+    'es-PR': CountryISO.PuertoRico,
+    en: CountryISO.UnitedStates,
+  };
+
+  /** Default phone country flag derived from the active language */
+  defaultPhoneCountry: CountryISO = CountryISO.Colombia;
+
   ngOnInit(): void {
+    this.resolveDefaultPhoneCountry();
     this.setupPageTitle();
     this.loadDocumentTypesFromResolver();
     this.initializeForm();
@@ -48,6 +61,19 @@ export class UserCreateComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  /**
+   * Sets the initial phone country flag from the active language and keeps it in sync
+   * if the user changes the language while the page is open.
+   */
+  private resolveDefaultPhoneCountry(): void {
+    const activeLang = this.languageService.currentLanguage as SupportedLanguage;
+    this.defaultPhoneCountry = this.langToCountry[activeLang] ?? CountryISO.Colombia;
+
+    this.languageService.currentLanguage$.pipe(takeUntil(this.destroy$)).subscribe((lang) => {
+      this.defaultPhoneCountry = this.langToCountry[lang] ?? CountryISO.Colombia;
+    });
   }
 
   private setupPageTitle(): void {
