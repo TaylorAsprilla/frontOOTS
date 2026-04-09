@@ -1012,6 +1012,7 @@
     "allStatuses": "All Statuses",
     "active": "Active",
     "inProgress": "In Progress",
+    "in_progress": "In Progress",
     "open": "Open",
     "closed": "Closed",
     "transferred": "Transferred",

@@ -206,11 +206,11 @@ export class CaseListComponent implements OnInit, OnDestroy {
   getStatusBadgeClass(status?: CaseStatus): string {
     switch (status) {
       case CaseStatus.OPEN:
-        return 'badge bg-success';
+        return 'badge bg-success text-white';
       case CaseStatus.IN_PROGRESS:
-        return 'badge bg-primary';
+        return 'badge bg-primary text-white';
       case CaseStatus.CLOSED:
-        return 'badge bg-secondary';
+        return 'badge bg-secondary text-white';
       default:
         return 'badge bg-light text-dark';
     }
