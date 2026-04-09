@@ -31,7 +31,8 @@
     "to": "to",
     "of": "of",
     "notAvailable": "Not available",
-    "select": "Select"
+    "select": "Select",
+    "clearFilters": "Clear filters"
   },
   "navigation": {
     "Navigation": "Navigation",
@@ -403,6 +404,7 @@
     "loadingParticipants": "Loading participants...",
     "noParticipantsFound": "No participants found",
     "noParticipantsMessage": "No participants registered in the system",
+    "noResultsFilterHint": "Try a different search term.",
     "createFirst": "Create First Participant",
     "participants": "participants",
     "actions": "Actions",
@@ -466,11 +468,14 @@
       "average": "Average",
       "casesPerParticipant": "cases per participant",
       "casesPerMonth": "Cases Performed by Month",
+      "casesByStatus": "Cases by Status",
       "totalCases": "Total Cases",
-      "closedCases": "Closed Cases"
+      "closedCases": "Closed Cases",
+      "noData": "No data yet — create the first case."
     },
     "tables": {
       "recentParticipants": "Recent Participants",
+      "recentCasesTitle": "Recent Cases",
       "caseHistory": "Case History",
       "name": "Name",
       "document": "Document",
@@ -535,6 +540,28 @@
     }
   },
   "profile": {
+    "title": "My Profile",
+    "personalInfo": "Personal Information",
+    "socialNetworks": "Social Networks",
+    "noPosition": "No position assigned",
+    "changePassword": "Change password",
+    "savedSuccess": "Profile updated successfully",
+    "savedError": "Could not update profile. Please try again.",
+    "fields": {
+      "firstName": "First Name",
+      "firstNamePlaceholder": "Enter your first name",
+      "firstLastName": "Last Name",
+      "firstLastNamePlaceholder": "Enter your last name",
+      "phone": "Phone",
+      "phonePlaceholder": "+1 800 000 0000",
+      "position": "Position",
+      "positionPlaceholder": "e.g. Social Worker"
+    },
+    "errors": {
+      "firstName": "First name is required (min. 2 characters)",
+      "firstLastName": "Last name is required (min. 2 characters)",
+      "phone": "Invalid phone number format"
+    },
     "myAccount": "My Account",
     "personalInformation": "Personal Information",
     "loadingProfile": "Loading profile information...",
@@ -1021,10 +1048,15 @@
     "loadingParticipant": "Loading...",
     "noCasesFound": "No cases found",
     "noCasesMessage": "No cases registered in the system",
+    "noCasesFilterHint": "Try a different search term or remove the active filters.",
+    "noCasesCreateHint": "Open a participant's record and create their first case.",
     "cases": "cases",
     "deleteConfirmation": "Case of",
     "downloadPdf": "Download PDF",
     "unknown": "Unknown",
+    "appointmentOverdue": "Overdue appointment — action required",
+    "appointmentToday": "Appointment today",
+    "appointmentSoon": "Upcoming appointment (≤3 days)",
     "loadingInfo": "Loading case information...",
     "familyComposition": "Family Composition",
     "familyMembers": "Family Members",

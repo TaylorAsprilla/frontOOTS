@@ -31,7 +31,8 @@
     "to": "a",
     "of": "de",
     "notAvailable": "No disponible",
-    "select": "Seleccione"
+    "select": "Seleccione",
+    "clearFilters": "Limpiar filtros"
   },
   "navigation": {
     "Navigation": "Navegación",
@@ -405,6 +406,7 @@
     "loadingParticipants": "Cargando participantes...",
     "noParticipantsFound": "No se encontraron participantes",
     "noParticipantsMessage": "No hay participantes registrados en el sistema",
+    "noResultsFilterHint": "Intenta con otro término de búsqueda.",
     "createFirst": "Crear Primer Participante",
     "participants": "participantes",
     "actions": "Acciones",
@@ -476,11 +478,14 @@
       "average": "Promedio",
       "casesPerParticipant": "casos por participante",
       "casesPerMonth": "Casos Realizados por Mes",
+      "casesByStatus": "Casos por Estado",
       "totalCases": "Total de Casos",
-      "closedCases": "Casos Cerrados"
+      "closedCases": "Casos Cerrados",
+      "noData": "Sin datos disponibles — crea el primer caso."
     },
     "tables": {
       "recentParticipants": "Participantes Recientes",
+      "recentCasesTitle": "Casos Recientes",
       "caseHistory": "Historial de Casos",
       "name": "Nombre",
       "document": "Documento",
@@ -590,6 +595,28 @@
     }
   },
   "profile": {
+    "title": "Mi Perfil",
+    "personalInfo": "Información Personal",
+    "socialNetworks": "Redes Sociales",
+    "noPosition": "Sin cargo asignado",
+    "changePassword": "Cambiar contraseña",
+    "savedSuccess": "Perfil actualizado exitosamente",
+    "savedError": "No se pudo actualizar el perfil. Intenta de nuevo.",
+    "fields": {
+      "firstName": "Nombre",
+      "firstNamePlaceholder": "Ingresa tu nombre",
+      "firstLastName": "Apellido",
+      "firstLastNamePlaceholder": "Ingresa tu apellido",
+      "phone": "Teléfono",
+      "phonePlaceholder": "+57 300 000 0000",
+      "position": "Cargo",
+      "positionPlaceholder": "Ej. Trabajador Social"
+    },
+    "errors": {
+      "firstName": "El nombre es obligatorio (mín. 2 caracteres)",
+      "firstLastName": "El apellido es obligatorio (mín. 2 caracteres)",
+      "phone": "Número de teléfono con formato inválido"
+    },
     "myAccount": "Mi Cuenta",
     "personalInformation": "Información Personal",
     "loadingProfile": "Cargando información del perfil...",
@@ -1076,6 +1103,8 @@
     "loadingParticipant": "Cargando...",
     "noCasesFound": "No se encontraron casos",
     "noCasesMessage": "No hay casos registrados en el sistema",
+    "noCasesFilterHint": "Intenta con otro término o elimina los filtros activos.",
+    "noCasesCreateHint": "Abre la ficha de un participante y crea su primer caso.",
     "cases": "casos",
     "deleteConfirmation": "Caso de",
     "downloadPdf": "Descargar PDF",
@@ -1083,6 +1112,9 @@
     "loadingInfo": "Cargando información del caso...",
     "familyComposition": "Composición Familiar",
     "familyMembers": "Miembros de la Familia",
+    "appointmentOverdue": "Cita vencida — acción requerida",
+    "appointmentToday": "Cita hoy",
+    "appointmentSoon": "Cita próxima (≤3 días)",
     "addFamilyMember": "Agregar Familiar",
     "removeFamilyMember": "Eliminar familiar",
     "family": "Familiar",

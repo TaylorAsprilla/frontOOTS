@@ -84,12 +84,14 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
   statisticsCardData: StatisticsCard1[] = [];
   revenuChart!: Partial<ChartOptions>;
   salesAnalyticsChart!: Partial<ChartOptions>;
+  casesByStatusChart!: Partial<ChartOptions>;
   userBalanceData: UserBalance[] = [];
   revenueHistoryData: RevenueHistory[] = [];
   totalParticipants: number = 0;
   totalCases: number = 0;
   openCases: number = 0;
   closedCases: number = 0;
+  pendingFollowUps: number = 0;
   recentParticipants: any[] = [];
   recentCases: any[] = [];
   casesByMonth: { [key: string]: number } = {};
@@ -101,6 +103,7 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.date = this.calendar.getToday();
     this.initChart();
+    this.updateCasesByStatusChart(); // Initialize with zeros
     this._fetchUserBalanceData();
     this._fetchRevenueHistoryData();
     this.loadDashboardData();
@@ -156,6 +159,21 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
           this.closedCases = cases.filter((c) => {
             const s = (c.status || '').toLowerCase().replace(/[-\s]/g, '_');
             return s === 'closed';
+          }).length;
+
+          // Count pending follow-ups: active cases with an overdue appointment
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          this.pendingFollowUps = cases.filter((c: any) => {
+            const status = (c.status || '').toLowerCase().replace(/[-\s]/g, '_');
+            if (status === 'closed') return false;
+            const plans: any[] = c.followUpPlans ?? c.followUpPlan ?? [];
+            return plans.some((p: any) => {
+              if (!p?.appointmentDate) return false;
+              const apptDate = new Date(p.appointmentDate);
+              apptDate.setHours(0, 0, 0, 0);
+              return apptDate <= today;
+            });
           }).length;
 
           // Process cases by month for chart
@@ -214,7 +232,7 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
         variant: 'warning',
         description: 'dashboard.stats.followUps',
         icon: 'fe-eye',
-        stats: 0, // Pendiente de implementar con API
+        stats: this.pendingFollowUps,
         options: {
           duration: 2,
         },
@@ -226,6 +244,9 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
 
     // Update sales analytics chart
     this.updateSalesAnalyticsChart();
+
+    // Update cases-by-status donut chart
+    this.updateCasesByStatusChart();
   }
 
   /**
@@ -413,6 +434,48 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
     if (participant.id) {
       this.router.navigate(['/participants/detail', participant.id]);
     }
+  }
+
+  /**
+   * Update cases-by-status donut chart with real data
+   */
+  updateCasesByStatusChart(): void {
+    const openCount = this.openCases;
+    const closedCount = this.closedCases;
+    const otherCount = this.totalCases - openCount - closedCount;
+
+    this.casesByStatusChart = {
+      series: [openCount, closedCount, otherCount > 0 ? otherCount : 0],
+      chart: {
+        height: 240,
+        type: 'donut',
+      },
+      labels: ['Abiertos / En Progreso', 'Cerrados', 'Otros'],
+      colors: ['#1abc9c', '#4a81d4', '#f7b731'],
+      legend: {
+        position: 'bottom',
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: (val: number) => `${Math.round(val)}%`,
+      },
+      plotOptions: {
+        pie: {
+          donut: {
+            size: '65%',
+          },
+        },
+      },
+      responsive: [
+        {
+          breakpoint: 600,
+          options: {
+            chart: { height: 200 },
+            legend: { show: false },
+          },
+        },
+      ],
+    };
   }
 
   /**

@@ -6,6 +6,7 @@ import { incomeLevelResolver } from '../../core/resolvers/income-level.resolver'
 import { housingTypeResolver } from '../../core/resolvers/housing-type.resolver';
 import { processTypeResolver } from '../configuration/process-types/process-type.resolver';
 import { approachTypeResolver } from '../configuration/approach-types/approach-type.resolver';
+import { unsavedChangesGuard } from '../../core/guards/unsaved-changes.guard';
 
 /**
  * Cases module routes configuration
@@ -29,6 +30,7 @@ export const CASES_ROUTES: Routes = [
     path: 'create/:participantId',
     loadComponent: () => import('./create-case/create-case.component').then((m) => m.CreateCaseComponent),
     title: 'Cases - Create New',
+    canDeactivate: [unsavedChangesGuard],
     data: {
       breadcrumb: 'cases.create',
     },
@@ -46,6 +48,7 @@ export const CASES_ROUTES: Routes = [
     path: 'edit/:id',
     loadComponent: () => import('./create-case/create-case.component').then((m) => m.CreateCaseComponent),
     title: 'Cases - Edit',
+    canDeactivate: [unsavedChangesGuard],
     data: {
       breadcrumb: 'cases.edit',
       mode: 'edit',

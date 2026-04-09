@@ -121,6 +121,20 @@
                         <span [class]="getStatusBadgeClass(caseItem.status)">
                           {{ 'cases.' + caseItem.status | transloco }}
                         </span>
+                        @if (getAppointmentAlert(caseItem); as alertLevel) {
+                          <span
+                            [class]="getAppointmentAlertClass(caseItem)"
+                            [ngbTooltip]="getAppointmentAlertLabel(caseItem)"
+                            placement="top"
+                          >
+                            <i
+                              class="mdi"
+                              [class.mdi-calendar-alert]="alertLevel === 'overdue'"
+                              [class.mdi-calendar-clock]="alertLevel === 'today'"
+                              [class.mdi-calendar-check]="alertLevel === 'soon'"
+                            ></i>
+                          </span>
+                        }
                       </td>
                       <td>
                         @if (caseItem.createdAt) {
@@ -206,7 +220,19 @@
                 <i class="mdi mdi-folder-search display-4 text-muted"></i>
               </div>
               <h5 class="text-muted">{{ 'cases.noCasesFound' | transloco }}</h5>
-              <p class="text-muted mb-4">{{ 'cases.noCasesMessage' | transloco }}</p>
+              <p class="text-muted mb-3">
+                @if (searchForm.value.searchTerm || statusFilter !== 'all') {
+                  {{ 'cases.noCasesFilterHint' | transloco }}
+                } @else {
+                  {{ 'cases.noCasesCreateHint' | transloco }}
+                }
+              </p>
+              @if (searchForm.value.searchTerm || statusFilter !== 'all') {
+                <button type="button" class="btn btn-outline-secondary" (click)="clearSearch()">
+                  <i class="mdi mdi-filter-remove me-1"></i>
+                  {{ 'app.clearFilters' | transloco }}
+                </button>
+              }
             </div>
           }
         </div>

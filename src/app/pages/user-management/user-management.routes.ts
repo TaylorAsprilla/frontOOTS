@@ -41,6 +41,14 @@ export const USER_MANAGEMENT_ROUTES: Routes = [
       description: 'Create a new user in the system',
     },
   },
+  {
+    path: 'profile',
+    title: 'Mi Perfil',
+    loadComponent: () => import('./my-profile/my-profile.component').then((c) => c.MyProfileComponent),
+    data: {
+      breadcrumb: 'Mi Perfil',
+    },
+  },
 
   {
     path: '**',

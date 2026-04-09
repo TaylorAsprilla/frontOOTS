@@ -18,6 +18,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { CaseService } from '../../../core/services/case.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { TokenStorageService } from '../../../core/services/token-storage.service';
+import { HasUnsavedChanges } from '../../../core/guards/unsaved-changes.guard';
 import { IdentifiedSituationService, IdentifiedSituation } from '../../../core/services/identified-situation.service';
 import { FamilyRelationship } from '../../configuration/family-relationship/family-relationship.interface';
 import { AcademicLevel } from '../../../core/interfaces/academic-level.interface';
@@ -41,7 +42,7 @@ import { ApproachType as ApproachTypeCatalog } from '../../configuration/approac
   templateUrl: './create-case.component.html',
   styleUrls: ['./create-case.component.scss'],
 })
-export class CreateCaseComponent implements OnInit, OnDestroy {
+export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges {
   private readonly formBuilder = inject(FormBuilder);
   private readonly caseService = inject(CaseService);
   private readonly notificationService = inject(NotificationService);
@@ -108,6 +109,15 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  /**
+   * CanDeactivate guard: returns true if there are unsaved changes.
+   * In view mode there are never "unsaved" changes.
+   */
+  hasUnsavedChanges(): boolean {
+    if (this.isViewMode) return false;
+    return this.caseForm?.dirty ?? false;
   }
 
   private setupBreadcrumb(): void {
