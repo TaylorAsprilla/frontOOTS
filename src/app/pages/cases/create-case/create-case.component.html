@@ -738,6 +738,14 @@
                               <small class="text-muted">{{ 'cases.followUpPlan.otherDetailsHint' | transloco }}</small>
                             </div>
                           </div>
+
+                          <!-- Validación: debe seleccionar al menos una opción -->
+                          @if (caseForm.get('followUpPlan')?.invalid && caseForm.get('followUpPlan')?.touched) {
+                            <div class="alert alert-danger d-flex align-items-center py-2 mt-2">
+                              <i class="mdi mdi-alert-circle-outline me-2"></i>
+                              Debe seleccionar al menos una opción del plan a seguir.
+                            </div>
+                          }
                         </div>
 
                         <ul class="list-inline mb-0 wizard">
@@ -751,7 +759,7 @@
                               type="button"
                               class="btn btn-primary"
                               (click)="goToNextStep()"
-                              [disabled]="isCaseClosed"
+                              [disabled]="isCaseClosed || caseForm.get('followUpPlan')?.invalid"
                             >
                               {{ 'cases.next' | transloco }}<i class="mdi mdi-arrow-right ms-1"></i>
                             </button>
@@ -1859,11 +1867,16 @@
                             </button>
                           </li>
                           @if (!isViewMode) {
-                            <li class="next list-inline-item float-end">
+                            <li class="next list-inline-item float-end d-flex gap-2">
                               <button type="submit" class="btn btn-success" [disabled]="caseForm.invalid">
                                 <i class="mdi mdi-check-circle me-1"></i>
                                 {{ isEditMode ? 'Actualizar Caso' : 'Crear Caso' }}
                               </button>
+                              @if (isEditMode && caseId && !isCaseClosed) {
+                                <button type="button" class="btn btn-danger" (click)="closeCaseFromFinalStep()">
+                                  <i class="mdi mdi-lock-outline me-1"></i>Cerrar Caso
+                                </button>
+                              }
                             </li>
                           }
                         </ul>

@@ -237,17 +237,20 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       }),
 
       // Step 6: Follow-up Plan
-      followUpPlan: this.formBuilder.group({
-        processCompleted: [false],
-        servicesCoordinated: [false],
-        servicesAgency: [''],
-        referralMade: [false],
-        referralDetails: [''],
-        appointmentScheduled: [false],
-        appointmentDate: [''],
-        appointmentTime: [''],
-        otherDetails: [''],
-      }),
+      followUpPlan: this.formBuilder.group(
+        {
+          processCompleted: [false],
+          servicesCoordinated: [false],
+          servicesAgency: [''],
+          referralMade: [false],
+          referralDetails: [''],
+          appointmentScheduled: [false],
+          appointmentDate: [''],
+          appointmentTime: [''],
+          otherDetails: [''],
+        },
+        { validators: this.atLeastOneFollowUpOptionValidator() },
+      ),
 
       // Step 7: Physical Health History
       physicalHealthHistory: this.formBuilder.group({
@@ -704,6 +707,18 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   /**
    * Custom validator to ensure at least one checkbox is selected
    */
+  private atLeastOneFollowUpOptionValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const group = control as FormGroup;
+      const anySelected =
+        group.get('processCompleted')?.value ||
+        group.get('servicesCoordinated')?.value ||
+        group.get('referralMade')?.value ||
+        group.get('appointmentScheduled')?.value;
+      return anySelected ? null : { atLeastOneOption: true };
+    };
+  }
+
   private atLeastOneSelectedValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;
@@ -863,9 +878,47 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
     // Steps 5-12 with an existing caseId → auto-save current step then advance
     if (this.caseId && this.activeWizardStep >= 5 && this.activeWizardStep <= 12) {
+      // Step 6: validate that at least one option is selected
+      if (this.activeWizardStep === 6) {
+        const followUpGroup = this.caseForm.get('followUpPlan');
+        followUpGroup?.markAllAsTouched();
+        if (followUpGroup?.invalid) return;
+      }
       // Step 6: if processCompleted is checked, close the case instead of advancing
       if (this.activeWizardStep === 6 && this.caseForm.get('followUpPlan.processCompleted')?.value) {
         this.closeCaseOnProcessCompleted();
+        return;
+      }
+      // Step 6: if appointmentScheduled is checked, update follow-up plan + set status to in_progress
+      if (this.activeWizardStep === 6 && this.caseForm.get('followUpPlan.appointmentScheduled')?.value) {
+        const formValue = this.caseForm.getRawValue();
+        const followUpData = {
+          processCompleted: formValue.followUpPlan.processCompleted,
+          coordinatedService: formValue.followUpPlan.servicesCoordinated ? formValue.followUpPlan.servicesAgency : null,
+          referred: formValue.followUpPlan.referralMade,
+          referralDetails: formValue.followUpPlan.referralDetails || null,
+          orientationAppointment: formValue.followUpPlan.appointmentScheduled,
+          appointmentDate: formValue.followUpPlan.appointmentDate || null,
+          appointmentTime: formValue.followUpPlan.appointmentTime || null,
+          otherDetails: formValue.followUpPlan.otherDetails || null,
+        };
+        this.caseService
+          .updateCase(this.caseId, { followUpPlan: [followUpData] } as any)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {
+              this.caseService
+                .updateCaseStatus(this.caseId!, CaseStatus.IN_PROGRESS)
+                .pipe(takeUntil(this.destroy$))
+                .subscribe({
+                  next: () => {
+                    this.activeWizardStep = Math.min(this.activeWizardStep + 1, 13);
+                  },
+                  error: (err) => console.error('Error al cambiar el estado del caso:', err),
+                });
+            },
+            error: (err) => console.error('Error al guardar el plan a seguir:', err),
+          });
         return;
       }
       const partial = this.mapStepDataToDto(this.activeWizardStep);
@@ -977,16 +1030,55 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
   private closeCaseOnProcessCompleted(): void {
     if (!this.caseId) return;
-    this.caseService
-      .updateCaseStatus(this.caseId, CaseStatus.CLOSED)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          this.isCaseClosed = true;
-          this.caseForm.disable();
-          this.notificationService.showSuccess('El proceso de ayuda ha sido culminado. El caso está cerrado.');
-        },
-        error: (err) => console.error('Error al cerrar el caso:', err),
+    this.notificationService
+      .showConfirmation('¿Está seguro de culminar el proceso de ayuda?', {
+        text: 'El caso quedará cerrado y no podrá continuar con el registro.',
+      })
+      .then((result) => {
+        if (!result.isConfirmed) return;
+        this.caseService
+          .updateCaseStatus(this.caseId!, CaseStatus.CLOSED)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {
+              this.isCaseClosed = true;
+              this.caseForm.disable();
+              this.notificationService.showSuccess('El proceso de ayuda ha sido culminado. El caso está cerrado.');
+            },
+            error: (err) => console.error('Error al cerrar el caso:', err),
+          });
+      });
+  }
+
+  closeCaseFromFinalStep(): void {
+    if (!this.caseId) return;
+    this.notificationService
+      .showConfirmation('¿Está seguro de cerrar el caso?', {
+        text: 'Se guardarán los datos del formulario y el caso quedará cerrado.',
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          const caseDto: CreateCaseDto = this.mapFormDataToDto();
+          this.caseService
+            .updateCase(this.caseId!, caseDto)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: () => {
+                this.caseService
+                  .updateCaseStatus(this.caseId!, CaseStatus.CLOSED)
+                  .pipe(takeUntil(this.destroy$))
+                  .subscribe({
+                    next: () => {
+                      this.isCaseClosed = true;
+                      this.caseForm.disable();
+                      this.notificationService.showSuccess('El caso ha sido actualizado y cerrado exitosamente.');
+                    },
+                    error: (err) => console.error('Error al cerrar el caso:', err),
+                  });
+              },
+              error: (err) => console.error('Error al actualizar el caso:', err),
+            });
+        }
       });
   }
 
@@ -1073,22 +1165,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       case 5:
         return { intervention: formValue.intervention.action };
       case 6:
-        return {
-          followUpPlan: [
-            {
-              processCompleted: formValue.followUpPlan.processCompleted,
-              coordinatedService: formValue.followUpPlan.servicesCoordinated
-                ? formValue.followUpPlan.servicesAgency
-                : null,
-              referred: formValue.followUpPlan.referralMade,
-              referralDetails: formValue.followUpPlan.referralDetails || null,
-              orientationAppointment: formValue.followUpPlan.appointmentScheduled,
-              appointmentDate: formValue.followUpPlan.appointmentDate || null,
-              appointmentTime: formValue.followUpPlan.appointmentTime || null,
-              otherDetails: formValue.followUpPlan.otherDetails || null,
-            },
-          ],
-        };
+        return null; // followUpPlan no es aceptado por el endpoint PATCH /cases/:id
       case 7:
         return {
           physicalHealthHistory: formValue.physicalHealthHistory.conditions.map((c: any) => ({
@@ -1314,6 +1391,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
     const field = this.caseForm.get(fieldPath);
     if (field?.hasError('required')) return 'Este campo es requerido';
     if (field?.hasError('atLeastOne')) return 'Debe seleccionar al menos una situación';
+    if (field?.hasError('atLeastOneOption')) return 'Debe seleccionar al menos una opción del plan a seguir';
     if (field?.hasError('min')) return 'Valor mínimo no alcanzado';
     if (field?.hasError('max')) return 'Valor máximo excedido';
     return '';
