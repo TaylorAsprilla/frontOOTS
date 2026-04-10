@@ -51,7 +51,7 @@ export class CustomDateParserFormatter extends NgbDateParserFormatter {
   }
 
   format(date: NgbDateStruct | null): string {
-    return date ? this.month_list[date.month - 1] + this.DELIMITER + date.day + ',' + this.DELIMITER + date.year : '';
+    return date ? this.month_list[date.month - 1] + this.DELIMITER + date.year : '';
   }
 }
 
@@ -97,8 +97,12 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
   casesByMonth: { [key: string]: number } = {};
   closedCasesByMonth: { [key: string]: number } = {};
   currentYear: number = new Date().getFullYear();
+  isFiltered: boolean = false;
 
   date!: NgbDateStruct;
+
+  private allCases: any[] = [];
+  private allParticipants: any[] = [];
 
   ngOnInit(): void {
     this.date = this.calendar.getToday();
@@ -132,55 +136,10 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          // Update participants data
-          this.totalParticipants = response.participants?.data?.total || 0;
-
-          // Get recent participants (last 5)
-          const participants = response.participants?.data?.participants || [];
-          this.recentParticipants = participants
-            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-            .slice(0, 5);
-
-          // Update cases data
-          this.totalCases = response.cases?.total || 0;
-
-          // Get recent cases (last 5)
-          const cases = response.cases?.cases || [];
-          this.recentCases = cases
-            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-            .slice(0, 5);
-
-          // Count open and closed cases
-          this.openCases = cases.filter((c) => {
-            const s = (c.status || '').toLowerCase().replace(/[-\s]/g, '_');
-            return s === 'in_progress' || s === 'active' || s === 'open';
-          }).length;
-
-          this.closedCases = cases.filter((c) => {
-            const s = (c.status || '').toLowerCase().replace(/[-\s]/g, '_');
-            return s === 'closed';
-          }).length;
-
-          // Count pending follow-ups: active cases with an overdue appointment
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          this.pendingFollowUps = cases.filter((c: any) => {
-            const status = (c.status || '').toLowerCase().replace(/[-\s]/g, '_');
-            if (status === 'closed') return false;
-            const plans: any[] = c.followUpPlans ?? c.followUpPlan ?? [];
-            return plans.some((p: any) => {
-              if (!p?.appointmentDate) return false;
-              const apptDate = new Date(p.appointmentDate);
-              apptDate.setHours(0, 0, 0, 0);
-              return apptDate <= today;
-            });
-          }).length;
-
-          // Process cases by month for chart
-          this.processCasesByMonth(cases);
-
-          // Update all statistics cards
-          this._updateStatisticsCards();
+          this.allParticipants = response.participants?.data?.participants || [];
+          this.allCases = response.cases?.cases || [];
+          this.isFiltered = false;
+          this.applyStats(this.allCases, this.allParticipants);
         },
         error: (error) => {
           console.error('Error loading dashboard data:', error);
@@ -188,6 +147,75 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
           this._updateStatisticsCards();
         },
       });
+  }
+
+  /**
+   * Apply statistics for a given subset of cases and participants
+   */
+  private applyStats(cases: any[], participants: any[]): void {
+    this.totalParticipants = participants.length;
+    this.totalCases = cases.length;
+
+    this.recentParticipants = [...participants]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 5);
+
+    this.recentCases = [...cases]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 5);
+
+    this.openCases = cases.filter((c) => {
+      const s = (c.status || '').toLowerCase().replace(/[-\s]/g, '_');
+      return s === 'in_progress' || s === 'active' || s === 'open';
+    }).length;
+
+    this.closedCases = cases.filter((c) => {
+      const s = (c.status || '').toLowerCase().replace(/[-\s]/g, '_');
+      return s === 'closed';
+    }).length;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    this.pendingFollowUps = cases.filter((c: any) => {
+      const status = (c.status || '').toLowerCase().replace(/[-\s]/g, '_');
+      if (status === 'closed') return false;
+      const plans: any[] = c.followUpPlans ?? c.followUpPlan ?? [];
+      return plans.some((p: any) => {
+        if (!p?.appointmentDate) return false;
+        const apptDate = new Date(p.appointmentDate);
+        apptDate.setHours(0, 0, 0, 0);
+        return apptDate <= today;
+      });
+    }).length;
+
+    this.processCasesByMonth(cases);
+    this._updateStatisticsCards();
+  }
+
+  /**
+   * Filter dashboard data by the selected month/year in the datepicker
+   */
+  applyDateFilter(): void {
+    if (!this.date) return;
+    const filteredCases = this.allCases.filter((c) => {
+      const d = new Date(c.createdAt);
+      return d.getFullYear() === this.date.year && d.getMonth() + 1 === this.date.month;
+    });
+    const filteredParticipants = this.allParticipants.filter((p) => {
+      const d = new Date(p.createdAt);
+      return d.getFullYear() === this.date.year && d.getMonth() + 1 === this.date.month;
+    });
+    this.isFiltered = true;
+    this.applyStats(filteredCases, filteredParticipants);
+  }
+
+  /**
+   * Reset date filter back to all data
+   */
+  resetDateFilter(): void {
+    this.date = this.calendar.getToday();
+    this.isFiltered = false;
+    this.applyStats(this.allCases, this.allParticipants);
   }
 
   /**

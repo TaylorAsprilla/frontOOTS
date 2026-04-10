@@ -3,8 +3,8 @@
   <div class="col-12">
     <div class="page-title-box">
       <div class="page-title-right">
-        <form class="d-flex align-items-center mb-3">
-          <div class="input-group input-group-sm">
+        <form class="d-flex align-items-center gap-1 mb-3">
+          <div class="input-group input-group-sm" style="width: 170px">
             <input
               type="text"
               name="datepicker"
@@ -13,20 +13,30 @@
               [(ngModel)]="date"
               ngbDatepicker
               #datepicker="ngbDatepicker"
+              [navigation]="'select'"
+              [showWeekNumbers]="false"
               (click)="datepicker.toggle()"
-              autoClose="'outside'"
+              [autoClose]="true"
+              readonly
             />
-
-            <span class="input-group-text bg-blue border-blue text-white">
+            <span
+              class="input-group-text bg-blue border-blue text-white"
+              style="cursor: pointer"
+              (click)="datepicker.toggle()"
+            >
               <i class="mdi mdi-calendar-range"></i>
             </span>
           </div>
-          <a href="javascript: void(0);" class="btn btn-blue btn-sm ms-2">
-            <i class="mdi mdi-autorenew"></i>
-          </a>
-          <a href="javascript: void(0);" class="btn btn-blue btn-sm ms-1">
-            <i class="mdi mdi-filter-variant"></i>
-          </a>
+
+          <button type="button" class="btn btn-blue btn-sm" (click)="applyDateFilter()" title="Aplicar filtro por mes">
+            <i class="mdi mdi-filter-variant me-1"></i>Filtrar
+          </button>
+
+          @if (isFiltered) {
+            <button type="button" class="btn btn-sm btn-warning" (click)="resetDateFilter()" title="Limpiar filtro">
+              <i class="mdi mdi-close me-1"></i>Limpiar
+            </button>
+          }
         </form>
       </div>
       <h4 class="page-title">{{ 'dashboard.home' | transloco }}</h4>
