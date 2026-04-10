@@ -21,7 +21,7 @@
             <p class="text-muted mb-2">
               {{ 'auth.login.description' | transloco }}
             </p>
-            <p class="text-primary fst-italic mb-4">&ldquo;{{ 'auth.login.slogan' | transloco }}&rdquo;</p>
+            <p class="text-primary fst-italic mb-4 text-nowrap">&ldquo;{{ 'auth.login.slogan' | transloco }}&rdquo;</p>
           </div>
 
           <form name="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
