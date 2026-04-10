@@ -34,7 +34,10 @@ export class SettingsComponent implements OnInit, OnChanges {
     github: [''],
   });
 
-  constructor(private fb: FormBuilder, private authService: AuthenticationService) {}
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthenticationService,
+  ) {}
 
   ngOnInit(): void {
     this._loadUserData();
@@ -99,7 +102,6 @@ export class SettingsComponent implements OnInit, OnChanges {
 
       this.authService.updateProfile(payload).subscribe({
         next: (response) => {
-          console.log('Profile updated successfully', response);
           this.isLoading = false;
           this.successMessage = 'Perfil actualizado exitosamente';
           this.profileUpdated.emit();

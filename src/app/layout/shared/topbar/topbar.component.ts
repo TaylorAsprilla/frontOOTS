@@ -47,7 +47,10 @@ export class TopbarComponent implements OnInit {
   @Output() mobileMenuButtonClicked = new EventEmitter();
   @Output() settingsButtonClicked = new EventEmitter<boolean>();
 
-  constructor(private authService: AuthenticationService, private eventService: EventService) {}
+  constructor(
+    private authService: AuthenticationService,
+    private eventService: EventService,
+  ) {}
 
   ngOnInit(): void {
     this._fetchMenus();
@@ -210,7 +213,7 @@ export class TopbarComponent implements OnInit {
       {
         label: 'navigation.myAccount',
         icon: 'fe-user',
-        redirectTo: '/apps/contacts/profile',
+        redirectTo: '/users/profile',
       },
       {
         label: 'navigation.settings',

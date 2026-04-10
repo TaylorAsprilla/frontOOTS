@@ -12,15 +12,11 @@ export class ErrorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(
       catchError((err) => {
-        if (err.status === 401) {
-          // auto logout if 401 response returned from api
-          this.authenticationService.logout();
-          location.reload();
-        }
-
-        const error = err.error.message || err.statusText;
-        return throwError(error);
-      })
+        // Los errores 401 son manejados por AuthInterceptor (refresh token flow).
+        // Aquí solo se propagan otros errores para que los componentes los manejen.
+        const error = err?.error?.message || err?.statusText || err?.message || 'Unknown error';
+        return throwError(() => error);
+      }),
     );
   }
 }

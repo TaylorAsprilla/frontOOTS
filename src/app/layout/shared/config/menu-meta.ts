@@ -2,7 +2,7 @@ import { MenuItem } from '../models/menu.model';
 
 // menu items for vertcal and detached layout
 const MENU_ITEMS: MenuItem[] = [
-  { key: 'navigation', label: 'Navigation', isTitle: true },
+  { key: 'navigation', label: 'navigation.Navigation', isTitle: true },
   {
     key: 'dashboards',
     label: 'navigation.dashboard',

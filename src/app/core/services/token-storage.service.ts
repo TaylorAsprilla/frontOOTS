@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AuthenticatedUser, AuthenticatedUserComplete } from '../interfaces/auth.interface';
+import { AuthenticatedUser, AuthenticatedUserComplete, UserRole } from '../interfaces/auth.interface';
 
 /**
  * Servicio para gestionar el almacenamiento del token y datos del usuario
@@ -7,6 +7,7 @@ import { AuthenticatedUser, AuthenticatedUserComplete } from '../interfaces/auth
 @Injectable({ providedIn: 'root' })
 export class TokenStorageService {
   private readonly STORAGE_KEY = 'currentUser';
+  private readonly REFRESH_TOKEN_KEY = 'refreshToken';
 
   constructor() {}
 
@@ -67,11 +68,37 @@ export class TokenStorageService {
   }
 
   /**
-   * Obtiene solo el token JWT
+   * Obtiene solo el access token JWT
    */
   getToken(): string | null {
     const user = this.getUser();
     return user?.token || null;
+  }
+
+  /**
+   * Guarda el refresh token en localStorage
+   */
+  saveRefreshToken(refreshToken: string): void {
+    try {
+      localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
+    } catch (error) {
+      console.error('Error saving refresh token:', error);
+    }
+  }
+
+  /**
+   * Obtiene el refresh token
+   */
+  getRefreshToken(): string | null {
+    return localStorage.getItem(this.REFRESH_TOKEN_KEY);
+  }
+
+  /**
+   * Obtiene el rol del usuario actual
+   */
+  getRole(): UserRole | null {
+    const user = this.getUser();
+    return (user as AuthenticatedUser)?.role ?? null;
   }
 
   /**
@@ -106,6 +133,18 @@ export class TokenStorageService {
   }
 
   /**
+   * Limpia toda la sesión (access token, refresh token y datos de usuario)
+   */
+  clearSession(): void {
+    try {
+      localStorage.removeItem(this.STORAGE_KEY);
+      localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+    } catch (error) {
+      console.error('Error clearing session from localStorage:', error);
+    }
+  }
+
+  /**
    * Obtiene el tiempo restante hasta la expiración en segundos
    */
   getTimeUntilExpiration(): number {
@@ -120,14 +159,27 @@ export class TokenStorageService {
   }
 
   /**
-   * Actualiza solo el token (útil para refresh token)
+   * Actualiza los tokens (access + refresh) tras un refresco exitoso
+   */
+  updateTokens(accessToken: string, refreshToken: string, expiresIn: number): void {
+    const user = this.getUser();
+    if (user) {
+      user.token = accessToken;
+      user.expiresAt = this.calculateExpirationDate(expiresIn);
+      this.saveUser(user as AuthenticatedUser);
+    }
+    this.saveRefreshToken(refreshToken);
+  }
+
+  /**
+   * @deprecated Usa updateTokens() para actualizar ambos tokens
    */
   updateToken(token: string, expiresIn: number): void {
     const user = this.getUser();
     if (user) {
       user.token = token;
       user.expiresAt = this.calculateExpirationDate(expiresIn);
-      this.saveUser(user);
+      this.saveUser(user as AuthenticatedUser);
     }
   }
 

@@ -1,0 +1,11 @@
+::ng-deep ngb-datepicker {
+  background-color: #fff !important;
+  opacity: 1 !important;
+
+  .ngb-dp-header,
+  .ngb-dp-months,
+  .ngb-dp-month,
+  .ngb-dp-week {
+    background-color: #fff !important;
+  }
+}

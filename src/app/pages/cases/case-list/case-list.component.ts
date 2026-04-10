@@ -65,11 +65,8 @@ export class CaseListComponent implements OnInit, OnDestroy {
   statusOptions: Array<{ value: CaseStatus | 'all'; label: string }> = [
     { value: 'all', label: 'cases.allStatuses' },
     { value: CaseStatus.OPEN, label: 'cases.open' },
-    { value: CaseStatus.ACTIVE, label: 'cases.active' },
     { value: CaseStatus.IN_PROGRESS, label: 'cases.inProgress' },
     { value: CaseStatus.CLOSED, label: 'cases.closed' },
-    { value: CaseStatus.TRANSFERRED, label: 'cases.transferred' },
-    { value: CaseStatus.SUSPENDED, label: 'cases.suspended' },
   ];
 
   // Math utility for templates
@@ -208,16 +205,12 @@ export class CaseListComponent implements OnInit, OnDestroy {
 
   getStatusBadgeClass(status?: CaseStatus): string {
     switch (status) {
-      case CaseStatus.ACTIVE:
-        return 'badge bg-success';
+      case CaseStatus.OPEN:
+        return 'badge bg-success text-white';
       case CaseStatus.IN_PROGRESS:
-        return 'badge bg-primary';
+        return 'badge bg-primary text-white';
       case CaseStatus.CLOSED:
-        return 'badge bg-secondary';
-      case CaseStatus.TRANSFERRED:
-        return 'badge bg-info';
-      case CaseStatus.SUSPENDED:
-        return 'badge bg-warning';
+        return 'badge bg-secondary text-white';
       default:
         return 'badge bg-light text-dark';
     }
@@ -307,5 +300,71 @@ export class CaseListComponent implements OnInit, OnDestroy {
       return 'mdi mdi-sort';
     }
     return this.sortDirection === 'asc' ? 'mdi mdi-sort-ascending' : 'mdi mdi-sort-descending';
+  }
+
+  /**
+   * Returns the appointment alert level for a case based on the latest follow-up plan date.
+   * 'overdue'  → appointment date is in the past
+   * 'today'    → appointment is today
+   * 'soon'     → appointment is within the next 3 days
+   * null       → no upcoming appointment or case is closed
+   */
+  getAppointmentAlert(caseItem: any): 'overdue' | 'today' | 'soon' | null {
+    if (caseItem.status === CaseStatus.CLOSED) return null;
+
+    // API returns followUpPlans (array) or followUpPlan
+    const plans: any[] = caseItem.followUpPlans ?? caseItem.followUpPlan ?? [];
+    if (!plans.length) return null;
+
+    // Take the most recent plan with an appointment date
+    const latestPlan = [...plans].reverse().find((p) => p.orientationAppointment && p.appointmentDate);
+
+    if (!latestPlan?.appointmentDate) return null;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const appointmentDate = new Date(latestPlan.appointmentDate);
+    appointmentDate.setHours(0, 0, 0, 0);
+
+    const diffDays = Math.ceil((appointmentDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) return 'overdue';
+    if (diffDays === 0) return 'today';
+    if (diffDays <= 3) return 'soon';
+    return null;
+  }
+
+  /**
+   * Returns the CSS class for the appointment alert badge.
+   */
+  getAppointmentAlertClass(caseItem: any): string {
+    const level = this.getAppointmentAlert(caseItem);
+    switch (level) {
+      case 'overdue':
+        return 'badge bg-danger text-white ms-1';
+      case 'today':
+        return 'badge bg-warning text-dark ms-1';
+      case 'soon':
+        return 'badge bg-info text-white ms-1';
+      default:
+        return '';
+    }
+  }
+
+  /**
+   * Returns the tooltip label for the appointment alert.
+   */
+  getAppointmentAlertLabel(caseItem: any): string {
+    const level = this.getAppointmentAlert(caseItem);
+    switch (level) {
+      case 'overdue':
+        return this.translocoService.translate('cases.appointmentOverdue');
+      case 'today':
+        return this.translocoService.translate('cases.appointmentToday');
+      case 'soon':
+        return this.translocoService.translate('cases.appointmentSoon');
+      default:
+        return '';
+    }
   }
 }

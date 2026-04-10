@@ -97,6 +97,7 @@ export class ParticipantListComponent implements OnInit, OnDestroy {
 
   loadParticipants(): void {
     this.isLoading = true;
+    this.searchForm.get('searchTerm')?.disable({ emitEvent: false });
 
     // Obtener el usuario actual
     const currentUser = this.authService.currentUser();
@@ -104,6 +105,7 @@ export class ParticipantListComponent implements OnInit, OnDestroy {
     if (!currentUser || !currentUser.id) {
       this.notificationService.showError('No se pudo obtener la información del usuario');
       this.isLoading = false;
+      this.searchForm.get('searchTerm')?.enable({ emitEvent: false });
       return;
     }
 
@@ -147,12 +149,14 @@ export class ParticipantListComponent implements OnInit, OnDestroy {
           this.participants = allParticipants; // Guardar todos los participantes
           this.filteredParticipants = filteredData.slice(startIndex, endIndex); // Mostrar solo la página actual
           this.isLoading = false;
+          this.searchForm.get('searchTerm')?.enable({ emitEvent: false });
         },
         error: (error) => {
           this.participants = [];
           this.filteredParticipants = [];
           this.totalItems = 0;
           this.isLoading = false;
+          this.searchForm.get('searchTerm')?.enable({ emitEvent: false });
         },
       });
   }

@@ -1,5 +1,5 @@
 import { Component, Injectable, OnInit, inject, OnDestroy } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { NgbDatepickerModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
@@ -51,7 +51,7 @@ export class CustomDateParserFormatter extends NgbDateParserFormatter {
   }
 
   format(date: NgbDateStruct | null): string {
-    return date ? this.month_list[date.month - 1] + this.DELIMITER + date.day + ',' + this.DELIMITER + date.year : '';
+    return date ? this.month_list[date.month - 1] + this.DELIMITER + date.year : '';
   }
 }
 
@@ -66,7 +66,6 @@ export class CustomDateParserFormatter extends NgbDateParserFormatter {
     NgbDropdownModule,
     NgApexchartsModule,
     StatisticsCardComponent,
-    DatePipe,
     TranslocoModule,
     LocalizedDatePipe,
   ],
@@ -85,23 +84,30 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
   statisticsCardData: StatisticsCard1[] = [];
   revenuChart!: Partial<ChartOptions>;
   salesAnalyticsChart!: Partial<ChartOptions>;
+  casesByStatusChart!: Partial<ChartOptions>;
   userBalanceData: UserBalance[] = [];
   revenueHistoryData: RevenueHistory[] = [];
   totalParticipants: number = 0;
   totalCases: number = 0;
   openCases: number = 0;
   closedCases: number = 0;
+  pendingFollowUps: number = 0;
   recentParticipants: any[] = [];
   recentCases: any[] = [];
   casesByMonth: { [key: string]: number } = {};
   closedCasesByMonth: { [key: string]: number } = {};
   currentYear: number = new Date().getFullYear();
+  isFiltered: boolean = false;
 
   date!: NgbDateStruct;
+
+  private allCases: any[] = [];
+  private allParticipants: any[] = [];
 
   ngOnInit(): void {
     this.date = this.calendar.getToday();
     this.initChart();
+    this.updateCasesByStatusChart(); // Initialize with zeros
     this._fetchUserBalanceData();
     this._fetchRevenueHistoryData();
     this.loadDashboardData();
@@ -130,40 +136,10 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          // Update participants data
-          this.totalParticipants = response.participants?.data?.total || 0;
-
-          // Get recent participants (last 5)
-          const participants = response.participants?.data?.participants || [];
-          this.recentParticipants = participants
-            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-            .slice(0, 5);
-
-          // Update cases data
-          this.totalCases = response.cases?.total || 0;
-
-          // Get recent cases (last 5)
-          const cases = response.cases?.cases || [];
-          this.recentCases = cases
-            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-            .slice(0, 5);
-
-          // Count open and closed cases
-          this.openCases = cases.filter((c) => {
-            const s = (c.status || '').toLowerCase().replace(/[-\s]/g, '_');
-            return s === 'in_progress' || s === 'active' || s === 'open';
-          }).length;
-
-          this.closedCases = cases.filter((c) => {
-            const s = (c.status || '').toLowerCase().replace(/[-\s]/g, '_');
-            return s === 'closed';
-          }).length;
-
-          // Process cases by month for chart
-          this.processCasesByMonth(cases);
-
-          // Update all statistics cards
-          this._updateStatisticsCards();
+          this.allParticipants = response.participants?.data?.participants || [];
+          this.allCases = response.cases?.cases || [];
+          this.isFiltered = false;
+          this.applyStats(this.allCases, this.allParticipants);
         },
         error: (error) => {
           console.error('Error loading dashboard data:', error);
@@ -171,6 +147,75 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
           this._updateStatisticsCards();
         },
       });
+  }
+
+  /**
+   * Apply statistics for a given subset of cases and participants
+   */
+  private applyStats(cases: any[], participants: any[]): void {
+    this.totalParticipants = participants.length;
+    this.totalCases = cases.length;
+
+    this.recentParticipants = [...participants]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 5);
+
+    this.recentCases = [...cases]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 5);
+
+    this.openCases = cases.filter((c) => {
+      const s = (c.status || '').toLowerCase().replace(/[-\s]/g, '_');
+      return s === 'in_progress' || s === 'active' || s === 'open';
+    }).length;
+
+    this.closedCases = cases.filter((c) => {
+      const s = (c.status || '').toLowerCase().replace(/[-\s]/g, '_');
+      return s === 'closed';
+    }).length;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    this.pendingFollowUps = cases.filter((c: any) => {
+      const status = (c.status || '').toLowerCase().replace(/[-\s]/g, '_');
+      if (status === 'closed') return false;
+      const plans: any[] = c.followUpPlans ?? c.followUpPlan ?? [];
+      return plans.some((p: any) => {
+        if (!p?.appointmentDate) return false;
+        const apptDate = new Date(p.appointmentDate);
+        apptDate.setHours(0, 0, 0, 0);
+        return apptDate <= today;
+      });
+    }).length;
+
+    this.processCasesByMonth(cases);
+    this._updateStatisticsCards();
+  }
+
+  /**
+   * Filter dashboard data by the selected month/year in the datepicker
+   */
+  applyDateFilter(): void {
+    if (!this.date) return;
+    const filteredCases = this.allCases.filter((c) => {
+      const d = new Date(c.createdAt);
+      return d.getFullYear() === this.date.year && d.getMonth() + 1 === this.date.month;
+    });
+    const filteredParticipants = this.allParticipants.filter((p) => {
+      const d = new Date(p.createdAt);
+      return d.getFullYear() === this.date.year && d.getMonth() + 1 === this.date.month;
+    });
+    this.isFiltered = true;
+    this.applyStats(filteredCases, filteredParticipants);
+  }
+
+  /**
+   * Reset date filter back to all data
+   */
+  resetDateFilter(): void {
+    this.date = this.calendar.getToday();
+    this.isFiltered = false;
+    this.applyStats(this.allCases, this.allParticipants);
   }
 
   /**
@@ -215,7 +260,7 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
         variant: 'warning',
         description: 'dashboard.stats.followUps',
         icon: 'fe-eye',
-        stats: 0, // Pendiente de implementar con API
+        stats: this.pendingFollowUps,
         options: {
           duration: 2,
         },
@@ -227,6 +272,9 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
 
     // Update sales analytics chart
     this.updateSalesAnalyticsChart();
+
+    // Update cases-by-status donut chart
+    this.updateCasesByStatusChart();
   }
 
   /**
@@ -414,6 +462,48 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
     if (participant.id) {
       this.router.navigate(['/participants/detail', participant.id]);
     }
+  }
+
+  /**
+   * Update cases-by-status donut chart with real data
+   */
+  updateCasesByStatusChart(): void {
+    const openCount = this.openCases;
+    const closedCount = this.closedCases;
+    const otherCount = this.totalCases - openCount - closedCount;
+
+    this.casesByStatusChart = {
+      series: [openCount, closedCount, otherCount > 0 ? otherCount : 0],
+      chart: {
+        height: 240,
+        type: 'donut',
+      },
+      labels: ['Abiertos / En Progreso', 'Cerrados', 'Otros'],
+      colors: ['#1abc9c', '#4a81d4', '#f7b731'],
+      legend: {
+        position: 'bottom',
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: (val: number) => `${Math.round(val)}%`,
+      },
+      plotOptions: {
+        pie: {
+          donut: {
+            size: '65%',
+          },
+        },
+      },
+      responsive: [
+        {
+          breakpoint: 600,
+          options: {
+            chart: { height: 200 },
+            legend: { show: false },
+          },
+        },
+      ],
+    };
   }
 
   /**

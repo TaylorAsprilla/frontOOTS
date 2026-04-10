@@ -18,6 +18,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { CaseService } from '../../../core/services/case.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { TokenStorageService } from '../../../core/services/token-storage.service';
+import { HasUnsavedChanges } from '../../../core/guards/unsaved-changes.guard';
 import { IdentifiedSituationService, IdentifiedSituation } from '../../../core/services/identified-situation.service';
 import { FamilyRelationship } from '../../configuration/family-relationship/family-relationship.interface';
 import { AcademicLevel } from '../../../core/interfaces/academic-level.interface';
@@ -26,7 +27,7 @@ import { IncomeLevel } from '../../configuration/income-level/income-level.inter
 import { HousingType } from '../../configuration/housing-type/housing-type.interface';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
-import { CreateCaseDto, ApproachType } from '../../../core/interfaces/case.interface';
+import { CreateCaseDto, ApproachType, CaseStatus } from '../../../core/interfaces/case.interface';
 import { ProcessType } from '../../configuration/process-types/process-type.interface';
 import { ApproachType as ApproachTypeCatalog } from '../../configuration/approach-types/approach-type.interface';
 
@@ -41,13 +42,13 @@ import { ApproachType as ApproachTypeCatalog } from '../../configuration/approac
   templateUrl: './create-case.component.html',
   styleUrls: ['./create-case.component.scss'],
 })
-export class CreateCaseComponent implements OnInit, OnDestroy {
+export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges {
   private readonly formBuilder = inject(FormBuilder);
   private readonly caseService = inject(CaseService);
   private readonly notificationService = inject(NotificationService);
   private readonly tokenStorageService = inject(TokenStorageService);
   private readonly identifiedSituationService = inject(IdentifiedSituationService);
-  private readonly router = inject(Router);
+  readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly destroy$ = new Subject<void>();
 
@@ -59,6 +60,8 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   isEditMode = false;
   isViewMode = false;
   isLoadingCase = false;
+  isCreatingCase = false;
+  isCaseClosed = false;
 
   // Data
   identifiedSituations: IdentifiedSituation[] = [];
@@ -106,6 +109,15 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  /**
+   * CanDeactivate guard: returns true if there are unsaved changes.
+   * In view mode there are never "unsaved" changes.
+   */
+  hasUnsavedChanges(): boolean {
+    if (this.isViewMode) return false;
+    return this.caseForm?.dirty ?? false;
   }
 
   private setupBreadcrumb(): void {
@@ -235,17 +247,20 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       }),
 
       // Step 6: Follow-up Plan
-      followUpPlan: this.formBuilder.group({
-        processCompleted: [false],
-        servicesCoordinated: [false],
-        servicesAgency: [''],
-        referralMade: [false],
-        referralDetails: [''],
-        appointmentScheduled: [false],
-        appointmentDate: [''],
-        appointmentTime: [''],
-        otherDetails: [''],
-      }),
+      followUpPlan: this.formBuilder.group(
+        {
+          processCompleted: [false],
+          servicesCoordinated: [false],
+          servicesAgency: [''],
+          referralMade: [false],
+          referralDetails: [''],
+          appointmentScheduled: [false],
+          appointmentDate: [''],
+          appointmentTime: [''],
+          otherDetails: [''],
+        },
+        { validators: this.atLeastOneFollowUpOptionValidator() },
+      ),
 
       // Step 7: Physical Health History
       physicalHealthHistory: this.formBuilder.group({
@@ -257,6 +272,14 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       mentalHealthHistory: this.formBuilder.group({
         hasMentalHistory: [false],
         conditions: this.formBuilder.array([]),
+      }),
+
+      // Family Health History (independent – filled once for both physical and mental)
+      familyHealthHistory: this.formBuilder.group({
+        physicalFamilyHistoryFather: [''],
+        physicalFamilyHistoryMother: [''],
+        mentalFamilyHistoryFather: [''],
+        mentalFamilyHistoryMother: [''],
       }),
 
       // Step 9: Assessment (Ponderación)
@@ -332,8 +355,6 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
         next: (response) => {
           const caseData = response.data;
 
-          console.log('Case data loaded from API:', caseData);
-
           if (caseData) {
             // Mapear datos del caso al formulario
             this.mapCaseDataToForm(caseData);
@@ -352,7 +373,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
           this.isLoadingCase = false;
         },
         error: (error) => {
-          console.error('Error loading case:', error);
+          console.error('Error al cargar el caso:', error);
           this.isLoadingCase = false;
           this.notificationService.showError('Error al cargar el caso: ' + (error.message || 'Error desconocido'));
           this.router.navigate(['/cases/list']);
@@ -503,8 +524,6 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
             condition: [condition.currentConditions || ''],
             receivingTreatment: [!!condition.medications],
             treatmentDetails: [condition.medications || ''],
-            paternalFamilyHistory: [condition.familyHistoryFather || ''],
-            maternalFamilyHistory: [condition.familyHistoryMother || ''],
             observations: [condition.observations || ''],
           });
           this.physicalConditions.push(conditionGroup);
@@ -517,8 +536,6 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
             condition: [condition.currentConditions || ''],
             receivingTreatment: [!!condition.medications],
             treatmentDetails: [condition.medications || ''],
-            paternalFamilyHistory: [condition.familyHistoryFather || ''],
-            maternalFamilyHistory: [condition.familyHistoryMother || ''],
             observations: [condition.observations || ''],
           });
           this.physicalConditions.push(conditionGroup);
@@ -536,8 +553,6 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
             condition: [condition.currentConditions || ''],
             receivingTreatment: [!!condition.medications],
             treatmentDetails: [condition.medications || ''],
-            paternalFamilyHistory: [condition.familyHistoryFather || ''],
-            maternalFamilyHistory: [condition.familyHistoryMother || ''],
             observations: [condition.observations || ''],
           });
           this.mentalConditions.push(conditionGroup);
@@ -550,11 +565,25 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
             condition: [condition.currentConditions || ''],
             receivingTreatment: [!!condition.medications],
             treatmentDetails: [condition.medications || ''],
-            paternalFamilyHistory: [condition.familyHistoryFather || ''],
-            maternalFamilyHistory: [condition.familyHistoryMother || ''],
             observations: [condition.observations || ''],
           });
           this.mentalConditions.push(conditionGroup);
+        });
+      }
+
+      // 8b. Cargar historial familiar de condiciones
+      if (caseData.familyHealthHistories && Array.isArray(caseData.familyHealthHistories)) {
+        const physicalFH = caseData.familyHealthHistories.find(
+          (h: any) => h.historyType === 'physical' || h.history_type === 'physical',
+        );
+        const mentalFH = caseData.familyHealthHistories.find(
+          (h: any) => h.historyType === 'mental' || h.history_type === 'mental',
+        );
+        this.caseForm.get('familyHealthHistory')?.patchValue({
+          physicalFamilyHistoryFather: physicalFH?.familyHistoryFather || '',
+          physicalFamilyHistoryMother: physicalFH?.familyHistoryMother || '',
+          mentalFamilyHistoryFather: mentalFH?.familyHistoryFather || '',
+          mentalFamilyHistoryMother: mentalFH?.familyHistoryMother || '',
         });
       }
 
@@ -613,7 +642,6 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
             approachType: [note.sessionType || note.approachType || ''],
             process: [note.process || ''],
             interventionSummary: [note.summary || note.interventionSummary || ''],
-            observations: [note.observations || ''],
             agreements: [note.agreements || ''],
           });
           this.progressNotesArray.push(noteGroup);
@@ -687,6 +715,18 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
   /**
    * Custom validator to ensure at least one checkbox is selected
    */
+  private atLeastOneFollowUpOptionValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const group = control as FormGroup;
+      const anySelected =
+        group.get('processCompleted')?.value ||
+        group.get('servicesCoordinated')?.value ||
+        group.get('referralMade')?.value ||
+        group.get('appointmentScheduled')?.value;
+      return anySelected ? null : { atLeastOneOption: true };
+    };
+  }
+
   private atLeastOneSelectedValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;
@@ -758,8 +798,6 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       condition: [''],
       receivingTreatment: [false],
       treatmentDetails: [''],
-      paternalFamilyHistory: [''],
-      maternalFamilyHistory: [''],
       observations: [''],
     });
     this.physicalConditions.push(conditionGroup);
@@ -779,8 +817,6 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       condition: [''],
       receivingTreatment: [false],
       treatmentDetails: [''],
-      paternalFamilyHistory: [''],
-      maternalFamilyHistory: [''],
       observations: [''],
     });
     this.mentalConditions.push(conditionGroup);
@@ -788,6 +824,10 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
   removeMentalCondition(index: number): void {
     this.mentalConditions.removeAt(index);
+  }
+
+  get familyHealthHistoryGroup(): FormGroup {
+    return this.caseForm.get('familyHealthHistory') as FormGroup;
   }
 
   // Step 8: Intervention Plan methods
@@ -827,7 +867,6 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       approachType: [''],
       process: [''],
       interventionSummary: [''],
-      observations: [''],
       agreements: [''],
     });
     this.progressNotesArray.push(noteGroup);
@@ -839,6 +878,74 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
 
   // Navigation methods
   goToNextStep(): void {
+    // Step 4 with no case yet → create
+    if (this.activeWizardStep === 4 && !this.isEditMode && !this.caseId) {
+      this.createInitialCase();
+      return;
+    }
+
+    // Steps 5-12 with an existing caseId → auto-save current step then advance
+    if (this.caseId && this.activeWizardStep >= 5 && this.activeWizardStep <= 12) {
+      // Step 6: validate that at least one option is selected
+      if (this.activeWizardStep === 6) {
+        const followUpGroup = this.caseForm.get('followUpPlan');
+        followUpGroup?.markAllAsTouched();
+        if (followUpGroup?.invalid) return;
+      }
+      // Step 6: if processCompleted is checked, close the case instead of advancing
+      if (this.activeWizardStep === 6 && this.caseForm.get('followUpPlan.processCompleted')?.value) {
+        this.closeCaseOnProcessCompleted();
+        return;
+      }
+      // Step 6: if appointmentScheduled is checked, update follow-up plan + set status to in_progress
+      if (this.activeWizardStep === 6 && this.caseForm.get('followUpPlan.appointmentScheduled')?.value) {
+        const formValue = this.caseForm.getRawValue();
+        const followUpData = {
+          processCompleted: formValue.followUpPlan.processCompleted,
+          coordinatedService: formValue.followUpPlan.servicesCoordinated ? formValue.followUpPlan.servicesAgency : null,
+          referred: formValue.followUpPlan.referralMade,
+          referralDetails: formValue.followUpPlan.referralDetails || null,
+          orientationAppointment: formValue.followUpPlan.appointmentScheduled,
+          appointmentDate: formValue.followUpPlan.appointmentDate || null,
+          appointmentTime: formValue.followUpPlan.appointmentTime || null,
+          otherDetails: formValue.followUpPlan.otherDetails || null,
+        };
+        this.caseService
+          .updateCase(this.caseId, { followUpPlan: [followUpData] } as any)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {
+              this.caseService
+                .updateCaseStatus(this.caseId!, CaseStatus.IN_PROGRESS)
+                .pipe(takeUntil(this.destroy$))
+                .subscribe({
+                  next: () => {
+                    this.activeWizardStep = Math.min(this.activeWizardStep + 1, 13);
+                  },
+                  error: (err) => console.error('Error al cambiar el estado del caso:', err),
+                });
+            },
+            error: (err) => console.error('Error al guardar el plan a seguir:', err),
+          });
+        return;
+      }
+      const partial = this.mapStepDataToDto(this.activeWizardStep);
+      if (partial) {
+        this.caseService
+          .updateCase(this.caseId, partial)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {
+              this.activeWizardStep = Math.min(this.activeWizardStep + 1, 13);
+            },
+            error: (error) => {
+              console.error('Error al guardar el paso', this.activeWizardStep, error);
+            },
+          });
+        return;
+      }
+    }
+
     if (this.isStepValid(this.activeWizardStep)) {
       this.activeWizardStep = Math.min(this.activeWizardStep + 1, 13);
     } else {
@@ -911,6 +1018,241 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
     }
   }
 
+  downloadCasePdf(): void {
+    if (!this.caseId) return;
+    this.caseService
+      .downloadCasePdf(this.caseId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (blob: Blob) => {
+          const url = URL.createObjectURL(blob);
+          const anchor = document.createElement('a');
+          anchor.href = url;
+          anchor.download = `caso-${this.caseId}.pdf`;
+          anchor.click();
+          URL.revokeObjectURL(url);
+        },
+        error: () => this.notificationService.showError('Error al descargar el PDF del caso'),
+      });
+  }
+
+  private closeCaseOnProcessCompleted(): void {
+    if (!this.caseId) return;
+    this.notificationService
+      .showConfirmation('¿Está seguro de culminar el proceso de ayuda?', {
+        text: 'El caso quedará cerrado y no podrá continuar con el registro.',
+      })
+      .then((result) => {
+        if (!result.isConfirmed) return;
+        this.caseService
+          .updateCaseStatus(this.caseId!, CaseStatus.CLOSED)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {
+              this.isCaseClosed = true;
+              this.caseForm.disable();
+              this.notificationService.showSuccess('El proceso de ayuda ha sido culminado. El caso está cerrado.');
+            },
+            error: (err) => console.error('Error al cerrar el caso:', err),
+          });
+      });
+  }
+
+  closeCaseFromFinalStep(): void {
+    if (!this.caseId) return;
+    this.notificationService
+      .showConfirmation('¿Está seguro de cerrar el caso?', {
+        text: 'Se guardarán los datos del formulario y el caso quedará cerrado.',
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          const caseDto: CreateCaseDto = this.mapFormDataToDto();
+          this.caseService
+            .updateCase(this.caseId!, caseDto)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: () => {
+                this.caseService
+                  .updateCaseStatus(this.caseId!, CaseStatus.CLOSED)
+                  .pipe(takeUntil(this.destroy$))
+                  .subscribe({
+                    next: () => {
+                      this.isCaseClosed = true;
+                      this.caseForm.disable();
+                      this.notificationService.showSuccess('El caso ha sido actualizado y cerrado exitosamente.');
+                    },
+                    error: (err) => console.error('Error al cerrar el caso:', err),
+                  });
+              },
+              error: (err) => console.error('Error al actualizar el caso:', err),
+            });
+        }
+      });
+  }
+
+  private createInitialCase(): void {
+    // Validate steps 1-4
+    const stepsToValidate = ['familyMembers', 'bioPsychosocialHistory', 'consultationReason', 'identifiedSituations'];
+    const allValid = stepsToValidate.every((key) => this.caseForm.get(key)?.valid);
+    if (!allValid) {
+      this.notificationService.showWarning('Por favor complete todos los campos requeridos en los pasos anteriores');
+      return;
+    }
+
+    const formValue = this.caseForm.getRawValue();
+    const caseDto: CreateCaseDto = {
+      participantId: this.participantId,
+      familyMembers: formValue.familyMembers.map((member: any) => ({
+        name: member.name,
+        birthDate: member.birthDate || null,
+        occupation: member.occupation || null,
+        familyRelationshipId: member.familyRelationshipId ? Number(member.familyRelationshipId) : null,
+        academicLevelId: member.academicLevelId ? Number(member.academicLevelId) : null,
+      })),
+      bioPsychosocialHistory: {
+        academicLevelId: formValue.bioPsychosocialHistory.academicLevelId
+          ? Number(formValue.bioPsychosocialHistory.academicLevelId)
+          : null,
+        completedGrade: formValue.bioPsychosocialHistory.completedGrade,
+        institution: formValue.bioPsychosocialHistory.institution,
+        profession: formValue.bioPsychosocialHistory.profession,
+        incomeSourceId: formValue.bioPsychosocialHistory.incomeSourceId
+          ? Number(formValue.bioPsychosocialHistory.incomeSourceId)
+          : null,
+        incomeLevelId: formValue.bioPsychosocialHistory.incomeLevelId
+          ? Number(formValue.bioPsychosocialHistory.incomeLevelId)
+          : null,
+        occupationalHistory: formValue.bioPsychosocialHistory.occupationalHistory,
+        housingTypeId: formValue.bioPsychosocialHistory.housingTypeId
+          ? Number(formValue.bioPsychosocialHistory.housingTypeId)
+          : null,
+        housing: formValue.bioPsychosocialHistory.housing,
+      },
+      consultationReason: formValue.consultationReason.reason,
+      identifiedSituations: formValue.identifiedSituations.situations,
+      intervention: '',
+      followUpPlan: [],
+      physicalHealthHistory: [],
+      mentalHealthHistory: [],
+      family_health_history: [
+        { history_type: 'physical', familyHistoryFather: null, familyHistoryMother: null },
+        { history_type: 'mental', familyHistoryFather: null, familyHistoryMother: null },
+      ],
+      weighing: {
+        reasonConsultation: '',
+        identifiedSituation: '',
+        favorableConditions: '',
+        conditionsNotFavorable: '',
+        helpProcess: '',
+      },
+      interventionPlans: [],
+      progressNotes: [],
+      referrals: '',
+    };
+
+    this.isCreatingCase = true;
+    this.caseService
+      .createCase(caseDto)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.caseId = response.data.id;
+          this.isEditMode = true;
+          this.isCreatingCase = false;
+          this.activeWizardStep = 5;
+        },
+        error: () => {
+          this.isCreatingCase = false;
+        },
+      });
+  }
+
+  private mapStepDataToDto(step: number): Partial<CreateCaseDto> | null {
+    const formValue = this.caseForm.getRawValue();
+    switch (step) {
+      case 5:
+        return { intervention: formValue.intervention.action };
+      case 6:
+        return null; // followUpPlan no es aceptado por el endpoint PATCH /cases/:id
+      case 7: {
+        const hasPhysical = formValue.physicalHealthHistory.hasPhysicalHistory;
+        return {
+          physicalHealthHistory: hasPhysical
+            ? formValue.physicalHealthHistory.conditions
+                .filter((c: any) => c.condition || c.observations || (c.receivingTreatment && c.treatmentDetails))
+                .map((c: any) => ({
+                  currentConditions: c.condition || null,
+                  medications: c.receivingTreatment ? c.treatmentDetails || null : null,
+                  observations: c.observations || null,
+                }))
+            : [],
+          family_health_history: [
+            {
+              history_type: 'physical' as const,
+              familyHistoryFather: formValue.familyHealthHistory.physicalFamilyHistoryFather || null,
+              familyHistoryMother: formValue.familyHealthHistory.physicalFamilyHistoryMother || null,
+            },
+          ],
+        };
+      }
+      case 8: {
+        const hasMental = formValue.mentalHealthHistory.hasMentalHistory;
+        return {
+          mentalHealthHistory: hasMental
+            ? formValue.mentalHealthHistory.conditions
+                .filter((c: any) => c.condition || c.observations || (c.receivingTreatment && c.treatmentDetails))
+                .map((c: any) => ({
+                  currentConditions: c.condition || null,
+                  medications: c.receivingTreatment ? c.treatmentDetails || null : null,
+                  observations: c.observations || null,
+                }))
+            : [],
+          family_health_history: [
+            {
+              history_type: 'mental' as const,
+              familyHistoryFather: formValue.familyHealthHistory.mentalFamilyHistoryFather || null,
+              familyHistoryMother: formValue.familyHealthHistory.mentalFamilyHistoryMother || null,
+            },
+          ],
+        };
+      }
+      case 9:
+        return {
+          weighing: {
+            reasonConsultation: formValue.consultationReason.reason,
+            identifiedSituation: formValue.identifiedSituations.situations.join(', '),
+            favorableConditions: formValue.assessment.concurrentFactors,
+            conditionsNotFavorable: formValue.assessment.criticalFactors,
+            helpProcess: formValue.assessment.theoreticalFramework,
+          },
+        };
+      case 10:
+        return {
+          interventionPlans: formValue.interventionPlan.interventions.map((i: any) => ({
+            goal: i.goals,
+            objectives: i.objectives,
+            activities: i.activities,
+            timeline: i.timeframe,
+            responsible: i.responsiblePerson,
+            evaluationCriteria: i.evaluationCriteria,
+          })),
+        };
+      case 11:
+        return {
+          progressNotes: formValue.progressNotes.notes.map((n: any) => ({
+            sessionDate: n.date,
+            sessionType: n.approachType,
+            summary: n.interventionSummary,
+            agreements: n.agreements,
+          })),
+        };
+      case 12:
+        return { referrals: formValue.referrals.referralsJustification };
+      default:
+        return null;
+    }
+  }
+
   private createCase(caseDto: CreateCaseDto): void {
     this.caseService
       .createCase(caseDto)
@@ -920,12 +1262,12 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
           this.router.navigate(['/participants/detail', this.participantId]);
         },
         error: (error) => {
-          console.error('Error creating case:', error);
+          console.error('Error al crear el caso:', error);
         },
       });
   }
 
-  private updateCase(caseDto: CreateCaseDto): void {
+  private updateCase(caseDto: Partial<CreateCaseDto>): void {
     if (!this.caseId) return;
 
     this.caseService
@@ -936,7 +1278,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
           this.router.navigate(['/participants/detail', this.participantId]);
         },
         error: (error) => {
-          console.error('Error updating case:', error);
+          console.error('Error al actualizar el caso:', error);
         },
       });
   }
@@ -990,17 +1332,25 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
       physicalHealthHistory: formValue.physicalHealthHistory.conditions.map((condition: any) => ({
         currentConditions: condition.condition,
         medications: condition.receivingTreatment ? condition.treatmentDetails : null,
-        familyHistoryFather: condition.paternalFamilyHistory,
-        familyHistoryMother: condition.maternalFamilyHistory,
         observations: condition.observations,
       })),
       mentalHealthHistory: formValue.mentalHealthHistory.conditions.map((condition: any) => ({
         currentConditions: condition.condition,
         medications: condition.receivingTreatment ? condition.treatmentDetails : null,
-        familyHistoryFather: condition.paternalFamilyHistory,
-        familyHistoryMother: condition.maternalFamilyHistory,
         observations: condition.observations,
       })),
+      family_health_history: [
+        {
+          history_type: 'physical',
+          familyHistoryFather: formValue.familyHealthHistory.physicalFamilyHistoryFather || null,
+          familyHistoryMother: formValue.familyHealthHistory.physicalFamilyHistoryMother || null,
+        },
+        {
+          history_type: 'mental',
+          familyHistoryFather: formValue.familyHealthHistory.mentalFamilyHistoryFather || null,
+          familyHistoryMother: formValue.familyHealthHistory.mentalFamilyHistoryMother || null,
+        },
+      ],
       weighing: {
         reasonConsultation: formValue.consultationReason.reason,
         identifiedSituation: formValue.identifiedSituations.situations.join(', '),
@@ -1020,7 +1370,6 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
         sessionDate: note.date,
         sessionType: note.approachType,
         summary: note.interventionSummary,
-        observations: note.observations,
         agreements: note.agreements,
       })),
       referrals: formValue.referrals.referralsJustification,
@@ -1062,6 +1411,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy {
     const field = this.caseForm.get(fieldPath);
     if (field?.hasError('required')) return 'Este campo es requerido';
     if (field?.hasError('atLeastOne')) return 'Debe seleccionar al menos una situación';
+    if (field?.hasError('atLeastOneOption')) return 'Debe seleccionar al menos una opción del plan a seguir';
     if (field?.hasError('min')) return 'Valor mínimo no alcanzado';
     if (field?.hasError('max')) return 'Valor máximo excedido';
     return '';

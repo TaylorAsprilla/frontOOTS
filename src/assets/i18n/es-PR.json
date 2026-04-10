@@ -18,6 +18,7 @@
     "delete": "Eliminar",
     "create": "Crear",
     "actions": "Acciones",
+    "all": "Todos",
     "refresh": "Actualizar",
     "tryAgain": "Intentar de nuevo",
     "noData": "Sin datos",
@@ -31,7 +32,8 @@
     "to": "a",
     "of": "de",
     "notAvailable": "No disponible",
-    "select": "Seleccione"
+    "select": "Seleccione",
+    "clearFilters": "Limpiar filtros"
   },
   "navigation": {
     "Navigation": "Navegación",
@@ -299,7 +301,7 @@
     "profession": "Profesión u Oficio",
     "currentOccupation": "Ocupación Actual",
     "workExperience": "Experiencia Laboral",
-    "incomeSource": "Fuente de Ingresos",
+    "incomeSource": "Fuente de Ingresos ",
     "incomeLevel": "Nivel de Ingresos",
     "familyDynamics": "Dinámicas Familiares",
     "personalHistory": "Historia Personal",
@@ -405,6 +407,7 @@
     "loadingParticipants": "Cargando participantes...",
     "noParticipantsFound": "No se encontraron participantes",
     "noParticipantsMessage": "No hay participantes registrados en el sistema",
+    "noResultsFilterHint": "Intenta con otro término de búsqueda.",
     "createFirst": "Crear Primer Participante",
     "participants": "participantes",
     "actions": "Acciones",
@@ -456,6 +459,13 @@
     }
   },
   "dashboard": {
+    "home": "Inicio",
+    "loading": "Cargando estadísticas...",
+    "salesReport": "Reporte de Ventas",
+    "exportReport": "Exportar Reporte",
+    "profit": "Ganancias",
+    "action": "Acción",
+    "editReport": "Editar Reporte",
     "stats": {
       "participants": "Participantes",
       "openCases": "Casos Abiertos",
@@ -469,11 +479,14 @@
       "average": "Promedio",
       "casesPerParticipant": "casos por participante",
       "casesPerMonth": "Casos Realizados por Mes",
+      "casesByStatus": "Casos por Estado",
       "totalCases": "Total de Casos",
-      "closedCases": "Casos Cerrados"
+      "closedCases": "Casos Cerrados",
+      "noData": "Sin datos disponibles — crea el primer caso."
     },
     "tables": {
       "recentParticipants": "Participantes Recientes",
+      "recentCasesTitle": "Casos Recientes",
       "caseHistory": "Historial de Casos",
       "name": "Nombre",
       "document": "Documento",
@@ -559,6 +572,9 @@
     "backToLoginText": "Volver a",
     "login": {
       "title": "Iniciar Sesión",
+      "appName": "Mi OOTS",
+      "description": "Sistema especializado en la gestión y documentación de casos, asegurando orden y confidencialidad.",
+      "slogan": "Cada caso importa, cada dato cuenta.",
       "subtitle": "Ingrese su dirección de correo electrónico y contraseña para acceder al panel de administración.",
       "email": "Correo Electrónico",
       "emailPlaceholder": "Ingrese su correo electrónico",
@@ -577,9 +593,56 @@
         "connectionError": "No se pudo conectar con el servidor. Verifique su conexión.",
         "unknownError": "Error al iniciar sesión. Por favor, intente nuevamente."
       }
+    },
+    "sessions": {
+      "title": "Sesiones Activas",
+      "subtitle": "Dispositivos donde tienes la sesión iniciada",
+      "ip": "IP",
+      "location": "Ubicación",
+      "device": "Dispositivo",
+      "browser": "Navegador",
+      "os": "Sistema Operativo",
+      "lastActivity": "Última actividad",
+      "createdAt": "Iniciada",
+      "noSessions": "No hay sesiones activas",
+      "unknown": "Desconocido"
+    },
+    "loginHistory": {
+      "title": "Historial de Accesos",
+      "subtitle": "Registro de inicios de sesión recientes",
+      "riskLabel": "Riesgo",
+      "newLocation": "Nueva ubicación",
+      "noHistory": "No hay registros de acceso",
+      "risk": {
+        "LOW": "Bajo",
+        "MEDIUM": "Medio",
+        "HIGH": "Alto"
+      }
     }
   },
   "profile": {
+    "title": "Mi Perfil",
+    "personalInfo": "Información Personal",
+    "socialNetworks": "Redes Sociales",
+    "noPosition": "Sin cargo asignado",
+    "changePassword": "Cambiar contraseña",
+    "savedSuccess": "Perfil actualizado exitosamente",
+    "savedError": "No se pudo actualizar el perfil. Intenta de nuevo.",
+    "fields": {
+      "firstName": "Nombre",
+      "firstNamePlaceholder": "Ingresa tu nombre",
+      "firstLastName": "Apellido",
+      "firstLastNamePlaceholder": "Ingresa tu apellido",
+      "phone": "Teléfono",
+      "phonePlaceholder": "+1 787 000 0000",
+      "position": "Cargo",
+      "positionPlaceholder": "Ej. Trabajador Social"
+    },
+    "errors": {
+      "firstName": "El nombre es obligatorio (mín. 2 caracteres)",
+      "firstLastName": "El apellido es obligatorio (mín. 2 caracteres)",
+      "phone": "Número de teléfono con formato inválido"
+    },
     "myAccount": "Mi Cuenta",
     "personalInformation": "Información Personal",
     "loadingProfile": "Cargando información del perfil...",
@@ -1057,6 +1120,7 @@
     "active": "Activo",
     "open": "Abierto",
     "inProgress": "En Progreso",
+    "in_progress": "En Progreso",
     "closed": "Cerrado",
     "transferred": "Transferido",
     "suspended": "Suspendido",
@@ -1064,10 +1128,16 @@
     "loadingParticipant": "Cargando...",
     "noCasesFound": "No se encontraron casos",
     "noCasesMessage": "No hay casos registrados en el sistema",
+    "noCasesFilterHint": "Intenta con otro término o elimina los filtros activos.",
+    "noCasesCreateHint": "Abre la ficha de un participante y crea su primer caso.",
     "cases": "casos",
     "deleteConfirmation": "Caso de",
+    "downloadPdf": "Descargar PDF",
     "unknown": "Desconocido",
     "loadingInfo": "Cargando información del caso...",
+    "appointmentOverdue": "Cita vencida — acción requerida",
+    "appointmentToday": "Cita hoy",
+    "appointmentSoon": "Cita próxima (≤3 días)",
     "familyComposition": "Composición Familiar",
     "familyMembers": "Miembros de la Familia",
     "addFamilyMember": "Agregar Familiar",
@@ -1082,16 +1152,16 @@
     "academicGrade": "Grado Académico",
     "selectAcademicGrade": "Seleccione el Grado Académico",
     "bioPsychosocialHistory": "Historial BioPsicosocial",
-    "completedGrade": "Grado completado",
+    "completedGrade": "Grado Completado",
     "completedGradePlaceholder": "Ej: Profesional Completo",
     "institution": "Institución",
     "institutionPlaceholder": "Ej: Universidad Nacional",
     "profession": "Profesión",
     "professionPlaceholder": "Ej: Psicóloga Clínica",
-    "incomeSource": "Fuente de ingresos",
-    "incomeLevel": "Nivel de ingresos",
+    "incomeSource": "Fuente de Ingresos Principal",
+    "incomeLevel": "Nivel de Ingresos",
     "housingType": "Tipo de Vivienda",
-    "occupationalHistory": "Historial ocupacional",
+    "occupationalHistory": "Historial Ocupacional",
     "occupationalHistoryPlaceholder": "Describa el historial ocupacional del participante...",
     "migrationalHistory": "Historial Migracional",
     "migrationalHistoryPlaceholder": "Describa el historial migracional del participante...",
@@ -1174,7 +1244,7 @@
     "submit": "Enviar",
     "select": "Seleccione",
     "requiredField": "Este campo es requerido",
-    "housingDescription": "Descripción de la vivienda",
+    "housingDescription": "Descripción de la Vivienda",
     "housingDescriptionPlaceholder": "Ej: Casa propia de 2 pisos, 3 habitaciones, buen estado",
     "consultationReasonLabel": "Motivo de consulta",
     "selectIdentifiedSituations": "Seleccione las situaciones identificadas",
@@ -1361,6 +1431,38 @@
   "ui": {
     "cards": {
       "navigation": "Navegación"
+    }
+  },
+  "audit": {
+    "title": "Registro de Auditoría",
+    "subtitle": "Historial de operaciones del sistema",
+    "userEmail": "Usuario",
+    "action": "Acción",
+    "endpoint": "Endpoint",
+    "method": "Método",
+    "status": "Estado",
+    "ip": "IP",
+    "duration": "Duración",
+    "date": "Fecha",
+    "totalRecords": "registros",
+    "noLogs": "No hay registros de auditoría",
+    "actions": {
+      "CREATE": "Crear",
+      "UPDATE": "Actualizar",
+      "DELETE": "Eliminar",
+      "LOGIN": "Inicio de sesión",
+      "LOGOUT": "Cierre de sesión",
+      "PASSWORD_CHANGE": "Cambio de contraseña",
+      "PASSWORD_RESET": "Restablecimiento",
+      "STATUS_CHANGE": "Cambio de estado"
+    },
+    "filters": {
+      "title": "Filtros",
+      "userId": "ID de Usuario",
+      "action": "Acción",
+      "endpoint": "Endpoint",
+      "dateFrom": "Desde",
+      "dateTo": "Hasta"
     }
   }
 }

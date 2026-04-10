@@ -37,7 +37,8 @@
             "inlineStyleLanguage": "scss",
             "assets": ["src/favicon.ico", "src/assets", "src/.htaccess"],
             "styles": ["src/assets/scss/Default.scss", "node_modules/intl-tel-input/build/css/intlTelInput.css"],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": ["feather-icons", "sweetalert2", "google-libphonenumber"]
           },
           "configurations": {
             "production": {
@@ -146,8 +147,7 @@
               "vendorChunk": false,
               "buildOptimizer": true,
               "outputPath": "dist/oots-pr",
-              "baseHref": "/oots/",
-              "deployUrl": "/oots/",
+              "baseHref": "/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -196,7 +196,7 @@
               "optimization": false,
               "vendorChunk": true,
               "extractLicenses": false,
-              "sourceMap": false,
+              "sourceMap": true,
               "namedChunks": true
             }
           },
@@ -235,7 +235,7 @@
             "karmaConfig": "karma.conf.js",
             "inlineStyleLanguage": "scss",
             "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.scss"],
+            "styles": ["src/assets/scss/Default.scss"],
             "scripts": []
           }
         }

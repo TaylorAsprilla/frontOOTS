@@ -7,11 +7,8 @@ import { ProcessType } from 'src/app/pages/configuration/process-types/process-t
 
 export enum CaseStatus {
   OPEN = 'open',
-  ACTIVE = 'active',
   IN_PROGRESS = 'in_progress',
   CLOSED = 'closed',
-  TRANSFERRED = 'transferred',
-  SUSPENDED = 'suspended',
 }
 
 export enum ApproachType {
@@ -261,6 +258,7 @@ export interface CreateCaseDto {
   followUpPlan: FollowUpPlanDto[];
   physicalHealthHistory: PhysicalHealthHistoryDto[];
   mentalHealthHistory: MentalHealthHistoryDto[];
+  family_health_history: FamilyHealthHistoryDto[];
   weighing: WeighingDto;
   interventionPlans: InterventionPlanDto[];
   progressNotes: ProgressNoteDto[];
@@ -302,17 +300,19 @@ export interface FollowUpPlanDto {
 export interface PhysicalHealthHistoryDto {
   currentConditions: string;
   medications: string | null;
-  familyHistoryFather: string;
-  familyHistoryMother: string;
   observations: string;
 }
 
 export interface MentalHealthHistoryDto {
   currentConditions: string;
   medications: string | null;
-  familyHistoryFather: string;
-  familyHistoryMother: string;
   observations: string;
+}
+
+export interface FamilyHealthHistoryDto {
+  history_type: 'physical' | 'mental';
+  familyHistoryFather: string | null;
+  familyHistoryMother: string | null;
 }
 
 export interface WeighingDto {
@@ -375,14 +375,12 @@ export interface CaseResponse {
 }
 
 export interface CaseListResponse {
-  success: boolean;
   data: Case[];
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  success?: boolean;
   message?: string;
 }
 

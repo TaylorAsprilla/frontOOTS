@@ -1,5 +1,5 @@
 <!-- Page Title -->
-<app-page-title [breadcrumbItems]="pageTitle" [title]="'user.createNewUser' | transloco"></app-page-title>
+<app-page-title [breadcrumbItems]="pageTitle" title="user.createNewUser"></app-page-title>
 
 <div class="container-fluid">
   <div class="row justify-content-center">
@@ -104,13 +104,13 @@
                       >
                         <ngx-intl-tel-input
                           [cssClass]="'form-control'"
-                          [preferredCountries]="[CountryISO.Colombia, CountryISO.UnitedStates]"
+                          [preferredCountries]="[CountryISO.Colombia, CountryISO.PuertoRico, CountryISO.UnitedStates]"
                           [enableAutoCountrySelect]="true"
                           [enablePlaceholder]="true"
                           [searchCountryFlag]="true"
                           [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
                           [selectFirstCountry]="false"
-                          [selectedCountryISO]="CountryISO.Colombia"
+                          [selectedCountryISO]="defaultPhoneCountry"
                           [maxLength]="15"
                           [phoneValidation]="true"
                           [separateDialCode]="false"

@@ -1,4 +1,9 @@
 /**
+ * Roles de usuario disponibles en el sistema (RBAC)
+ */
+export type UserRole = 'ADMIN' | 'COORDINADOR' | 'SUPERVISOR' | 'PSICOLOGO' | 'ORIENTADOR';
+
+/**
  * Interface para la solicitud de login
  */
 export interface LoginRequest {
@@ -14,6 +19,8 @@ export interface AuthUser {
   firstName: string;
   firstLastName: string;
   email: string;
+  role?: UserRole;
+  status?: string;
 }
 
 /**
@@ -21,6 +28,7 @@ export interface AuthUser {
  */
 export interface AuthData {
   access_token: string;
+  refresh_token: string;
   token_type: string;
   expires_in: number; // Segundos hasta la expiración
   user: AuthUser;
@@ -42,8 +50,109 @@ export interface LoginResponse {
  */
 export interface AuthenticatedUser extends AuthUser {
   token: string;
+  refreshToken?: string;
   tokenType: string;
   expiresAt: Date; // Timestamp de expiración calculado
+}
+
+// ==================== REFRESH TOKEN ====================
+
+export interface RefreshTokenRequest {
+  refresh_token: string;
+}
+
+export interface RefreshTokenResponse {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+}
+
+// ==================== LOGOUT ====================
+
+export interface LogoutRequest {
+  refresh_token?: string;
+}
+
+export interface LogoutResponse {
+  message: string;
+}
+
+// ==================== SESIONES ACTIVAS ====================
+
+export interface ActiveSession {
+  id: number;
+  ipAddress: string;
+  deviceType: string;
+  browser: string;
+  os: string;
+  country: string;
+  city: string;
+  lastActivity: string;
+  createdAt: string;
+}
+
+// ==================== HISTORIAL DE LOGIN ====================
+
+export interface LoginHistoryEntry {
+  id: number;
+  ipAddress: string;
+  country: string;
+  city: string;
+  deviceType: string;
+  browser: string;
+  os: string;
+  isNewLocation: boolean;
+  risk: 'LOW' | 'MEDIUM' | 'HIGH';
+  createdAt: string;
+}
+
+export interface LoginHistoryResponse {
+  data: LoginHistoryEntry[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+// ==================== AUDIT LOGS ====================
+
+export type AuditAction =
+  | 'CREATE'
+  | 'UPDATE'
+  | 'DELETE'
+  | 'LOGIN'
+  | 'LOGOUT'
+  | 'PASSWORD_CHANGE'
+  | 'PASSWORD_RESET'
+  | 'STATUS_CHANGE';
+
+export interface AuditLog {
+  id: number;
+  userEmail: string;
+  action: AuditAction;
+  endpoint: string;
+  httpMethod: string;
+  responseStatus: number;
+  ipAddress: string;
+  durationMs: number;
+  createdAt: string;
+}
+
+export interface AuditLogResponse {
+  data: AuditLog[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export interface AuditLogFilters {
+  userId?: number;
+  action?: AuditAction;
+  endpoint?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  page?: number;
+  limit?: number;
 }
 
 /**
@@ -75,6 +184,7 @@ export interface ValidatedUser {
   city: string;
   birthDate: string; // ISO date string
   documentTypeId: number;
+  role?: UserRole;
   status: 'ACTIVE' | 'INACTIVE';
   facebook: string | null;
   twitter: string | null;
