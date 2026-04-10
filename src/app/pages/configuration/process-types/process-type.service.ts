@@ -18,7 +18,7 @@ export class ProcessTypeService {
    */
   getAll(includeInactive: boolean = false): Observable<ApiResponse<ProcessType[]>> {
     let params = new HttpParams();
-    console.log('Include Inactive:', includeInactive, this.apiUrl);
+
     if (includeInactive) {
       params = params.set('includeInactive', 'true');
     }
