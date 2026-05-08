@@ -214,6 +214,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
   private initializeForm(): void {
     this.caseForm = this.formBuilder.group({
       // Step 1: Family Members (Composición Familiar)
+      livesAlone: [false],
       familyMembers: this.formBuilder.array([this.createFamilyMemberForm()]),
 
       // Step 2: Biopsychosocial History (Historial BioPsicosocial)
@@ -381,6 +382,12 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
   private mapCaseDataToForm(caseData: any): void {
     try {
       // 1. Cargar miembros de familia
+      const livesAloneFromData =
+        typeof caseData.livesAlone === 'boolean'
+          ? caseData.livesAlone
+          : !caseData.familyMembers || !Array.isArray(caseData.familyMembers) || caseData.familyMembers.length === 0;
+      this.caseForm.get('livesAlone')?.setValue(livesAloneFromData);
+      this.toggleFamilyMembersValidators(livesAloneFromData);
       if (caseData.familyMembers && Array.isArray(caseData.familyMembers) && caseData.familyMembers.length > 0) {
         this.familyMembersArray.clear();
         caseData.familyMembers.forEach((member: any) => {
@@ -803,6 +810,37 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
     }
   }
 
+  get livesAlone(): boolean {
+    return !!this.caseForm.get('livesAlone')?.value;
+  }
+
+  onLivesAloneChange(checked: boolean): void {
+    this.caseForm.get('livesAlone')?.setValue(checked);
+    this.toggleFamilyMembersValidators(checked);
+  }
+
+  private toggleFamilyMembersValidators(livesAlone: boolean): void {
+    const arr = this.familyMembersArray;
+    arr.controls.forEach((group) => {
+      const fg = group as FormGroup;
+      ['name', 'occupation', 'familyRelationshipId', 'academicLevelId'].forEach((key) => {
+        const ctrl = fg.get(key);
+        if (!ctrl) return;
+        if (livesAlone) {
+          ctrl.clearValidators();
+        } else {
+          ctrl.setValidators(Validators.required);
+        }
+        ctrl.updateValueAndValidity({ emitEvent: false });
+      });
+    });
+    if (livesAlone) {
+      arr.disable({ emitEvent: false });
+    } else {
+      arr.enable({ emitEvent: false });
+    }
+  }
+
   // Physical Health Conditions methods
   get physicalConditions(): FormArray {
     return this.caseForm.get('physicalHealthHistory.conditions') as FormArray;
@@ -1003,6 +1041,10 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
     const controlName = stepControls[step];
     if (!controlName) return true;
 
+    if (step === 1 && this.livesAlone) {
+      return true;
+    }
+
     const control = this.caseForm.get(controlName);
     return control?.valid || false;
   }
@@ -1136,13 +1178,15 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
     const formValue = this.caseForm.getRawValue();
     const caseDto: CreateCaseDto = {
       participantId: this.participantId,
-      familyMembers: formValue.familyMembers.map((member: any) => ({
-        name: member.name,
-        birthDate: member.birthDate || null,
-        occupation: member.occupation || null,
-        familyRelationshipId: member.familyRelationshipId ? Number(member.familyRelationshipId) : null,
-        academicLevelId: member.academicLevelId ? Number(member.academicLevelId) : null,
-      })),
+      familyMembers: formValue.livesAlone
+        ? []
+        : formValue.familyMembers.map((member: any) => ({
+            name: member.name,
+            birthDate: member.birthDate || null,
+            occupation: member.occupation || null,
+            familyRelationshipId: member.familyRelationshipId ? Number(member.familyRelationshipId) : null,
+            academicLevelId: member.academicLevelId ? Number(member.academicLevelId) : null,
+          })),
       bioPsychosocialHistory: {
         academicLevelId: formValue.bioPsychosocialHistory.academicLevelId
           ? Number(formValue.bioPsychosocialHistory.academicLevelId)
@@ -1318,17 +1362,19 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
   }
 
   private mapFormDataToDto(): CreateCaseDto {
-    const formValue = this.caseForm.value;
+    const formValue = this.caseForm.getRawValue();
 
     return {
       participantId: this.participantId,
-      familyMembers: formValue.familyMembers.map((member: any) => ({
-        name: member.name,
-        birthDate: member.birthDate || null,
-        occupation: member.occupation || null,
-        familyRelationshipId: member.familyRelationshipId ? Number(member.familyRelationshipId) : null,
-        academicLevelId: member.academicLevelId ? Number(member.academicLevelId) : null,
-      })),
+      familyMembers: formValue.livesAlone
+        ? []
+        : formValue.familyMembers.map((member: any) => ({
+            name: member.name,
+            birthDate: member.birthDate || null,
+            occupation: member.occupation || null,
+            familyRelationshipId: member.familyRelationshipId ? Number(member.familyRelationshipId) : null,
+            academicLevelId: member.academicLevelId ? Number(member.academicLevelId) : null,
+          })),
       bioPsychosocialHistory: {
         academicLevelId: formValue.bioPsychosocialHistory.academicLevelId
           ? Number(formValue.bioPsychosocialHistory.academicLevelId)

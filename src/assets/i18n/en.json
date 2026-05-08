@@ -1141,6 +1141,7 @@
     "loadingInfo": "Loading case information...",
     "familyComposition": "Family Composition",
     "familyMembers": "Family Members",
+    "livesAlone": "Lives alone",
     "addFamilyMember": "Add Family Member",
     "removeFamilyMember": "Remove family member",
     "family": "Family Member",
