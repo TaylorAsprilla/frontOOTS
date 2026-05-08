@@ -146,3 +146,108 @@ small.text-muted {
 .array-item input {
   flex: 1;
 }
+
+/* PDF documents bar */
+.case-documents-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1.1rem;
+  background: linear-gradient(135deg, #fff5f5 0%, #ffffff 60%);
+  border: 1px solid #f1d7d7;
+  border-left: 4px solid #dc3545;
+  border-radius: 0.6rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  flex-wrap: wrap;
+}
+
+.case-documents-bar__icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+  font-size: 1.4rem;
+}
+
+.case-documents-bar__info {
+  flex: 1 1 auto;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+}
+
+.case-documents-bar__title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #2c2f33;
+}
+
+.case-documents-bar__participant {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #dc3545;
+  margin-top: 0.15rem;
+}
+
+.case-documents-bar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.case-documents-bar .dropdown-menu {
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 0.5rem;
+  padding: 0.35rem 0;
+  min-width: 260px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  z-index: 1060;
+}
+
+.case-documents-bar .dropdown-item {
+  padding: 0.6rem 1rem;
+  font-size: 0.875rem;
+  color: #2c2f33;
+  background-color: transparent;
+}
+
+.case-documents-bar .dropdown-item:hover,
+.case-documents-bar .dropdown-item:focus {
+  background-color: #f3f5f9;
+  color: #111;
+}
+
+.case-documents-bar .dropdown-item:disabled {
+  opacity: 0.55;
+}
+
+.case-documents-bar .dropdown-header {
+  padding: 0.5rem 1rem 0.35rem;
+  letter-spacing: 0.04em;
+}
+
+/* Inline PDF section actions (intervention plan, closing note, etc.) */
+.pdf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.85rem;
+  background: #f8f9fb;
+  border: 1px dashed #e2e5ea;
+  border-radius: 0.5rem;
+}
+
+.pdf-actions__label {
+  font-weight: 500;
+  margin-right: auto;
+}

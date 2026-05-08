@@ -11,11 +11,13 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { NgbNavModule, NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbNavModule, NgbProgressbarModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule } from '@ngneat/transloco';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, finalize } from 'rxjs';
 
 import { CaseService } from '../../../core/services/case.service';
+import { CasePdfService } from '../../../core/services/case-pdf.service';
+import { ParticipantService } from '../../../core/services/participant.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { TokenStorageService } from '../../../core/services/token-storage.service';
 import { HasUnsavedChanges } from '../../../core/guards/unsaved-changes.guard';
@@ -38,13 +40,23 @@ import { ApproachType as ApproachTypeCatalog } from '../../configuration/approac
 @Component({
   selector: 'app-create-case',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgbNavModule, NgbProgressbarModule, TranslocoModule, PageTitleComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    NgbNavModule,
+    NgbProgressbarModule,
+    NgbDropdownModule,
+    TranslocoModule,
+    PageTitleComponent,
+  ],
   templateUrl: './create-case.component.html',
   styleUrls: ['./create-case.component.scss'],
 })
 export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges {
   private readonly formBuilder = inject(FormBuilder);
   private readonly caseService = inject(CaseService);
+  private readonly casePdfService = inject(CasePdfService);
+  private readonly participantService = inject(ParticipantService);
   private readonly notificationService = inject(NotificationService);
   private readonly tokenStorageService = inject(TokenStorageService);
   private readonly identifiedSituationService = inject(IdentifiedSituationService);
@@ -56,12 +68,26 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
   caseForm!: FormGroup;
   activeWizardStep = 1;
   participantId!: number;
+  participantName = '';
   caseId?: number;
   isEditMode = false;
   isViewMode = false;
   isLoadingCase = false;
   isCreatingCase = false;
   isCaseClosed = false;
+
+  // PDF generation state
+  isGeneratingFullCasePdf = false;
+  isGeneratingInterventionPlanPdf = false;
+  isGeneratingClosingNotePdf = false;
+  isGeneratingProcessCompletionPdf = false;
+  /** Map of progress-note id -> generating flag (key '__index_<i>' when no id is available). */
+  generatingProgressNotePdf: Record<string, boolean> = {};
+
+  // Document availability flags (computed when the case is loaded)
+  hasInterventionPlanDocument = false;
+  hasClosingNoteDocument = false;
+  hasProcessCompletionDocument = false;
 
   // Data
   identifiedSituations: IdentifiedSituation[] = [];
@@ -87,6 +113,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
       this.isEditMode = !!this.caseId && !this.isViewMode;
 
       this.setupBreadcrumb();
+      this.loadParticipantName();
       this.loadFamilyRelationshipsFromResolver();
       this.loadAcademicLevelsFromResolver();
       this.loadIncomeSourcesFromResolver();
@@ -118,6 +145,65 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
   hasUnsavedChanges(): boolean {
     if (this.isViewMode) return false;
     return this.caseForm?.dirty ?? false;
+  }
+
+  /**
+   * Load participant name to display in the documents bar header.
+   */
+  private loadParticipantName(): void {
+    if (!this.participantId || Number.isNaN(this.participantId)) return;
+    this.participantService
+      .getParticipantById(this.participantId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          const p: any = response?.data;
+          if (!p) return;
+          this.participantName = [p.firstName, p.secondName, p.firstLastName, p.secondLastName]
+            .filter((part) => !!part && String(part).trim().length > 0)
+            .join(' ')
+            .trim();
+        },
+        error: () => {
+          // Silently ignore: the documents bar simply won't show the participant name.
+        },
+      });
+  }
+
+  /**
+   * Resolve participant id and name from a case payload. Used in edit/detail routes
+   * where the route only carries :id (case id) but not :participantId.
+   */
+  private resolveParticipantFromCase(caseData: any): void {
+    if (!caseData) return;
+    const nestedParticipant = caseData.participant ?? caseData.participantData ?? null;
+
+    if (!this.participantId || Number.isNaN(this.participantId)) {
+      const resolvedId = caseData.participantId ?? nestedParticipant?.id;
+      if (resolvedId) {
+        this.participantId = +resolvedId;
+      }
+    }
+
+    if (nestedParticipant) {
+      const composed = [
+        nestedParticipant.firstName,
+        nestedParticipant.secondName,
+        nestedParticipant.firstLastName,
+        nestedParticipant.secondLastName,
+      ]
+        .filter((part: any) => !!part && String(part).trim().length > 0)
+        .join(' ')
+        .trim();
+      if (composed) {
+        this.participantName = composed;
+        return;
+      }
+    }
+
+    if (!this.participantName) {
+      this.loadParticipantName();
+    }
   }
 
   private setupBreadcrumb(): void {
@@ -214,6 +300,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
   private initializeForm(): void {
     this.caseForm = this.formBuilder.group({
       // Step 1: Family Members (Composición Familiar)
+      livesAlone: [false],
       familyMembers: this.formBuilder.array([this.createFamilyMemberForm()]),
 
       // Step 2: Biopsychosocial History (Historial BioPsicosocial)
@@ -247,20 +334,14 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
       }),
 
       // Step 6: Follow-up Plan
-      followUpPlan: this.formBuilder.group(
-        {
-          processCompleted: [false],
-          servicesCoordinated: [false],
-          servicesAgency: [''],
-          referralMade: [false],
-          referralDetails: [''],
-          appointmentScheduled: [false],
-          appointmentDate: [''],
-          appointmentTime: [''],
-          otherDetails: [''],
-        },
-        { validators: this.atLeastOneFollowUpOptionValidator() },
-      ),
+      followUpPlan: this.formBuilder.group({
+        selectedOption: ['', Validators.required],
+        servicesAgency: [''],
+        referralDetails: [''],
+        appointmentDate: [''],
+        appointmentTime: [''],
+        otherDetails: [''],
+      }),
 
       // Step 7: Physical Health History
       physicalHealthHistory: this.formBuilder.group({
@@ -356,6 +437,9 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
           const caseData = response.data;
 
           if (caseData) {
+            // Resolve participant info (id + name) from case payload when route lacks :participantId
+            this.resolveParticipantFromCase(caseData);
+
             // Mapear datos del caso al formulario
             this.mapCaseDataToForm(caseData);
 
@@ -387,6 +471,12 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
   private mapCaseDataToForm(caseData: any): void {
     try {
       // 1. Cargar miembros de familia
+      const livesAloneFromData =
+        typeof caseData.livesAlone === 'boolean'
+          ? caseData.livesAlone
+          : !caseData.familyMembers || !Array.isArray(caseData.familyMembers) || caseData.familyMembers.length === 0;
+      this.caseForm.get('livesAlone')?.setValue(livesAloneFromData);
+      this.toggleFamilyMembersValidators(livesAloneFromData);
       if (caseData.familyMembers && Array.isArray(caseData.familyMembers) && caseData.familyMembers.length > 0) {
         this.familyMembersArray.clear();
         caseData.familyMembers.forEach((member: any) => {
@@ -483,13 +573,22 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
         // Tomar el primer elemento del array
         const followUpData = caseData.followUpPlans[0];
 
+        // Determinar qué opción está seleccionada
+        let selectedOption = '';
+        if (followUpData.processCompleted) {
+          selectedOption = 'processCompleted';
+        } else if (followUpData.coordinatedService) {
+          selectedOption = 'servicesCoordinated';
+        } else if (followUpData.referred) {
+          selectedOption = 'referralMade';
+        } else if (followUpData.orientationAppointment) {
+          selectedOption = 'appointmentScheduled';
+        }
+
         this.caseForm.get('followUpPlan')?.patchValue({
-          processCompleted: followUpData.processCompleted || false,
-          servicesCoordinated: !!followUpData.coordinatedService,
+          selectedOption: selectedOption,
           servicesAgency: followUpData.coordinatedService || '',
-          referralMade: followUpData.referred || false,
           referralDetails: followUpData.referralDetails || '',
-          appointmentScheduled: followUpData.orientationAppointment || false,
           appointmentDate: followUpData.appointmentDate || '',
           appointmentTime: followUpData.appointmentTime ? followUpData.appointmentTime.slice(0, 5) : '',
           otherDetails: followUpData.otherDetails || '',
@@ -499,13 +598,22 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
         const followUpData = Array.isArray(caseData.followUpPlan) ? caseData.followUpPlan[0] : caseData.followUpPlan;
 
         if (followUpData) {
+          // Determinar qué opción está seleccionada
+          let selectedOption = '';
+          if (followUpData.processCompleted) {
+            selectedOption = 'processCompleted';
+          } else if (followUpData.coordinatedService) {
+            selectedOption = 'servicesCoordinated';
+          } else if (followUpData.referred) {
+            selectedOption = 'referralMade';
+          } else if (followUpData.orientationAppointment) {
+            selectedOption = 'appointmentScheduled';
+          }
+
           this.caseForm.get('followUpPlan')?.patchValue({
-            processCompleted: followUpData.processCompleted || false,
-            servicesCoordinated: !!followUpData.coordinatedService,
+            selectedOption: selectedOption,
             servicesAgency: followUpData.coordinatedService || '',
-            referralMade: followUpData.referred || false,
             referralDetails: followUpData.referralDetails || '',
-            appointmentScheduled: followUpData.orientationAppointment || false,
             appointmentDate: followUpData.appointmentDate || '',
             appointmentTime: followUpData.appointmentTime ? followUpData.appointmentTime.slice(0, 5) : '',
             otherDetails: followUpData.otherDetails || '',
@@ -637,6 +745,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
         this.progressNotesArray.clear();
         caseData.progressNotes.forEach((note: any) => {
           const noteGroup = this.formBuilder.group({
+            id: [note.id ?? null],
             date: [note.sessionDate || note.date || ''],
             time: [note.time || ''],
             approachType: [note.sessionType || note.approachType || ''],
@@ -672,6 +781,13 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
           followUpSuggestions: cn.followUpSuggestions || '',
         });
       }
+
+      // Compute document availability flags for PDF buttons
+      this.hasInterventionPlanDocument = this.interventions.length > 0;
+      this.hasClosingNoteDocument = !!caseData.closingNote || this.isCaseClosed;
+      const followUpArray = Array.isArray(caseData.followUpPlan) ? caseData.followUpPlan : [];
+      this.hasProcessCompletionDocument =
+        this.isCaseClosed || followUpArray.some((fp: any) => fp?.processCompleted === true);
 
       // Forzar actualización de la vista
       this.caseForm.updateValueAndValidity();
@@ -715,17 +831,20 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
   /**
    * Custom validator to ensure at least one checkbox is selected
    */
-  private atLeastOneFollowUpOptionValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const group = control as FormGroup;
-      const anySelected =
-        group.get('processCompleted')?.value ||
-        group.get('servicesCoordinated')?.value ||
-        group.get('referralMade')?.value ||
-        group.get('appointmentScheduled')?.value;
-      return anySelected ? null : { atLeastOneOption: true };
-    };
-  }
+  /**
+   * Validator: At least one option must be selected (DEPRECATED - now using required validator on selectedOption)
+   */
+  // private atLeastOneFollowUpOptionValidator(): ValidatorFn {
+  //   return (control: AbstractControl): ValidationErrors | null => {
+  //     const group = control as FormGroup;
+  //     const anySelected =
+  //       group.get('processCompleted')?.value ||
+  //       group.get('servicesCoordinated')?.value ||
+  //       group.get('referralMade')?.value ||
+  //       group.get('appointmentScheduled')?.value;
+  //     return anySelected ? null : { atLeastOneOption: true };
+  //   };
+  // }
 
   private atLeastOneSelectedValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -785,6 +904,37 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
   removeFamilyMember(index: number): void {
     if (this.familyMembersArray.length > 1) {
       this.familyMembersArray.removeAt(index);
+    }
+  }
+
+  get livesAlone(): boolean {
+    return !!this.caseForm.get('livesAlone')?.value;
+  }
+
+  onLivesAloneChange(checked: boolean): void {
+    this.caseForm.get('livesAlone')?.setValue(checked);
+    this.toggleFamilyMembersValidators(checked);
+  }
+
+  private toggleFamilyMembersValidators(livesAlone: boolean): void {
+    const arr = this.familyMembersArray;
+    arr.controls.forEach((group) => {
+      const fg = group as FormGroup;
+      ['name', 'occupation', 'familyRelationshipId', 'academicLevelId'].forEach((key) => {
+        const ctrl = fg.get(key);
+        if (!ctrl) return;
+        if (livesAlone) {
+          ctrl.clearValidators();
+        } else {
+          ctrl.setValidators(Validators.required);
+        }
+        ctrl.updateValueAndValidity({ emitEvent: false });
+      });
+    });
+    if (livesAlone) {
+      arr.disable({ emitEvent: false });
+    } else {
+      arr.enable({ emitEvent: false });
     }
   }
 
@@ -862,6 +1012,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
     const currentDate = now.toISOString().split('T')[0];
     const currentTime = now.toTimeString().slice(0, 5);
     const noteGroup = this.formBuilder.group({
+      id: [null],
       date: [currentDate],
       time: [currentTime],
       approachType: [''],
@@ -892,22 +1043,28 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
         followUpGroup?.markAllAsTouched();
         if (followUpGroup?.invalid) return;
       }
-      // Step 6: if processCompleted is checked, close the case instead of advancing
-      if (this.activeWizardStep === 6 && this.caseForm.get('followUpPlan.processCompleted')?.value) {
+      // Step 6: if processCompleted is selected, close the case instead of advancing
+      if (
+        this.activeWizardStep === 6 &&
+        this.caseForm.get('followUpPlan.selectedOption')?.value === 'processCompleted'
+      ) {
         this.closeCaseOnProcessCompleted();
         return;
       }
-      // Step 6: if appointmentScheduled is checked, update follow-up plan + set status to in_progress
-      if (this.activeWizardStep === 6 && this.caseForm.get('followUpPlan.appointmentScheduled')?.value) {
+      // Step 6: save follow-up plan data
+      if (this.activeWizardStep === 6) {
         const formValue = this.caseForm.getRawValue();
+        const selectedOption = formValue.followUpPlan.selectedOption;
         const followUpData = {
-          processCompleted: formValue.followUpPlan.processCompleted,
-          coordinatedService: formValue.followUpPlan.servicesCoordinated ? formValue.followUpPlan.servicesAgency : null,
-          referred: formValue.followUpPlan.referralMade,
-          referralDetails: formValue.followUpPlan.referralDetails || null,
-          orientationAppointment: formValue.followUpPlan.appointmentScheduled,
-          appointmentDate: formValue.followUpPlan.appointmentDate || null,
-          appointmentTime: formValue.followUpPlan.appointmentTime || null,
+          processCompleted: selectedOption === 'processCompleted',
+          coordinatedService: selectedOption === 'servicesCoordinated' ? formValue.followUpPlan.servicesAgency : null,
+          referred: selectedOption === 'referralMade',
+          referralDetails: selectedOption === 'referralMade' ? formValue.followUpPlan.referralDetails || null : null,
+          orientationAppointment: selectedOption === 'appointmentScheduled',
+          appointmentDate:
+            selectedOption === 'appointmentScheduled' ? formValue.followUpPlan.appointmentDate || null : null,
+          appointmentTime:
+            selectedOption === 'appointmentScheduled' ? formValue.followUpPlan.appointmentTime || null : null,
           otherDetails: formValue.followUpPlan.otherDetails || null,
         };
         this.caseService
@@ -915,15 +1072,20 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: () => {
-              this.caseService
-                .updateCaseStatus(this.caseId!, CaseStatus.IN_PROGRESS)
-                .pipe(takeUntil(this.destroy$))
-                .subscribe({
-                  next: () => {
-                    this.activeWizardStep = Math.min(this.activeWizardStep + 1, 13);
-                  },
-                  error: (err) => console.error('Error al cambiar el estado del caso:', err),
-                });
+              // If appointmentScheduled, also update status to IN_PROGRESS
+              if (selectedOption === 'appointmentScheduled') {
+                this.caseService
+                  .updateCaseStatus(this.caseId!, CaseStatus.IN_PROGRESS)
+                  .pipe(takeUntil(this.destroy$))
+                  .subscribe({
+                    next: () => {
+                      this.activeWizardStep = Math.min(this.activeWizardStep + 1, 13);
+                    },
+                    error: (err) => console.error('Error al cambiar el estado del caso:', err),
+                  });
+              } else {
+                this.activeWizardStep = Math.min(this.activeWizardStep + 1, 13);
+              }
             },
             error: (err) => console.error('Error al guardar el plan a seguir:', err),
           });
@@ -977,6 +1139,10 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
     const controlName = stepControls[step];
     if (!controlName) return true;
 
+    if (step === 1 && this.livesAlone) {
+      return true;
+    }
+
     const control = this.caseForm.get(controlName);
     return control?.valid || false;
   }
@@ -1019,21 +1185,189 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
   }
 
   downloadCasePdf(): void {
-    if (!this.caseId) return;
-    this.caseService
-      .downloadCasePdf(this.caseId)
-      .pipe(takeUntil(this.destroy$))
+    this.onDownloadFullCasePdf();
+  }
+
+  // ---------------------------------------------------------------------
+  // PDF document handlers
+  // NOTE: Signature handling is intentionally NOT implemented in this phase.
+  // The structure here is prepared so that signature capture / validation
+  // can be added later (signature canvas, uploaded image, etc.) without
+  // changing these handlers' public surface.
+  // ---------------------------------------------------------------------
+
+  onOpenFullCasePdf(): void {
+    if (!this.caseId || this.isGeneratingFullCasePdf) return;
+    this.isGeneratingFullCasePdf = true;
+    this.casePdfService
+      .getFullCasePdf(this.caseId)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => (this.isGeneratingFullCasePdf = false)),
+      )
       .subscribe({
-        next: (blob: Blob) => {
-          const url = URL.createObjectURL(blob);
-          const anchor = document.createElement('a');
-          anchor.href = url;
-          anchor.download = `caso-${this.caseId}.pdf`;
-          anchor.click();
-          URL.revokeObjectURL(url);
-        },
-        error: () => this.notificationService.showError('Error al descargar el PDF del caso'),
+        next: (blob) => this.casePdfService.openPdf(blob, `caso-completo-${this.caseId}.pdf`),
+        error: (err) => this.casePdfService.handlePdfError(err, 'Error al descargar el PDF del caso'),
       });
+  }
+
+  onDownloadFullCasePdf(): void {
+    if (!this.caseId || this.isGeneratingFullCasePdf) return;
+    this.isGeneratingFullCasePdf = true;
+    this.casePdfService
+      .getFullCasePdf(this.caseId)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => (this.isGeneratingFullCasePdf = false)),
+      )
+      .subscribe({
+        next: (blob) => this.casePdfService.downloadPdf(blob, `caso-completo-${this.caseId}.pdf`),
+        error: (err) => this.casePdfService.handlePdfError(err, 'Error al descargar el PDF del caso'),
+      });
+  }
+
+  onOpenInterventionPlanPdf(): void {
+    if (!this.caseId || this.isGeneratingInterventionPlanPdf) return;
+    this.isGeneratingInterventionPlanPdf = true;
+    this.casePdfService
+      .getInterventionPlanPdf(this.caseId)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => (this.isGeneratingInterventionPlanPdf = false)),
+      )
+      .subscribe({
+        next: (blob) => this.casePdfService.openPdf(blob, `plan-intervencion-caso-${this.caseId}.pdf`),
+        error: (err) => this.casePdfService.handlePdfError(err),
+      });
+  }
+
+  onDownloadInterventionPlanPdf(): void {
+    if (!this.caseId || this.isGeneratingInterventionPlanPdf) return;
+    this.isGeneratingInterventionPlanPdf = true;
+    this.casePdfService
+      .getInterventionPlanPdf(this.caseId)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => (this.isGeneratingInterventionPlanPdf = false)),
+      )
+      .subscribe({
+        next: (blob) => this.casePdfService.downloadPdf(blob, `plan-intervencion-caso-${this.caseId}.pdf`),
+        error: (err) => this.casePdfService.handlePdfError(err),
+      });
+  }
+
+  onOpenClosingNotePdf(): void {
+    if (!this.caseId || this.isGeneratingClosingNotePdf) return;
+    this.isGeneratingClosingNotePdf = true;
+    this.casePdfService
+      .getClosingNotePdf(this.caseId)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => (this.isGeneratingClosingNotePdf = false)),
+      )
+      .subscribe({
+        next: (blob) => this.casePdfService.openPdf(blob, `nota-cierre-caso-${this.caseId}.pdf`),
+        error: (err) => this.casePdfService.handlePdfError(err),
+      });
+  }
+
+  onDownloadClosingNotePdf(): void {
+    if (!this.caseId || this.isGeneratingClosingNotePdf) return;
+    this.isGeneratingClosingNotePdf = true;
+    this.casePdfService
+      .getClosingNotePdf(this.caseId)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => (this.isGeneratingClosingNotePdf = false)),
+      )
+      .subscribe({
+        next: (blob) => this.casePdfService.downloadPdf(blob, `nota-cierre-caso-${this.caseId}.pdf`),
+        error: (err) => this.casePdfService.handlePdfError(err),
+      });
+  }
+
+  onOpenHelpProcessCompletionPdf(): void {
+    if (!this.caseId || this.isGeneratingProcessCompletionPdf) return;
+    this.isGeneratingProcessCompletionPdf = true;
+    this.casePdfService
+      .getHelpProcessCompletionPdf(this.caseId)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => (this.isGeneratingProcessCompletionPdf = false)),
+      )
+      .subscribe({
+        next: (blob) => this.casePdfService.openPdf(blob, `culminacion-proceso-caso-${this.caseId}.pdf`),
+        error: (err) => this.casePdfService.handlePdfError(err),
+      });
+  }
+
+  onDownloadHelpProcessCompletionPdf(): void {
+    if (!this.caseId || this.isGeneratingProcessCompletionPdf) return;
+    this.isGeneratingProcessCompletionPdf = true;
+    this.casePdfService
+      .getHelpProcessCompletionPdf(this.caseId)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => (this.isGeneratingProcessCompletionPdf = false)),
+      )
+      .subscribe({
+        next: (blob) => this.casePdfService.downloadPdf(blob, `culminacion-proceso-caso-${this.caseId}.pdf`),
+        error: (err) => this.casePdfService.handlePdfError(err),
+      });
+  }
+
+  onOpenProgressNotePdf(noteControl: AbstractControl, index: number): void {
+    if (!this.caseId) return;
+    const noteId = noteControl.get('id')?.value;
+    if (!noteId) {
+      this.notificationService.showInfo('Guarde la nota de progreso antes de generar el PDF.');
+      return;
+    }
+    const key = String(noteId);
+    if (this.generatingProgressNotePdf[key]) return;
+    this.generatingProgressNotePdf[key] = true;
+    this.casePdfService
+      .getProgressNotePdf(this.caseId, noteId)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => (this.generatingProgressNotePdf[key] = false)),
+      )
+      .subscribe({
+        next: (blob) => this.casePdfService.openPdf(blob, `nota-progreso-${noteId}-caso-${this.caseId}.pdf`),
+        error: (err) => this.casePdfService.handlePdfError(err),
+      });
+  }
+
+  onDownloadProgressNotePdf(noteControl: AbstractControl, index: number): void {
+    if (!this.caseId) return;
+    const noteId = noteControl.get('id')?.value;
+    if (!noteId) {
+      this.notificationService.showInfo('Guarde la nota de progreso antes de generar el PDF.');
+      return;
+    }
+    const key = String(noteId);
+    if (this.generatingProgressNotePdf[key]) return;
+    this.generatingProgressNotePdf[key] = true;
+    this.casePdfService
+      .getProgressNotePdf(this.caseId, noteId)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => (this.generatingProgressNotePdf[key] = false)),
+      )
+      .subscribe({
+        next: (blob) => this.casePdfService.downloadPdf(blob, `nota-progreso-${noteId}-caso-${this.caseId}.pdf`),
+        error: (err) => this.casePdfService.handlePdfError(err),
+      });
+  }
+
+  isGeneratingProgressNote(noteControl: AbstractControl): boolean {
+    const noteId = noteControl.get('id')?.value;
+    if (!noteId) return false;
+    return !!this.generatingProgressNotePdf[String(noteId)];
+  }
+
+  hasProgressNoteId(noteControl: AbstractControl): boolean {
+    return !!noteControl.get('id')?.value;
   }
 
   private closeCaseOnProcessCompleted(): void {
@@ -1052,6 +1386,10 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
               this.isCaseClosed = true;
               this.caseForm.disable();
               this.notificationService.showSuccess('El proceso de ayuda ha sido culminado. El caso está cerrado.');
+              // Redirigir a la lista de casos
+              setTimeout(() => {
+                this.router.navigate(['/cases']);
+              }, 1500);
             },
             error: (err) => console.error('Error al cerrar el caso:', err),
           });
@@ -1080,6 +1418,10 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
                       this.isCaseClosed = true;
                       this.caseForm.disable();
                       this.notificationService.showSuccess('El caso ha sido actualizado y cerrado exitosamente.');
+                      // Redirigir a la lista de casos
+                      setTimeout(() => {
+                        this.router.navigate(['/cases']);
+                      }, 1500);
                     },
                     error: (err) => console.error('Error al cerrar el caso:', err),
                   });
@@ -1102,13 +1444,15 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
     const formValue = this.caseForm.getRawValue();
     const caseDto: CreateCaseDto = {
       participantId: this.participantId,
-      familyMembers: formValue.familyMembers.map((member: any) => ({
-        name: member.name,
-        birthDate: member.birthDate || null,
-        occupation: member.occupation || null,
-        familyRelationshipId: member.familyRelationshipId ? Number(member.familyRelationshipId) : null,
-        academicLevelId: member.academicLevelId ? Number(member.academicLevelId) : null,
-      })),
+      familyMembers: formValue.livesAlone
+        ? []
+        : formValue.familyMembers.map((member: any) => ({
+            name: member.name,
+            birthDate: member.birthDate || null,
+            occupation: member.occupation || null,
+            familyRelationshipId: member.familyRelationshipId ? Number(member.familyRelationshipId) : null,
+            academicLevelId: member.academicLevelId ? Number(member.academicLevelId) : null,
+          })),
       bioPsychosocialHistory: {
         academicLevelId: formValue.bioPsychosocialHistory.academicLevelId
           ? Number(formValue.bioPsychosocialHistory.academicLevelId)
@@ -1284,17 +1628,19 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
   }
 
   private mapFormDataToDto(): CreateCaseDto {
-    const formValue = this.caseForm.value;
+    const formValue = this.caseForm.getRawValue();
 
     return {
       participantId: this.participantId,
-      familyMembers: formValue.familyMembers.map((member: any) => ({
-        name: member.name,
-        birthDate: member.birthDate || null,
-        occupation: member.occupation || null,
-        familyRelationshipId: member.familyRelationshipId ? Number(member.familyRelationshipId) : null,
-        academicLevelId: member.academicLevelId ? Number(member.academicLevelId) : null,
-      })),
+      familyMembers: formValue.livesAlone
+        ? []
+        : formValue.familyMembers.map((member: any) => ({
+            name: member.name,
+            birthDate: member.birthDate || null,
+            occupation: member.occupation || null,
+            familyRelationshipId: member.familyRelationshipId ? Number(member.familyRelationshipId) : null,
+            academicLevelId: member.academicLevelId ? Number(member.academicLevelId) : null,
+          })),
       bioPsychosocialHistory: {
         academicLevelId: formValue.bioPsychosocialHistory.academicLevelId
           ? Number(formValue.bioPsychosocialHistory.academicLevelId)

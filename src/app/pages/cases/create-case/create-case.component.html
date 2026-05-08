@@ -16,6 +16,127 @@
             </div>
           } @else if (caseForm) {
             <div class="wizard-container">
+              @if (caseId) {
+                <div class="case-documents-bar mb-3">
+                  <div class="case-documents-bar__icon">
+                    <i class="mdi mdi-file-document-multiple-outline"></i>
+                  </div>
+                  <div class="case-documents-bar__info">
+                    <h6 class="case-documents-bar__title mb-0">
+                      {{ 'cases.documents.title' | transloco }}
+                    </h6>
+                    <small class="text-muted d-none d-md-inline">
+                      @if (participantName) {
+                        {{ 'cases.documents.subtitleWithName' | transloco: { name: participantName } }}
+                      } @else {
+                        {{ 'cases.documents.subtitle' | transloco }}
+                      }
+                    </small>
+                  </div>
+                  <div class="case-documents-bar__actions">
+                    <button
+                      type="button"
+                      class="btn btn-danger btn-sm rounded-pill px-3"
+                      (click)="onDownloadFullCasePdf()"
+                      [disabled]="isGeneratingFullCasePdf"
+                      [title]="'cases.documents.downloadFullCase' | transloco"
+                    >
+                      @if (isGeneratingFullCasePdf) {
+                        <span class="spinner-border spinner-border-sm me-1"></span>
+                        {{ 'cases.documents.generating' | transloco }}
+                      } @else {
+                        <i class="mdi mdi-file-pdf-box me-1"></i>
+                        <span class="d-none d-sm-inline">{{ 'cases.documents.downloadFullCase' | transloco }}</span>
+                        <span class="d-inline d-sm-none">PDF</span>
+                      }
+                    </button>
+
+                    <div ngbDropdown class="d-inline-block">
+                      <button
+                        type="button"
+                        class="btn btn-outline-secondary btn-sm rounded-pill px-3"
+                        ngbDropdownToggle
+                        [disabled]="
+                          isGeneratingFullCasePdf ||
+                          isGeneratingInterventionPlanPdf ||
+                          isGeneratingClosingNotePdf ||
+                          isGeneratingProcessCompletionPdf
+                        "
+                      >
+                        <i class="mdi mdi-printer-outline me-1"></i>
+                        {{ 'cases.documents.menuButton' | transloco }}
+                      </button>
+                      <div ngbDropdownMenu class="dropdown-menu-end shadow-sm">
+                        <h6 class="dropdown-header text-uppercase small text-muted mb-0">
+                          {{ 'cases.documents.title' | transloco }}
+                        </h6>
+                        <button
+                          type="button"
+                          ngbDropdownItem
+                          class="d-flex align-items-center gap-2"
+                          (click)="onDownloadFullCasePdf()"
+                          [disabled]="isGeneratingFullCasePdf"
+                        >
+                          @if (isGeneratingFullCasePdf) {
+                            <span class="spinner-border spinner-border-sm text-primary"></span>
+                          } @else {
+                            <i class="mdi mdi-file-document-outline text-primary"></i>
+                          }
+                          <span>{{ 'cases.documents.fullCase' | transloco }}</span>
+                        </button>
+                        @if (hasInterventionPlanDocument) {
+                          <button
+                            type="button"
+                            ngbDropdownItem
+                            class="d-flex align-items-center gap-2"
+                            (click)="onDownloadInterventionPlanPdf()"
+                            [disabled]="isGeneratingInterventionPlanPdf"
+                          >
+                            @if (isGeneratingInterventionPlanPdf) {
+                              <span class="spinner-border spinner-border-sm text-primary"></span>
+                            } @else {
+                              <i class="mdi mdi-clipboard-list-outline text-primary"></i>
+                            }
+                            <span>{{ 'cases.documents.interventionPlan' | transloco }}</span>
+                          </button>
+                        }
+                        @if (hasClosingNoteDocument) {
+                          <button
+                            type="button"
+                            ngbDropdownItem
+                            class="d-flex align-items-center gap-2"
+                            (click)="onDownloadClosingNotePdf()"
+                            [disabled]="isGeneratingClosingNotePdf"
+                          >
+                            @if (isGeneratingClosingNotePdf) {
+                              <span class="spinner-border spinner-border-sm text-warning"></span>
+                            } @else {
+                              <i class="mdi mdi-bookmark-check-outline text-warning"></i>
+                            }
+                            <span>{{ 'cases.documents.closingNote' | transloco }}</span>
+                          </button>
+                        }
+                        @if (hasProcessCompletionDocument) {
+                          <button
+                            type="button"
+                            ngbDropdownItem
+                            class="d-flex align-items-center gap-2"
+                            (click)="onDownloadHelpProcessCompletionPdf()"
+                            [disabled]="isGeneratingProcessCompletionPdf"
+                          >
+                            @if (isGeneratingProcessCompletionPdf) {
+                              <span class="spinner-border spinner-border-sm text-success"></span>
+                            } @else {
+                              <i class="mdi mdi-check-circle-outline text-success"></i>
+                            }
+                            <span>{{ 'cases.documents.processCompletion' | transloco }}</span>
+                          </button>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
               <form [formGroup]="caseForm" (ngSubmit)="onSubmit()" novalidate>
                 <div id="caseWizard">
                   <ul
@@ -47,110 +168,131 @@
                               <h5 class="mb-0">
                                 <i class="mdi mdi-account-group me-2"></i>{{ 'cases.familyMembers' | transloco }}
                               </h5>
-                              @if (!isViewMode) {
+                              @if (!isViewMode && !livesAlone) {
                                 <button type="button" class="btn btn-primary btn-sm" (click)="addFamilyMember()">
                                   <i class="mdi mdi-plus me-1"></i>{{ 'cases.addFamilyMember' | transloco }}
                                 </button>
                               }
                             </div>
 
-                            @for (member of familyMembersArray.controls; track $index; let i = $index) {
-                              <div [formGroupName]="i" class="family-member-card p-3 mb-3 position-relative">
-                                <div
-                                  class="family-member-header d-flex justify-content-between align-items-center mb-3"
-                                >
-                                  <h6 class="mb-0 text-muted">
-                                    <i class="mdi mdi-account me-1"></i>{{ 'cases.family' | transloco }} {{ i + 1 }}
-                                  </h6>
-                                  @if (familyMembersArray.length > 1 && !isViewMode) {
-                                    <button
-                                      type="button"
-                                      class="btn btn-danger btn-sm"
-                                      (click)="removeFamilyMember(i)"
-                                      [title]="'cases.removeFamilyMember' | transloco"
-                                    >
-                                      <i class="mdi mdi-delete"></i>
-                                    </button>
-                                  }
-                                </div>
+                            <div class="form-check mb-3">
+                              <input
+                                type="checkbox"
+                                class="form-check-input"
+                                id="livesAloneCheck"
+                                [checked]="livesAlone"
+                                [disabled]="isViewMode"
+                                (change)="onLivesAloneChange($any($event.target).checked)"
+                              />
+                              <label class="form-check-label" for="livesAloneCheck">
+                                {{ 'cases.livesAlone' | transloco }}
+                              </label>
+                            </div>
 
-                                <div class="row mb-3">
-                                  <label class="col-md-3 col-form-label obligatorio" [for]="'name_' + i">{{
-                                    'cases.name' | transloco
-                                  }}</label>
-                                  <div class="col-md-9">
-                                    <input type="text" [id]="'name_' + i" class="form-control" formControlName="name" />
+                            @if (!livesAlone) {
+                              @for (member of familyMembersArray.controls; track $index; let i = $index) {
+                                <div [formGroupName]="i" class="family-member-card p-3 mb-3 position-relative">
+                                  <div
+                                    class="family-member-header d-flex justify-content-between align-items-center mb-3"
+                                  >
+                                    <h6 class="mb-0 text-muted">
+                                      <i class="mdi mdi-account me-1"></i>{{ 'cases.family' | transloco }} {{ i + 1 }}
+                                    </h6>
+                                    @if (familyMembersArray.length > 1 && !isViewMode) {
+                                      <button
+                                        type="button"
+                                        class="btn btn-danger btn-sm"
+                                        (click)="removeFamilyMember(i)"
+                                        [title]="'cases.removeFamilyMember' | transloco"
+                                      >
+                                        <i class="mdi mdi-delete"></i>
+                                      </button>
+                                    }
+                                  </div>
+
+                                  <div class="row mb-3">
+                                    <label class="col-md-3 col-form-label obligatorio" [for]="'name_' + i">{{
+                                      'cases.name' | transloco
+                                    }}</label>
+                                    <div class="col-md-9">
+                                      <input
+                                        type="text"
+                                        [id]="'name_' + i"
+                                        class="form-control"
+                                        formControlName="name"
+                                      />
+                                    </div>
+                                  </div>
+
+                                  <div class="row mb-3">
+                                    <label class="col-md-3 col-form-label" [for]="'birthDate_' + i">{{
+                                      'cases.birthDate' | transloco
+                                    }}</label>
+                                    <div class="col-md-9">
+                                      <input
+                                        type="date"
+                                        [id]="'birthDate_' + i"
+                                        class="form-control"
+                                        formControlName="birthDate"
+                                      />
+                                    </div>
+                                  </div>
+
+                                  <div class="row mb-3">
+                                    <label class="col-md-3 col-form-label obligatorio" [for]="'occupation_' + i">{{
+                                      'cases.occupation' | transloco
+                                    }}</label>
+                                    <div class="col-md-9">
+                                      <input
+                                        type="text"
+                                        [id]="'occupation_' + i"
+                                        class="form-control"
+                                        formControlName="occupation"
+                                      />
+                                    </div>
+                                  </div>
+
+                                  <div class="row mb-3">
+                                    <label [for]="'relationshipId_' + i" class="col-md-3 col-form-label obligatorio">{{
+                                      'cases.relationship' | transloco
+                                    }}</label>
+                                    <div class="col-md-9">
+                                      <select
+                                        class="form-select"
+                                        [id]="'relationshipId_' + i"
+                                        formControlName="familyRelationshipId"
+                                      >
+                                        <option value="" disabled selected>
+                                          {{ 'cases.selectRelationship' | transloco }}
+                                        </option>
+                                        @for (relationship of familyRelationships; track relationship.id) {
+                                          <option [value]="relationship.id">{{ relationship.name }}</option>
+                                        }
+                                      </select>
+                                    </div>
+                                  </div>
+
+                                  <div class="row mb-3">
+                                    <label [for]="'academicLevelId_' + i" class="col-md-3 col-form-label obligatorio">{{
+                                      'cases.academicGrade' | transloco
+                                    }}</label>
+                                    <div class="col-md-9">
+                                      <select
+                                        class="form-select"
+                                        [id]="'academicLevelId_' + i"
+                                        formControlName="academicLevelId"
+                                      >
+                                        <option value="" disabled selected>
+                                          {{ 'cases.selectAcademicGrade' | transloco }}
+                                        </option>
+                                        @for (academicLevel of academicLevels; track academicLevel.id) {
+                                          <option [value]="academicLevel.id">{{ academicLevel.name }}</option>
+                                        }
+                                      </select>
+                                    </div>
                                   </div>
                                 </div>
-
-                                <div class="row mb-3">
-                                  <label class="col-md-3 col-form-label" [for]="'birthDate_' + i">{{
-                                    'cases.birthDate' | transloco
-                                  }}</label>
-                                  <div class="col-md-9">
-                                    <input
-                                      type="date"
-                                      [id]="'birthDate_' + i"
-                                      class="form-control"
-                                      formControlName="birthDate"
-                                    />
-                                  </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                  <label class="col-md-3 col-form-label obligatorio" [for]="'occupation_' + i">{{
-                                    'cases.occupation' | transloco
-                                  }}</label>
-                                  <div class="col-md-9">
-                                    <input
-                                      type="text"
-                                      [id]="'occupation_' + i"
-                                      class="form-control"
-                                      formControlName="occupation"
-                                    />
-                                  </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                  <label [for]="'relationshipId_' + i" class="col-md-3 col-form-label obligatorio">{{
-                                    'cases.relationship' | transloco
-                                  }}</label>
-                                  <div class="col-md-9">
-                                    <select
-                                      class="form-select"
-                                      [id]="'relationshipId_' + i"
-                                      formControlName="familyRelationshipId"
-                                    >
-                                      <option value="" disabled selected>
-                                        {{ 'cases.selectRelationship' | transloco }}
-                                      </option>
-                                      @for (relationship of familyRelationships; track relationship.id) {
-                                        <option [value]="relationship.id">{{ relationship.name }}</option>
-                                      }
-                                    </select>
-                                  </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                  <label [for]="'academicLevelId_' + i" class="col-md-3 col-form-label obligatorio">{{
-                                    'cases.academicGrade' | transloco
-                                  }}</label>
-                                  <div class="col-md-9">
-                                    <select
-                                      class="form-select"
-                                      [id]="'academicLevelId_' + i"
-                                      formControlName="academicLevelId"
-                                    >
-                                      <option value="" disabled selected>
-                                        {{ 'cases.selectAcademicGrade' | transloco }}
-                                      </option>
-                                      @for (academicLevel of academicLevels; track academicLevel.id) {
-                                        <option [value]="academicLevel.id">{{ academicLevel.name }}</option>
-                                      }
-                                    </select>
-                                  </div>
-                                </div>
-                              </div>
+                              }
                             }
                           </div>
                         </div>
@@ -585,9 +727,26 @@
                                 >
                                   <i class="mdi mdi-eye-outline me-1"></i>Ver el caso
                                 </button>
-                                <button type="button" class="btn btn-primary btn-sm" (click)="downloadCasePdf()">
-                                  <i class="mdi mdi-file-pdf-box me-1"></i>Descargar PDF
+                                <button type="button" class="btn btn-danger btn-sm" (click)="downloadCasePdf()">
+                                  <i class="mdi mdi-file-pdf-box me-1"></i
+                                  >{{ 'cases.documents.downloadFullCase' | transloco }}
                                 </button>
+                                @if (hasProcessCompletionDocument) {
+                                  <button
+                                    type="button"
+                                    class="btn btn-success btn-sm"
+                                    (click)="onDownloadHelpProcessCompletionPdf()"
+                                    [disabled]="isGeneratingProcessCompletionPdf"
+                                  >
+                                    @if (isGeneratingProcessCompletionPdf) {
+                                      <span class="spinner-border spinner-border-sm me-1"></span>
+                                      {{ 'cases.documents.generating' | transloco }}
+                                    } @else {
+                                      <i class="mdi mdi-check-circle-outline me-1"></i>
+                                      {{ 'cases.documents.downloadProcessCompletion' | transloco }}
+                                    }
+                                  </button>
+                                }
                               </div>
                             </div>
                           }
@@ -606,10 +765,11 @@
                             <div class="card-body">
                               <div class="form-check">
                                 <input
-                                  type="checkbox"
+                                  type="radio"
                                   class="form-check-input"
                                   id="processCompleted"
-                                  formControlName="processCompleted"
+                                  formControlName="selectedOption"
+                                  value="processCompleted"
                                 />
                                 <label class="form-check-label fw-semibold" for="processCompleted">
                                   <i class="mdi mdi-check-circle-outline me-1 text-success"></i>
@@ -624,17 +784,18 @@
                             <div class="card-body">
                               <div class="form-check mb-2">
                                 <input
-                                  type="checkbox"
+                                  type="radio"
                                   class="form-check-input"
                                   id="servicesCoordinated"
-                                  formControlName="servicesCoordinated"
+                                  formControlName="selectedOption"
+                                  value="servicesCoordinated"
                                 />
                                 <label class="form-check-label fw-semibold" for="servicesCoordinated">
                                   <i class="mdi mdi-account-group-outline me-1 text-info"></i>
                                   {{ 'cases.followUpPlan.servicesCoordinatedLabel' | transloco }}
                                 </label>
                               </div>
-                              @if (caseForm.get('followUpPlan.servicesCoordinated')?.value) {
+                              @if (caseForm.get('followUpPlan.selectedOption')?.value === 'servicesCoordinated') {
                                 <div class="mt-3 ps-4 border-start border-info border-3">
                                   <label class="form-label small text-muted">{{
                                     'cases.followUpPlan.servicesAgencyLabel' | transloco
@@ -655,17 +816,18 @@
                             <div class="card-body">
                               <div class="form-check mb-2">
                                 <input
-                                  type="checkbox"
+                                  type="radio"
                                   class="form-check-input"
                                   id="referralMade"
-                                  formControlName="referralMade"
+                                  formControlName="selectedOption"
+                                  value="referralMade"
                                 />
                                 <label class="form-check-label fw-semibold" for="referralMade">
                                   <i class="mdi mdi-share-outline me-1 text-warning"></i>
                                   {{ 'cases.followUpPlan.referralMadeLabel' | transloco }}
                                 </label>
                               </div>
-                              @if (caseForm.get('followUpPlan.referralMade')?.value) {
+                              @if (caseForm.get('followUpPlan.selectedOption')?.value === 'referralMade') {
                                 <div class="mt-3 ps-4 border-start border-warning border-3">
                                   <label class="form-label small text-muted">{{
                                     'cases.followUpPlan.referralDetailsLabel' | transloco
@@ -686,17 +848,18 @@
                             <div class="card-body">
                               <div class="form-check mb-2">
                                 <input
-                                  type="checkbox"
+                                  type="radio"
                                   class="form-check-input"
                                   id="appointmentScheduled"
-                                  formControlName="appointmentScheduled"
+                                  formControlName="selectedOption"
+                                  value="appointmentScheduled"
                                 />
                                 <label class="form-check-label fw-semibold" for="appointmentScheduled">
                                   <i class="mdi mdi-calendar-clock me-1 text-primary"></i>
                                   {{ 'cases.followUpPlan.appointmentScheduledLabel' | transloco }}
                                 </label>
                               </div>
-                              @if (caseForm.get('followUpPlan.appointmentScheduled')?.value) {
+                              @if (caseForm.get('followUpPlan.selectedOption')?.value === 'appointmentScheduled') {
                                 <div class="mt-3 ps-4 border-start border-primary border-3">
                                   <div class="row g-3">
                                     <div class="col-md-6">
@@ -1378,6 +1541,43 @@
                               PLAN DE INTERVENCIÓN
                             </h4>
 
+                            @if (caseId && hasInterventionPlanDocument) {
+                              <div class="pdf-actions mb-3">
+                                <span class="pdf-actions__label text-muted small">
+                                  <i class="mdi mdi-file-pdf-box text-danger me-1"></i>
+                                  {{ 'cases.documents.interventionPlan' | transloco }}
+                                </span>
+                                <div class="btn-group btn-group-sm" role="group">
+                                  <button
+                                    type="button"
+                                    class="btn btn-outline-primary"
+                                    (click)="onOpenInterventionPlanPdf()"
+                                    [disabled]="isGeneratingInterventionPlanPdf"
+                                    [title]="'cases.documents.viewInterventionPlanPdf' | transloco"
+                                  >
+                                    @if (isGeneratingInterventionPlanPdf) {
+                                      <span class="spinner-border spinner-border-sm"></span>
+                                    } @else {
+                                      <i class="mdi mdi-eye-outline me-1"></i>{{ 'cases.documents.view' | transloco }}
+                                    }
+                                  </button>
+                                  <button
+                                    type="button"
+                                    class="btn btn-danger"
+                                    (click)="onDownloadInterventionPlanPdf()"
+                                    [disabled]="isGeneratingInterventionPlanPdf"
+                                    [title]="'cases.documents.downloadInterventionPlan' | transloco"
+                                  >
+                                    @if (isGeneratingInterventionPlanPdf) {
+                                      <span class="spinner-border spinner-border-sm"></span>
+                                    } @else {
+                                      <i class="mdi mdi-download me-1"></i>{{ 'cases.documents.download' | transloco }}
+                                    }
+                                  </button>
+                                </div>
+                              </div>
+                            }
+
                             <!-- Nota informativa -->
                             <div class="alert alert-light border-start border-primary border-3 mb-4">
                               <p class="fw-semibold mb-2">
@@ -1586,16 +1786,48 @@
                                     <i class="mdi mdi-file-document-edit me-2"></i>
                                     Nota de Progreso #{{ $index + 1 }}
                                   </span>
-                                  @if (!isViewMode) {
-                                    <button
-                                      type="button"
-                                      class="btn btn-sm btn-outline-danger"
-                                      (click)="removeProgressNote($index)"
-                                      title="Eliminar nota"
-                                    >
-                                      <i class="mdi mdi-delete-outline me-1"></i>Eliminar
-                                    </button>
-                                  }
+                                  <div class="d-flex align-items-center gap-2">
+                                    @if (caseId && hasProgressNoteId(note)) {
+                                      <div class="btn-group btn-group-sm" role="group">
+                                        <button
+                                          type="button"
+                                          class="btn btn-outline-primary"
+                                          (click)="onOpenProgressNotePdf(note, $index)"
+                                          [disabled]="isGeneratingProgressNote(note)"
+                                          [title]="'cases.documents.viewProgressNotePdf' | transloco"
+                                        >
+                                          @if (isGeneratingProgressNote(note)) {
+                                            <span class="spinner-border spinner-border-sm"></span>
+                                          } @else {
+                                            <i class="mdi mdi-eye-outline"></i>
+                                          }
+                                        </button>
+                                        <button
+                                          type="button"
+                                          class="btn btn-outline-danger"
+                                          (click)="onDownloadProgressNotePdf(note, $index)"
+                                          [disabled]="isGeneratingProgressNote(note)"
+                                          [title]="'cases.documents.downloadProgressNote' | transloco"
+                                        >
+                                          @if (isGeneratingProgressNote(note)) {
+                                            <span class="spinner-border spinner-border-sm"></span>
+                                          } @else {
+                                            <i class="mdi mdi-download"></i>
+                                          }
+                                        </button>
+                                      </div>
+                                    }
+                                    @if (!isViewMode) {
+                                      <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-danger"
+                                        (click)="removeProgressNote($index)"
+                                        title="Eliminar nota"
+                                      >
+                                        <i class="mdi mdi-delete-outline"></i>
+                                      </button>
+                                    }
+                                  </div>
                                 </div>
                                 <div class="card-body px-3 py-3">
                                   <div class="row mb-3">
@@ -1800,6 +2032,43 @@
                             </h6>
                             <p class="mb-0 small">Complete esta sección solo si está cerrando el caso.</p>
                           </div>
+
+                          @if (caseId && hasClosingNoteDocument) {
+                            <div class="pdf-actions mb-3">
+                              <span class="pdf-actions__label text-muted small">
+                                <i class="mdi mdi-file-pdf-box text-danger me-1"></i>
+                                {{ 'cases.documents.closingNote' | transloco }}
+                              </span>
+                              <div class="btn-group btn-group-sm" role="group">
+                                <button
+                                  type="button"
+                                  class="btn btn-outline-primary"
+                                  (click)="onOpenClosingNotePdf()"
+                                  [disabled]="isGeneratingClosingNotePdf"
+                                  [title]="'cases.documents.viewClosingNotePdf' | transloco"
+                                >
+                                  @if (isGeneratingClosingNotePdf) {
+                                    <span class="spinner-border spinner-border-sm"></span>
+                                  } @else {
+                                    <i class="mdi mdi-eye-outline me-1"></i>{{ 'cases.documents.view' | transloco }}
+                                  }
+                                </button>
+                                <button
+                                  type="button"
+                                  class="btn btn-danger"
+                                  (click)="onDownloadClosingNotePdf()"
+                                  [disabled]="isGeneratingClosingNotePdf"
+                                  [title]="'cases.documents.downloadClosingNote' | transloco"
+                                >
+                                  @if (isGeneratingClosingNotePdf) {
+                                    <span class="spinner-border spinner-border-sm"></span>
+                                  } @else {
+                                    <i class="mdi mdi-download me-1"></i>{{ 'cases.documents.download' | transloco }}
+                                  }
+                                </button>
+                              </div>
+                            </div>
+                          }
 
                           <div class="row mb-3">
                             <label class="col-md-3 col-form-label">Fecha de cierre</label>

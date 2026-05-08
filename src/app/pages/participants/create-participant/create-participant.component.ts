@@ -699,20 +699,142 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
    */
 
   onSubmit(): void {
-    // Validar que el formulario esté completo
-    const personalDataValid = this.participantForm.get('personalData')?.valid;
+    // Marcar todos los campos como touched para mostrar errores
+    this.markFormGroupTouched(this.participantForm);
 
-    if (!personalDataValid) {
-      this.markFormGroupTouched(this.participantForm);
+    // Validar que no haya operación de envío en curso
+    if (this.isSubmitting) {
+      return;
+    }
+
+    // Validar datos personales
+    const personalDataGroup = this.participantForm.get('personalData') as FormGroup;
+    if (!personalDataGroup || !personalDataGroup.valid) {
+      this.validateAndShowErrors(personalDataGroup);
+      return;
+    }
+
+    // Validar el formulario completo
+    if (!this.participantForm.valid) {
       this.notificationService.showWarning('Por favor complete todos los campos requeridos');
       return;
     }
 
-    if (this.participantForm.valid && !this.isSubmitting) {
-      this.confirmSubmission();
-    } else {
-      this.markFormGroupTouched(this.participantForm);
-      this.notificationService.showWarning('Por favor complete todos los campos requeridos');
+    // Validar campos específicos críticos antes de enviar
+    if (!this.validateRequiredFields()) {
+      return;
+    }
+
+    // Si todas las validaciones pasan, confirmar envío
+    this.confirmSubmission();
+  }
+
+  /**
+   * Valida campos obligatorios específicos y muestra errores detallados
+   */
+  private validateRequiredFields(): boolean {
+    const personalData = this.participantForm.get('personalData');
+    if (!personalData) {
+      this.notificationService.showError('Error en la estructura del formulario');
+      return false;
+    }
+
+    const requiredFields = [
+      { field: 'firstName', label: 'Primer nombre' },
+      { field: 'firstLastName', label: 'Primer apellido' },
+      { field: 'phoneNumber', label: 'Número de teléfono' },
+      { field: 'documentTypeId', label: 'Tipo de documento' },
+      { field: 'documentNumber', label: 'Número de documento' },
+      { field: 'address', label: 'Dirección' },
+      { field: 'city', label: 'Ciudad' },
+      { field: 'state', label: 'Estado/Provincia' },
+      { field: 'birthDate', label: 'Fecha de nacimiento' },
+      { field: 'genderId', label: 'Género' },
+      { field: 'maritalStatusId', label: 'Estado civil' },
+      { field: 'healthInsuranceId', label: 'Seguro médico' },
+      { field: 'emergencyContactName', label: 'Nombre del contacto de emergencia' },
+      { field: 'emergencyContactPhone', label: 'Teléfono del contacto de emergencia' },
+      { field: 'emergencyContactRelationship', label: 'Relación con contacto de emergencia' },
+    ];
+
+    const missingFields: string[] = [];
+
+    for (const { field, label } of requiredFields) {
+      const control = personalData.get(field);
+      if (!control || !control.value || (typeof control.value === 'string' && control.value.trim() === '')) {
+        missingFields.push(label);
+        control?.markAsTouched();
+      }
+    }
+
+    // Validación especial para seguro médico personalizado
+    const healthInsuranceId = personalData.get('healthInsuranceId')?.value;
+    const customHealthInsurance = personalData.get('customHealthInsurance');
+    if (healthInsuranceId === 'other' && (!customHealthInsurance?.value || customHealthInsurance.value.trim() === '')) {
+      missingFields.push('Especifique el seguro médico');
+      customHealthInsurance?.markAsTouched();
+    }
+
+    // Validar email si está presente
+    const emailControl = personalData.get('email');
+    if (emailControl && emailControl.value && emailControl.value.trim() !== '' && emailControl.invalid) {
+      this.notificationService.showError('El correo electrónico no tiene un formato válido');
+      return false;
+    }
+
+    // Validar que no exista documento duplicado
+    const documentControl = personalData.get('documentNumber');
+    if (documentControl?.hasError('documentExists')) {
+      this.notificationService.showError('El número de documento ya está registrado en el sistema');
+      return false;
+    }
+
+    // Validar que no exista email duplicado
+    if (emailControl?.hasError('emailExists')) {
+      this.notificationService.showError('El correo electrónico ya está registrado en el sistema');
+      return false;
+    }
+
+    // Validar edad mínima
+    const birthDateControl = personalData.get('birthDate');
+    if (birthDateControl?.hasError('underAge')) {
+      const error = birthDateControl.errors?.['underAge'];
+      this.notificationService.showError(
+        `El participante debe tener al menos ${error?.requiredAge} años (edad actual: ${error?.currentAge} años)`,
+      );
+      return false;
+    }
+
+    // Si hay campos faltantes, mostrar error
+    if (missingFields.length > 0) {
+      const fieldsList = missingFields.join(', ');
+      this.notificationService.showError(`Faltan campos obligatorios: ${fieldsList}`);
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Valida un FormGroup y muestra errores específicos
+   */
+  private validateAndShowErrors(formGroup: FormGroup | null): void {
+    if (!formGroup) {
+      this.notificationService.showError('Error en la validación del formulario');
+      return;
+    }
+
+    const invalidControls: string[] = [];
+    Object.keys(formGroup.controls).forEach((key) => {
+      const control = formGroup.get(key);
+      if (control && control.invalid) {
+        invalidControls.push(key);
+        control.markAsTouched();
+      }
+    });
+
+    if (invalidControls.length > 0) {
+      this.notificationService.showWarning('Por favor complete todos los campos requeridos en Datos Personales');
     }
   }
 
