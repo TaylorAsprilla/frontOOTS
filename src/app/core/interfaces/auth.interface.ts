@@ -12,6 +12,26 @@ export interface LoginRequest {
 }
 
 /**
+ * Interface para la información del país en la respuesta de autenticación
+ */
+export interface AuthCountry {
+  id: number;
+  name: string;
+  iso: string;
+  locale: string;
+}
+
+/**
+ * Interface para la información del rol en la respuesta de autenticación
+ */
+export interface AuthRole {
+  id: number;
+  name: UserRole;
+  description?: string;
+  isActive?: boolean;
+}
+
+/**
  * Interface para la información del usuario en la respuesta
  */
 export interface AuthUser {
@@ -19,8 +39,9 @@ export interface AuthUser {
   firstName: string;
   firstLastName: string;
   email: string;
-  role?: UserRole;
+  role?: UserRole | AuthRole;
   status?: string;
+  country?: AuthCountry;
 }
 
 /**
@@ -29,8 +50,6 @@ export interface AuthUser {
 export interface AuthData {
   access_token: string;
   refresh_token: string;
-  token_type: string;
-  expires_in: number; // Segundos hasta la expiración
   user: AuthUser;
 }
 

@@ -98,7 +98,9 @@ export class TokenStorageService {
    */
   getRole(): UserRole | null {
     const user = this.getUser();
-    return (user as AuthenticatedUser)?.role ?? null;
+    const role = (user as AuthenticatedUser)?.role;
+    if (!role) return null;
+    return (typeof role === 'string' ? role : role.name) as UserRole;
   }
 
   /**
