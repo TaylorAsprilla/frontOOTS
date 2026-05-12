@@ -101,9 +101,6 @@
                         {{ 'participants.createdAt' | transloco }}
                       </div>
                     </th>
-                    <th class="border-0 text-end">
-                      {{ 'app.actions' | transloco }}
-                    </th>
                     <th class="border-0 text-center">
                       <i class="fas fa-cog me-1 text-primary"></i>
                       {{ 'app.actions' | transloco }}
@@ -121,10 +118,6 @@
                       <td>{{ participant.email }}</td>
                       <td>{{ participant.phoneNumber }}</td>
                       <td>{{ participant.createdAt | localizedDate }}</td>
-                      <td class="text-end">
-                        <button *ngIf="canCreateParticipant()" class="btn btn-primary btn-sm me-2">Editar</button>
-                        <button *ngIf="canCreateParticipant()" class="btn btn-danger btn-sm">Eliminar</button>
-                      </td>
                       <td class="text-center" (click)="$event.stopPropagation()">
                         <div class="action-buttons">
                           <a
