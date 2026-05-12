@@ -45,20 +45,38 @@ export class ParticipantService {
   public loading$ = this.loadingSubject.asObservable();
 
   /**
-   * Get all participants with optional filtering
+   * Get all participants with automatic filtering by role (countryId/userId)
    */
   getParticipants(filters?: {
     page?: number;
     limit?: number;
     search?: string;
     status?: ParticipantStatus;
+    countryId?: number;
+    userId?: number;
   }): Observable<ParticipantListResponse> {
     this.loadingSubject.next(true);
 
+    // Obtener usuario autenticado
+    const user = this.tokenStorageService.getUser();
+    const role = (user as any)?.role;
+    const countryId = (user as any)?.countryId;
+    const userId = (user as any)?.id;
+
+    // Clonar filtros para no mutar el objeto original
+    const mergedFilters: any = { ...filters };
+
+    // Filtrado automático según rol
+    if (role === 'ADMIN_PAIS' && countryId) {
+      mergedFilters.countryId = countryId;
+    } else if (role === 'USUARIO' && userId) {
+      mergedFilters.userId = userId;
+    }
+
     let params = '';
-    if (filters) {
+    if (mergedFilters) {
       const searchParams = new URLSearchParams();
-      Object.entries(filters).forEach(([key, value]) => {
+      Object.entries(mergedFilters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
           searchParams.append(key, value.toString());
         }

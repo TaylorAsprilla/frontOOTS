@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { TranslocoService } from '@ngneat/transloco';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 /**
  * Países soportados por el sistema
@@ -74,7 +76,10 @@ export class CountryService {
   private currentLanguageSubject = new BehaviorSubject<SupportedLanguage>('es-CO');
   public currentLanguage$: Observable<SupportedLanguage> = this.currentLanguageSubject.asObservable();
 
-  constructor(private translocoService: TranslocoService) {
+  constructor(
+    private translocoService: TranslocoService,
+    private http: HttpClient,
+  ) {
     this.initializeLanguage();
     this.loadSavedCountry();
   }
@@ -295,5 +300,29 @@ export class CountryService {
     }
 
     return translation;
+  }
+
+  /**
+   * Obtener todos los países disponibles
+   */
+
+  getCountries(): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/countries`);
+  }
+
+  /**
+   * Crear un nuevo país
+   */
+
+  createCountry(country: { name: string; code: string }): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/countries`, country);
+  }
+
+  /**
+   * Editar un país
+   */
+
+  updateCountry(id: number, country: { name: string; code: string }): Observable<any> {
+    return this.http.patch(`${environment.apiUrl}/countries/${id}`, country);
   }
 }

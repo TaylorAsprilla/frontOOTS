@@ -52,6 +52,15 @@
                     }
                   </div>
                 </div>
+                <button
+                  *ngIf="canCreateCase()"
+                  class="btn btn-success ms-2"
+                  [routerLink]="['/cases/create']"
+                  [attr.title]="'cases.addNew' | transloco"
+                >
+                  <i class="mdi mdi-folder-plus"></i>
+                  <span class="ms-1 d-none d-md-inline">{{ 'cases.addNew' | transloco }}</span>
+                </button>
               </div>
             </div>
           </div>
@@ -89,7 +98,7 @@
                       {{ 'cases.createdDate' | transloco }}
                       <i [class]="getSortIcon('createdAt')" class="ms-1"></i>
                     </th>
-                    <th class="text-center">{{ 'app.actions' | transloco }}</th>
+                    <th class="text-end">{{ 'app.actions' | transloco }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -213,28 +222,62 @@
             }
           }
 
-          <!-- Empty State -->
-          @if (!isLoading && filteredCases.length === 0) {
-            <div class="text-center py-5">
-              <div class="mb-3">
-                <i class="mdi mdi-folder-search display-4 text-muted"></i>
-              </div>
-              <h5 class="text-muted">{{ 'cases.noCasesFound' | transloco }}</h5>
-              <p class="text-muted mb-3">
-                @if (searchForm.value.searchTerm || statusFilter !== 'all') {
-                  {{ 'cases.noCasesFilterHint' | transloco }}
-                } @else {
-                  {{ 'cases.noCasesCreateHint' | transloco }}
-                }
-              </p>
-              @if (searchForm.value.searchTerm || statusFilter !== 'all') {
-                <button type="button" class="btn btn-outline-secondary" (click)="clearSearch()">
-                  <i class="mdi mdi-filter-remove me-1"></i>
-                  {{ 'app.clearFilters' | transloco }}
-                </button>
-              }
-            </div>
-          }
+          <tbody>
+            @for (caseItem of filteredCases; track caseItem.id) {
+              <tr>
+                <td>
+                  <span class="fw-bold text-primary">{{ caseItem.id }}</span>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div>
+                      <h6 class="mb-0">{{ getParticipantName(caseItem) }}</h6>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span
+                    [ngbTooltip]="caseItem.consultationReason?.length > 120 ? caseItem.consultationReason : ''"
+                    placement="top"
+                  >
+                    {{
+                      caseItem.consultationReason?.length > 120
+                        ? (caseItem.consultationReason | slice: 0 : 120) + '…'
+                        : caseItem.consultationReason
+                    }}
+                  </span>
+                </td>
+                <td>
+                  <span [class]="getStatusBadgeClass(caseItem.status)">
+                    {{ 'cases.' + caseItem.status | transloco }}
+                  </span>
+                  @if (getAppointmentAlert(caseItem); as alertLevel) {
+                    <span
+                      [class]="getAppointmentAlertClass(caseItem)"
+                      [ngbTooltip]="getAppointmentAlertLabel(caseItem)"
+                      placement="top"
+                    >
+                      <i
+                        class="mdi"
+                        [class.mdi-calendar-alert]="alertLevel === 'overdue'"
+                        [class.mdi-calendar-clock]="alertLevel === 'today'"
+                        [class.mdi-calendar-check]="alertLevel === 'soon'"
+                      ></i>
+                    </span>
+                  }
+                </td>
+                <td>
+                  @if (caseItem.createdAt) {
+                    <span>{{ caseItem.createdAt | localizedDate: 'short' }}</span>
+                  }
+                </td>
+                <td class="text-end">
+                  <button *ngIf="canCreateCase()" class="btn btn-primary btn-sm me-2">Editar</button>
+                  <button *ngIf="canCreateCase()" class="btn btn-danger btn-sm">Eliminar</button>
+                </td>
+              </tr>
+            }
+          </tbody>
         </div>
       </div>
     </div>

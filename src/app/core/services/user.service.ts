@@ -38,7 +38,7 @@ export class UserService {
   }
 
   /**
-   * Obtiene la lista de todos los usuarios desde el backend real
+   * Obtiene la lista de todos los usuarios desde el backend real, filtrando automáticamente por país o usuario según el rol
    * @param page - Número de página (opcional)
    * @param limit - Límite de usuarios por página (opcional)
    * @returns Observable<UserModel[]>
@@ -46,12 +46,25 @@ export class UserService {
   getUsers(page?: number, limit?: number): Observable<UserModel[]> {
     let params = new HttpParams();
 
+    // Obtener usuario autenticado
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const role = user?.role;
+    const countryId = user?.countryId;
+    const userId = user?.id;
+
     if (page !== undefined) {
       params = params.set('page', page.toString());
     }
 
     if (limit !== undefined) {
       params = params.set('limit', limit.toString());
+    }
+
+    // Filtrado automático según rol
+    if (role === 'ADMIN_PAIS' && countryId) {
+      params = params.set('countryId', countryId.toString());
+    } else if (role === 'USUARIO' && userId) {
+      params = params.set('userId', userId.toString());
     }
 
     // Interface para la respuesta del backend que incluye data, statusCode, message, etc.

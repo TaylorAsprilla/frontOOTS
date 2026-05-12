@@ -43,6 +43,7 @@
                   <span class="ms-1">{{ isLoading ? ('app.loading' | transloco) : ('app.refresh' | transloco) }}</span>
                 </button>
                 <button
+                  *ngIf="canCreateParticipant()"
                   class="btn btn-success ms-2"
                   [routerLink]="['/participants/create']"
                   [attr.title]="'participants.addNew' | transloco"
@@ -100,6 +101,9 @@
                         {{ 'participants.createdAt' | transloco }}
                       </div>
                     </th>
+                    <th class="border-0 text-end">
+                      {{ 'app.actions' | transloco }}
+                    </th>
                     <th class="border-0 text-center">
                       <i class="fas fa-cog me-1 text-primary"></i>
                       {{ 'app.actions' | transloco }}
@@ -110,68 +114,16 @@
                   @for (participant of filteredParticipants; track participant.id) {
                     <tr class="participant-row" (click)="viewParticipant(participant)" style="cursor: pointer">
                       <td>
-                        <div class="d-flex align-items-center">
-                          <div class="avatar-wrapper position-relative me-3">
-                            <div class="avatar-circle bg-gradient-primary">
-                              <span class="avatar-initials">
-                                {{ participant.firstName.charAt(0).toUpperCase()
-                                }}{{ participant.firstLastName.charAt(0).toUpperCase() }}
-                              </span>
-                            </div>
-                            <span class="avatar-status-indicator"></span>
-                          </div>
-                          <div class="participant-info">
-                            <h6 class="participant-name mb-0">
-                              {{ participant.firstName }} {{ participant.firstLastName }}
-                            </h6>
-                            @if (participant.secondName || participant.secondLastName) {
-                              <small class="participant-secondary-name text-muted d-block">
-                                {{ participant.secondName }} {{ participant.secondLastName }}
-                              </small>
-                            }
-                          </div>
-                        </div>
+                        {{ participant.firstName }} {{ participant.secondName }} {{ participant.firstLastName }}
+                        {{ participant.secondLastName }}
                       </td>
-                      <td>
-                        <div class="document-info">
-                          <span class="fw-semibold text-dark d-block">{{ participant.documentNumber }}</span>
-                          <small class="badge bg-light text-dark border">CC</small>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="contact-info">
-                          <a
-                            [href]="'mailto:' + participant.email"
-                            class="text-primary text-decoration-none d-flex align-items-center"
-                          >
-                            <i class="far fa-envelope me-1"></i>
-                            <span class="text-truncate" style="max-width: 200px">{{ participant.email }}</span>
-                          </a>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="contact-info">
-                          <a
-                            [href]="'tel:' + participant.phoneNumber"
-                            class="text-primary text-decoration-none d-flex align-items-center"
-                          >
-                            <i class="fas fa-phone-alt me-1"></i>
-                            {{ participant.phoneNumber }}
-                          </a>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="date-info">
-                          @if (participant.createdAt) {
-                            <span class="text-muted d-block">
-                              <i class="far fa-calendar me-1"></i>
-                              {{ participant.createdAt | localizedDate: 'dd/MM/yyyy' }}
-                            </span>
-                            <small class="text-muted">{{ participant.createdAt | date: 'HH:mm' }}</small>
-                          } @else {
-                            <span class="text-muted">{{ 'app.notAvailable' | transloco }}</span>
-                          }
-                        </div>
+                      <td>{{ participant.documentNumber }}</td>
+                      <td>{{ participant.email }}</td>
+                      <td>{{ participant.phoneNumber }}</td>
+                      <td>{{ participant.createdAt | localizedDate }}</td>
+                      <td class="text-end">
+                        <button *ngIf="canCreateParticipant()" class="btn btn-primary btn-sm me-2">Editar</button>
+                        <button *ngIf="canCreateParticipant()" class="btn btn-danger btn-sm">Eliminar</button>
                       </td>
                       <td class="text-center" (click)="$event.stopPropagation()">
                         <div class="action-buttons">

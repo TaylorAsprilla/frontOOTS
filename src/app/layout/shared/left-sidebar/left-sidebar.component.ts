@@ -3,6 +3,7 @@ import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbCollapse } from '@ng-bootstrap/ng-bootstrap';
 import { EventService } from 'src/app/core/services/event.service';
 import { AuthenticationService } from '../../../core/services/auth.service';
+import { RoleService } from 'src/app/core/services/role.service';
 import { MENU_ITEMS } from '../config/menu-meta';
 import { MenuItem } from '../models/menu.model';
 import { findAllParent, findMenuItem } from '../helper/utils';
@@ -30,9 +31,16 @@ export class LeftSidebarComponent implements OnInit, AfterViewInit {
 
   loggedInUser: any = {};
 
+  isAdmin = false;
+
   menuItems: MenuItem[] = [];
 
-  constructor(router: Router, private authService: AuthenticationService, private eventService: EventService) {
+  constructor(
+    router: Router,
+    private authService: AuthenticationService,
+    private eventService: EventService,
+    private roleService: RoleService,
+  ) {
     router.events.forEach((event) => {
       if (event instanceof NavigationEnd) {
         this._activateMenu(); //actiavtes menu
@@ -44,6 +52,7 @@ export class LeftSidebarComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.initMenu();
     this.loggedInUser = this.authService.currentUser();
+    this.isAdmin = this.roleService.isAdmin();
 
     this.eventService.subscribe('toggleTwoToneIcons', (enable) => {
       this.hasTwoToneIcons = enable;

@@ -13,6 +13,7 @@ import { PageTitleComponent } from '../../../shared/page-title/page-title.compon
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { CaseStatus } from '../../../core/interfaces/case.interface';
 import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
+import { RoleService } from '../../../core/services/role.service';
 
 @Component({
   selector: 'app-case-list',
@@ -32,6 +33,11 @@ import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
   styleUrls: ['./case-list.component.scss'],
 })
 export class CaseListComponent implements OnInit, OnDestroy {
+  private readonly roleService = inject(RoleService);
+  canCreateCase(): boolean {
+    // Solo ADMIN o COORDINADOR pueden crear
+    return this.roleService.hasAnyRole('ADMIN', 'COORDINADOR');
+  }
   private readonly caseService = inject(CaseService);
   private readonly tokenStorageService = inject(TokenStorageService);
   private readonly notificationService = inject(NotificationService);

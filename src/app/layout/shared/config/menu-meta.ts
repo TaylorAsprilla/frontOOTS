@@ -207,6 +207,14 @@ const MENU_ITEMS: MenuItem[] = [
         link: '/configuration/process-types',
         parentKey: 'configuration-management',
       },
+      {
+        key: 'configuration-countries',
+        label: 'Países',
+        icon: 'globe',
+        link: '/configuration/countries',
+        parentKey: 'configuration-management',
+        adminOnly: true,
+      },
     ],
   },
   // {

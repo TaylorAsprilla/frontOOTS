@@ -1,0 +1,70 @@
+<div class="container mt-4">
+  <h2>Gestión de Países</h2>
+
+  <form [formGroup]="countryForm" (ngSubmit)="submit()" class="mb-4">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-5">
+        <label for="name" class="form-label">Nombre</label>
+        <input
+          id="name"
+          formControlName="name"
+          class="form-control"
+          [class.is-invalid]="countryForm.get('name')?.invalid && countryForm.get('name')?.touched"
+        />
+        @if (countryForm.get('name')?.invalid && countryForm.get('name')?.touched) {
+          <div class="invalid-feedback">El nombre es obligatorio</div>
+        }
+      </div>
+      <div class="col-md-5">
+        <label for="code" class="form-label">Código</label>
+        <input
+          id="code"
+          formControlName="code"
+          class="form-control"
+          [class.is-invalid]="countryForm.get('code')?.invalid && countryForm.get('code')?.touched"
+        />
+        @if (countryForm.get('code')?.invalid && countryForm.get('code')?.touched) {
+          <div class="invalid-feedback">El código es obligatorio</div>
+        }
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100" [disabled]="countryForm.invalid || loading">
+          {{ editingCountry ? 'Actualizar' : 'Crear' }}
+        </button>
+      </div>
+    </div>
+    @if (editingCountry) {
+      <div class="mt-2">
+        <button type="button" class="btn btn-secondary btn-sm" (click)="cancelEdit()">Cancelar edición</button>
+      </div>
+    }
+  </form>
+
+  @if (loading) {
+    <div class="alert alert-info">Cargando...</div>
+  }
+  @if (error) {
+    <div class="alert alert-danger">{{ error }}</div>
+  }
+
+  <table class="table table-bordered table-hover mt-3">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Código</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (country of countries; track country) {
+        <tr>
+          <td>{{ country.name }}</td>
+          <td>{{ country.code }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning me-2" (click)="edit(country)">Editar</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

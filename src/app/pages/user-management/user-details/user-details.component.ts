@@ -12,6 +12,7 @@ import { UserService } from 'src/app/core/services/user.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { UserModel } from 'src/app/core/models/user.model';
 import { Subject, takeUntil } from 'rxjs';
+import { RoleService } from 'src/app/core/services/role.service';
 
 @Component({
   selector: 'app-user-details',
@@ -30,6 +31,8 @@ import { Subject, takeUntil } from 'rxjs';
   styleUrls: ['./user-details.component.scss'],
 })
 export class UserDetailsComponent implements OnInit, OnDestroy {
+  // Inyección de servicios para roles
+  private readonly roleService = inject(RoleService);
   private readonly modalService = inject(NgbModal);
   modalRef: NgbModalRef | null = null;
   selectedUser: UserInfoInterface | null = null;
@@ -84,6 +87,13 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       { label: 'Users Directory', path: '/user-management/list', active: true },
     ];
     this.loadUsers();
+  }
+
+  /**
+   * Indica si el usuario puede crear usuarios
+   */
+  canCreateUser(): boolean {
+    return this.roleService.canManageUsers();
   }
 
   ngOnDestroy(): void {
@@ -219,7 +229,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
           usuario.segundoApellido?.toLowerCase().includes(this.searchTerm) ||
           usuario.email?.toLowerCase().includes(this.searchTerm) ||
           usuario.celular?.toLowerCase().includes(this.searchTerm) ||
-          usuario.cargo?.toLowerCase().includes(this.searchTerm)
+          usuario.cargo?.toLowerCase().includes(this.searchTerm),
       );
 
       this.totalUsers = filteredUsers.length;

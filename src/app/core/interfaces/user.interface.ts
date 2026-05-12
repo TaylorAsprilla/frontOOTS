@@ -13,6 +13,7 @@ export interface UserInterface {
   address: string;
   city: string;
   birthDate: string;
+  country: string;
 }
 
 /**
@@ -30,6 +31,7 @@ export interface CreateUserRequest {
   address: string;
   city: string;
   birthDate: string;
+  country: string;
 }
 
 /**
@@ -46,6 +48,7 @@ export interface UpdateUserRequest {
   address?: string;
   city?: string;
   birthDate?: string;
+  country?: string;
 }
 
 /**

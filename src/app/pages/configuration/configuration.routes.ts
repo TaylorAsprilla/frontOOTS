@@ -52,6 +52,11 @@ export const CONFIGURATION_ROUTES: Routes = [
     loadChildren: () => import('./process-types/process-types.routes').then((m) => m.PROCESS_TYPES_ROUTES),
   },
   {
+    path: 'countries',
+    loadChildren: () =>
+      import('./country-management/country-management.routes').then((m) => m.COUNTRY_MANAGEMENT_ROUTES),
+  },
+  {
     path: '',
     redirectTo: 'academic-level',
     pathMatch: 'full',

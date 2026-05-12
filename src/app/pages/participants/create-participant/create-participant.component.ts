@@ -379,6 +379,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         emergencyContactState: [''],
         emergencyContactZipCode: [''],
         emergencyContactRelationship: ['', Validators.required],
+        country: ['', Validators.required],
       }),
     });
 

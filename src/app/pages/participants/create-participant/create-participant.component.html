@@ -464,6 +464,35 @@
                                 />
                               </div>
                             </div>
+
+                            <!-- Fila País -->
+                            <div class="row mb-3">
+                              <label class="col-md-4 col-form-label obligatorio text-start" for="country">
+                                {{ 'participants.country' | transloco }}
+                              </label>
+                              <div class="col-md-8">
+                                <select
+                                  class="form-select"
+                                  [class.is-invalid]="hasFieldError('personalData.country')"
+                                  id="country"
+                                  name="country"
+                                  formControlName="country"
+                                >
+                                  <option value="" disabled selected>{{ 'app.select' | transloco }}</option>
+                                  <option value="Colombia">Colombia</option>
+                                  <option value="Perú">Perú</option>
+                                  <option value="México">México</option>
+                                  <option value="Argentina">Argentina</option>
+                                  <option value="Chile">Chile</option>
+                                  <option value="Otro">Otro</option>
+                                </select>
+                                @if (hasFieldError('personalData.country')) {
+                                  <div class="invalid-feedback">
+                                    {{ getFieldError('personalData.country') | transloco }}
+                                  </div>
+                                }
+                              </div>
+                            </div>
                           </div>
 
                           <!-- Campo EPS personalizada ocupa toda la fila -->

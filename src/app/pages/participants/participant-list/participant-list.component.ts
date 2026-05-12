@@ -13,6 +13,7 @@ import { PageTitleComponent } from '../../../shared/page-title/page-title.compon
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { Participant, ParticipantStatus } from '../../../core/interfaces/participant.interface';
 import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
+import { RoleService } from '../../../core/services/role.service';
 
 @Component({
   selector: 'app-participant-list',
@@ -32,6 +33,11 @@ import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
   styleUrls: ['./participant-list.component.scss'],
 })
 export class ParticipantListComponent implements OnInit, OnDestroy {
+  private readonly roleService = inject(RoleService);
+  canCreateParticipant(): boolean {
+    // Solo ADMIN o COORDINADOR pueden crear
+    return this.roleService.hasAnyRole('ADMIN', 'COORDINADOR');
+  }
   private readonly participantService = inject(ParticipantService);
   private readonly notificationService = inject(NotificationService);
   private readonly authService = inject(AuthenticationService);
