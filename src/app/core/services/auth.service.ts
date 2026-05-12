@@ -23,7 +23,7 @@ import {
   LoginHistoryResponse,
 } from '../interfaces/auth.interface';
 import { TokenStorageService } from './token-storage.service';
-import { CountryService, SupportedLanguage } from './country.service';
+import { CountryService } from './country.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -88,10 +88,10 @@ export class AuthenticationService {
         // Guardar refresh token por separado
         this.tokenStorage.saveRefreshToken(data.refresh_token);
 
-        // Aplicar idioma según el país del usuario
-        const locale = data.user.country?.locale;
-        if (locale) {
-          this.countryService.setLanguage(locale as SupportedLanguage);
+        // Aplicar país e idioma según el usuario logueado
+        const iso = data.user.country?.iso;
+        if (iso) {
+          this.countryService.setCountry(iso);
         }
 
         return authenticatedUser;
