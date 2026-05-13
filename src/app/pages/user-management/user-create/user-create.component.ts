@@ -74,6 +74,9 @@ export class UserCreateComponent implements OnInit, OnDestroy {
 
     if (this.isEditMode) {
       this.loadUser();
+    } else {
+      this.userForm.get('phoneNumber')!.addValidators(Validators.required);
+      this.userForm.get('phoneNumber')!.updateValueAndValidity();
     }
   }
 
@@ -124,8 +127,12 @@ export class UserCreateComponent implements OnInit, OnDestroy {
       .getRoles()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (roles) => { this.roles = roles; },
-        error: (error) => { console.error('Error loading roles:', error); },
+        next: (roles) => {
+          this.roles = roles;
+        },
+        error: (error) => {
+          console.error('Error loading roles:', error);
+        },
       });
   }
 
@@ -137,7 +144,7 @@ export class UserCreateComponent implements OnInit, OnDestroy {
       firstLastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       secondLastName: ['', [Validators.maxLength(50)]],
       email: ['', [Validators.required, Validators.email]],
-      phoneNumber: ['', [Validators.required, Validators.maxLength(20)]],
+      phoneNumber: ['', [Validators.maxLength(20)]],
       documentNumber: ['', [Validators.required, Validators.minLength(6)]],
       documentTypeId: [null, [Validators.required]],
       address: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]],
@@ -171,7 +178,7 @@ export class UserCreateComponent implements OnInit, OnDestroy {
   private fillFormFromUser(user: UserModel): void {
     const birthDateStr = user.birthDate ? new Date(user.birthDate).toISOString().split('T')[0] : '';
     this.userForm.patchValue({
-      mitaNumber: (user as any).mitaNumber ?? '',
+      mitaNumber: user.mitaNumber ?? '',
       firstName: user.firstName ?? '',
       secondName: user.secondName ?? '',
       firstLastName: user.firstLastName ?? '',
@@ -182,11 +189,11 @@ export class UserCreateComponent implements OnInit, OnDestroy {
       documentTypeId: user.documentTypeId ?? null,
       address: user.address ?? '',
       city: user.city ?? '',
-      countryId: (user as any).countryId ?? null,
+      countryId: user.countryId ?? null,
       birthDate: birthDateStr,
       position: user.position ?? '',
-      headquarters: (user as any).headquarters ?? '',
-      roleId: (user as any).roleId ?? null,
+      headquarters: user.headquarters ?? '',
+      roleId: user.roleId ?? null,
     });
   }
 
@@ -206,14 +213,18 @@ export class UserCreateComponent implements OnInit, OnDestroy {
           : formValue.phoneNumber?.internationalNumber;
 
       if (this.isEditMode) {
+        const newDocumentNumber = formValue.documentNumber?.trim();
+        const documentNumberChanged = newDocumentNumber !== this.originalUser?.documentNumber;
+        const phoneNumberChanged = phoneNumber !== this.originalUser?.phoneNumber;
+
         const payload: UpdateUserRequest = {
           firstName: formValue.firstName?.trim(),
           secondName: formValue.secondName?.trim() || undefined,
           firstLastName: formValue.firstLastName?.trim(),
           secondLastName: formValue.secondLastName?.trim() || undefined,
           email: formValue.email?.trim().toLowerCase(),
-          phoneNumber,
-          documentNumber: formValue.documentNumber?.trim(),
+          ...(phoneNumberChanged ? { phoneNumber } : {}),
+          ...(documentNumberChanged ? { documentNumber: newDocumentNumber } : {}),
           documentTypeId: formValue.documentTypeId,
           address: formValue.address?.trim(),
           city: formValue.city?.trim(),
@@ -222,7 +233,8 @@ export class UserCreateComponent implements OnInit, OnDestroy {
           position: formValue.position?.trim(),
           headquarters: formValue.headquarters?.trim(),
           roleId: formValue.roleId,
-          mitaNumber: formValue.mitaNumber?.trim() || undefined,
+          mitaNumber:
+            formValue.mitaNumber !== '' && formValue.mitaNumber != null ? Number(formValue.mitaNumber) : undefined,
         };
 
         this.userService
@@ -232,10 +244,14 @@ export class UserCreateComponent implements OnInit, OnDestroy {
             next: () => {
               this.notificationService
                 .showSuccess('Usuario actualizado exitosamente', { title: '¡Éxito!', timer: 2000 })
-                .then(() => { this.router.navigate(['/users/details']); });
+                .then(() => {
+                  this.router.navigate(['/users/details']);
+                });
               this.isSubmitting = false;
             },
-            error: (error) => { this.handleSubmitError(error, true); },
+            error: (error) => {
+              this.handleSubmitError(error, true);
+            },
           });
       } else {
         const registerRequest = {
@@ -254,7 +270,7 @@ export class UserCreateComponent implements OnInit, OnDestroy {
           position: formValue.position?.trim(),
           headquarters: formValue.headquarters?.trim(),
           roleId: formValue.roleId,
-          mitaNumber: formValue.mitaNumber?.trim() || null,
+          mitaNumber: formValue.mitaNumber !== '' && formValue.mitaNumber != null ? Number(formValue.mitaNumber) : null,
         };
 
         this.userService
@@ -265,13 +281,17 @@ export class UserCreateComponent implements OnInit, OnDestroy {
               this.notificationService
                 .showSuccess('Usuario registrado exitosamente', {
                   title: '¡Éxito!',
-                  text: (user.firstName + ' ' + user.firstLastName + ' ha sido registrado correctamente.'),
+                  text: user.firstName + ' ' + user.firstLastName + ' ha sido registrado correctamente.',
                   timer: 2000,
                 })
-                .then(() => { this.router.navigate(['/users/details']); });
+                .then(() => {
+                  this.router.navigate(['/users/details']);
+                });
               this.isSubmitting = false;
             },
-            error: (error) => { this.handleSubmitError(error, false); },
+            error: (error) => {
+              this.handleSubmitError(error, false);
+            },
           });
       }
     } else {
@@ -288,8 +308,8 @@ export class UserCreateComponent implements OnInit, OnDestroy {
     const status: number = error?.status ?? 0;
     const action = isEdit ? 'actualizar' : 'registrar';
 
-    let errorTitle = ('Error al ' + action + ' usuario');
-    if (status === 409) errorTitle = ('Conflicto al ' + action + ' usuario');
+    let errorTitle = 'Error al ' + action + ' usuario';
+    if (status === 409) errorTitle = 'Conflicto al ' + action + ' usuario';
     else if (status === 400 || status === 422) errorTitle = 'Datos inválidos';
     else if (status === 500) errorTitle = 'Error del servidor';
 
@@ -303,7 +323,7 @@ export class UserCreateComponent implements OnInit, OnDestroy {
           ? (rawMessages as string[]).map((m) => '• ' + m).join('<br>')
           : String(rawMessages);
       } else {
-        errorMessage = ('Ocurrió un error al intentar ' + action + ' el usuario. Por favor intente nuevamente.');
+        errorMessage = 'Ocurrió un error al intentar ' + action + ' el usuario. Por favor intente nuevamente.';
       }
     }
 
@@ -324,27 +344,34 @@ export class UserCreateComponent implements OnInit, OnDestroy {
           confirmButtonText: 'Sí, cancelar',
           cancelButtonText: 'Continuar editando',
         })
-        .then((result) => { if (result.isConfirmed) { this.router.navigate([targetRoute]); } });
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.router.navigate([targetRoute]);
+          }
+        });
     } else {
       this.router.navigate([targetRoute]);
     }
   }
 
   private markFormGroupTouched(): void {
-    Object.keys(this.userForm.controls).forEach((key) => { this.userForm.get(key)?.markAsTouched(); });
+    Object.keys(this.userForm.controls).forEach((key) => {
+      this.userForm.get(key)?.markAsTouched();
+    });
   }
 
   onPhoneBlur(event: FocusEvent): void {
     const wrapper = event.currentTarget as HTMLElement;
-    if (!wrapper.contains(event.relatedTarget as Node)) { this.validatePhoneNumber(); }
+    if (!wrapper.contains(event.relatedTarget as Node)) {
+      this.validatePhoneNumber();
+    }
   }
 
   validatePhoneNumber(): void {
     const phoneControl = this.userForm.get('phoneNumber');
     const value = phoneControl?.value;
     if (value && phoneControl?.valid) {
-      const internationalNumber =
-        typeof value === 'string' ? value : ((value.internationalNumber as string) ?? '');
+      const internationalNumber = typeof value === 'string' ? value : ((value.internationalNumber as string) ?? '');
       if (!internationalNumber) return;
       // Skip uniqueness check if the number has not changed in edit mode
       if (this.isEditMode && internationalNumber === this.originalUser?.phoneNumber) return;
@@ -354,14 +381,18 @@ export class UserCreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (exists) => {
             if (phoneControl) {
-              if (exists) { phoneControl.setErrors({ phoneExists: true }); }
-              else if (phoneControl.hasError('phoneExists')) {
-                const errors = { ...phoneControl.errors }; delete errors['phoneExists'];
+              if (exists) {
+                phoneControl.setErrors({ phoneExists: true });
+              } else if (phoneControl.hasError('phoneExists')) {
+                const errors = { ...phoneControl.errors };
+                delete errors['phoneExists'];
                 phoneControl.setErrors(Object.keys(errors).length ? errors : null);
               }
             }
           },
-          error: (error) => { console.error('Error checking phone existence:', error); },
+          error: (error) => {
+            console.error('Error checking phone existence:', error);
+          },
         });
     }
   }
@@ -377,14 +408,18 @@ export class UserCreateComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (exists) => {
             if (emailControl) {
-              if (exists) { emailControl.setErrors({ emailExists: true }); }
-              else if (emailControl.hasError('emailExists')) {
-                const errors = { ...emailControl.errors }; delete errors['emailExists'];
+              if (exists) {
+                emailControl.setErrors({ emailExists: true });
+              } else if (emailControl.hasError('emailExists')) {
+                const errors = { ...emailControl.errors };
+                delete errors['emailExists'];
                 emailControl.setErrors(Object.keys(errors).length ? errors : null);
               }
             }
           },
-          error: (error) => { console.error('Error checking email existence:', error); },
+          error: (error) => {
+            console.error('Error checking email existence:', error);
+          },
         });
     }
   }
@@ -401,17 +436,28 @@ export class UserCreateComponent implements OnInit, OnDestroy {
           next: (response) => {
             this.isLookingUpDocument = false;
             if (!response) return;
-            if (response.ok && response.usuario) { this.fillFormFromExternal(response.usuario); return; }
+            if (response.ok && response.usuario) {
+              this.fillFormFromExternal(response.usuario);
+              return;
+            }
             const status = response._httpStatus;
             if (status === 404) {
-              this.notificationService.showWarning(response.msg ?? 'No se encontró ningún usuario con ese número Mita.', { title: 'Usuario no encontrado', timer: 4000 });
+              this.notificationService.showWarning(
+                response.msg ?? 'No se encontró ningún usuario con ese número Mita.',
+                { title: 'Usuario no encontrado', timer: 4000 },
+              );
             } else if (status === 400) {
               console.warn('Búsqueda por Mita (400):', response.msg);
             } else if (status === 500) {
-              this.notificationService.showWarning('Error en el microservicio al buscar por Mita. Los campos deberán llenarse manualmente.', { title: 'Error del servidor externo', timer: 5000 });
+              this.notificationService.showWarning(
+                'Error en el microservicio al buscar por Mita. Los campos deberán llenarse manualmente.',
+                { title: 'Error del servidor externo', timer: 5000 },
+              );
             }
           },
-          error: () => { this.isLookingUpDocument = false; },
+          error: () => {
+            this.isLookingUpDocument = false;
+          },
         });
     }
   }
@@ -438,17 +484,28 @@ export class UserCreateComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.isLookingUpDocument = false;
           if (!response) return;
-          if (response.ok && response.usuario) { this.fillFormFromExternal(response.usuario); return; }
+          if (response.ok && response.usuario) {
+            this.fillFormFromExternal(response.usuario);
+            return;
+          }
           const status = response._httpStatus;
           if (status === 404) {
-            this.notificationService.showWarning(response.msg ?? 'No se encontró ningún usuario con ese número de documento.', { title: 'Usuario no encontrado', timer: 4000 });
+            this.notificationService.showWarning(
+              response.msg ?? 'No se encontró ningún usuario con ese número de documento.',
+              { title: 'Usuario no encontrado', timer: 4000 },
+            );
           } else if (status === 400) {
             console.warn('Búsqueda por documento (400):', response.msg);
           } else if (status === 500) {
-            this.notificationService.showWarning('Error en el microservicio al buscar el documento. Los campos deberán llenarse manualmente.', { title: 'Error del servidor externo', timer: 5000 });
+            this.notificationService.showWarning(
+              'Error en el microservicio al buscar el documento. Los campos deberán llenarse manualmente.',
+              { title: 'Error del servidor externo', timer: 5000 },
+            );
           }
         },
-        error: () => { this.isLookingUpDocument = false; },
+        error: () => {
+          this.isLookingUpDocument = false;
+        },
       });
   }
 
@@ -465,7 +522,9 @@ export class UserCreateComponent implements OnInit, OnDestroy {
     if (usuario.ciudadDireccion) patch['city'] = usuario.ciudadDireccion;
     if (usuario.fechaNacimiento) patch['birthDate'] = usuario.fechaNacimiento;
     if (usuario.paisDireccion) {
-      const matchedCountry = this.countries.find((c) => c.name.toLowerCase() === (usuario.paisDireccion as string).toLowerCase());
+      const matchedCountry = this.countries.find(
+        (c) => c.name.toLowerCase() === (usuario.paisDireccion as string).toLowerCase(),
+      );
       if (matchedCountry?.id) patch['countryId'] = matchedCountry.id;
     }
     this.userForm.patchValue(patch);
@@ -480,14 +539,18 @@ export class UserCreateComponent implements OnInit, OnDestroy {
         next: (exists) => {
           const documentControl = this.userForm.get('documentNumber');
           if (documentControl) {
-            if (exists) { documentControl.setErrors({ documentExists: true }); }
-            else if (documentControl.hasError('documentExists')) {
-              const errors = { ...documentControl.errors }; delete errors['documentExists'];
+            if (exists) {
+              documentControl.setErrors({ documentExists: true });
+            } else if (documentControl.hasError('documentExists')) {
+              const errors = { ...documentControl.errors };
+              delete errors['documentExists'];
               documentControl.setErrors(Object.keys(errors).length ? errors : null);
             }
           }
         },
-        error: (error) => { console.error('Error checking document existence:', error); },
+        error: (error) => {
+          console.error('Error checking document existence:', error);
+        },
       });
   }
 

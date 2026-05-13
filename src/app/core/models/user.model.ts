@@ -9,16 +9,17 @@ export interface UserBackendResponse {
   secondLastName?: string | null;
   phoneNumber: string;
   email: string;
-  position?: string | null; // Cargo del usuario
-  organization?: string | null; // Organización del usuario
+  position?: string | null;
+  headquarters?: string | null;
   documentNumber: string;
   documentTypeId?: number;
   address: string;
   city: string;
-  state: string;
-  zipCode: string;
   birthDate: string; // ISO string from backend
-  status: 'ACTIVE' | 'INACTIVE'; // Backend uses status instead of isActive
+  status: 'ACTIVE' | 'INACTIVE';
+  roleId?: number | null;
+  countryId?: number | null;
+  mitaNumber?: number | null;
   createdAt: string; // ISO string from backend
   updatedAt: string; // ISO string from backend
 }
@@ -37,18 +38,19 @@ export class UserModel {
     public phoneNumber: string,
     public email: string,
     public password: string,
-    public position: string, // Cargo/posición
-    public organization: string, // Organización
+    public position: string,
+    public headquarters: string,
     public documentNumber: string,
     public documentTypeId: number,
     public address: string,
     public city: string,
-    public state: string,
-    public zipCode: string,
     public birthDate: Date,
     public createdAt: Date,
     public updatedAt: Date,
-    public isActive: boolean
+    public isActive: boolean,
+    public roleId: number | null,
+    public countryId: number | null,
+    public mitaNumber: number | null,
   ) {}
 
   /**
@@ -64,18 +66,19 @@ export class UserModel {
       response.phoneNumber,
       response.email,
       '', // password no viene en la respuesta
-      response.position || '', // Cargo/posición
-      response.organization || '', // Organización
+      response.position || '',
+      response.headquarters || '',
       response.documentNumber,
       response.documentTypeId || 1,
       response.address,
       response.city,
-      response.state,
-      response.zipCode || '',
       new Date(response.birthDate),
       new Date(response.createdAt),
       new Date(response.updatedAt),
-      response.status === 'ACTIVE'
+      response.status === 'ACTIVE',
+      response.roleId ?? null,
+      response.countryId ?? null,
+      response.mitaNumber ?? null,
     );
   }
 
@@ -496,11 +499,14 @@ export class UserUtils {
     const averageAge = usersWithAge > 0 ? Math.round(agesSum / usersWithAge) : 0;
 
     // Ciudades más comunes
-    const cityCounts = users.reduce((counts, user) => {
-      const city = user.city.trim();
-      counts[city] = (counts[city] || 0) + 1;
-      return counts;
-    }, {} as Record<string, number>);
+    const cityCounts = users.reduce(
+      (counts, user) => {
+        const city = user.city.trim();
+        counts[city] = (counts[city] || 0) + 1;
+        return counts;
+      },
+      {} as Record<string, number>,
+    );
 
     const topCities = Object.entries(cityCounts)
       .map(([city, count]) => ({ city, count }))
@@ -522,14 +528,17 @@ export class UserUtils {
    * Agrupa usuarios por ciudad
    */
   static groupByCity(users: UserModel[]): Record<string, UserModel[]> {
-    return users.reduce((groups, user) => {
-      const city = user.city.trim();
-      if (!groups[city]) {
-        groups[city] = [];
-      }
-      groups[city].push(user);
-      return groups;
-    }, {} as Record<string, UserModel[]>);
+    return users.reduce(
+      (groups, user) => {
+        const city = user.city.trim();
+        if (!groups[city]) {
+          groups[city] = [];
+        }
+        groups[city].push(user);
+        return groups;
+      },
+      {} as Record<string, UserModel[]>,
+    );
   }
 
   /**
@@ -539,12 +548,15 @@ export class UserUtils {
     const duplicates: Array<{ type: 'email' | 'document'; users: UserModel[] }> = [];
 
     // Duplicados por email
-    const emailGroups = users.reduce((groups, user) => {
-      const email = user.email.toLowerCase().trim();
-      if (!groups[email]) groups[email] = [];
-      groups[email].push(user);
-      return groups;
-    }, {} as Record<string, UserModel[]>);
+    const emailGroups = users.reduce(
+      (groups, user) => {
+        const email = user.email.toLowerCase().trim();
+        if (!groups[email]) groups[email] = [];
+        groups[email].push(user);
+        return groups;
+      },
+      {} as Record<string, UserModel[]>,
+    );
 
     Object.values(emailGroups).forEach((group) => {
       if (group.length > 1) {
@@ -553,12 +565,15 @@ export class UserUtils {
     });
 
     // Duplicados por documento
-    const documentGroups = users.reduce((groups, user) => {
-      const doc = user.documentNumber.trim();
-      if (!groups[doc]) groups[doc] = [];
-      groups[doc].push(user);
-      return groups;
-    }, {} as Record<string, UserModel[]>);
+    const documentGroups = users.reduce(
+      (groups, user) => {
+        const doc = user.documentNumber.trim();
+        if (!groups[doc]) groups[doc] = [];
+        groups[doc].push(user);
+        return groups;
+      },
+      {} as Record<string, UserModel[]>,
+    );
 
     Object.values(documentGroups).forEach((group) => {
       if (group.length > 1) {
