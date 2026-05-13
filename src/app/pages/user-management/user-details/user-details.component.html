@@ -154,6 +154,16 @@
           <h4 class="mb-1 fw-bold">
             {{ selectedUser.primerNombre }} {{ selectedUser.segundoNombre }} {{ selectedUser.primerApellido }}
             {{ selectedUser.segundoApellido }}
+            @if (canCreateUser()) {
+              <button
+                type="button"
+                class="btn btn-link p-0 ms-2 align-baseline"
+                title="Editar usuario"
+                (click)="navigateToEdit(selectedUser)"
+              >
+                <i class="mdi mdi-pencil fs-5 text-primary"></i>
+              </button>
+            }
           </h4>
           <div class="mb-2">
             <span class="d-block h2 fw-bold text-primary" style="font-size: 1rem">
@@ -242,5 +252,121 @@
         </div>
       </div>
     }
+  </div>
+  @if (isAdmin()) {
+    <div class="modal-footer justify-content-center border-0 pb-4">
+      <button type="button" class="btn btn-warning" (click)="openResetPasswordModal(selectedUser!)">
+        <i class="mdi mdi-lock-reset me-1"></i>Restablecer contraseña
+      </button>
+    </div>
+  }
+</ng-template>
+
+<!-- Modal: Restablecer contraseña (solo ADMIN) -->
+<ng-template #resetPasswordModal let-modal>
+  <div class="modal-header bg-warning text-dark">
+    <h5 class="modal-title"><i class="mdi mdi-lock-reset me-2"></i>Restablecer contraseña</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeResetPasswordModal()"></button>
+  </div>
+  <div class="modal-body p-4">
+    @if (selectedUserForReset) {
+      <p class="text-muted mb-3">
+        Establecer nueva contraseña para
+        <strong>{{ selectedUserForReset.primerNombre }} {{ selectedUserForReset.primerApellido }}</strong
+        >. Se enviará un correo de notificación al usuario automáticamente.
+      </p>
+    }
+    <form [formGroup]="resetPasswordForm" (ngSubmit)="submitResetPassword()" novalidate>
+      <!-- Nueva contraseña -->
+      <div class="mb-3">
+        <label for="reset-new-password" class="form-label">Nueva contraseña <span class="text-danger">*</span></label>
+        <div class="input-group">
+          <input
+            [type]="showResetNewPassword ? 'text' : 'password'"
+            id="reset-new-password"
+            class="form-control"
+            formControlName="newPassword"
+            placeholder="Mínimo 8 caracteres"
+            [class.is-invalid]="
+              resetPasswordForm.get('newPassword')?.invalid && resetPasswordForm.get('newPassword')?.touched
+            "
+          />
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="showResetNewPassword = !showResetNewPassword"
+            tabindex="-1"
+          >
+            <i [class]="showResetNewPassword ? 'mdi mdi-eye-off' : 'mdi mdi-eye'"></i>
+          </button>
+        </div>
+        @if (resetPasswordForm.get('newPassword')?.invalid && resetPasswordForm.get('newPassword')?.touched) {
+          <div class="invalid-feedback d-block">
+            @if (resetPasswordForm.get('newPassword')?.errors?.['required']) {
+              <span>La contraseña es obligatoria.</span>
+            } @else if (resetPasswordForm.get('newPassword')?.errors?.['minlength']) {
+              <span>Debe tener al menos 8 caracteres.</span>
+            } @else if (resetPasswordForm.get('newPassword')?.errors?.['pattern']) {
+              <span>Debe incluir mayúscula, minúscula y al menos un número o carácter especial.</span>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Confirmar contraseña -->
+      <div class="mb-4">
+        <label for="reset-confirm-password" class="form-label"
+          >Confirmar contraseña <span class="text-danger">*</span></label
+        >
+        <div class="input-group">
+          <input
+            [type]="showResetConfirmPassword ? 'text' : 'password'"
+            id="reset-confirm-password"
+            class="form-control"
+            formControlName="confirmPassword"
+            placeholder="Repita la nueva contraseña"
+            [class.is-invalid]="
+              resetPasswordForm.get('confirmPassword')?.invalid && resetPasswordForm.get('confirmPassword')?.touched
+            "
+          />
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="showResetConfirmPassword = !showResetConfirmPassword"
+            tabindex="-1"
+          >
+            <i [class]="showResetConfirmPassword ? 'mdi mdi-eye-off' : 'mdi mdi-eye'"></i>
+          </button>
+        </div>
+        @if (resetPasswordForm.get('confirmPassword')?.invalid && resetPasswordForm.get('confirmPassword')?.touched) {
+          <div class="invalid-feedback d-block">
+            @if (resetPasswordForm.get('confirmPassword')?.errors?.['required']) {
+              <span>Confirme la contraseña.</span>
+            } @else if (resetPasswordForm.get('confirmPassword')?.errors?.['passwordMismatch']) {
+              <span>Las contraseñas no coinciden.</span>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="d-flex gap-2 justify-content-end">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="closeResetPasswordModal()"
+          [disabled]="resetPasswordSubmitting"
+        >
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-warning" [disabled]="resetPasswordSubmitting">
+          @if (resetPasswordSubmitting) {
+            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+            Restableciendo...
+          } @else {
+            <i class="mdi mdi-check me-1"></i>Restablecer
+          }
+        </button>
+      </div>
+    </form>
   </div>
 </ng-template>

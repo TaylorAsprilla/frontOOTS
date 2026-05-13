@@ -9,7 +9,10 @@ import { PageTitleComponent } from '../../../shared/page-title/page-title.compon
 import { UserService } from '../../../core/services/user.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { LanguageService, SupportedLanguage } from '../../../core/services/language.service';
+import { CountryService, CountryConfig } from '../../../core/services/country.service';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
+import { UpdateUserRequest } from '../../../core/interfaces/user.interface';
+import { UserModel } from '../../../core/models/user.model';
 import { DocumentType } from '../../configuration/document-types/document-type.interface';
 
 @Component({
@@ -20,42 +23,58 @@ import { DocumentType } from '../../configuration/document-types/document-type.i
   styleUrls: ['./user-create.component.scss'],
 })
 export class UserCreateComponent implements OnInit, OnDestroy {
-  // Dependency injection with inject()
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly userService = inject(UserService);
   private readonly notificationService = inject(NotificationService);
   private readonly languageService = inject(LanguageService);
+  private readonly countryService = inject(CountryService);
   private readonly destroy$ = new Subject<void>();
 
   pageTitle: BreadcrumbItem[] = [];
   userForm!: FormGroup;
   isSubmitting = false;
 
-  // Document types from resolver
-  documentTypes: DocumentType[] = [];
+  // Edit mode state
+  isEditMode = false;
+  isLoading = false;
+  userId?: number;
+  originalUser: UserModel | null = null;
 
-  // Expose enums for template
+  documentTypes: DocumentType[] = [];
+  countries: CountryConfig[] = [];
+  roles: any[] = [];
+  isLookingUpDocument = false;
+
   SearchCountryField = SearchCountryField;
   CountryISO = CountryISO;
   PhoneNumberFormat = PhoneNumberFormat;
 
-  /** Maps each supported language to its default phone country */
   private readonly langToCountry: Record<SupportedLanguage, CountryISO> = {
     'es-CO': CountryISO.Colombia,
     'es-PR': CountryISO.PuertoRico,
     en: CountryISO.UnitedStates,
   };
-
-  /** Default phone country flag derived from the active language */
   defaultPhoneCountry: CountryISO = CountryISO.Colombia;
 
   ngOnInit(): void {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam && !isNaN(Number(idParam))) {
+      this.isEditMode = true;
+      this.userId = Number(idParam);
+    }
+
     this.resolveDefaultPhoneCountry();
     this.setupPageTitle();
     this.loadDocumentTypesFromResolver();
+    this.loadCountries();
+    this.loadRoles();
     this.initializeForm();
+
+    if (this.isEditMode) {
+      this.loadUser();
+    }
   }
 
   ngOnDestroy(): void {
@@ -63,30 +82,30 @@ export class UserCreateComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  /**
-   * Sets the initial phone country flag from the active language and keeps it in sync
-   * if the user changes the language while the page is open.
-   */
   private resolveDefaultPhoneCountry(): void {
     const activeLang = this.languageService.currentLanguage as SupportedLanguage;
     this.defaultPhoneCountry = this.langToCountry[activeLang] ?? CountryISO.Colombia;
-
     this.languageService.currentLanguage$.pipe(takeUntil(this.destroy$)).subscribe((lang) => {
       this.defaultPhoneCountry = this.langToCountry[lang] ?? CountryISO.Colombia;
     });
   }
 
   private setupPageTitle(): void {
-    this.pageTitle = [
-      { label: 'User Management', path: '/users' },
-      { label: 'Users', path: '/users/list' },
-      { label: 'Create User', path: '/users/create', active: true },
-    ];
+    if (this.isEditMode) {
+      this.pageTitle = [
+        { label: 'Gestión de usuarios', path: '/users' },
+        { label: 'Usuarios', path: '/users/details' },
+        { label: 'Editar usuario', path: '', active: true },
+      ];
+    } else {
+      this.pageTitle = [
+        { label: 'User Management', path: '/users' },
+        { label: 'Users', path: '/users/list' },
+        { label: 'Create User', path: '/users/create', active: true },
+      ];
+    }
   }
 
-  /**
-   * Load document types from route resolver
-   */
   private loadDocumentTypesFromResolver(): void {
     const resolvedData = this.route.snapshot.data['documentTypes'];
     if (resolvedData && resolvedData.statusCode === 200) {
@@ -96,22 +115,78 @@ export class UserCreateComponent implements OnInit, OnDestroy {
     }
   }
 
+  private loadCountries(): void {
+    this.countries = this.countryService.getAvailableCountries();
+  }
+
+  private loadRoles(): void {
+    this.userService
+      .getRoles()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (roles) => { this.roles = roles; },
+        error: (error) => { console.error('Error loading roles:', error); },
+      });
+  }
+
   private initializeForm(): void {
     this.userForm = this.fb.group({
+      mitaNumber: ['', [Validators.maxLength(50)]],
       firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       secondName: ['', [Validators.maxLength(50)]],
       firstLastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       secondLastName: ['', [Validators.maxLength(50)]],
       email: ['', [Validators.required, Validators.email]],
       phoneNumber: ['', [Validators.required, Validators.maxLength(20)]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
       documentNumber: ['', [Validators.required, Validators.minLength(6)]],
+      documentTypeId: [null, [Validators.required]],
       address: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]],
       city: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      countryId: [null, [Validators.required]],
       birthDate: ['', [Validators.required]],
       position: ['', [Validators.required, Validators.maxLength(100)]],
       headquarters: ['', [Validators.required, Validators.maxLength(100)]],
-      documentTypeId: ['', [Validators.required]],
+      roleId: [null, [Validators.required]],
+    });
+  }
+
+  private loadUser(): void {
+    this.isLoading = true;
+    this.userService
+      .getUserById(this.userId!)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (user: UserModel) => {
+          this.originalUser = user;
+          this.fillFormFromUser(user);
+          this.isLoading = false;
+        },
+        error: () => {
+          this.isLoading = false;
+          this.router.navigate(['/users/details']);
+        },
+      });
+  }
+
+  private fillFormFromUser(user: UserModel): void {
+    const birthDateStr = user.birthDate ? new Date(user.birthDate).toISOString().split('T')[0] : '';
+    this.userForm.patchValue({
+      mitaNumber: (user as any).mitaNumber ?? '',
+      firstName: user.firstName ?? '',
+      secondName: user.secondName ?? '',
+      firstLastName: user.firstLastName ?? '',
+      secondLastName: user.secondLastName ?? '',
+      email: user.email ?? '',
+      phoneNumber: user.phoneNumber ?? '',
+      documentNumber: user.documentNumber ?? '',
+      documentTypeId: user.documentTypeId ?? null,
+      address: user.address ?? '',
+      city: user.city ?? '',
+      countryId: (user as any).countryId ?? null,
+      birthDate: birthDateStr,
+      position: user.position ?? '',
+      headquarters: (user as any).headquarters ?? '',
+      roleId: (user as any).roleId ?? null,
     });
   }
 
@@ -120,79 +195,85 @@ export class UserCreateComponent implements OnInit, OnDestroy {
     return !!(field && field.invalid && (field.dirty || field.touched));
   }
 
-  generateRandomPassword(length: number = 10): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=';
-    let password = '';
-    for (let i = 0; i < length; i++) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return password;
-  }
-
-  onGeneratePassword(): void {
-    const password = this.generateRandomPassword();
-    this.userForm.get('password')?.setValue(password);
-    this.userForm.get('password')?.markAsDirty();
-  }
-
   onSubmit(): void {
     if (this.userForm.valid) {
       this.isSubmitting = true;
-
-      // Mapear los datos del formulario al formato esperado por el backend
       const formValue = this.userForm.value;
-      const registerRequest = {
-        firstName: formValue.firstName?.trim(),
-        secondName: formValue.secondName?.trim() || null,
-        firstLastName: formValue.firstLastName?.trim(),
-        secondLastName: formValue.secondLastName?.trim() || null,
-        email: formValue.email?.trim().toLowerCase(),
-        phoneNumber: formValue.phoneNumber?.internationalNumber,
-        password: formValue.password,
-        documentNumber: formValue.documentNumber?.trim(),
-        documentTypeId: formValue.documentTypeId,
-        address: formValue.address?.trim(),
-        city: formValue.city?.trim(),
-        birthDate: formValue.birthDate,
-        position: formValue.position?.trim(),
-        headquarters: formValue.headquarters?.trim(),
-      };
 
-      this.userService
-        .registerUser(registerRequest)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (user: any) => {
-            this.notificationService
-              .showSuccess('Usuario registrado exitosamente', {
-                title: '¡Éxito!',
-                text: `${user.firstName} ${user.firstLastName} ha sido registrado correctamente.`,
-                timer: 2000,
-              })
-              .then(() => {
-                this.router.navigate(['/users/details']);
-              });
-            this.isSubmitting = false;
-          },
-          error: (error) => {
-            this.isSubmitting = false;
-            let errorTitle = 'Error al registrar usuario';
-            let errorMessage = 'Ocurrió un error al intentar registrar el usuario. Por favor intente nuevamente.';
+      const phoneNumber =
+        typeof formValue.phoneNumber === 'string'
+          ? formValue.phoneNumber.trim()
+          : formValue.phoneNumber?.internationalNumber;
 
-            // Extraer mensaje de error del backend si está disponible
-            if (error?.error?.message) {
-              errorMessage = error.error.message;
-            } else if (error?.message) {
-              errorMessage = error.message;
-            }
+      if (this.isEditMode) {
+        const payload: UpdateUserRequest = {
+          firstName: formValue.firstName?.trim(),
+          secondName: formValue.secondName?.trim() || undefined,
+          firstLastName: formValue.firstLastName?.trim(),
+          secondLastName: formValue.secondLastName?.trim() || undefined,
+          email: formValue.email?.trim().toLowerCase(),
+          phoneNumber,
+          documentNumber: formValue.documentNumber?.trim(),
+          documentTypeId: formValue.documentTypeId,
+          address: formValue.address?.trim(),
+          city: formValue.city?.trim(),
+          countryId: formValue.countryId,
+          birthDate: formValue.birthDate,
+          position: formValue.position?.trim(),
+          headquarters: formValue.headquarters?.trim(),
+          roleId: formValue.roleId,
+          mitaNumber: formValue.mitaNumber?.trim() || undefined,
+        };
 
-            this.notificationService.showError(errorMessage, {
-              title: errorTitle,
-              timer: 0,
-              showConfirmButton: true,
-            });
-          },
-        });
+        this.userService
+          .updateUser(this.userId!, payload)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {
+              this.notificationService
+                .showSuccess('Usuario actualizado exitosamente', { title: '¡Éxito!', timer: 2000 })
+                .then(() => { this.router.navigate(['/users/details']); });
+              this.isSubmitting = false;
+            },
+            error: (error) => { this.handleSubmitError(error, true); },
+          });
+      } else {
+        const registerRequest = {
+          firstName: formValue.firstName?.trim(),
+          secondName: formValue.secondName?.trim() || null,
+          firstLastName: formValue.firstLastName?.trim(),
+          secondLastName: formValue.secondLastName?.trim() || null,
+          email: formValue.email?.trim().toLowerCase(),
+          phoneNumber,
+          documentNumber: formValue.documentNumber?.trim(),
+          documentTypeId: formValue.documentTypeId,
+          address: formValue.address?.trim(),
+          city: formValue.city?.trim(),
+          countryId: formValue.countryId,
+          birthDate: formValue.birthDate,
+          position: formValue.position?.trim(),
+          headquarters: formValue.headquarters?.trim(),
+          roleId: formValue.roleId,
+          mitaNumber: formValue.mitaNumber?.trim() || null,
+        };
+
+        this.userService
+          .registerUser(registerRequest)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (user: any) => {
+              this.notificationService
+                .showSuccess('Usuario registrado exitosamente', {
+                  title: '¡Éxito!',
+                  text: (user.firstName + ' ' + user.firstLastName + ' ha sido registrado correctamente.'),
+                  timer: 2000,
+                })
+                .then(() => { this.router.navigate(['/users/details']); });
+              this.isSubmitting = false;
+            },
+            error: (error) => { this.handleSubmitError(error, false); },
+          });
+      }
     } else {
       this.markFormGroupTouched();
       this.notificationService.showWarning('Por favor completa todos los campos requeridos correctamente.', {
@@ -202,115 +283,195 @@ export class UserCreateComponent implements OnInit, OnDestroy {
     }
   }
 
+  private handleSubmitError(error: any, isEdit: boolean): void {
+    this.isSubmitting = false;
+    const status: number = error?.status ?? 0;
+    const action = isEdit ? 'actualizar' : 'registrar';
+
+    let errorTitle = ('Error al ' + action + ' usuario');
+    if (status === 409) errorTitle = ('Conflicto al ' + action + ' usuario');
+    else if (status === 400 || status === 422) errorTitle = 'Datos inválidos';
+    else if (status === 500) errorTitle = 'Error del servidor';
+
+    let errorMessage: string;
+    if (Array.isArray(error)) {
+      errorMessage = (error as string[]).map((m) => '• ' + m).join('<br>');
+    } else {
+      const rawMessages = error?.error?.message ?? error?.message;
+      if (rawMessages) {
+        errorMessage = Array.isArray(rawMessages)
+          ? (rawMessages as string[]).map((m) => '• ' + m).join('<br>')
+          : String(rawMessages);
+      } else {
+        errorMessage = ('Ocurrió un error al intentar ' + action + ' el usuario. Por favor intente nuevamente.');
+      }
+    }
+
+    this.notificationService.showError(errorMessage, { title: errorTitle, timer: 0, showConfirmButton: true });
+  }
+
   onCancel(): void {
-    // Check if form has any data before showing confirmation
+    const targetRoute = this.isEditMode ? '/users/details' : '/users/list';
+    const title = this.isEditMode ? '¿Cancelar edición?' : '¿Cancelar creación?';
+    const text = this.isEditMode
+      ? 'Se perderán los cambios no guardados. ¿Estás seguro de que deseas cancelar?'
+      : 'Se perderán todos los datos ingresados. ¿Estás seguro de que deseas cancelar?';
+
     if (this.userForm.dirty) {
       this.notificationService
-        .showConfirmation('Se perderán todos los datos ingresados. ¿Estás seguro de que deseas cancelar?', {
-          title: '¿Cancelar creación?',
+        .showConfirmation(text, {
+          title,
           confirmButtonText: 'Sí, cancelar',
           cancelButtonText: 'Continuar editando',
         })
-        .then((result) => {
-          if (result.isConfirmed) {
-            this.router.navigate(['/users/list']);
-          }
-        });
+        .then((result) => { if (result.isConfirmed) { this.router.navigate([targetRoute]); } });
     } else {
-      this.router.navigate(['/users/list']);
+      this.router.navigate([targetRoute]);
     }
   }
 
   private markFormGroupTouched(): void {
-    Object.keys(this.userForm.controls).forEach((key) => {
-      const control = this.userForm.get(key);
-      control?.markAsTouched();
-    });
+    Object.keys(this.userForm.controls).forEach((key) => { this.userForm.get(key)?.markAsTouched(); });
   }
 
   onPhoneBlur(event: FocusEvent): void {
     const wrapper = event.currentTarget as HTMLElement;
-    if (!wrapper.contains(event.relatedTarget as Node)) {
-      this.validatePhoneNumber();
-    }
+    if (!wrapper.contains(event.relatedTarget as Node)) { this.validatePhoneNumber(); }
   }
 
-  /**
-   * Triggered on blur — validates phone number against the API
-   */
   validatePhoneNumber(): void {
     const phoneControl = this.userForm.get('phoneNumber');
     const value = phoneControl?.value;
-
     if (value && phoneControl?.valid) {
-      // value.number respects [numberFormat]="PhoneNumberFormat.International" → e.g. "+57 300 123 4567"
-      const internationalNumber = (value.internationalNumber as string) ?? '';
+      const internationalNumber =
+        typeof value === 'string' ? value : ((value.internationalNumber as string) ?? '');
       if (!internationalNumber) return;
+      // Skip uniqueness check if the number has not changed in edit mode
+      if (this.isEditMode && internationalNumber === this.originalUser?.phoneNumber) return;
       this.userService
         .checkPhoneExists(internationalNumber)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (exists) => {
             if (phoneControl) {
-              if (exists) {
-                phoneControl.setErrors({ phoneExists: true });
-              } else if (phoneControl.hasError('phoneExists')) {
-                const errors = { ...phoneControl.errors };
-                delete errors['phoneExists'];
+              if (exists) { phoneControl.setErrors({ phoneExists: true }); }
+              else if (phoneControl.hasError('phoneExists')) {
+                const errors = { ...phoneControl.errors }; delete errors['phoneExists'];
                 phoneControl.setErrors(Object.keys(errors).length ? errors : null);
               }
             }
           },
-          error: (error) => {
-            console.error('Error checking phone existence:', error);
-          },
+          error: (error) => { console.error('Error checking phone existence:', error); },
         });
     }
   }
 
-  /**
-   * Triggered on blur or Enter key — validates email against the API
-   */
   validateEmail(): void {
     const emailControl = this.userForm.get('email');
     const value = emailControl?.value;
-    if (value && emailControl?.valid) {
+    // Skip uniqueness check if the email has not changed in edit mode
+    if (value && emailControl?.valid && !(this.isEditMode && value === this.originalUser?.email)) {
       this.userService
         .checkEmailExists(value)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (exists) => {
             if (emailControl) {
-              if (exists) {
-                emailControl.setErrors({ emailExists: true });
-              } else if (emailControl.hasError('emailExists')) {
-                const errors = { ...emailControl.errors };
-                delete errors['emailExists'];
+              if (exists) { emailControl.setErrors({ emailExists: true }); }
+              else if (emailControl.hasError('emailExists')) {
+                const errors = { ...emailControl.errors }; delete errors['emailExists'];
                 emailControl.setErrors(Object.keys(errors).length ? errors : null);
               }
             }
           },
-          error: (error) => {
-            console.error('Error checking email existence:', error);
-          },
+          error: (error) => { console.error('Error checking email existence:', error); },
         });
     }
   }
 
-  /**
-   * Triggered on blur or Enter key — validates document number against the API
-   */
+  validateMitaNumber(): void {
+    const mitaControl = this.userForm.get('mitaNumber');
+    const value = mitaControl?.value?.trim();
+    if (value) {
+      this.isLookingUpDocument = true;
+      this.userService
+        .lookupMitaExternal(value)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            this.isLookingUpDocument = false;
+            if (!response) return;
+            if (response.ok && response.usuario) { this.fillFormFromExternal(response.usuario); return; }
+            const status = response._httpStatus;
+            if (status === 404) {
+              this.notificationService.showWarning(response.msg ?? 'No se encontró ningún usuario con ese número Mita.', { title: 'Usuario no encontrado', timer: 4000 });
+            } else if (status === 400) {
+              console.warn('Búsqueda por Mita (400):', response.msg);
+            } else if (status === 500) {
+              this.notificationService.showWarning('Error en el microservicio al buscar por Mita. Los campos deberán llenarse manualmente.', { title: 'Error del servidor externo', timer: 5000 });
+            }
+          },
+          error: () => { this.isLookingUpDocument = false; },
+        });
+    }
+  }
+
   validateDocumentNumber(): void {
     const documentControl = this.userForm.get('documentNumber');
     const value = documentControl?.value;
     if (value && value.length >= 6) {
-      this.checkDocumentExists(value);
+      // Skip uniqueness check if document number has not changed in edit mode
+      if (!(this.isEditMode && value === this.originalUser?.documentNumber)) {
+        this.checkDocumentExists(value);
+      }
+      this.lookupExternalDocument(value);
     }
   }
 
-  /**
-   * Check if document number already exists
-   */
+  private lookupExternalDocument(documentNumber: string): void {
+    const countryId = this.userForm.get('countryId')?.value || undefined;
+    this.isLookingUpDocument = true;
+    this.userService
+      .lookupDocumentExternal(documentNumber, countryId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.isLookingUpDocument = false;
+          if (!response) return;
+          if (response.ok && response.usuario) { this.fillFormFromExternal(response.usuario); return; }
+          const status = response._httpStatus;
+          if (status === 404) {
+            this.notificationService.showWarning(response.msg ?? 'No se encontró ningún usuario con ese número de documento.', { title: 'Usuario no encontrado', timer: 4000 });
+          } else if (status === 400) {
+            console.warn('Búsqueda por documento (400):', response.msg);
+          } else if (status === 500) {
+            this.notificationService.showWarning('Error en el microservicio al buscar el documento. Los campos deberán llenarse manualmente.', { title: 'Error del servidor externo', timer: 5000 });
+          }
+        },
+        error: () => { this.isLookingUpDocument = false; },
+      });
+  }
+
+  private fillFormFromExternal(usuario: any): void {
+    const patch: Record<string, any> = {};
+    if (usuario.numeroDocumento) patch['documentNumber'] = usuario.numeroDocumento;
+    if (usuario.primerNombre) patch['firstName'] = usuario.primerNombre;
+    if (usuario.segundoNombre) patch['secondName'] = usuario.segundoNombre;
+    if (usuario.primerApellido) patch['firstLastName'] = usuario.primerApellido;
+    if (usuario.segundoApellido) patch['secondLastName'] = usuario.segundoApellido;
+    if (usuario.email) patch['email'] = usuario.email;
+    if (usuario.numeroCelular) patch['phoneNumber'] = usuario.numeroCelular;
+    if (usuario.direccion) patch['address'] = usuario.direccion;
+    if (usuario.ciudadDireccion) patch['city'] = usuario.ciudadDireccion;
+    if (usuario.fechaNacimiento) patch['birthDate'] = usuario.fechaNacimiento;
+    if (usuario.paisDireccion) {
+      const matchedCountry = this.countries.find((c) => c.name.toLowerCase() === (usuario.paisDireccion as string).toLowerCase());
+      if (matchedCountry?.id) patch['countryId'] = matchedCountry.id;
+    }
+    this.userForm.patchValue(patch);
+    Object.keys(patch).forEach((key) => this.userForm.get(key)?.markAsDirty());
+  }
+
   private checkDocumentExists(documentNumber: string): void {
     this.userService
       .checkDocumentExists(documentNumber)
@@ -319,30 +480,21 @@ export class UserCreateComponent implements OnInit, OnDestroy {
         next: (exists) => {
           const documentControl = this.userForm.get('documentNumber');
           if (documentControl) {
-            if (exists) {
-              documentControl.setErrors({ documentExists: true });
-            } else if (documentControl.hasError('documentExists')) {
-              // Remove only documentExists error if document is now available
-              const errors = { ...documentControl.errors };
-              delete errors['documentExists'];
+            if (exists) { documentControl.setErrors({ documentExists: true }); }
+            else if (documentControl.hasError('documentExists')) {
+              const errors = { ...documentControl.errors }; delete errors['documentExists'];
               documentControl.setErrors(Object.keys(errors).length ? errors : null);
             }
           }
         },
-        error: (error) => {
-          console.error('Error checking document existence:', error);
-        },
+        error: (error) => { console.error('Error checking document existence:', error); },
       });
   }
 
-  /**
-   * Get error message for a specific field
-   */
   getFieldError(fieldName: string): string {
     const control = this.userForm.get(fieldName);
     if (control && control.errors && control.touched) {
       const errors = control.errors;
-
       if (errors['required']) return 'user.validation.required';
       if (errors['email']) return 'user.validation.invalidEmail';
       if (errors['emailExists']) return 'user.validation.emailExists';
@@ -351,7 +503,6 @@ export class UserCreateComponent implements OnInit, OnDestroy {
       if (errors['maxlength']) return 'user.validation.maxLength';
       if (errors['documentExists']) return 'user.validation.documentExists';
     }
-
     return '';
   }
 }

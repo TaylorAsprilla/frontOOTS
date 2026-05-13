@@ -11,6 +11,7 @@ export type SupportedLanguage = string;
 export type BaseLanguage = 'es' | 'en';
 
 export interface CountryConfig {
+  id?: number;
   code: string;
   name: string;
   locale: string;
@@ -49,6 +50,7 @@ const DEFAULT_LANGUAGE = 'es-PR';
 // Fallback mínimo si el backend falla y no hay caché
 const FALLBACK_COUNTRIES: CountryConfig[] = [
   {
+    id: 1,
     code: 'PR',
     name: 'Puerto Rico',
     locale: 'es-PR',
@@ -246,6 +248,7 @@ export class CountryService {
     return countries
       .filter((c) => c.isActive)
       .map((c) => ({
+        id: c.id,
         code: c.iso,
         name: c.name,
         locale: this.normalizeLocale(c.locale),
@@ -287,7 +290,13 @@ export class CountryService {
       if (!raw) return null;
       const cache: CountriesCache = JSON.parse(raw);
       const age = Date.now() - new Date(cache.cachedAt).getTime();
-      return age < CACHE_TTL_MS ? cache.data : null;
+      if (age >= CACHE_TTL_MS) return null;
+      // Invalidar caché si los países no tienen id (guardada con versión anterior)
+      if (cache.data.some((c) => c.id == null)) {
+        localStorage.removeItem(CACHE_KEY);
+        return null;
+      }
+      return cache.data;
     } catch {
       return null;
     }

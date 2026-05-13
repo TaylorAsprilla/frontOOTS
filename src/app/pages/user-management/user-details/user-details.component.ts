@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { FormsModule, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import { NgbPaginationModule, NgbModal, NgbModalRef, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule } from '@ngneat/transloco';
 import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
@@ -13,6 +13,7 @@ import { NotificationService } from 'src/app/core/services/notification.service'
 import { UserModel } from 'src/app/core/models/user.model';
 import { Subject, takeUntil } from 'rxjs';
 import { RoleService } from 'src/app/core/services/role.service';
+import { passwordMatchValidator } from 'src/app/core/validators/password-match.validator';
 
 @Component({
   selector: 'app-user-details',
@@ -20,6 +21,7 @@ import { RoleService } from 'src/app/core/services/role.service';
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     RouterModule,
     NgbPaginationModule,
     NgbModalModule,
@@ -34,9 +36,20 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   // Inyección de servicios para roles
   private readonly roleService = inject(RoleService);
   private readonly modalService = inject(NgbModal);
+  private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
+
   modalRef: NgbModalRef | null = null;
   selectedUser: UserInfoInterface | null = null;
   @ViewChild('userDetailsModal', { static: false }) userDetailsModal: any;
+
+  // Reset password
+  selectedUserForReset: UserInfoInterface | null = null;
+  resetPasswordForm!: FormGroup;
+  resetPasswordSubmitting = false;
+  showResetNewPassword = false;
+  showResetConfirmPassword = false;
+  @ViewChild('resetPasswordModal', { static: false }) resetPasswordModal: any;
   // Open modal with user info
   openUserModal(user: UserInfoInterface): void {
     this.selectedUser = user;
@@ -51,6 +64,93 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       this.modalRef = null;
     }
     this.selectedUser = null;
+  }
+
+  /**
+   * Indica si el usuario autenticado es ADMIN
+   */
+  isAdmin(): boolean {
+    return this.roleService.isAdmin();
+  }
+
+  /**
+   * Cierra el modal y navega a la página de edición del usuario
+   */
+  navigateToEdit(user: UserInfoInterface): void {
+    if (this.modalRef) {
+      this.modalRef.close();
+      this.modalRef = null;
+    }
+    this.router.navigate(['/users/edit', user.id]);
+  }
+
+  /**
+   * Abre el modal de restablecimiento de contraseña para el usuario indicado
+   */
+  openResetPasswordModal(user: UserInfoInterface): void {
+    this.selectedUserForReset = user;
+    this.resetPasswordForm = this.fb.group(
+      {
+        newPassword: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(8),
+            Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d\W]).{8,}$/),
+          ],
+        ],
+        confirmPassword: ['', Validators.required],
+      },
+      { validators: passwordMatchValidator('newPassword', 'confirmPassword') },
+    );
+    this.showResetNewPassword = false;
+    this.showResetConfirmPassword = false;
+    // Close the user details modal first, then open reset password modal
+    if (this.modalRef) {
+      this.modalRef.close();
+      this.modalRef = null;
+    }
+    setTimeout(() => {
+      this.modalRef = this.modalService.open(this.resetPasswordModal, { centered: true, backdrop: 'static' });
+    });
+  }
+
+  closeResetPasswordModal(): void {
+    if (this.modalRef) {
+      this.modalRef.close();
+      this.modalRef = null;
+    }
+    this.selectedUserForReset = null;
+    this.resetPasswordSubmitting = false;
+  }
+
+  submitResetPassword(): void {
+    if (this.resetPasswordForm.invalid) {
+      this.resetPasswordForm.markAllAsTouched();
+      return;
+    }
+    if (!this.selectedUserForReset?.id) return;
+
+    this.resetPasswordSubmitting = true;
+    const newPassword = this.resetPasswordForm.value.newPassword;
+
+    this.userService
+      .resetUserPassword(this.selectedUserForReset.id, newPassword)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.resetPasswordSubmitting = false;
+          const userName = `${this.selectedUserForReset?.primerNombre} ${this.selectedUserForReset?.primerApellido}`;
+          this.closeResetPasswordModal();
+          this.notificationService.showSuccess(
+            `La contraseña de ${userName} ha sido restablecida. Se envió un correo de notificación al usuario.`,
+            { title: '¡Contraseña restablecida!', timer: 5000 },
+          );
+        },
+        error: () => {
+          this.resetPasswordSubmitting = false;
+        },
+      });
   }
   // Inyección de dependencias usando inject()
   private readonly userService = inject(UserService);

@@ -43,6 +43,18 @@ export const USER_MANAGEMENT_ROUTES: Routes = [
     },
   },
   {
+    path: 'edit/:id',
+    title: 'Editar Usuario',
+    loadComponent: () => import('./user-create/user-create.component').then((c) => c.UserCreateComponent),
+    resolve: {
+      documentTypes: documentTypesResolver,
+    },
+    data: {
+      breadcrumb: 'Editar Usuario',
+      description: 'Edit an existing user profile',
+    },
+  },
+  {
     path: 'profile',
     title: 'Mi Perfil',
     loadComponent: () => import('./my-profile/my-profile.component').then((c) => c.MyProfileComponent),

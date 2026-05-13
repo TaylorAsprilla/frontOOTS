@@ -45,10 +45,15 @@ export interface UpdateUserRequest {
   phoneNumber?: string;
   email?: string;
   documentNumber?: string;
+  documentTypeId?: number;
   address?: string;
   city?: string;
   birthDate?: string;
-  country?: string;
+  countryId?: number;
+  position?: string;
+  headquarters?: string;
+  roleId?: number;
+  mitaNumber?: string | number | null;
 }
 
 /**

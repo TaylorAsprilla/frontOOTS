@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { UserModel, UserBackendResponse } from '../models/user.model';
@@ -142,7 +142,7 @@ export class UserService {
    * @returns Observable<User>
    */
   updateUser(id: number, user: UpdateUserRequest): Observable<UserModel> {
-    return this.http.put<ApiResponse<UserModel>>(`${this.apiUrl}/${id}`, user).pipe(
+    return this.http.patch<ApiResponse<UserModel>>(`${this.apiUrl}/${id}`, user).pipe(
       map((response) => response.data),
       tap(() => {
         this.notificationService.showSuccess('Usuario actualizado exitosamente');
@@ -249,33 +249,98 @@ export class UserService {
   }
 
   /**
+   * Busca un usuario en el microservicio externo por número de documento
+   * @param documentNumber - Número de documento a consultar
+   * @returns Observable con los datos del usuario encontrado
+   */
+  /**
+   * Busca un usuario en el microservicio externo por número de documento
+   * @param documentNumber - Número de documento a consultar
+   * @param countryId - ID del país (requerido por el microservicio)
+   * @returns Observable con la respuesta completa (ok, msg, usuario)
+   */
+  lookupDocumentExternal(documentNumber: string, countryId?: number): Observable<any> {
+    const params: Record<string, string> = { numeroDocumento: documentNumber };
+    if (countryId) params['paisId'] = String(countryId);
+    return this.http.get<any>(environment.documentLookupUrl, { params }).pipe(
+      catchError((err) => {
+        const errorBody = err?.error ?? { ok: false, msg: 'Error de conexión con el microservicio.' };
+        return of({ ...errorBody, _httpStatus: err?.status ?? 0 });
+      }),
+    );
+  }
+
+  lookupMitaExternal(mitaNumber: string): Observable<any> {
+    const params: Record<string, string> = { numeroMita: mitaNumber };
+    return this.http.get<any>(environment.documentLookupUrl, { params }).pipe(
+      catchError((err) => {
+        const errorBody = err?.error ?? { ok: false, msg: 'Error de conexión con el microservicio.' };
+        return of({ ...errorBody, _httpStatus: err?.status ?? 0 });
+      }),
+    );
+  }
+
+  /**
+   * Restablece la contraseña de un usuario (solo ADMIN)
+   * @param userId - ID del usuario
+   * @param newPassword - Nueva contraseña
+   * @returns Observable con la respuesta del backend
+   */
+  resetUserPassword(userId: number, newPassword: string): Observable<any> {
+    return this.http
+      .post<any>(`${this.apiUrl}/${userId}/reset-password`, { newPassword })
+      .pipe(catchError((error) => this.handleError(error, 'Error al restablecer la contraseña')));
+  }
+
+  /**
+   * Obtiene el listado de roles disponibles
+   * @returns Observable<any[]>
+   */
+  getRoles(): Observable<any[]> {
+    return this.http.get<any>(`${environment.apiUrl}/roles`).pipe(
+      map((response) => {
+        if (response && response.data) {
+          return Array.isArray(response.data) ? response.data : (response.data.data ?? []);
+        }
+        return Array.isArray(response) ? response : [];
+      }),
+      catchError((error) => this.handleError(error, 'Error al obtener roles')),
+    );
+  }
+
+  /**
    * Manejo centralizado de errores
    * @param error - Error de HTTP
    * @param defaultMessage - Mensaje por defecto
    * @returns Observable que emite el error
    */
-  private handleError(error: HttpErrorResponse, defaultMessage: string): Observable<never> {
+  private handleError(error: any, defaultMessage: string): Observable<never> {
     let errorMessage = defaultMessage;
 
-    if (error.error) {
+    if (Array.isArray(error)) {
+      // Backend returned a plain array as the error body
+      errorMessage = (error as string[]).join(', ');
+    } else if (error && error.error) {
       // Si el backend envía un mensaje de error específico
       if (error.error.message) {
-        errorMessage = error.error.message;
+        errorMessage = Array.isArray(error.error.message) ? error.error.message.join(', ') : error.error.message;
       } else if (error.error.errors && Array.isArray(error.error.errors)) {
         // Si hay múltiples errores de validación
         errorMessage = error.error.errors.join(', ');
+      } else if (Array.isArray(error.error)) {
+        errorMessage = error.error.join(', ');
       } else if (typeof error.error === 'string') {
         errorMessage = error.error;
       }
-    } else if (error.status === 0) {
+    } else if (error && error.status === 0) {
       errorMessage = 'No se pudo conectar con el servidor. Verifique su conexión a internet.';
-    } else if (error.status >= 500) {
+    } else if (error && error.status >= 500) {
       errorMessage = 'Error interno del servidor. Intente nuevamente más tarde.';
-    } else if (error.status === 404) {
+    } else if (error && error.status === 404) {
       errorMessage = 'El recurso solicitado no fue encontrado.';
-    } else if (error.status === 401) {
+    } else if (error && error.status === 401) {
       errorMessage = 'No tiene autorización para realizar esta acción.';
-    } else if (error.status === 403) {
+    } else if (error && error.status === 403) {
       errorMessage = 'No tiene permisos para realizar esta acción.';
     }
 
