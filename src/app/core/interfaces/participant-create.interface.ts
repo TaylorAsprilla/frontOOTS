@@ -21,6 +21,7 @@ export interface CreateParticipantDto {
   customHealthInsurance?: string;
   referralSource?: string;
   registeredById: number;
+  countryId?: number | null;
 
   // Contactos de emergencia
   emergencyContacts: CreateEmergencyContactDto[];
@@ -99,6 +100,7 @@ export interface Participant {
   referralSource?: string;
   registeredById: number;
   registeredBy: RegisteredBy;
+  countryId?: number | null;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string;

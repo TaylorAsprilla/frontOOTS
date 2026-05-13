@@ -31,8 +31,9 @@ import { IncomeSource } from '../../configuration/income-source/income-source.in
 import { IncomeLevel } from '../../configuration/income-level/income-level.interface';
 import { HousingType } from '../../configuration/housing-type/housing-type.interface';
 import { AcademicLevel } from '../../../core/interfaces/academic-level.interface';
-import { CountryService } from '../../../core/services/country.service';
+import { CountryService, CountryConfig } from '../../../core/services/country.service';
 import { environment } from '../../../../environments/environment';
+import { AuthenticatedUser } from '../../../core/interfaces/auth.interface';
 import { Participant } from 'src/app/core/interfaces/participant-create.interface';
 
 @Component({
@@ -95,6 +96,10 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
 
   // Academic Levels from resolver
   academicLevels: AcademicLevel[] = [];
+
+  // Countries from CountryService
+  countries: CountryConfig[] = [];
+  defaultCountryId: number | null = null;
 
   // Expose enums for template
   SearchCountryField = SearchCountryField;
@@ -175,6 +180,13 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     // Get current country from localStorage via CountryService
     const currentCountry = this.countryService.getCurrentCountry();
     this.updatePhoneCountry(currentCountry || 'CO');
+
+    // Load available countries for the select
+    this.countries = this.countryService.getAvailableCountries();
+
+    // Set default countryId from the logged-in user's country
+    const user = this.tokenStorageService.getUser() as AuthenticatedUser;
+    this.defaultCountryId = user?.country?.id ?? null;
   }
 
   /**
@@ -328,6 +340,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
             emergencyContactState: emergencyContact?.emergencyContact?.state || '',
             emergencyContactZipCode: emergencyContact?.emergencyContact?.zipCode || '',
             emergencyContactRelationship: emergencyContact?.relationshipId || '',
+            countryId: participant.countryId || null,
           });
 
           this.isLoading = false;
@@ -380,6 +393,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         emergencyContactZipCode: [''],
         emergencyContactRelationship: ['', Validators.required],
         country: ['', Validators.required],
+        countryId: [this.defaultCountryId || '', Validators.required],
       }),
     });
 
@@ -887,6 +901,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
       healthInsuranceId: personalData.healthInsuranceId ? Number(personalData.healthInsuranceId) : null,
       customHealthInsurance: personalData.customHealthInsurance || undefined,
       referralSource: personalData.referralSource || undefined,
+      countryId: personalData.countryId ? Number(personalData.countryId) : null,
       registeredById,
       emergencyContacts,
     };

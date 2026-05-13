@@ -467,28 +467,25 @@
 
                             <!-- Fila País -->
                             <div class="row mb-3">
-                              <label class="col-md-4 col-form-label obligatorio text-start" for="country">
+                              <label class="col-md-4 col-form-label obligatorio text-start" for="countryId">
                                 {{ 'participants.country' | transloco }}
                               </label>
                               <div class="col-md-8">
                                 <select
                                   class="form-select"
-                                  [class.is-invalid]="hasFieldError('personalData.country')"
-                                  id="country"
-                                  name="country"
-                                  formControlName="country"
+                                  [class.is-invalid]="hasFieldError('personalData.countryId')"
+                                  id="countryId"
+                                  name="countryId"
+                                  formControlName="countryId"
                                 >
                                   <option value="" disabled selected>{{ 'app.select' | transloco }}</option>
-                                  <option value="Colombia">Colombia</option>
-                                  <option value="Perú">Perú</option>
-                                  <option value="México">México</option>
-                                  <option value="Argentina">Argentina</option>
-                                  <option value="Chile">Chile</option>
-                                  <option value="Otro">Otro</option>
+                                  @for (c of countries; track c.id) {
+                                    <option [value]="c.id">{{ c.name }}</option>
+                                  }
                                 </select>
-                                @if (hasFieldError('personalData.country')) {
+                                @if (hasFieldError('personalData.countryId')) {
                                   <div class="invalid-feedback">
-                                    {{ getFieldError('personalData.country') | transloco }}
+                                    {{ getFieldError('personalData.countryId') | transloco }}
                                   </div>
                                 }
                               </div>
