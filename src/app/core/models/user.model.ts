@@ -18,8 +18,12 @@ export interface UserBackendResponse {
   birthDate: string; // ISO string from backend
   status: 'ACTIVE' | 'INACTIVE';
   roleId?: number | null;
+  role?: { id: number; name: string } | null;
   countryId?: number | null;
+  country?: { id: number; name: string; code?: string; flagUrl?: string } | null;
   mitaNumber?: number | null;
+  participantCount?: number | null;
+  caseCount?: number | null;
   createdAt: string; // ISO string from backend
   updatedAt: string; // ISO string from backend
 }
@@ -51,6 +55,12 @@ export class UserModel {
     public roleId: number | null,
     public countryId: number | null,
     public mitaNumber: number | null,
+    public roleName: string | null,
+    public countryName: string | null,
+    public countryCode: string | null,
+    public flagUrl: string | null,
+    public participantCount: number,
+    public caseCount: number,
   ) {}
 
   /**
@@ -79,6 +89,12 @@ export class UserModel {
       response.roleId ?? null,
       response.countryId ?? null,
       response.mitaNumber ?? null,
+      response.role?.name ?? null,
+      response.country?.name ?? null,
+      response.country?.code?.toLowerCase() ?? null,
+      response.country?.flagUrl ?? null,
+      response.participantCount ?? 0,
+      response.caseCount ?? 0,
     );
   }
 

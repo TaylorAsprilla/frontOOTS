@@ -91,6 +91,11 @@ export interface UserInfoInterface {
   foto?: string;
   cargo?: string;
   ciudad?: string;
+  pais?: string;
+  countryCode?: string;
+  flagUrl?: string;
+  roleName?: string;
+  mitaNumber?: number | null;
   documentNumber?: string;
   birthDate?: string;
   address?: string;

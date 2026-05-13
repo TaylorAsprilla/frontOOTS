@@ -243,24 +243,37 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
    * Mapea UserModel[] del backend a UserInfoInterface[] para el componente
    */
   private mapUsersToUserInfo(users: UserModel[]): UserInfoInterface[] {
-    return users.map((user, index) => ({
-      id: user.id,
-      primerNombre: user.firstName,
-      segundoNombre: user.secondName || '',
-      primerApellido: user.firstLastName,
-      segundoApellido: user.secondLastName || '',
-      email: user.email,
-      celular: user.phoneNumber,
-      foto: this.getGenericAvatar(index),
-      cargo: user.position || 'Sin cargo',
-      ciudad: user.city || '',
-      documentNumber: user.documentNumber,
-      birthDate: user.birthDate instanceof Date ? user.birthDate.toISOString().substring(0, 10) : user.birthDate || '',
-      address: user.address || '',
-      participants: Math.floor(Math.random() * 50) + 1, // Estadísticas simuladas
-      casos: Math.floor(Math.random() * 25) + 1,
-      proximasCitas: Math.floor(Math.random() * 10) + 1,
-    }));
+    return users
+      .slice()
+      .sort((a, b) => {
+        const nameA = `${a.firstLastName} ${a.secondLastName} ${a.firstName}`.toLowerCase();
+        const nameB = `${b.firstLastName} ${b.secondLastName} ${b.firstName}`.toLowerCase();
+        return nameA.localeCompare(nameB, 'es');
+      })
+      .map((user, index) => ({
+        id: user.id,
+        primerNombre: user.firstName,
+        segundoNombre: user.secondName || '',
+        primerApellido: user.firstLastName,
+        segundoApellido: user.secondLastName || '',
+        email: user.email,
+        celular: user.phoneNumber,
+        foto: this.getGenericAvatar(index),
+        cargo: user.position || 'Sin cargo',
+        ciudad: user.city || '',
+        pais: user.countryName || '',
+        countryCode: user.countryCode || '',
+        flagUrl: user.flagUrl || '',
+        roleName: user.roleName || '',
+        mitaNumber: user.mitaNumber,
+        documentNumber: user.documentNumber,
+        birthDate:
+          user.birthDate instanceof Date ? user.birthDate.toISOString().substring(0, 10) : user.birthDate || '',
+        address: user.address || '',
+        participants: user.participantCount,
+        casos: user.caseCount,
+        proximasCitas: 0,
+      }));
   }
 
   /**

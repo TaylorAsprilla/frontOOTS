@@ -48,6 +48,10 @@ export class MemberInfoComponent implements OnInit {
     return `${nombre} ${apellido}`.trim() || 'Usuario sin nombre';
   }
 
+  get cleanPhone(): string {
+    return (this.user.celular || '').replace(/[^0-9]/g, '');
+  }
+
   onInfoClick(event: Event) {
     event.preventDefault();
     this.infoClick.emit(this.user);
