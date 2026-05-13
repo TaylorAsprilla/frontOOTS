@@ -52,15 +52,6 @@
                     }
                   </div>
                 </div>
-                <button
-                  *ngIf="canCreateCase()"
-                  class="btn btn-success ms-2"
-                  [routerLink]="['/cases/create']"
-                  [attr.title]="'cases.addNew' | transloco"
-                >
-                  <i class="mdi mdi-folder-plus"></i>
-                  <span class="ms-1 d-none d-md-inline">{{ 'cases.addNew' | transloco }}</span>
-                </button>
               </div>
             </div>
           </div>
@@ -221,63 +212,6 @@
               </div>
             }
           }
-
-          <tbody>
-            @for (caseItem of filteredCases; track caseItem.id) {
-              <tr>
-                <td>
-                  <span class="fw-bold text-primary">{{ caseItem.id }}</span>
-                </td>
-                <td>
-                  <div class="d-flex align-items-center">
-                    <div>
-                      <h6 class="mb-0">{{ getParticipantName(caseItem) }}</h6>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <span
-                    [ngbTooltip]="caseItem.consultationReason?.length > 120 ? caseItem.consultationReason : ''"
-                    placement="top"
-                  >
-                    {{
-                      caseItem.consultationReason?.length > 120
-                        ? (caseItem.consultationReason | slice: 0 : 120) + '…'
-                        : caseItem.consultationReason
-                    }}
-                  </span>
-                </td>
-                <td>
-                  <span [class]="getStatusBadgeClass(caseItem.status)">
-                    {{ 'cases.' + caseItem.status | transloco }}
-                  </span>
-                  @if (getAppointmentAlert(caseItem); as alertLevel) {
-                    <span
-                      [class]="getAppointmentAlertClass(caseItem)"
-                      [ngbTooltip]="getAppointmentAlertLabel(caseItem)"
-                      placement="top"
-                    >
-                      <i
-                        class="mdi"
-                        [class.mdi-calendar-alert]="alertLevel === 'overdue'"
-                        [class.mdi-calendar-clock]="alertLevel === 'today'"
-                        [class.mdi-calendar-check]="alertLevel === 'soon'"
-                      ></i>
-                    </span>
-                  }
-                </td>
-                <td>
-                  @if (caseItem.createdAt) {
-                    <span>{{ caseItem.createdAt | localizedDate: 'short' }}</span>
-                  }
-                </td>
-                <td class="text-end">
-                  <button *ngIf="canCreateCase()" class="btn btn-primary btn-sm me-2">Editar</button>
-                  <button *ngIf="canCreateCase()" class="btn btn-danger btn-sm">Eliminar</button>
-                </td>
-              </tr>
-            }
-          </tbody>
         </div>
       </div>
     </div>
