@@ -69,6 +69,8 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
   activeWizardStep: number = 1;
   isLoading = false;
   isSubmitting = false;
+  isLookingUpMita = false;
+  isLookingUpDocument = false;
 
   // Document Types from resolver
   documentTypes: DocumentType[] = [];
@@ -313,6 +315,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
           const emergencyContact = participant.emergencyContacts?.[0];
 
           this.participantForm.get('personalData')?.patchValue({
+            mitaNumber: participant.mitaNumber || '',
             firstName: participant.firstName,
             secondName: participant.secondName || '',
             firstLastName: participant.firstLastName,
@@ -364,6 +367,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     this.participantForm = this.formBuilder.group({
       // Personal Data
       personalData: this.formBuilder.group({
+        mitaNumber: ['', Validators.maxLength(50)],
         firstName: ['', [Validators.required, Validators.maxLength(50)]],
         secondName: ['', Validators.maxLength(50)],
         firstLastName: ['', [Validators.required, Validators.maxLength(50)]],
@@ -539,11 +543,18 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
    * Check if document number already exists when user leaves the field
    */
   onDocumentNumberBlur(): void {
+    if (this.isLookingUpDocument) {
+      return;
+    }
+
     const documentControl = this.participantForm.get('personalData.documentNumber');
     if (documentControl && documentControl.value) {
-      const documentNumber = documentControl.value.trim();
+      const documentNumber = String(documentControl.value).trim();
 
       this.checkDocumentExists(documentNumber);
+      if (documentNumber.length >= 6) {
+        this.lookupExternalDocument(documentNumber);
+      }
     }
   }
 
@@ -557,6 +568,92 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
 
       this.checkEmailExists(email);
     }
+  }
+
+  validateMitaNumber(): void {
+    if (this.isLookingUpMita) {
+      return;
+    }
+
+    const mitaControl = this.participantForm.get('personalData.mitaNumber');
+    const mitaNumber = String(mitaControl?.value ?? '').trim();
+
+    if (!mitaNumber) {
+      return;
+    }
+
+    this.isLookingUpMita = true;
+    this.participantService
+      .lookupMitaExternal(mitaNumber)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.isLookingUpMita = false;
+
+          if (!response) {
+            return;
+          }
+
+          if (response.ok && response.usuario) {
+            this.fillPersonalDataFromExternal(response.usuario);
+            mitaControl?.markAsTouched();
+            return;
+          }
+
+          const status = response._httpStatus;
+          if (status === 404) {
+            this.notificationService.showWarning(response.msg ?? 'No se encontró ningún usuario con ese número Mita.', {
+              title: 'Usuario no encontrado',
+              timer: 4000,
+            });
+          } else if (status === 500) {
+            this.notificationService.showWarning(
+              'Error en el microservicio al buscar por Mita. Los campos deberán llenarse manualmente.',
+              { title: 'Error del servidor externo', timer: 5000 },
+            );
+          }
+        },
+        error: () => {
+          this.isLookingUpMita = false;
+        },
+      });
+  }
+
+  private lookupExternalDocument(documentNumber: string): void {
+    this.isLookingUpDocument = true;
+    this.participantService
+      .lookupDocumentExternal(documentNumber)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.isLookingUpDocument = false;
+
+          if (!response) {
+            return;
+          }
+
+          if (response.ok && response.usuario) {
+            this.fillPersonalDataFromExternal(response.usuario);
+            return;
+          }
+
+          const status = response._httpStatus;
+          if (status === 404) {
+            this.notificationService.showWarning(
+              response.msg ?? 'No se encontró ningún usuario con ese número de documento.',
+              { title: 'Usuario no encontrado', timer: 4000 },
+            );
+          } else if (status === 500) {
+            this.notificationService.showWarning(
+              'Error en el microservicio al buscar el documento. Los campos deberán llenarse manualmente.',
+              { title: 'Error del servidor externo', timer: 5000 },
+            );
+          }
+        },
+        error: () => {
+          this.isLookingUpDocument = false;
+        },
+      });
   }
 
   /**
@@ -639,6 +736,64 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
           this.notificationService.showWarning(errorMessage);
         },
       });
+  }
+
+  private fillPersonalDataFromExternal(usuario: any): void {
+    const personalDataGroup = this.participantForm.get('personalData');
+    if (!personalDataGroup) {
+      return;
+    }
+
+    const patch: Record<string, any> = {};
+    const countryName = usuario.paisDireccion || usuario.usuarioCongregacionPais?.pais;
+    const genderId = usuario.genero?.id ?? usuario.genero_id;
+    const maritalStatusId = usuario.estadoCivil?.id;
+
+    if (usuario.numeroDocumento) patch['documentNumber'] = usuario.numeroDocumento;
+    if (usuario.primerNombre) patch['firstName'] = usuario.primerNombre;
+    if (usuario.segundoNombre) patch['secondName'] = usuario.segundoNombre;
+    if (usuario.primerApellido) patch['firstLastName'] = usuario.primerApellido;
+    if (usuario.segundoApellido) patch['secondLastName'] = usuario.segundoApellido;
+    if (usuario.email) patch['email'] = String(usuario.email).trim().toLowerCase();
+    if (usuario.numeroCelular) patch['phoneNumber'] = usuario.numeroCelular;
+    if (usuario.direccion) patch['address'] = usuario.direccion;
+    if (usuario.ciudadDireccion) patch['city'] = usuario.ciudadDireccion;
+    if (usuario.departamentoDireccion) patch['state'] = usuario.departamentoDireccion;
+    if (usuario.codigoPostalDireccion) patch['zipCode'] = usuario.codigoPostalDireccion;
+    if (usuario.fechaNacimiento) patch['birthDate'] = usuario.fechaNacimiento;
+    if (genderId) patch['genderId'] = genderId;
+    if (maritalStatusId) patch['maritalStatusId'] = maritalStatusId;
+
+    if (countryName) {
+      const matchedCountry = this.countries.find(
+        (country) => country.name.toLowerCase() === String(countryName).toLowerCase(),
+      );
+
+      if (matchedCountry?.id) {
+        patch['countryId'] = matchedCountry.id;
+      }
+    }
+
+    personalDataGroup.patchValue(patch);
+    Object.keys(patch).forEach((key) => personalDataGroup.get(key)?.markAsDirty());
+
+    const documentNumber = String(personalDataGroup.get('documentNumber')?.value ?? '').trim();
+    if (documentNumber) {
+      this.checkDocumentExists(documentNumber);
+      personalDataGroup.get('documentNumber')?.markAsTouched();
+    }
+
+    const email = String(personalDataGroup.get('email')?.value ?? '')
+      .trim()
+      .toLowerCase();
+    const emailControl = personalDataGroup.get('email');
+    if (emailControl && email) {
+      emailControl.setValue(email, { emitEvent: false });
+      if (emailControl.valid) {
+        this.checkEmailExists(email);
+        emailControl.markAsTouched();
+      }
+    }
   }
 
   /**
@@ -882,6 +1037,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
 
     // Build the complete DTO
     const dto = {
+      mitaNumber: personalData.mitaNumber?.trim() || undefined,
       firstName: personalData.firstName,
       secondName: personalData.secondName || undefined,
       firstLastName: personalData.firstLastName,

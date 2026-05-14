@@ -1,6 +1,7 @@
 // DTOs para crear participante
 export interface CreateParticipantDto {
   // Datos Personales
+  mitaNumber?: string;
   firstName: string;
   secondName?: string;
   firstLastName: string;
@@ -75,6 +76,7 @@ export interface ParticipantResponse {
 
 export interface Participant {
   id: number;
+  mitaNumber?: string;
   firstName: string;
   secondName?: string;
   firstLastName: string;

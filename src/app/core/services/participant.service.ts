@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, BehaviorSubject, throwError } from 'rxjs';
+import { Observable, BehaviorSubject, throwError, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import {
   Participant,
@@ -388,6 +388,33 @@ export class ParticipantService {
       catchError((error) => {
         console.error('Error checking email existence:', error);
         return throwError(() => error);
+      }),
+    );
+  }
+
+  /**
+   * Lookup participant data from the external microservice by document number
+   */
+  lookupDocumentExternal(documentNumber: string): Observable<any> {
+    const params: Record<string, string> = { numeroDocumento: documentNumber };
+
+    return this.http.get<any>(environment.documentLookupUrl, { params }).pipe(
+      catchError((err) => {
+        const errorBody = err?.error ?? { ok: false, msg: 'Error de conexión con el microservicio.' };
+        return of({ ...errorBody, _httpStatus: err?.status ?? 0 });
+      }),
+    );
+  }
+
+  /**
+   * Lookup participant data from the external microservice by Mita number
+   */
+  lookupMitaExternal(mitaNumber: string): Observable<any> {
+    const params: Record<string, string> = { numeroMita: mitaNumber };
+    return this.http.get<any>(environment.documentLookupUrl, { params }).pipe(
+      catchError((err) => {
+        const errorBody = err?.error ?? { ok: false, msg: 'Error de conexión con el microservicio.' };
+        return of({ ...errorBody, _httpStatus: err?.status ?? 0 });
       }),
     );
   }
