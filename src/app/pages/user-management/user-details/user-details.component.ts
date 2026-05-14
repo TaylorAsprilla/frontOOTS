@@ -183,8 +183,8 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.pageTitle = [
-      { label: 'User Management', path: '/user-management' },
-      { label: 'Users Directory', path: '/user-management/list', active: true },
+      { label: 'navigation.userManagement', path: '/user-management' },
+      { label: 'navigation.users', path: '/user-management/list', active: true },
     ];
     this.loadUsers();
   }

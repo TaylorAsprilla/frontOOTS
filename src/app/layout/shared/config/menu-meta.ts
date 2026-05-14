@@ -209,7 +209,7 @@ const MENU_ITEMS: MenuItem[] = [
       },
       {
         key: 'configuration-countries',
-        label: 'Países',
+        label: 'navigation.countries',
         icon: 'globe',
         link: '/configuration/countries',
         parentKey: 'configuration-management',

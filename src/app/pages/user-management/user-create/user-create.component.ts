@@ -96,15 +96,15 @@ export class UserCreateComponent implements OnInit, OnDestroy {
   private setupPageTitle(): void {
     if (this.isEditMode) {
       this.pageTitle = [
-        { label: 'Gestión de usuarios', path: '/users' },
-        { label: 'Usuarios', path: '/users/details' },
-        { label: 'Editar usuario', path: '', active: true },
+        { label: 'navigation.userManagement', path: '/users' },
+        { label: 'navigation.users', path: '/users/details' },
+        { label: 'user.editUser', path: '', active: true },
       ];
     } else {
       this.pageTitle = [
-        { label: 'User Management', path: '/users' },
-        { label: 'Users', path: '/users/list' },
-        { label: 'Create User', path: '/users/create', active: true },
+        { label: 'navigation.userManagement', path: '/users' },
+        { label: 'navigation.users', path: '/users/list' },
+        { label: 'navigation.createUser', path: '/users/create', active: true },
       ];
     }
   }
@@ -360,6 +360,42 @@ export class UserCreateComponent implements OnInit, OnDestroy {
     });
   }
 
+  onClearForm(): void {
+    if (this.isSubmitting) return;
+
+    if (this.isEditMode && this.originalUser) {
+      this.fillFormFromUser(this.originalUser);
+    } else {
+      this.userForm.reset({
+        mitaNumber: '',
+        firstName: '',
+        secondName: '',
+        firstLastName: '',
+        secondLastName: '',
+        email: '',
+        phoneNumber: '',
+        documentNumber: '',
+        documentTypeId: null,
+        address: '',
+        city: '',
+        countryId: null,
+        birthDate: '',
+        position: '',
+        headquarters: '',
+        roleId: null,
+      });
+    }
+
+    Object.values(this.userForm.controls).forEach((control) => {
+      control.markAsPristine();
+      control.markAsUntouched();
+      control.updateValueAndValidity({ emitEvent: false });
+    });
+
+    this.userForm.markAsPristine();
+    this.userForm.markAsUntouched();
+  }
+
   onPhoneBlur(event: FocusEvent): void {
     const wrapper = event.currentTarget as HTMLElement;
     if (!wrapper.contains(event.relatedTarget as Node)) {
@@ -375,25 +411,7 @@ export class UserCreateComponent implements OnInit, OnDestroy {
       if (!internationalNumber) return;
       // Skip uniqueness check if the number has not changed in edit mode
       if (this.isEditMode && internationalNumber === this.originalUser?.phoneNumber) return;
-      this.userService
-        .checkPhoneExists(internationalNumber)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (exists) => {
-            if (phoneControl) {
-              if (exists) {
-                phoneControl.setErrors({ phoneExists: true });
-              } else if (phoneControl.hasError('phoneExists')) {
-                const errors = { ...phoneControl.errors };
-                delete errors['phoneExists'];
-                phoneControl.setErrors(Object.keys(errors).length ? errors : null);
-              }
-            }
-          },
-          error: (error) => {
-            console.error('Error checking phone existence:', error);
-          },
-        });
+      this.checkPhoneExists(internationalNumber);
     }
   }
 
@@ -402,29 +420,13 @@ export class UserCreateComponent implements OnInit, OnDestroy {
     const value = emailControl?.value;
     // Skip uniqueness check if the email has not changed in edit mode
     if (value && emailControl?.valid && !(this.isEditMode && value === this.originalUser?.email)) {
-      this.userService
-        .checkEmailExists(value)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (exists) => {
-            if (emailControl) {
-              if (exists) {
-                emailControl.setErrors({ emailExists: true });
-              } else if (emailControl.hasError('emailExists')) {
-                const errors = { ...emailControl.errors };
-                delete errors['emailExists'];
-                emailControl.setErrors(Object.keys(errors).length ? errors : null);
-              }
-            }
-          },
-          error: (error) => {
-            console.error('Error checking email existence:', error);
-          },
-        });
+      this.checkEmailExists(value);
     }
   }
 
   validateMitaNumber(): void {
+    if (this.isLookingUpDocument) return;
+
     const mitaControl = this.userForm.get('mitaNumber');
     const value = mitaControl?.value?.trim();
     if (value) {
@@ -438,6 +440,8 @@ export class UserCreateComponent implements OnInit, OnDestroy {
             if (!response) return;
             if (response.ok && response.usuario) {
               this.fillFormFromExternal(response.usuario);
+              this.checkMitaExists(value);
+              mitaControl?.markAsTouched();
               return;
             }
             const status = response._httpStatus;
@@ -529,6 +533,86 @@ export class UserCreateComponent implements OnInit, OnDestroy {
     }
     this.userForm.patchValue(patch);
     Object.keys(patch).forEach((key) => this.userForm.get(key)?.markAsDirty());
+    this.validateAutofilledUniqueFields(patch);
+  }
+
+  private validateAutofilledUniqueFields(patch: Record<string, any>): void {
+    const documentControl = this.userForm.get('documentNumber');
+    if (Object.prototype.hasOwnProperty.call(patch, 'documentNumber') && documentControl?.value) {
+      const documentNumber = String(documentControl.value).trim();
+      if (documentNumber.length >= 6 && !(this.isEditMode && documentNumber === this.originalUser?.documentNumber)) {
+        this.checkDocumentExists(documentNumber);
+        documentControl.markAsTouched();
+      }
+    }
+
+    const emailControl = this.userForm.get('email');
+    if (Object.prototype.hasOwnProperty.call(patch, 'email') && emailControl?.value) {
+      const email = String(emailControl.value).trim().toLowerCase();
+      if (email) {
+        emailControl.setValue(email, { emitEvent: false });
+      }
+      if (emailControl.valid && !(this.isEditMode && email === this.originalUser?.email)) {
+        this.checkEmailExists(email);
+        emailControl.markAsTouched();
+      }
+    }
+
+    const phoneControl = this.userForm.get('phoneNumber');
+    const rawPhone = phoneControl?.value;
+    if (Object.prototype.hasOwnProperty.call(patch, 'phoneNumber') && rawPhone) {
+      const phoneNumber = typeof rawPhone === 'string' ? rawPhone : ((rawPhone.internationalNumber as string) ?? '');
+      if (phoneNumber && !(this.isEditMode && phoneNumber === this.originalUser?.phoneNumber)) {
+        this.checkPhoneExists(phoneNumber);
+        phoneControl?.markAsTouched();
+      }
+    }
+  }
+
+  private checkEmailExists(email: string): void {
+    const emailControl = this.userForm.get('email');
+    this.userService
+      .checkEmailExists(email)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (exists) => {
+          if (emailControl) {
+            if (exists) {
+              emailControl.setErrors({ emailExists: true });
+            } else if (emailControl.hasError('emailExists')) {
+              const errors = { ...emailControl.errors };
+              delete errors['emailExists'];
+              emailControl.setErrors(Object.keys(errors).length ? errors : null);
+            }
+          }
+        },
+        error: (error) => {
+          console.error('Error checking email existence:', error);
+        },
+      });
+  }
+
+  private checkPhoneExists(phoneNumber: string): void {
+    const phoneControl = this.userForm.get('phoneNumber');
+    this.userService
+      .checkPhoneExists(phoneNumber)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (exists) => {
+          if (phoneControl) {
+            if (exists) {
+              phoneControl.setErrors({ phoneExists: true });
+            } else if (phoneControl.hasError('phoneExists')) {
+              const errors = { ...phoneControl.errors };
+              delete errors['phoneExists'];
+              phoneControl.setErrors(Object.keys(errors).length ? errors : null);
+            }
+          }
+        },
+        error: (error) => {
+          console.error('Error checking phone existence:', error);
+        },
+      });
   }
 
   private checkDocumentExists(documentNumber: string): void {
@@ -554,6 +638,29 @@ export class UserCreateComponent implements OnInit, OnDestroy {
       });
   }
 
+  private checkMitaExists(mitaNumber: string): void {
+    const mitaControl = this.userForm.get('mitaNumber');
+    this.userService
+      .checkMitaExists(mitaNumber)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (exists) => {
+          if (mitaControl) {
+            if (exists) {
+              mitaControl.setErrors({ mitaExists: true });
+            } else if (mitaControl.hasError('mitaExists')) {
+              const errors = { ...mitaControl.errors };
+              delete errors['mitaExists'];
+              mitaControl.setErrors(Object.keys(errors).length ? errors : null);
+            }
+          }
+        },
+        error: (error) => {
+          console.error('Error checking Mita existence:', error);
+        },
+      });
+  }
+
   getFieldError(fieldName: string): string {
     const control = this.userForm.get(fieldName);
     if (control && control.errors && control.touched) {
@@ -565,6 +672,7 @@ export class UserCreateComponent implements OnInit, OnDestroy {
       if (errors['minlength']) return 'user.validation.minLength';
       if (errors['maxlength']) return 'user.validation.maxLength';
       if (errors['documentExists']) return 'user.validation.documentExists';
+      if (errors['mitaExists']) return 'user.validation.mitaExists';
     }
     return '';
   }

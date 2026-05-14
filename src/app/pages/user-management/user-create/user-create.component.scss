@@ -328,6 +328,48 @@
   }
 }
 
+.form-actions-top {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.25rem;
+}
+
+.btn-clear-minimal {
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #adb5bd;
+  background: #fff;
+  color: #6c757d;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+
+  i {
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    border-color: #727cf5;
+    background: #eef0ff;
+    color: #4a56d6;
+    box-shadow: 0 4px 10px rgba(114, 124, 245, 0.2);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
 .btn-primary {
   background-color: #727cf5;
   border-color: #727cf5;

@@ -232,6 +232,27 @@ export class UserService {
   }
 
   /**
+   * Verifica si un número Mita ya está registrado
+   * @param mitaNumber - Número Mita a verificar
+   * @returns Observable<boolean>
+   */
+  checkMitaExists(mitaNumber: string): Observable<boolean> {
+    const params = new HttpParams().set('mitaNumber', mitaNumber);
+
+    return this.http
+      .get<{ exists?: boolean; data?: { exists?: boolean } }>(`${this.apiUrl}/check-mita`, { params })
+      .pipe(
+        map((response) => {
+          if (typeof response?.exists === 'boolean') {
+            return response.exists;
+          }
+          return !!response?.data?.exists;
+        }),
+        catchError((error) => this.handleError(error, 'Error al verificar el número Mita')),
+      );
+  }
+
+  /**
    * Cambia el estado activo/inactivo de un usuario
    * @param id - ID del usuario
    * @param isActive - Nuevo estado

@@ -22,7 +22,7 @@
             }
           </p>
         </div>
-        <div class="card-body p-5">
+        <div class="card-body p-4">
           @if (isLoading) {
             <div class="d-flex justify-content-center align-items-center py-5">
               <div class="spinner-border text-primary" role="status">
@@ -31,6 +31,19 @@
             </div>
           } @else {
             <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+              <div class="form-actions-top">
+                <button
+                  type="button"
+                  class="btn btn-clear-minimal"
+                  (click)="onClearForm()"
+                  [disabled]="isSubmitting"
+                  title="Limpiar formulario"
+                  aria-label="Limpiar formulario"
+                >
+                  <i class="mdi mdi-broom"></i>
+                </button>
+              </div>
+
               <div class="horizontal-form-section">
                 <div class="two-column-layout">
                   <!-- Primera columna -->
@@ -45,9 +58,16 @@
                           id="mitaNumber"
                           formControlName="mitaNumber"
                           placeholder="Número Mita"
+                          [class.is-invalid]="isFieldInvalid('mitaNumber')"
                           (blur)="validateMitaNumber()"
                           (keydown.enter)="validateMitaNumber()"
                         />
+                        @if (isFieldInvalid('mitaNumber')) {
+                          <div class="invalid-feedback d-block">
+                            <i class="mdi mdi-alert-circle-outline me-1"></i>
+                            {{ getFieldError('mitaNumber') | transloco }}
+                          </div>
+                        }
                       </div>
                     </div>
 
@@ -430,10 +450,12 @@
               <div class="row mt-4">
                 <div class="col-12">
                   <div class="d-flex justify-content-between">
-                    <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSubmitting">
-                      <i class="mdi mdi-arrow-left me-1"></i>
-                      {{ 'app.cancel' | transloco }}
-                    </button>
+                    <div class="form-actions-left">
+                      <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSubmitting">
+                        <i class="mdi mdi-arrow-left me-1"></i>
+                        {{ 'app.cancel' | transloco }}
+                      </button>
+                    </div>
 
                     <button type="submit" class="btn btn-primary">
                       <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>

@@ -59,6 +59,7 @@
     "participantsList": "Lista de participantes",
     "createParticipant": "Crear participante",
     "participantDetails": "Detalles del participante",
+    "countries": "Países",
     "cases": "Casos",
     "casesList": "Lista de casos",
     "myAccount": "Mi Cuenta",
@@ -193,7 +194,8 @@
       "phoneExists": "Este número de teléfono ya está registrado en el sistema",
       "minLength": "El valor ingresado es muy corto",
       "maxLength": "El valor ingresado es muy largo",
-      "documentExists": "Este número de documento ya está registrado en el sistema"
+      "documentExists": "Este número de documento ya está registrado en el sistema",
+      "mitaExists": "Este número Mita ya está registrado en el sistema"
     }
   },
   "states": {
