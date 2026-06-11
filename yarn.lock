@@ -236,10 +236,10 @@
     rxjs "^7.8.1"
     tslib "^2.3.0"
 
-"@angular/animations@~20.1.6":
-  version "20.1.6"
-  resolved "https://registry.npmjs.org/@angular/animations/-/animations-20.1.6.tgz"
-  integrity sha512-vSU0BP0BzX20HoCE81MKcr9cd6H9zB1qbCNk2J1ulH1C9rXs5ZpeORy+riIJTOZDYLtE0jCsXT3pvVb+nPmADQ==
+"@angular/animations@20.1.8":
+  version "20.1.8"
+  resolved "https://registry.npmjs.org/@angular/animations/-/animations-20.1.8.tgz"
+  integrity sha512-Hid/s6hIVmK7xC+rlPoXR0F2+5ylqOrqt+8dNS3dc28xdivsHUegW6/7hz22Rm1bqpBc8xjB28E4mPJXDbpJVg==
   dependencies:
     tslib "^2.3.0"
 
@@ -310,17 +310,17 @@
     yargs "18.0.0"
     zod "3.25.75"
 
-"@angular/common@~20.1.6":
+"@angular/common@20.1.8":
   version "20.1.8"
   resolved "https://registry.npmjs.org/@angular/common/-/common-20.1.8.tgz"
   integrity sha512-naL9BOwbjnCHU/lV36qTeRn7dp/zBVE2ROaMi2VFnNt3IUZn6izolzFEEmjBkTXGChp+X9y0ha6JlQr/HlWGqg==
   dependencies:
     tslib "^2.3.0"
 
-"@angular/compiler-cli@~20.1.6":
-  version "20.1.6"
-  resolved "https://registry.npmjs.org/@angular/compiler-cli/-/compiler-cli-20.1.6.tgz"
-  integrity sha512-wskAeqRH46XfYRjaNSE3waeaBrogKghUM82WDDEw0U+CMP/j3BBS0RqILRYJCmuTjQ7RwXaPQBV2m2jAYaHlNg==
+"@angular/compiler-cli@20.1.8":
+  version "20.1.8"
+  resolved "https://registry.npmjs.org/@angular/compiler-cli/-/compiler-cli-20.1.8.tgz"
+  integrity sha512-zjkNO13etxB4Q6Tz3CTCaSY9FIfmEzR/lchAdC9lz2jygxCukjbwHD0HHKCwoF4oJZSwZKLLh0ZXMm2sQNGf6A==
   dependencies:
     "@babel/core" "7.28.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
@@ -331,55 +331,55 @@
     tslib "^2.3.0"
     yargs "^18.0.0"
 
-"@angular/compiler@~20.1.6":
+"@angular/compiler@20.1.8":
   version "20.1.8"
   resolved "https://registry.npmjs.org/@angular/compiler/-/compiler-20.1.8.tgz"
   integrity sha512-EvPO+sCLx2kGowvexxB4FMdXlza6UpGBv+r3hxI0rolUDHJpuVvxmyIbOMadHCVWXs7V3OwwHG8uEZK6fgdfcQ==
   dependencies:
     tslib "^2.3.0"
 
-"@angular/core@~20.1.6":
+"@angular/core@20.1.8":
   version "20.1.8"
   resolved "https://registry.npmjs.org/@angular/core/-/core-20.1.8.tgz"
   integrity sha512-MFXUAP7DCBRBAfGl7Yx8aGIyDkbpHiAAjaXpZ2faE+H9H6j3pB7sSEIw2BUZvI0sNk15ZCFVgASbzZR2mSrWzA==
   dependencies:
     tslib "^2.3.0"
 
-"@angular/forms@~20.1.6":
-  version "20.1.6"
-  resolved "https://registry.npmjs.org/@angular/forms/-/forms-20.1.6.tgz"
-  integrity sha512-9gLaiX8c2qOCu4jVukATCnSAANJuLKWGLZpZyLdJGHpZWM7ECf6hpsDKOq+AytqqYKWqZvjcI8AujUroU6aUtg==
+"@angular/forms@20.1.8":
+  version "20.1.8"
+  resolved "https://registry.npmjs.org/@angular/forms/-/forms-20.1.8.tgz"
+  integrity sha512-aktq6tsfSZz8//H0t5JMxdUPhwFY7QNvp5sF1wJDbckeP29I+of0Bl1kuVf9HAYczk0Xr5xHsgDzagh7vU0EeA==
   dependencies:
     tslib "^2.3.0"
 
-"@angular/localize@20.1.6":
-  version "20.1.6"
-  resolved "https://registry.npmjs.org/@angular/localize/-/localize-20.1.6.tgz"
-  integrity sha512-Sfn78lBaE5iNsv77++KF8of/6DhXsAl4eIaZjlaEUsOe7+a0fLL+kcfNac2n2UA1/kLYZrkzXdDdjft/caL+Hw==
+"@angular/localize@20.1.8":
+  version "20.1.8"
+  resolved "https://registry.npmjs.org/@angular/localize/-/localize-20.1.8.tgz"
+  integrity sha512-3oLACYjKaE6AkWBfcsyZl25zUNysigD7J6q0QkAsWBtK0SPl3Nyr5j/eGMXFTAyYqMU51jWhq4QsIQUPhcc2fw==
   dependencies:
     "@babel/core" "7.28.0"
     "@types/babel__core" "7.20.5"
     tinyglobby "^0.2.12"
     yargs "^18.0.0"
 
-"@angular/platform-browser-dynamic@~20.1.6":
-  version "20.1.6"
-  resolved "https://registry.npmjs.org/@angular/platform-browser-dynamic/-/platform-browser-dynamic-20.1.6.tgz"
-  integrity sha512-vAzgQUGppZ6lBpT++hFzCw6K77MfeYwtL/2BxHPWZMsJVrHF2WtbATn0Icgx6vyKixz7eJzDPKhooFSn5o32RQ==
+"@angular/platform-browser-dynamic@20.1.8":
+  version "20.1.8"
+  resolved "https://registry.npmjs.org/@angular/platform-browser-dynamic/-/platform-browser-dynamic-20.1.8.tgz"
+  integrity sha512-udBN++YbQS6r+Vf1JgafbamU32RiFr/B8B//K3xEv8NGfTH4en/RX8Bm4HKGReS/6V3/Bbj95EAA3dmmMw1Rhg==
   dependencies:
     tslib "^2.3.0"
 
-"@angular/platform-browser@~20.1.6":
-  version "20.1.6"
-  resolved "https://registry.npmjs.org/@angular/platform-browser/-/platform-browser-20.1.6.tgz"
-  integrity sha512-0FmqP1+JdzrT74JZLbf5IpC8nn0AeJ3Mk1IlXRVcK5olyh3SiEZIGBw89mYwmgP3gQqnjoakooTMA3wwy4Evxw==
+"@angular/platform-browser@20.1.8":
+  version "20.1.8"
+  resolved "https://registry.npmjs.org/@angular/platform-browser/-/platform-browser-20.1.8.tgz"
+  integrity sha512-OWE66k++1qhWIUbOGyocXU93PxWC3gw/mxTih4taTlyG6HJhottpEgkeWfGod0BpU3zko9kmnQmr/+F/Pc5gsw==
   dependencies:
     tslib "^2.3.0"
 
-"@angular/router@~20.1.6":
-  version "20.1.6"
-  resolved "https://registry.npmjs.org/@angular/router/-/router-20.1.6.tgz"
-  integrity sha512-42eB6UB/uZt5LqBK7sIGV+fnWPWgwlhZDCl7aujv0Tlwx1HgdLW7EbqMYs+2SIrezn4uj0hg+74oy1PL46V7MA==
+"@angular/router@20.1.8":
+  version "20.1.8"
+  resolved "https://registry.npmjs.org/@angular/router/-/router-20.1.8.tgz"
+  integrity sha512-Rn1QJ8rbEWq6+sxQb3zZY2wURvX59FMqiOVBMdOMIQ8tMaH/DDoem+Y3wer2m+VAzRSVHCVLSJkop2VclqQorA==
   dependencies:
     tslib "^2.3.0"
 
