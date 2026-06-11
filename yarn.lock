@@ -1243,10 +1243,10 @@
   resolved "https://registry.npmjs.org/@esbuild/win32-x64/-/win32-x64-0.25.5.tgz"
   integrity sha512-TXv6YnJ8ZMVdX+SXWVBo/0p8LTcrUYngpWjvm91TMjjBQii7Oz11Lw5lbDV5Y0TzuhSJHwiH4hEtC1I42mMS0g==
 
-"@fullcalendar/angular@^6.1.18":
-  version "6.1.18"
-  resolved "https://registry.npmjs.org/@fullcalendar/angular/-/angular-6.1.18.tgz"
-  integrity sha512-OBdpz0OA/7a2QdLES3vAAIO/TddtaIh7v4mZDYSFqTAia+ISkgGEqb6rZUPcqoSNS/SRLbvowSUO8qgbHOQMTg==
+"@fullcalendar/angular@^6.1.20":
+  version "6.1.20"
+  resolved "https://registry.npmjs.org/@fullcalendar/angular/-/angular-6.1.20.tgz"
+  integrity sha512-/V5wZuZSzWZxD3dnVteqY844Onv6we5ah0RU9ZJdRIeNbBFknHLeVYpIjYKsAPwkGigYX7UGOJR6NNpyarBLlQ==
   dependencies:
     tslib "^2.3.0"
 
