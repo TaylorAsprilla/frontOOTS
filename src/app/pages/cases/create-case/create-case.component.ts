@@ -11,6 +11,7 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { NgbNavModule, NgbProgressbarModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule } from '@ngneat/transloco';
 import { Subject, takeUntil, finalize } from 'rxjs';
@@ -43,6 +44,7 @@ import { ApproachType as ApproachTypeCatalog } from '../../configuration/approac
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterModule,
     NgbNavModule,
     NgbProgressbarModule,
     NgbDropdownModule,
@@ -1029,14 +1031,14 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
 
   // Navigation methods
   goToNextStep(): void {
-    // Step 4 with no case yet → create
-    if (this.activeWizardStep === 4 && !this.isEditMode && !this.caseId) {
+    // Step 1 with no case yet → create with family members data
+    if (this.activeWizardStep === 1 && !this.isEditMode && !this.caseId) {
       this.createInitialCase();
       return;
     }
 
-    // Steps 5-12 with an existing caseId → auto-save current step then advance
-    if (this.caseId && this.activeWizardStep >= 5 && this.activeWizardStep <= 12) {
+    // Steps 2-12 with an existing caseId → auto-save current step then advance
+    if (this.caseId && this.activeWizardStep >= 2 && this.activeWizardStep <= 12) {
       // Step 6: validate that at least one option is selected
       if (this.activeWizardStep === 6) {
         const followUpGroup = this.caseForm.get('followUpPlan');
@@ -1433,12 +1435,14 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
   }
 
   private createInitialCase(): void {
-    // Validate steps 1-4
-    const stepsToValidate = ['familyMembers', 'bioPsychosocialHistory', 'consultationReason', 'identifiedSituations'];
-    const allValid = stepsToValidate.every((key) => this.caseForm.get(key)?.valid);
-    if (!allValid) {
-      this.notificationService.showWarning('Por favor complete todos los campos requeridos en los pasos anteriores');
-      return;
+    // Validate step 1 only (skip family members check if livesAlone)
+    const livesAlone = !!this.caseForm.get('livesAlone')?.value;
+    if (!livesAlone) {
+      const familyMembersValid = this.caseForm.get('familyMembers')?.valid;
+      if (!familyMembersValid) {
+        this.notificationService.showWarning('Por favor complete la composición familiar antes de continuar');
+        return;
+      }
     }
 
     const formValue = this.caseForm.getRawValue();
@@ -1454,26 +1458,18 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
             academicLevelId: member.academicLevelId ? Number(member.academicLevelId) : null,
           })),
       bioPsychosocialHistory: {
-        academicLevelId: formValue.bioPsychosocialHistory.academicLevelId
-          ? Number(formValue.bioPsychosocialHistory.academicLevelId)
-          : null,
-        completedGrade: formValue.bioPsychosocialHistory.completedGrade,
-        institution: formValue.bioPsychosocialHistory.institution,
-        profession: formValue.bioPsychosocialHistory.profession,
-        incomeSourceId: formValue.bioPsychosocialHistory.incomeSourceId
-          ? Number(formValue.bioPsychosocialHistory.incomeSourceId)
-          : null,
-        incomeLevelId: formValue.bioPsychosocialHistory.incomeLevelId
-          ? Number(formValue.bioPsychosocialHistory.incomeLevelId)
-          : null,
-        occupationalHistory: formValue.bioPsychosocialHistory.occupationalHistory,
-        housingTypeId: formValue.bioPsychosocialHistory.housingTypeId
-          ? Number(formValue.bioPsychosocialHistory.housingTypeId)
-          : null,
-        housing: formValue.bioPsychosocialHistory.housing,
+        academicLevelId: null,
+        completedGrade: '',
+        institution: '',
+        profession: '',
+        incomeSourceId: null,
+        incomeLevelId: null,
+        occupationalHistory: '',
+        housingTypeId: null,
+        housing: '',
       },
-      consultationReason: formValue.consultationReason.reason,
-      identifiedSituations: formValue.identifiedSituations.situations,
+      consultationReason: '',
+      identifiedSituations: [],
       intervention: '',
       followUpPlan: [],
       physicalHealthHistory: [],
@@ -1503,7 +1499,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
           this.caseId = response.data.id;
           this.isEditMode = true;
           this.isCreatingCase = false;
-          this.activeWizardStep = 5;
+          this.activeWizardStep = 2;
         },
         error: () => {
           this.isCreatingCase = false;
@@ -1514,6 +1510,32 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
   private mapStepDataToDto(step: number): Partial<CreateCaseDto> | null {
     const formValue = this.caseForm.getRawValue();
     switch (step) {
+      case 2:
+        return {
+          bioPsychosocialHistory: {
+            academicLevelId: formValue.bioPsychosocialHistory.academicLevelId
+              ? Number(formValue.bioPsychosocialHistory.academicLevelId)
+              : null,
+            completedGrade: formValue.bioPsychosocialHistory.completedGrade,
+            institution: formValue.bioPsychosocialHistory.institution,
+            profession: formValue.bioPsychosocialHistory.profession,
+            incomeSourceId: formValue.bioPsychosocialHistory.incomeSourceId
+              ? Number(formValue.bioPsychosocialHistory.incomeSourceId)
+              : null,
+            incomeLevelId: formValue.bioPsychosocialHistory.incomeLevelId
+              ? Number(formValue.bioPsychosocialHistory.incomeLevelId)
+              : null,
+            occupationalHistory: formValue.bioPsychosocialHistory.occupationalHistory,
+            housingTypeId: formValue.bioPsychosocialHistory.housingTypeId
+              ? Number(formValue.bioPsychosocialHistory.housingTypeId)
+              : null,
+            housing: formValue.bioPsychosocialHistory.housing,
+          },
+        };
+      case 3:
+        return { consultationReason: formValue.consultationReason.reason };
+      case 4:
+        return { identifiedSituations: formValue.identifiedSituations.situations };
       case 5:
         return { intervention: formValue.intervention.action };
       case 6:

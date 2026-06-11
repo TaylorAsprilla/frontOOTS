@@ -1,4 +1,5 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { APP_INITIALIZER, ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { CountryService } from './app/core/services/country.service';
 import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { Title } from '@angular/platform-browser';
@@ -28,13 +29,18 @@ export const appConfig: ApplicationConfig = {
       // Reutiliza tus NgModules existentes:
 
       JoyrideModule.forRoot(),
-      SweetAlert2Module.forRoot()
+      SweetAlert2Module.forRoot(),
     ),
     Title,
     { provide: HTTP_INTERCEPTORS, useClass: LoggingInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-    // FakeBackendProvider, // Disabled - using real backend API
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (countryService: CountryService) => () => countryService.loadCountries(),
+      deps: [CountryService],
+      multi: true,
+    },
   ],
 };

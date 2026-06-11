@@ -235,6 +235,41 @@ small.text-muted {
   letter-spacing: 0.04em;
 }
 
+.case-discussion-entry-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  background: linear-gradient(135deg, #f5fbff 0%, #ffffff 55%);
+  border: 1px solid #d8ecff;
+  border-left: 4px solid #0d6efd;
+  border-radius: 0.6rem;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  flex-wrap: wrap;
+}
+
+.case-discussion-entry-card__icon {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(13, 110, 253, 0.1);
+  color: #0d6efd;
+  font-size: 1.35rem;
+}
+
+.case-discussion-entry-card__content {
+  flex: 1 1 260px;
+}
+
+.case-discussion-entry-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 /* Inline PDF section actions (intervention plan, closing note, etc.) */
 .pdf-actions {
   display: flex;

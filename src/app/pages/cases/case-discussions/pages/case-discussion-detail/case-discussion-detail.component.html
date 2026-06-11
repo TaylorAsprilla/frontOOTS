@@ -1,0 +1,132 @@
+<div class="container-fluid case-discussion-detail-page">
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+      <span class="text-uppercase small fw-semibold text-primary">Caso {{ caseId }}</span>
+      <h3 class="mb-1">Detalle de discusión del caso</h3>
+      <p class="text-muted mb-0">Vista de solo lectura con acceso a descarga y edición según permisos.</p>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      <a class="btn btn-outline-secondary" [routerLink]="['/cases', caseId, 'discussions']">Volver al listado</a>
+      <a
+        *ngIf="canEdit"
+        class="btn btn-outline-primary"
+        [routerLink]="['/cases', caseId, 'discussions', discussionId, 'edit']"
+        >Editar</a
+      >
+      <button type="button" class="btn btn-danger" (click)="downloadPdf()" [disabled]="!discussion || isDownloadingPdf">
+        <span *ngIf="isDownloadingPdf" class="spinner-border spinner-border-sm me-1"></span>
+        Descargar PDF
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="card border-0 shadow-sm">
+    <div class="card-body text-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="text-muted mt-3 mb-0">Cargando información de la discusión...</p>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!isLoading && discussion as item">
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="mb-0">Información general</h5>
+              <span [class]="getStatusBadgeClass(item.status)">{{ item.status }}</span>
+            </div>
+            <dl class="detail-list mb-0">
+              <dt>Caso asociado</dt>
+              <dd>{{ item.caseNumber }}</dd>
+              <dt>Participante/cliente</dt>
+              <dd>{{ item.participantName }}</dd>
+              <dt>Trabajador social</dt>
+              <dd>{{ item.socialWorkerName }}</dd>
+              <dt>Supervisor</dt>
+              <dd>{{ item.supervisorName }}</dd>
+              <dt>Fecha de discusión</dt>
+              <dd>{{ item.discussionDate | date: 'dd/MM/yyyy' }}</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="mb-3">Datos del cliente</h5>
+            <div class="row g-3 detail-grid">
+              <div class="col-md-6"><strong>Nombre:</strong> {{ item.clientName }}</div>
+              <div class="col-md-2"><strong>Edad:</strong> {{ item.clientAge || 'N/D' }}</div>
+              <div class="col-md-2"><strong>Sexo:</strong> {{ item.clientSex || 'N/D' }}</div>
+              <div class="col-md-2"><strong>Estado civil:</strong> {{ item.clientMaritalStatus || 'N/D' }}</div>
+            </div>
+
+            <hr class="my-4" />
+
+            <h5 class="mb-3">Composición familiar</h5>
+            <div class="table-responsive">
+              <table class="table table-sm align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Edad</th>
+                    <th>Parentesco</th>
+                    <th>Ocupación</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let member of item.familyMembers">
+                    <td>{{ member.name }}</td>
+                    <td>{{ member.age || 'N/D' }}</td>
+                    <td>{{ member.relationship }}</td>
+                    <td>{{ member.occupation || 'N/D' }}</td>
+                  </tr>
+                  <tr *ngIf="!item.familyMembers.length">
+                    <td colspan="4" class="text-center text-muted py-3">No se registró composición familiar.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <h5 class="mb-3">Desarrollo de la discusión</h5>
+            <div class="row g-4">
+              <div class="col-12">
+                <div class="discussion-block">
+                  <span class="discussion-block__label">Situaciones que presenta</span>
+                  <p class="mb-0">{{ item.presentingSituations }}</p>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="discussion-block">
+                  <span class="discussion-block__label">Personas más afectadas con la situación</span>
+                  <p class="mb-0">{{ item.affectedPeople || 'Sin observaciones registradas.' }}</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="discussion-block h-100">
+                  <span class="discussion-block__label">Recomendaciones del trabajador social</span>
+                  <p class="mb-0">{{ item.socialWorkerRecommendations || 'Sin recomendaciones registradas.' }}</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="discussion-block h-100">
+                  <span class="discussion-block__label">Recomendaciones del supervisor</span>
+                  <p class="mb-0">{{ item.supervisorRecommendations || 'Sin recomendaciones registradas.' }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

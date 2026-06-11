@@ -1,29 +1,70 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map, tap, catchError } from 'rxjs/operators';
 import { TranslocoService } from '@ngneat/transloco';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
-/**
- * Países soportados por el sistema
- */
-export type CountryCode = 'CO' | 'PR' | 'US';
-
-/**
- * Idiomas soportados (con locales)
- */
-export type SupportedLanguage = 'es-CO' | 'es-PR' | 'en';
+// Tipos dinámicos — ya no están atados a un union fijo
+export type CountryCode = string;
+export type SupportedLanguage = string;
 export type BaseLanguage = 'es' | 'en';
 
-/**
- * Configuración por país
- */
 export interface CountryConfig {
-  code: CountryCode;
+  id?: number;
+  code: string;
   name: string;
-  locale: string; // es-CO, es-PR
+  locale: string;
   currency: string;
   phonePrefix: string;
-  flag: string; // emoji o ruta a imagen
+  flag: string;
 }
+
+export interface BackendCountry {
+  id: number;
+  name: string;
+  iso: string;
+  locale: string;
+  currency: string;
+  phonePrefix: string;
+  flagUrl: string;
+  defaultLanguage: string;
+  isActive: boolean;
+}
+
+interface BackendCountriesResponse {
+  data: BackendCountry[];
+  statusCode: number;
+  message: string;
+}
+
+interface CountriesCache {
+  data: CountryConfig[];
+  cachedAt: string;
+}
+
+const CACHE_KEY = 'countries_cache';
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 horas
+const DEFAULT_LANGUAGE = 'es-PR';
+
+// Fallback mínimo si el backend falla y no hay caché
+const FALLBACK_COUNTRIES: CountryConfig[] = [
+  {
+    id: 1,
+    code: 'PR',
+    name: 'Puerto Rico',
+    locale: 'es-PR',
+    currency: 'USD',
+    phonePrefix: '+1',
+    flag: 'https://flagcdn.com/w20/pr.png',
+  },
+];
+
+// Normalización de locales del backend → locales de archivos i18n del frontend
+const LOCALE_NORMALIZATION: Record<string, string> = {
+  'en-US': 'en',
+  'en-GB': 'en',
+};
 
 /**
  * Servicio para gestionar la configuración específica por país
@@ -32,220 +73,113 @@ export interface CountryConfig {
   providedIn: 'root',
 })
 export class CountryService {
-  /**
-   * Configuraciones disponibles por país
-   */
-  private readonly countryConfigs: Record<CountryCode, CountryConfig> = {
-    CO: {
-      code: 'CO',
-      name: 'Colombia',
-      locale: 'es-CO',
-      currency: 'COP',
-      phonePrefix: '+57',
-      flag: 'https://flagcdn.com/w20/co.png',
-    },
-    PR: {
-      code: 'PR',
-      name: 'Puerto Rico',
-      locale: 'es-PR',
-      currency: 'USD',
-      phonePrefix: '+1',
-      flag: 'https://flagcdn.com/w20/pr.png',
-    },
-    US: {
-      code: 'US',
-      name: 'United States',
-      locale: 'en',
-      currency: 'USD',
-      phonePrefix: '+1',
-      flag: 'https://flagcdn.com/w20/us.png',
-    },
-  };
+  private countryConfigs: Record<string, CountryConfig> = {};
+
+  private currentCountrySubject = new BehaviorSubject<string>('PR');
+  public currentCountry$: Observable<string> = this.currentCountrySubject.asObservable();
+
+  private currentLanguageSubject = new BehaviorSubject<string>(DEFAULT_LANGUAGE);
+  public currentLanguage$: Observable<string> = this.currentLanguageSubject.asObservable();
+
+  constructor(
+    private translocoService: TranslocoService,
+    private http: HttpClient,
+  ) {}
 
   /**
-   * País actual seleccionado (por defecto Colombia)
+   * Carga países desde backend (o caché).
+   * Llamado por APP_INITIALIZER antes de que arranque la app.
    */
-  private currentCountrySubject = new BehaviorSubject<CountryCode>('CO');
-  public currentCountry$: Observable<CountryCode> = this.currentCountrySubject.asObservable();
+  loadCountries(): Observable<void> {
+    const cached = this.getCache();
+    if (cached) {
+      this.applyConfigs(cached);
+      return of(void 0);
+    }
 
-  /**
-   * Idioma actual (observable)
-   */
-  private currentLanguageSubject = new BehaviorSubject<SupportedLanguage>('es-CO');
-  public currentLanguage$: Observable<SupportedLanguage> = this.currentLanguageSubject.asObservable();
-
-  constructor(private translocoService: TranslocoService) {
-    this.initializeLanguage();
-    this.loadSavedCountry();
+    return this.http.get<BackendCountriesResponse>(`${environment.apiUrl}/countries`).pipe(
+      map((response) => ({ configs: this.mapToConfigs(response.data), fromNetwork: true })),
+      catchError((err) => {
+        console.error('[CountryService] Error cargando países, usando fallback PR:', err);
+        return of({ configs: FALLBACK_COUNTRIES, fromNetwork: false });
+      }),
+      tap(({ configs, fromNetwork }) => {
+        if (fromNetwork) this.saveCache(configs);
+        this.applyConfigs(configs);
+      }),
+      map(() => void 0),
+    );
   }
 
-  /**
-   * Obtener país actual
-   */
-  getCurrentCountry(): CountryCode {
+  // ==================== MÉTODOS PÚBLICOS ====================
+
+  getCurrentCountry(): string {
     return this.currentCountrySubject.value;
   }
 
-  /**
-   * Obtener configuración del país actual
-   */
   getCurrentConfig(): CountryConfig {
-    return this.countryConfigs[this.getCurrentCountry()];
+    return this.countryConfigs[this.getCurrentCountry()] ?? FALLBACK_COUNTRIES[0];
   }
 
-  /**
-   * Cambiar país actual
-   * @param country Código del país
-   */
-  setCountry(country: CountryCode): void {
+  setCountry(country: string): void {
     if (!this.countryConfigs[country]) {
-      console.error(`País no soportado: ${country}`);
+      console.error(`[CountryService] País no soportado: ${country}`);
       return;
     }
-
     const config = this.countryConfigs[country];
-
-    // Guardar en localStorage
     localStorage.setItem('selectedCountry', country);
-
-    // Actualizar observable
     this.currentCountrySubject.next(country);
-
-    // Cambiar locale en Transloco
-    // USA siempre usa inglés, otros países usan su locale específico
-    const newLocale = config.locale;
-    this.translocoService.setActiveLang(newLocale);
-    this.currentLanguageSubject.next(newLocale as SupportedLanguage);
-    localStorage.setItem('app-language', newLocale);
+    this.translocoService.setActiveLang(config.locale);
+    this.currentLanguageSubject.next(config.locale);
+    localStorage.setItem('app-language', config.locale);
   }
 
-  /**
-   * Obtener el locale correcto según el país y idioma base actual
-   * @param baseLanguage 'es' o 'en'
-   * @returns Locale completo como 'es-CO', 'es-PR' o 'en'
-   */
   getLocaleForLanguage(baseLanguage: 'es' | 'en'): string {
-    if (baseLanguage === 'en') {
-      return 'en';
-    }
+    if (baseLanguage === 'en') return 'en';
     const currentCountry = this.getCurrentCountry();
-    return this.countryConfigs[currentCountry].locale;
+    return this.countryConfigs[currentCountry]?.locale ?? DEFAULT_LANGUAGE;
   }
 
-  /**
-   * Obtener todas las configuraciones de países disponibles
-   */
   getAvailableCountries(): CountryConfig[] {
     return Object.values(this.countryConfigs);
   }
 
-  /**
-   * Obtener configuración de un país específico
-   */
-  getCountryConfig(code: CountryCode): CountryConfig | undefined {
+  getCountryConfig(code: string): CountryConfig | undefined {
     return this.countryConfigs[code];
   }
 
-  /**
-   * Cargar país guardado del localStorage al iniciar
-   */
-  private loadSavedCountry(): void {
-    const saved = localStorage.getItem('selectedCountry') as CountryCode;
-    if (saved && this.countryConfigs[saved]) {
-      this.setCountry(saved);
-    }
-  }
-
-  /**
-   * Inicializar idioma desde localStorage o navegador
-   */
-  private initializeLanguage(): void {
-    const savedLanguage = localStorage.getItem('app-language') as SupportedLanguage;
-
-    if (savedLanguage && this.isValidLanguage(savedLanguage)) {
-      this.translocoService.setActiveLang(savedLanguage);
-      this.currentLanguageSubject.next(savedLanguage);
-    } else {
-      // Usar idioma por defecto
-      this.translocoService.setActiveLang('es-CO');
-      this.currentLanguageSubject.next('es-CO');
-    }
-  }
-
-  /**
-   * Validar si un idioma es soportado
-   */
-  private isValidLanguage(lang: string): lang is SupportedLanguage {
-    return lang === 'es-CO' || lang === 'es-PR' || lang === 'en';
-  }
-
-  /**
-   * Obtener idioma base del locale
-   */
-  private getBaseLanguage(locale: SupportedLanguage): BaseLanguage {
-    return locale.startsWith('es') ? 'es' : 'en';
-  }
-
-  /**
-   * Cambiar idioma base (es/en) manteniendo país actual
-   */
-  setBaseLanguage(baseLanguage: BaseLanguage): void {
-    const newLocale = this.getLocaleForLanguage(baseLanguage);
-    this.setLanguage(newLocale as SupportedLanguage);
-  }
-
-  /**
-   * Cambiar idioma completo
-   */
-  setLanguage(language: SupportedLanguage): void {
+  setLanguage(language: string): void {
     if (!this.isValidLanguage(language)) {
-      console.error(`Idioma no soportado: ${language}`);
+      console.error(`[CountryService] Idioma no soportado: ${language}`);
       return;
     }
-
-    // Guardar en localStorage
     localStorage.setItem('app-language', language);
-
-    // Actualizar observable
     this.currentLanguageSubject.next(language);
-
-    // Cambiar en Transloco
     this.translocoService.setActiveLang(language);
   }
 
-  /**
-   * Obtener idioma actual
-   */
-  get currentLanguage(): SupportedLanguage {
+  setBaseLanguage(baseLanguage: BaseLanguage): void {
+    const newLocale = this.getLocaleForLanguage(baseLanguage);
+    this.setLanguage(newLocale);
+  }
+
+  get currentLanguage(): string {
     return this.currentLanguageSubject.value;
   }
 
-  /**
-   * Obtener idioma base actual
-   */
   get baseLanguage(): BaseLanguage {
     return this.getBaseLanguage(this.currentLanguage);
   }
 
-  /**
-   * Verificar si un idioma base está activo
-   */
   isBaseLanguageActive(language: BaseLanguage): boolean {
     return this.getBaseLanguage(this.currentLanguage) === language;
   }
 
-  /**
-   * Alternar entre español e inglés
-   */
   switchLanguage(): void {
-    const currentBase = this.getBaseLanguage(this.currentLanguage);
-    const newBase: BaseLanguage = currentBase === 'es' ? 'en' : 'es';
+    const newBase: BaseLanguage = this.baseLanguage === 'es' ? 'en' : 'es';
     this.setBaseLanguage(newBase);
   }
 
-  /**
-   * Obtener opciones de idioma base disponibles
-   */
   getAvailableLanguages(): Array<{ code: BaseLanguage; name: string; flag: string }> {
     return [
       { code: 'es', name: 'Español', flag: 'es' },
@@ -253,20 +187,12 @@ export class CountryService {
     ];
   }
 
-  /**
-   * Obtener label para campo de estado/departamento según país
-   */
   get stateLabel(): string {
-    const country = this.getCurrentCountry();
-    return country === 'CO' ? 'Departamento' : 'Estado';
+    return this.getCurrentCountry() === 'CO' ? 'Departamento' : 'Estado';
   }
 
-  /**
-   * Obtener label para campo de seguro médico según país
-   */
   get healthInsuranceLabel(): string {
-    const country = this.getCurrentCountry();
-    switch (country) {
+    switch (this.getCurrentCountry()) {
       case 'CO':
         return 'EPS';
       case 'PR':
@@ -278,22 +204,110 @@ export class CountryService {
     }
   }
 
-  /**
-   * Obtener traducción específica por país
-   * Útil para términos que varían por país
-   */
   getCountryTerm(baseKey: string): string {
-    const country = this.getCurrentCountry();
-    const countrySpecificKey = `${baseKey}.${country}`;
-
-    // Intentar obtener traducción específica del país
+    const countrySpecificKey = `${baseKey}.${this.getCurrentCountry()}`;
     const translation = this.translocoService.translate(countrySpecificKey);
+    return translation === countrySpecificKey ? this.translocoService.translate(baseKey) : translation;
+  }
 
-    // Si no existe, usar la traducción base
-    if (translation === countrySpecificKey) {
-      return this.translocoService.translate(baseKey);
+  // ==================== MÉTODOS ADMIN (CRUD backend) ====================
+
+  getCountries(): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/countries`);
+  }
+
+  createCountry(country: { name: string; code: string }): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/countries`, country);
+  }
+
+  updateCountry(id: number, country: { name: string; code: string }): Observable<any> {
+    return this.http.patch(`${environment.apiUrl}/countries/${id}`, country);
+  }
+
+  // ==================== MÉTODOS PRIVADOS ====================
+
+  private applyConfigs(configs: CountryConfig[]): void {
+    this.buildConfigs(configs);
+    this.initializeLanguage();
+    this.loadSavedCountry();
+  }
+
+  private buildConfigs(configs: CountryConfig[]): void {
+    this.countryConfigs = configs.reduce(
+      (acc, c) => {
+        acc[c.code] = c;
+        return acc;
+      },
+      {} as Record<string, CountryConfig>,
+    );
+    const langs = configs.map((c) => ({ id: c.locale, label: c.name }));
+    this.translocoService.setAvailableLangs(langs);
+  }
+
+  private mapToConfigs(countries: BackendCountry[]): CountryConfig[] {
+    return countries
+      .filter((c) => c.isActive)
+      .map((c) => ({
+        id: c.id,
+        code: c.iso,
+        name: c.name,
+        locale: this.normalizeLocale(c.locale),
+        currency: c.currency,
+        phonePrefix: c.phonePrefix,
+        flag: c.flagUrl,
+      }));
+  }
+
+  private normalizeLocale(locale: string): string {
+    return LOCALE_NORMALIZATION[locale] ?? locale;
+  }
+
+  private initializeLanguage(): void {
+    const saved = localStorage.getItem('app-language');
+    const lang = saved && this.isValidLanguage(saved) ? saved : DEFAULT_LANGUAGE;
+    this.translocoService.setActiveLang(lang);
+    this.currentLanguageSubject.next(lang);
+  }
+
+  private loadSavedCountry(): void {
+    const saved = localStorage.getItem('selectedCountry');
+    if (saved && this.countryConfigs[saved]) {
+      this.currentCountrySubject.next(saved);
     }
+  }
 
-    return translation;
+  private isValidLanguage(lang: string): boolean {
+    return Object.values(this.countryConfigs).some((c) => c.locale === lang);
+  }
+
+  private getBaseLanguage(locale: string): BaseLanguage {
+    return locale.startsWith('es') ? 'es' : 'en';
+  }
+
+  private getCache(): CountryConfig[] | null {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      if (!raw) return null;
+      const cache: CountriesCache = JSON.parse(raw);
+      const age = Date.now() - new Date(cache.cachedAt).getTime();
+      if (age >= CACHE_TTL_MS) return null;
+      // Invalidar caché si los países no tienen id (guardada con versión anterior)
+      if (cache.data.some((c) => c.id == null)) {
+        localStorage.removeItem(CACHE_KEY);
+        return null;
+      }
+      return cache.data;
+    } catch {
+      return null;
+    }
+  }
+
+  private saveCache(data: CountryConfig[]): void {
+    try {
+      const cache: CountriesCache = { data, cachedAt: new Date().toISOString() };
+      localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+    } catch {
+      // localStorage podría no estar disponible
+    }
   }
 }

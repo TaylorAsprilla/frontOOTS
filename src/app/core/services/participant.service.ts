@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, BehaviorSubject, throwError } from 'rxjs';
+import { Observable, BehaviorSubject, throwError, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import {
   Participant,
@@ -45,20 +45,38 @@ export class ParticipantService {
   public loading$ = this.loadingSubject.asObservable();
 
   /**
-   * Get all participants with optional filtering
+   * Get all participants with automatic filtering by role (countryId/userId)
    */
   getParticipants(filters?: {
     page?: number;
     limit?: number;
     search?: string;
     status?: ParticipantStatus;
+    countryId?: number;
+    userId?: number;
   }): Observable<ParticipantListResponse> {
     this.loadingSubject.next(true);
 
+    // Obtener usuario autenticado
+    const user = this.tokenStorageService.getUser();
+    const role = (user as any)?.role;
+    const countryId = (user as any)?.countryId;
+    const userId = (user as any)?.id;
+
+    // Clonar filtros para no mutar el objeto original
+    const mergedFilters: any = { ...filters };
+
+    // Filtrado automático según rol
+    if (role === 'ADMIN_PAIS' && countryId) {
+      mergedFilters.countryId = countryId;
+    } else if (role === 'USUARIO' && userId) {
+      mergedFilters.userId = userId;
+    }
+
     let params = '';
-    if (filters) {
+    if (mergedFilters) {
       const searchParams = new URLSearchParams();
-      Object.entries(filters).forEach(([key, value]) => {
+      Object.entries(mergedFilters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
           searchParams.append(key, value.toString());
         }
@@ -370,6 +388,33 @@ export class ParticipantService {
       catchError((error) => {
         console.error('Error checking email existence:', error);
         return throwError(() => error);
+      }),
+    );
+  }
+
+  /**
+   * Lookup participant data from the external microservice by document number
+   */
+  lookupDocumentExternal(documentNumber: string): Observable<any> {
+    const params: Record<string, string> = { numeroDocumento: documentNumber };
+
+    return this.http.get<any>(environment.documentLookupUrl, { params }).pipe(
+      catchError((err) => {
+        const errorBody = err?.error ?? { ok: false, msg: 'Error de conexión con el microservicio.' };
+        return of({ ...errorBody, _httpStatus: err?.status ?? 0 });
+      }),
+    );
+  }
+
+  /**
+   * Lookup participant data from the external microservice by Mita number
+   */
+  lookupMitaExternal(mitaNumber: string): Observable<any> {
+    const params: Record<string, string> = { numeroMita: mitaNumber };
+    return this.http.get<any>(environment.documentLookupUrl, { params }).pipe(
+      catchError((err) => {
+        const errorBody = err?.error ?? { ok: false, msg: 'Error de conexión con el microservicio.' };
+        return of({ ...errorBody, _httpStatus: err?.status ?? 0 });
       }),
     );
   }

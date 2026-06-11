@@ -15,29 +15,21 @@ export type BaseLanguage = 'es' | 'en';
 export class LanguageService {
   private readonly transloco = inject(TranslocoService);
   private readonly STORAGE_KEY = 'app-language';
-  private readonly DEFAULT_LANGUAGE: SupportedLanguage = 'es-CO';
-  private countryService?: CountryService;
+  private readonly DEFAULT_LANGUAGE: SupportedLanguage = 'es-PR';
+  private readonly countryService = inject(CountryService);
 
   // Observable para el idioma actual
   private currentLanguageSubject = new BehaviorSubject<SupportedLanguage>(this.DEFAULT_LANGUAGE);
   public currentLanguage$ = this.currentLanguageSubject.asObservable();
 
   constructor() {
-    // Esperar a que Transloco esté listo antes de inicializar
     this.transloco.events$.subscribe((event) => {
-      if (event.type === 'translationLoadSuccess') {
-      }
       if (event.type === 'translationLoadFailure') {
         console.error('Error cargando traducciones para:', event.payload.langName);
       }
     });
 
-    // Inicializar después de un pequeño delay para permitir que Transloco se configure
-    setTimeout(() => {
-      this.initializeLanguage();
-      // Inyectar CountryService después de la inicialización para evitar dependencia circular
-      this.countryService = inject(CountryService);
-    }, 100);
+    this.initializeLanguage();
   }
 
   /**

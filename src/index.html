@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -14,6 +14,24 @@
   </head>
 
   <body>
+    <!-- Patch: ApexCharts registers touch/wheel events as passive:true but calls preventDefault().
+         Override addEventListener globally so those events are never passive. -->
+    <script>
+      (function () {
+        var orig = EventTarget.prototype.addEventListener;
+        var passiveEvents = ['touchstart', 'touchmove', 'wheel', 'mousewheel'];
+        EventTarget.prototype.addEventListener = function (type, fn, options) {
+          if (passiveEvents.indexOf(type) !== -1) {
+            if (typeof options === 'object' && options !== null) {
+              options = Object.assign({}, options, { passive: false });
+            } else {
+              options = { passive: false, capture: options === true };
+            }
+          }
+          return orig.call(this, type, fn, options);
+        };
+      })();
+    </script>
     <app-root></app-root>
   </body>
 </html>

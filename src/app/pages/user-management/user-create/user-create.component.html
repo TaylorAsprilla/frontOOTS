@@ -1,5 +1,8 @@
 <!-- Page Title -->
-<app-page-title [breadcrumbItems]="pageTitle" title="user.createNewUser"></app-page-title>
+<app-page-title
+  [breadcrumbItems]="pageTitle"
+  [title]="isEditMode ? 'user.editUser' : 'user.createNewUser'"
+></app-page-title>
 
 <div class="container-fluid">
   <div class="row justify-content-center">
@@ -7,382 +10,469 @@
       <div class="card shadow-sm border-0">
         <div class="card-header bg-light text-dark">
           <h4 class="header-title mb-1">
-            <i class="mdi mdi-account-plus me-2"></i>{{ 'user.userInformation' | transloco }}
+            <i [class]="'mdi me-2 ' + (isEditMode ? 'mdi-account-edit' : 'mdi-account-plus')"></i
+            >{{ 'user.userInformation' | transloco }}
           </h4>
-          <p class="text-dark-50 mb-0 font-14">{{ 'user.fillDetailsToCreate' | transloco }}</p>
+          <p class="text-dark-50 mb-0 font-14">
+            @if (isEditMode && originalUser) {
+              {{ 'user.editingUser' | transloco }}:
+              <strong>{{ originalUser.firstName }} {{ originalUser.firstLastName }}</strong>
+            } @else {
+              {{ 'user.fillDetailsToCreate' | transloco }}
+            }
+          </p>
         </div>
-        <div class="card-body p-5">
-          <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-            <div class="horizontal-form-section">
-              <div class="two-column-layout">
-                <!-- Primera columna -->
-                <div>
-                  <!-- First Name -->
-                  <div class="row mb-3">
-                    <label for="firstName" class="col-md-4 col-form-label obligatorio">
-                      {{ 'user.firstName' | transloco }}
-                    </label>
-                    <div class="col-md-8">
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="firstName"
-                        formControlName="firstName"
-                        [placeholder]="'user.enterFirstName' | transloco"
-                        [class.is-invalid]="isFieldInvalid('firstName')"
-                      />
-                      @if (isFieldInvalid('firstName')) {
-                        <div class="invalid-feedback d-block">
-                          <i class="mdi mdi-alert-circle-outline me-1"></i>
-                          {{ getFieldError('firstName') | transloco }}
-                        </div>
-                      }
-                    </div>
-                  </div>
+        <div class="card-body p-4">
+          @if (isLoading) {
+            <div class="d-flex justify-content-center align-items-center py-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">{{ 'app.loading' | transloco }}</span>
+              </div>
+            </div>
+          } @else {
+            <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+              <div class="form-actions-top">
+                <button
+                  type="button"
+                  class="btn btn-clear-minimal"
+                  (click)="onClearForm()"
+                  [disabled]="isSubmitting"
+                  title="Limpiar formulario"
+                  aria-label="Limpiar formulario"
+                >
+                  <i class="mdi mdi-broom"></i>
+                </button>
+              </div>
 
-                  <!-- First Last Name -->
-                  <div class="row mb-3">
-                    <label for="firstLastName" class="col-md-4 col-form-label obligatorio">
-                      {{ 'user.firstLastName' | transloco }}
-                    </label>
-                    <div class="col-md-8">
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="firstLastName"
-                        formControlName="firstLastName"
-                        [placeholder]="'user.enterFirstLastName' | transloco"
-                        [class.is-invalid]="isFieldInvalid('firstLastName')"
-                      />
-                      @if (isFieldInvalid('firstLastName')) {
-                        <div class="invalid-feedback d-block">
-                          <i class="mdi mdi-alert-circle-outline me-1"></i>
-                          {{ getFieldError('firstLastName') | transloco }}
-                        </div>
-                      }
-                    </div>
-                  </div>
-
-                  <!-- Email -->
-                  <div class="row mb-3">
-                    <label for="email" class="col-md-4 col-form-label obligatorio">
-                      {{ 'user.email' | transloco }}
-                    </label>
-                    <div class="col-md-8">
-                      <input
-                        type="email"
-                        class="form-control"
-                        id="email"
-                        formControlName="email"
-                        [placeholder]="'user.enterEmail' | transloco"
-                        [class.is-invalid]="isFieldInvalid('email')"
-                        (blur)="validateEmail()"
-                        (keydown.enter)="validateEmail()"
-                      />
-                      @if (isFieldInvalid('email')) {
-                        <div class="invalid-feedback d-block">
-                          <i class="mdi mdi-alert-circle-outline me-1"></i>
-                          {{ getFieldError('email') | transloco }}
-                        </div>
-                      }
-                    </div>
-                  </div>
-
-                  <!-- Phone Number -->
-                  <div class="row mb-3">
-                    <label class="col-md-4 col-form-label obligatorio" for="phoneNumber">
-                      {{ 'user.phone' | transloco }}
-                    </label>
-                    <div class="col-md-8">
-                      <div
-                        class="phone-input-wrapper"
-                        (focusout)="onPhoneBlur($event)"
-                        [ngClass]="{
-                          'has-error': isFieldInvalid('phoneNumber'),
-                          'has-success': !isFieldInvalid('phoneNumber') && userForm.get('phoneNumber')?.value,
-                        }"
-                      >
-                        <ngx-intl-tel-input
-                          [cssClass]="'form-control'"
-                          [preferredCountries]="[CountryISO.Colombia, CountryISO.PuertoRico, CountryISO.UnitedStates]"
-                          [enableAutoCountrySelect]="true"
-                          [enablePlaceholder]="true"
-                          [searchCountryFlag]="true"
-                          [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
-                          [selectFirstCountry]="false"
-                          [selectedCountryISO]="defaultPhoneCountry"
-                          [maxLength]="15"
-                          [phoneValidation]="true"
-                          [separateDialCode]="false"
-                          [numberFormat]="PhoneNumberFormat.International"
-                          formControlName="phoneNumber"
-                          id="phoneNumber"
-                        >
-                        </ngx-intl-tel-input>
-                        @if (isFieldInvalid('phoneNumber')) {
+              <div class="horizontal-form-section">
+                <div class="two-column-layout">
+                  <!-- Primera columna -->
+                  <div>
+                    <!-- #Mita (opcional) -->
+                    <div class="row mb-3">
+                      <label for="mitaNumber" class="col-md-4 col-form-label">#Mita</label>
+                      <div class="col-md-8">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="mitaNumber"
+                          formControlName="mitaNumber"
+                          placeholder="Número Mita"
+                          [class.is-invalid]="isFieldInvalid('mitaNumber')"
+                          (blur)="validateMitaNumber()"
+                          (keydown.enter)="validateMitaNumber()"
+                        />
+                        @if (isFieldInvalid('mitaNumber')) {
                           <div class="invalid-feedback d-block">
                             <i class="mdi mdi-alert-circle-outline me-1"></i>
-                            {{ getFieldError('phoneNumber') || 'user.validPhoneRequired' | transloco }}
+                            {{ getFieldError('mitaNumber') | transloco }}
+                          </div>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- Tipo de documento -->
+                    <div class="row mb-3">
+                      <label for="documentTypeId" class="col-md-4 col-form-label obligatorio">
+                        {{ 'user.documentType' | transloco }}
+                      </label>
+                      <div class="col-md-8">
+                        <select
+                          class="form-select"
+                          id="documentTypeId"
+                          formControlName="documentTypeId"
+                          [class.is-invalid]="isFieldInvalid('documentTypeId')"
+                        >
+                          <option [ngValue]="null" disabled selected>Seleccione</option>
+                          @for (docType of documentTypes; track docType.id) {
+                            <option [ngValue]="docType.id">{{ docType.name }}</option>
+                          }
+                        </select>
+                        @if (isFieldInvalid('documentTypeId')) {
+                          <div class="invalid-feedback d-block">
+                            <i class="mdi mdi-alert-circle-outline me-1"></i>
+                            {{ getFieldError('documentTypeId') | transloco }}
+                          </div>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- Primer nombre -->
+                    <div class="row mb-3">
+                      <label for="firstName" class="col-md-4 col-form-label obligatorio">
+                        {{ 'user.firstName' | transloco }}
+                      </label>
+                      <div class="col-md-8">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="firstName"
+                          formControlName="firstName"
+                          [placeholder]="'user.enterFirstName' | transloco"
+                          [class.is-invalid]="isFieldInvalid('firstName')"
+                        />
+                        @if (isFieldInvalid('firstName')) {
+                          <div class="invalid-feedback d-block">
+                            <i class="mdi mdi-alert-circle-outline me-1"></i>
+                            {{ getFieldError('firstName') | transloco }}
+                          </div>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- Primer apellido -->
+                    <div class="row mb-3">
+                      <label for="firstLastName" class="col-md-4 col-form-label obligatorio">
+                        {{ 'user.firstLastName' | transloco }}
+                      </label>
+                      <div class="col-md-8">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="firstLastName"
+                          formControlName="firstLastName"
+                          [placeholder]="'user.enterFirstLastName' | transloco"
+                          [class.is-invalid]="isFieldInvalid('firstLastName')"
+                        />
+                        @if (isFieldInvalid('firstLastName')) {
+                          <div class="invalid-feedback d-block">
+                            <i class="mdi mdi-alert-circle-outline me-1"></i>
+                            {{ getFieldError('firstLastName') | transloco }}
+                          </div>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- Teléfono -->
+                    <div class="row mb-3">
+                      <label class="col-md-4 col-form-label obligatorio" for="phoneNumber">
+                        {{ 'user.phone' | transloco }}
+                      </label>
+                      <div class="col-md-8">
+                        <div
+                          class="phone-input-wrapper"
+                          (focusout)="onPhoneBlur($event)"
+                          [ngClass]="{
+                            'has-error': isFieldInvalid('phoneNumber'),
+                            'has-success': !isFieldInvalid('phoneNumber') && userForm.get('phoneNumber')?.value,
+                          }"
+                        >
+                          <ngx-intl-tel-input
+                            [cssClass]="'form-control'"
+                            [preferredCountries]="[CountryISO.Colombia, CountryISO.PuertoRico, CountryISO.UnitedStates]"
+                            [enableAutoCountrySelect]="true"
+                            [enablePlaceholder]="true"
+                            [searchCountryFlag]="true"
+                            [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                            [selectFirstCountry]="false"
+                            [selectedCountryISO]="defaultPhoneCountry"
+                            [maxLength]="15"
+                            [phoneValidation]="true"
+                            [separateDialCode]="false"
+                            [numberFormat]="PhoneNumberFormat.International"
+                            formControlName="phoneNumber"
+                            id="phoneNumber"
+                          >
+                          </ngx-intl-tel-input>
+                          @if (isFieldInvalid('phoneNumber')) {
+                            <div class="invalid-feedback d-block">
+                              <i class="mdi mdi-alert-circle-outline me-1"></i>
+                              {{ getFieldError('phoneNumber') || 'user.validPhoneRequired' | transloco }}
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Dirección -->
+                    <div class="row mb-3">
+                      <label for="address" class="col-md-4 col-form-label obligatorio">
+                        {{ 'user.address' | transloco }}
+                      </label>
+                      <div class="col-md-8">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="address"
+                          formControlName="address"
+                          [placeholder]="'user.enterAddress' | transloco"
+                          [class.is-invalid]="isFieldInvalid('address')"
+                        />
+                        @if (isFieldInvalid('address')) {
+                          <div class="invalid-feedback d-block">
+                            <i class="mdi mdi-alert-circle-outline me-1"></i>
+                            {{ getFieldError('address') | transloco }}
+                          </div>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- Ciudad -->
+                    <div class="row mb-3">
+                      <label for="city" class="col-md-4 col-form-label obligatorio">
+                        {{ 'user.city' | transloco }}
+                      </label>
+                      <div class="col-md-8">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="city"
+                          formControlName="city"
+                          [placeholder]="'user.enterCity' | transloco"
+                          [class.is-invalid]="isFieldInvalid('city')"
+                        />
+                        @if (isFieldInvalid('city')) {
+                          <div class="invalid-feedback d-block">
+                            <i class="mdi mdi-alert-circle-outline me-1"></i>
+                            {{ getFieldError('city') | transloco }}
+                          </div>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- Cargo -->
+                    <div class="row mb-3">
+                      <label for="position" class="col-md-4 col-form-label obligatorio">
+                        {{ 'user.position' | transloco }}
+                      </label>
+                      <div class="col-md-8">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="position"
+                          formControlName="position"
+                          [placeholder]="'user.enterPosition' | transloco"
+                          [class.is-invalid]="isFieldInvalid('position')"
+                        />
+                        @if (isFieldInvalid('position')) {
+                          <div class="invalid-feedback d-block">
+                            <i class="mdi mdi-alert-circle-outline me-1"></i>
+                            {{ getFieldError('position') | transloco }}
                           </div>
                         }
                       </div>
                     </div>
                   </div>
 
-                  <!-- Document Type -->
-                  <div class="row mb-3">
-                    <label for="documentTypeId" class="col-md-4 col-form-label obligatorio">
-                      {{ 'user.documentType' | transloco }}
-                    </label>
-                    <div class="col-md-8">
-                      <select
-                        class="form-select"
-                        id="documentTypeId"
-                        formControlName="documentTypeId"
-                        [class.is-invalid]="isFieldInvalid('documentTypeId')"
-                      >
-                        <option value="" disabled selected>Seleccione</option>
-                        @for (docType of documentTypes; track docType.id) {
-                          <option [ngValue]="docType.id">{{ docType.name }}</option>
+                  <!-- Segunda columna -->
+                  <div>
+                    <!-- Número de Documento -->
+                    <div class="row mb-3">
+                      <label for="documentNumber" class="col-md-4 col-form-label obligatorio">
+                        {{ 'user.documentNumber' | transloco }}
+                      </label>
+                      <div class="col-md-8">
+                        <div class="input-group">
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="documentNumber"
+                            formControlName="documentNumber"
+                            [placeholder]="'user.enterDocumentNumber' | transloco"
+                            [class.is-invalid]="isFieldInvalid('documentNumber')"
+                            (blur)="validateDocumentNumber()"
+                            (keydown.enter)="validateDocumentNumber()"
+                          />
+                          @if (isLookingUpDocument) {
+                            <span class="input-group-text">
+                              <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
+                            </span>
+                          }
+                        </div>
+                        @if (isFieldInvalid('documentNumber')) {
+                          <div class="invalid-feedback d-block">
+                            <i class="mdi mdi-alert-circle-outline me-1"></i>
+                            {{ getFieldError('documentNumber') | transloco }}
+                          </div>
                         }
-                      </select>
-                      @if (isFieldInvalid('documentTypeId')) {
-                        <div class="invalid-feedback d-block">
-                          <i class="mdi mdi-alert-circle-outline me-1"></i>
-                          {{ getFieldError('documentTypeId') | transloco }}
-                        </div>
-                      }
-                    </div>
-                  </div>
-
-                  <!-- Address -->
-                  <div class="row mb-3">
-                    <label for="address" class="col-md-4 col-form-label obligatorio">
-                      {{ 'user.address' | transloco }}
-                    </label>
-                    <div class="col-md-8">
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="address"
-                        formControlName="address"
-                        [placeholder]="'user.enterAddress' | transloco"
-                        [class.is-invalid]="isFieldInvalid('address')"
-                      />
-                      @if (isFieldInvalid('address')) {
-                        <div class="invalid-feedback d-block">
-                          <i class="mdi mdi-alert-circle-outline me-1"></i>
-                          {{ getFieldError('address') | transloco }}
-                        </div>
-                      }
-                    </div>
-                  </div>
-
-                  <!-- Position -->
-                  <div class="row mb-3">
-                    <label for="position" class="col-md-4 col-form-label obligatorio">
-                      {{ 'user.position' | transloco }}
-                    </label>
-                    <div class="col-md-8">
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="position"
-                        formControlName="position"
-                        [placeholder]="'user.enterPosition' | transloco"
-                        [class.is-invalid]="isFieldInvalid('position')"
-                      />
-                      @if (isFieldInvalid('position')) {
-                        <div class="invalid-feedback d-block">
-                          <i class="mdi mdi-alert-circle-outline me-1"></i>
-                          {{ getFieldError('position') | transloco }}
-                        </div>
-                      }
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Segunda columna -->
-                <div>
-                  <!-- Second Name -->
-                  <div class="row mb-3">
-                    <label for="secondName" class="col-md-4 col-form-label">
-                      {{ 'user.secondName' | transloco }}
-                    </label>
-                    <div class="col-md-8">
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="secondName"
-                        formControlName="secondName"
-                        [placeholder]="'user.enterSecondName' | transloco"
-                      />
-                    </div>
-                  </div>
-
-                  <!-- Second Last Name -->
-                  <div class="row mb-3">
-                    <label for="secondLastName" class="col-md-4 col-form-label">
-                      {{ 'user.secondLastName' | transloco }}
-                    </label>
-                    <div class="col-md-8">
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="secondLastName"
-                        formControlName="secondLastName"
-                        [placeholder]="'user.enterSecondLastName' | transloco"
-                      />
-                    </div>
-                  </div>
-
-                  <!-- Password -->
-                  <div class="row mb-3">
-                    <label for="password" class="col-md-4 col-form-label obligatorio">
-                      {{ 'user.password' | transloco }}
-                    </label>
-                    <div class="col-md-8">
-                      <div class="input-group">
-                        <input
-                          type="password"
-                          class="form-control"
-                          id="password"
-                          formControlName="password"
-                          [placeholder]="'user.enterPassword' | transloco"
-                          [class.is-invalid]="isFieldInvalid('password')"
-                        />
-                        <button
-                          type="button"
-                          class="btn btn-outline-secondary"
-                          (click)="onGeneratePassword()"
-                          title="Generar contraseña automáticamente"
-                        >
-                          <i class="mdi mdi-refresh"></i> Generar
-                        </button>
                       </div>
-                      @if (isFieldInvalid('password')) {
-                        <div class="invalid-feedback d-block">
-                          <i class="mdi mdi-alert-circle-outline me-1"></i>
-                          {{ getFieldError('password') | transloco }}
-                        </div>
-                      }
                     </div>
-                  </div>
 
-                  <!-- Document Number -->
-                  <div class="row mb-3">
-                    <label for="documentNumber" class="col-md-4 col-form-label obligatorio">
-                      {{ 'user.documentNumber' | transloco }}
-                    </label>
-                    <div class="col-md-8">
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="documentNumber"
-                        formControlName="documentNumber"
-                        [placeholder]="'user.enterDocumentNumber' | transloco"
-                        [class.is-invalid]="isFieldInvalid('documentNumber')"
-                        (blur)="validateDocumentNumber()"
-                        (keydown.enter)="validateDocumentNumber()"
-                      />
-                      @if (isFieldInvalid('documentNumber')) {
-                        <div class="invalid-feedback d-block">
-                          <i class="mdi mdi-alert-circle-outline me-1"></i>
-                          {{ getFieldError('documentNumber') | transloco }}
-                        </div>
-                      }
+                    <!-- Correo electrónico -->
+                    <div class="row mb-3">
+                      <label for="email" class="col-md-4 col-form-label obligatorio">
+                        {{ 'user.email' | transloco }}
+                      </label>
+                      <div class="col-md-8">
+                        <input
+                          type="email"
+                          class="form-control"
+                          id="email"
+                          formControlName="email"
+                          [placeholder]="'user.enterEmail' | transloco"
+                          [class.is-invalid]="isFieldInvalid('email')"
+                          (blur)="validateEmail()"
+                          (keydown.enter)="validateEmail()"
+                        />
+                        @if (isFieldInvalid('email')) {
+                          <div class="invalid-feedback d-block">
+                            <i class="mdi mdi-alert-circle-outline me-1"></i>
+                            {{ getFieldError('email') | transloco }}
+                          </div>
+                        }
+                      </div>
                     </div>
-                  </div>
 
-                  <!-- City -->
-                  <div class="row mb-3">
-                    <label for="city" class="col-md-4 col-form-label obligatorio">
-                      {{ 'user.city' | transloco }}
-                    </label>
-                    <div class="col-md-8">
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="city"
-                        formControlName="city"
-                        [placeholder]="'user.enterCity' | transloco"
-                        [class.is-invalid]="isFieldInvalid('city')"
-                      />
-                      @if (isFieldInvalid('city')) {
-                        <div class="invalid-feedback d-block">
-                          <i class="mdi mdi-alert-circle-outline me-1"></i>
-                          {{ getFieldError('city') | transloco }}
-                        </div>
-                      }
+                    <!-- Segundo nombre -->
+                    <div class="row mb-3">
+                      <label for="secondName" class="col-md-4 col-form-label">
+                        {{ 'user.secondName' | transloco }}
+                      </label>
+                      <div class="col-md-8">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="secondName"
+                          formControlName="secondName"
+                          [placeholder]="'user.enterSecondName' | transloco"
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <!-- Birth Date -->
-                  <div class="row mb-3">
-                    <label for="birthDate" class="col-md-4 col-form-label obligatorio">
-                      {{ 'user.birthDate' | transloco }}
-                    </label>
-                    <div class="col-md-8">
-                      <input
-                        type="date"
-                        class="form-control"
-                        id="birthDate"
-                        formControlName="birthDate"
-                        [class.is-invalid]="isFieldInvalid('birthDate')"
-                      />
-                      @if (isFieldInvalid('birthDate')) {
-                        <div class="invalid-feedback d-block">
-                          <i class="mdi mdi-alert-circle-outline me-1"></i>
-                          {{ getFieldError('birthDate') | transloco }}
-                        </div>
-                      }
+                    <!-- Segundo apellido -->
+                    <div class="row mb-3">
+                      <label for="secondLastName" class="col-md-4 col-form-label">
+                        {{ 'user.secondLastName' | transloco }}
+                      </label>
+                      <div class="col-md-8">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="secondLastName"
+                          formControlName="secondLastName"
+                          [placeholder]="'user.enterSecondLastName' | transloco"
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <!-- Headquarters -->
-                  <div class="row mb-3">
-                    <label for="headquarters" class="col-md-4 col-form-label obligatorio">
-                      {{ 'user.headquarters' | transloco }}
-                    </label>
-                    <div class="col-md-8">
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="headquarters"
-                        formControlName="headquarters"
-                        [placeholder]="'user.enterHeadquarters' | transloco"
-                        [class.is-invalid]="isFieldInvalid('headquarters')"
-                      />
-                      @if (isFieldInvalid('headquarters')) {
-                        <div class="invalid-feedback d-block">
-                          <i class="mdi mdi-alert-circle-outline me-1"></i>
-                          {{ getFieldError('headquarters') | transloco }}
-                        </div>
-                      }
+                    <!-- Fecha de Nacimiento -->
+                    <div class="row mb-3">
+                      <label for="birthDate" class="col-md-4 col-form-label obligatorio">
+                        {{ 'user.birthDate' | transloco }}
+                      </label>
+                      <div class="col-md-8">
+                        <input
+                          type="date"
+                          class="form-control"
+                          id="birthDate"
+                          formControlName="birthDate"
+                          [class.is-invalid]="isFieldInvalid('birthDate')"
+                        />
+                        @if (isFieldInvalid('birthDate')) {
+                          <div class="invalid-feedback d-block">
+                            <i class="mdi mdi-alert-circle-outline me-1"></i>
+                            {{ getFieldError('birthDate') | transloco }}
+                          </div>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- País -->
+                    <div class="row mb-3">
+                      <label for="countryId" class="col-md-4 col-form-label obligatorio">
+                        {{ 'user.country' | transloco }}
+                      </label>
+                      <div class="col-md-8">
+                        <select
+                          class="form-select"
+                          id="countryId"
+                          formControlName="countryId"
+                          [class.is-invalid]="isFieldInvalid('countryId')"
+                        >
+                          <option [ngValue]="null" disabled selected>Seleccione</option>
+                          @for (country of countries; track country.code) {
+                            {{ country.name }}
+                            <option [ngValue]="country.id">{{ country.name }}</option>
+                          }
+                        </select>
+                        @if (isFieldInvalid('countryId')) {
+                          <div class="invalid-feedback d-block">
+                            <i class="mdi mdi-alert-circle-outline me-1"></i>
+                            {{ getFieldError('countryId') | transloco }}
+                          </div>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- Sede -->
+                    <div class="row mb-3">
+                      <label for="headquarters" class="col-md-4 col-form-label obligatorio">
+                        {{ 'user.headquarters' | transloco }}
+                      </label>
+                      <div class="col-md-8">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="headquarters"
+                          formControlName="headquarters"
+                          [placeholder]="'user.enterHeadquarters' | transloco"
+                          [class.is-invalid]="isFieldInvalid('headquarters')"
+                        />
+                        @if (isFieldInvalid('headquarters')) {
+                          <div class="invalid-feedback d-block">
+                            <i class="mdi mdi-alert-circle-outline me-1"></i>
+                            {{ getFieldError('headquarters') | transloco }}
+                          </div>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- Rol -->
+                    <div class="row mb-3">
+                      <label for="roleId" class="col-md-4 col-form-label obligatorio">
+                        {{ 'user.role' | transloco }}
+                      </label>
+                      <div class="col-md-8">
+                        <select
+                          class="form-select"
+                          id="roleId"
+                          formControlName="roleId"
+                          [class.is-invalid]="isFieldInvalid('roleId')"
+                        >
+                          <option [ngValue]="null" disabled selected>Seleccione</option>
+                          @for (role of roles; track role.id) {
+                            <option [ngValue]="role.id">{{ role.name }}</option>
+                          }
+                        </select>
+                        @if (isFieldInvalid('roleId')) {
+                          <div class="invalid-feedback d-block">
+                            <i class="mdi mdi-alert-circle-outline me-1"></i>
+                            {{ getFieldError('roleId') | transloco }}
+                          </div>
+                        }
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Action Buttons -->
-            <div class="row mt-4">
-              <div class="col-12">
-                <div class="d-flex justify-content-between">
-                  <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSubmitting">
-                    <i class="mdi mdi-arrow-left me-1"></i>
-                    {{ 'app.cancel' | transloco }}
-                  </button>
+              <!-- Action Buttons -->
+              <div class="row mt-4">
+                <div class="col-12">
+                  <div class="d-flex justify-content-between">
+                    <div class="form-actions-left">
+                      <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSubmitting">
+                        <i class="mdi mdi-arrow-left me-1"></i>
+                        {{ 'app.cancel' | transloco }}
+                      </button>
+                    </div>
 
-                  <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid || isSubmitting">
-                    <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
-                    <i *ngIf="!isSubmitting" class="mdi mdi-account-plus me-1"></i>
-                    {{ isSubmitting ? ('user.creating' | transloco) : ('user.createUser' | transloco) }}
-                  </button>
+                    <button type="submit" class="btn btn-primary">
+                      <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                      @if (!isSubmitting) {
+                        <i [class]="'mdi me-1 ' + (isEditMode ? 'mdi-content-save' : 'mdi-account-plus')"></i>
+                      }
+                      @if (isEditMode) {
+                        {{ isSubmitting ? ('user.saving' | transloco) : ('user.saveChanges' | transloco) }}
+                      } @else {
+                        {{ isSubmitting ? ('user.creating' | transloco) : ('user.createUser' | transloco) }}
+                      }
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </form>
+            </form>
+          }
         </div>
       </div>
     </div>

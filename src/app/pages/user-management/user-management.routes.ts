@@ -14,60 +14,72 @@ export const USER_MANAGEMENT_ROUTES: Routes = [
   },
   {
     path: 'details',
-    title: 'User Details',
+    title: 'user.details',
     loadComponent: () => import('./user-details/user-details.component').then((c) => c.UserDetailsComponent),
     data: {
-      breadcrumb: 'User Details',
+      breadcrumb: 'user.details',
       description: 'View detailed information about users',
     },
   },
   {
     path: 'details/:id',
-    title: 'User Profile',
+    title: 'profile.title',
     loadComponent: () => import('./user-details/user-details.component').then((c) => c.UserDetailsComponent),
     data: {
-      breadcrumb: 'User Profile',
+      breadcrumb: 'profile.title',
       description: 'View and edit specific user profile',
     },
   },
   {
     path: 'create',
-    title: 'Create User',
+    title: 'user.createNewUser',
     loadComponent: () => import('./user-create/user-create.component').then((c) => c.UserCreateComponent),
     resolve: {
       documentTypes: documentTypesResolver,
     },
     data: {
-      breadcrumb: 'Create User',
+      breadcrumb: 'user.createNewUser',
       description: 'Create a new user in the system',
     },
   },
   {
+    path: 'edit/:id',
+    title: 'user.editUser',
+    loadComponent: () => import('./user-create/user-create.component').then((c) => c.UserCreateComponent),
+    resolve: {
+      documentTypes: documentTypesResolver,
+    },
+    data: {
+      breadcrumb: 'user.editUser',
+      description: 'Edit an existing user profile',
+    },
+  },
+  {
     path: 'profile',
-    title: 'Mi Perfil',
+    title: 'profile.title',
     loadComponent: () => import('./my-profile/my-profile.component').then((c) => c.MyProfileComponent),
     data: {
-      breadcrumb: 'Mi Perfil',
+      breadcrumb: 'profile.title',
     },
   },
   {
     path: 'sessions',
-    title: 'Sesiones Activas',
+    title: 'auth.sessions.title',
     loadComponent: () => import('./active-sessions/active-sessions.component').then((c) => c.ActiveSessionsComponent),
-    data: { breadcrumb: 'Sesiones Activas' },
+    data: { breadcrumb: 'auth.sessions.title' },
   },
   {
     path: 'login-history',
-    title: 'Historial de Accesos',
+    title: 'auth.loginHistory.title',
     loadComponent: () => import('./login-history/login-history.component').then((c) => c.LoginHistoryComponent),
-    data: { breadcrumb: 'Historial de Accesos' },
+    data: { breadcrumb: 'auth.loginHistory.title' },
   },
   {
     path: 'audit-logs',
-    title: 'Registro de Auditoría',
+    title: 'audit.title',
     canActivate: [roleGuard(['ADMIN', 'COORDINADOR', 'SUPERVISOR'])],
     loadComponent: () => import('./audit-logs/audit-logs.component').then((c) => c.AuditLogsComponent),
-    data: { breadcrumb: 'Auditoría' },
+    data: { breadcrumb: 'audit.title' },
   },
 
   {

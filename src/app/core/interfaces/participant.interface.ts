@@ -128,6 +128,7 @@ export interface Participant {
   healthInsuranceId: number;
   customHealthInsurance?: string;
   referralSource?: string;
+  country: string;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;

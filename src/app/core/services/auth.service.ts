@@ -23,6 +23,7 @@ import {
   LoginHistoryResponse,
 } from '../interfaces/auth.interface';
 import { TokenStorageService } from './token-storage.service';
+import { CountryService } from './country.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -32,6 +33,7 @@ export class AuthenticationService {
   constructor(
     private http: HttpClient,
     private tokenStorage: TokenStorageService,
+    private countryService: CountryService,
   ) {}
 
   /**
@@ -61,9 +63,10 @@ export class AuthenticationService {
         // Extraer datos de la respuesta
         const { data } = response;
 
-        // Calcular fecha de expiración
+        // Calcular fecha de expiración (fallback: 1 hora si no viene expires_in)
+        const expiresInSeconds = 3600;
         const now = new Date();
-        const expiresAt = new Date(now.getTime() + data.expires_in * 1000);
+        const expiresAt = new Date(now.getTime() + expiresInSeconds * 1000);
 
         // Crear objeto de usuario autenticado
         const authenticatedUser: AuthenticatedUser = {
@@ -73,9 +76,10 @@ export class AuthenticationService {
           email: data.user.email,
           role: data.user.role,
           status: data.user.status,
+          country: data.user.country,
           token: data.access_token,
           refreshToken: data.refresh_token,
-          tokenType: data.token_type,
+          tokenType: 'Bearer',
           expiresAt: expiresAt,
         };
 
@@ -83,6 +87,12 @@ export class AuthenticationService {
         this.tokenStorage.saveUser(authenticatedUser);
         // Guardar refresh token por separado
         this.tokenStorage.saveRefreshToken(data.refresh_token);
+
+        // Aplicar país e idioma según el usuario logueado
+        const iso = data.user.country?.iso;
+        if (iso) {
+          this.countryService.setCountry(iso);
+        }
 
         return authenticatedUser;
       }),

@@ -136,6 +136,34 @@
                     </div>
                   </div>
                 </div>
+
+                <div class="case-discussion-entry-card mb-3">
+                  <div class="case-discussion-entry-card__icon">
+                    <i class="mdi mdi-account-supervisor-circle-outline"></i>
+                  </div>
+                  <div class="case-discussion-entry-card__content">
+                    <h6 class="mb-1">Discusión de Casos con el Supervisor</h6>
+                    <p class="text-muted mb-0">
+                      Accede al listado de discusiones del caso, crea una nueva o consulta el PDF disponible.
+                    </p>
+                  </div>
+                  <div class="case-discussion-entry-card__actions">
+                    <a
+                      class="btn btn-outline-primary btn-sm rounded-pill px-3"
+                      [routerLink]="['/cases', caseId, 'discussions']"
+                    >
+                      Ver discusiones
+                    </a>
+                    @if (!isViewMode) {
+                      <a
+                        class="btn btn-primary btn-sm rounded-pill px-3"
+                        [routerLink]="['/cases', caseId, 'discussions', 'new']"
+                      >
+                        Nueva discusión
+                      </a>
+                    }
+                  </div>
+                </div>
               }
               <form [formGroup]="caseForm" (ngSubmit)="onSubmit()" novalidate>
                 <div id="caseWizard">

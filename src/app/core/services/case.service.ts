@@ -47,20 +47,38 @@ export class CaseService {
   }
 
   /**
-   * Get all cases with optional filtering
+   * Get all cases with automatic filtering by role (countryId/userId)
    */
   getCases(filters?: {
     page?: number;
     limit?: number;
     participantId?: number;
     status?: CaseStatus;
+    countryId?: number;
+    userId?: number;
   }): Observable<CaseListResponse> {
     this.loadingSubject.next(true);
 
+    // Obtener usuario autenticado
+    const user = this.tokenStorageService.getUser();
+    const role = (user as any)?.role;
+    const countryId = (user as any)?.countryId;
+    const userId = (user as any)?.id;
+
+    // Clonar filtros para no mutar el objeto original
+    const mergedFilters: any = { ...filters };
+
+    // Filtrado automático según rol
+    if (role === 'ADMIN_PAIS' && countryId) {
+      mergedFilters.countryId = countryId;
+    } else if (role === 'USUARIO' && userId) {
+      mergedFilters.userId = userId;
+    }
+
     let params = '';
-    if (filters) {
+    if (mergedFilters) {
       const searchParams = new URLSearchParams();
-      Object.entries(filters).forEach(([key, value]) => {
+      Object.entries(mergedFilters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
           searchParams.append(key, value.toString());
         }

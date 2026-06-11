@@ -40,26 +40,30 @@
     <!--- Sidemenu -->
     <div id="sidebar-menu">
       <ul id="side-menu">
-        @for (menu of menuItems; track menu; let i = $index) { @if (menu.isTitle) {
-        <li class="menu-title" [class.mt-2]="i !== 0">
-          {{ menu.label | transloco }}
-        </li>
-        } @if (!menu.isTitle) {
-        <!-- menu item without any child -->
-        @if (!hasSubmenu(menu)) {
-        <ng-container *ngTemplateOutlet="MenuItem; context: { menu: menu, linkClassName: 'side-nav-link-ref' }">
-        </ng-container>
+        @for (menu of menuItems; track menu) {
+          @if (!!isAdmin) {
+            @if (menu.isTitle) {
+              <li class="menu-title">
+                {{ menu.label | transloco }}
+              </li>
+            }
+            @if (!menu.isTitle) {
+              @if (!hasSubmenu(menu)) {
+                <ng-container *ngTemplateOutlet="MenuItem; context: { menu: menu, linkClassName: 'side-nav-link-ref' }">
+                </ng-container>
+              }
+              @if (hasSubmenu(menu)) {
+                <ng-container
+                  *ngTemplateOutlet="
+                    MenuItemWithChildren;
+                    context: { menu: menu, linkClassName: 'side-nav-link-ref', subMenuClassNames: 'nav-second-level' }
+                  "
+                >
+                </ng-container>
+              }
+            }
+          }
         }
-        <!-- menu item with child -->
-        @if (hasSubmenu(menu)) {
-        <ng-container
-          *ngTemplateOutlet="
-            MenuItemWithChildren;
-            context: { menu: menu, linkClassName: 'side-nav-link-ref', subMenuClassNames: 'nav-second-level' }
-          "
-        >
-        </ng-container>
-        } } }
       </ul>
     </div>
     <!-- End Sidebar -->
@@ -85,30 +89,34 @@
       [attr.data-menu-key]="menu.key"
     >
       @if (menu.icon) {
-      <i [attr.data-feather]="menu.icon"></i>
-      } @if (menu.badge) {
-      <span class="badge bg-{{ menu.badge.variant }} rounded-pill float-end">{{ menu.badge.text }}</span>
+        <i [attr.data-feather]="menu.icon"></i>
+      }
+      @if (menu.badge) {
+        <span class="badge bg-{{ menu.badge.variant }} rounded-pill float-end">{{ menu.badge.text }}</span>
       }
       <span>{{ menu.label | transloco }}</span>
       @if (!menu.badge) {
-      <span class="menu-arrow"></span>
+        <span class="menu-arrow"></span>
       }
     </a>
 
     <div #collapse="ngbCollapse" [(ngbCollapse)]="menu.collapsed">
       <ul [class]="subMenuClassNames">
-        @for (child of menu.children; track child) { @if (hasSubmenu(child)) {
-        <ng-container
-          *ngTemplateOutlet="
-            MenuItemWithChildren;
-            context: { menu: child, linkClassName: 'side-nav-link-ref', subMenuClassNames: 'nav-second-level' }
-          "
-        >
-        </ng-container>
-        } @if (!hasSubmenu(child)) {
-        <ng-container *ngTemplateOutlet="MenuItem; context: { menu: child, linkClassName: 'side-nav-link-ref' }">
-        </ng-container>
-        } }
+        @for (child of menu.children; track child) {
+          @if (hasSubmenu(child)) {
+            <ng-container
+              *ngTemplateOutlet="
+                MenuItemWithChildren;
+                context: { menu: child, linkClassName: 'side-nav-link-ref', subMenuClassNames: 'nav-second-level' }
+              "
+            >
+            </ng-container>
+          }
+          @if (!hasSubmenu(child)) {
+            <ng-container *ngTemplateOutlet="MenuItem; context: { menu: child, linkClassName: 'side-nav-link-ref' }">
+            </ng-container>
+          }
+        }
       </ul>
     </div>
   </li>
@@ -128,9 +136,10 @@
     [attr.data-menu-key]="menu.key"
   >
     @if (menu.icon) {
-    <i [attr.data-feather]="menu.icon"></i>
-    } @if (menu.badge) {
-    <span class="badge bg-{{ menu.badge.variant }}  float-end">{{ menu.badge.text }}</span>
+      <i [attr.data-feather]="menu.icon"></i>
+    }
+    @if (menu.badge) {
+      <span class="badge bg-{{ menu.badge.variant }}  float-end">{{ menu.badge.text }}</span>
     }
     <span>{{ menu.label | transloco }}</span>
   </a>

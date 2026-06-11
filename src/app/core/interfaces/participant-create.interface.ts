@@ -1,6 +1,7 @@
 // DTOs para crear participante
 export interface CreateParticipantDto {
   // Datos Personales
+  mitaNumber?: string;
   firstName: string;
   secondName?: string;
   firstLastName: string;
@@ -21,6 +22,7 @@ export interface CreateParticipantDto {
   customHealthInsurance?: string;
   referralSource?: string;
   registeredById: number;
+  countryId?: number | null;
 
   // Contactos de emergencia
   emergencyContacts: CreateEmergencyContactDto[];
@@ -74,6 +76,7 @@ export interface ParticipantResponse {
 
 export interface Participant {
   id: number;
+  mitaNumber?: string;
   firstName: string;
   secondName?: string;
   firstLastName: string;
@@ -99,6 +102,7 @@ export interface Participant {
   referralSource?: string;
   registeredById: number;
   registeredBy: RegisteredBy;
+  countryId?: number | null;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string;

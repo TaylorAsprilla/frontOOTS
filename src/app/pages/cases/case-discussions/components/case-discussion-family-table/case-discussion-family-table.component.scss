@@ -1,0 +1,18 @@
+.family-table-wrapper {
+  border: 1px solid #e8edf4;
+  border-radius: 0.85rem;
+  padding: 1rem;
+  background: #fff;
+}
+
+.table thead th {
+  white-space: nowrap;
+  color: #5c6470;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.table tbody td {
+  vertical-align: top;
+}
