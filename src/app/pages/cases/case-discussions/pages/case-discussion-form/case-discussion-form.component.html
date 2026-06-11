@@ -1,0 +1,259 @@
+<div class="container-fluid case-discussion-form-page">
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+      <span class="text-uppercase small fw-semibold text-primary">Caso {{ caseId }}</span>
+      <h3 class="mb-1">{{ discussionId ? 'Actualizar discusión del caso' : 'Nueva discusión del caso' }}</h3>
+      <p class="text-muted mb-0">Formulario basado en el formato oficial de discusión de casos con el supervisor.</p>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      <button type="button" class="btn btn-outline-secondary" (click)="goBack()">Volver al caso</button>
+      <button
+        *ngIf="discussionId"
+        type="button"
+        class="btn btn-outline-danger"
+        (click)="downloadPdf()"
+        [disabled]="isDownloadingPdf"
+      >
+        <span *ngIf="isDownloadingPdf" class="spinner-border spinner-border-sm me-1"></span>
+        Descargar PDF
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="card border-0 shadow-sm">
+    <div class="card-body text-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="text-muted mt-3 mb-0">Cargando discusión del caso...</p>
+    </div>
+  </div>
+
+  <form *ngIf="!isLoading" [formGroup]="discussionForm" novalidate>
+    <div class="row g-4">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm section-card">
+          <div class="card-header bg-white border-0 pb-0">
+            <h5 class="mb-1">Información general</h5>
+            <p class="text-muted mb-0">Datos base de la discusión y responsables asociados.</p>
+          </div>
+          <div class="card-body" formGroupName="general">
+            <div class="row g-3">
+              <div class="col-md-3">
+                <label class="form-label">Caso asociado</label>
+                <input type="text" class="form-control" formControlName="caseNumber" readonly />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Participante/cliente</label>
+                <input type="text" class="form-control" formControlName="participantName" [readonly]="isReadOnly" />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Trabajador social</label>
+                <input type="text" class="form-control" formControlName="socialWorkerName" [readonly]="isReadOnly" />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label obligatorio">Supervisor</label>
+                <input type="text" class="form-control" formControlName="supervisorName" [readonly]="isReadOnly" />
+                <div class="invalid-feedback d-block" *ngIf="generalGroup.get('supervisorName')?.invalid && submitted">
+                  El supervisor es requerido.
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label obligatorio">Fecha de discusión</label>
+                <input type="date" class="form-control" formControlName="discussionDate" [readonly]="isReadOnly" />
+                <div class="invalid-feedback d-block" *ngIf="generalGroup.get('discussionDate')?.invalid && submitted">
+                  La fecha de discusión es requerida.
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Estado</label>
+                <input type="text" class="form-control" formControlName="status" readonly />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="card border-0 shadow-sm section-card">
+          <div class="card-header bg-white border-0 pb-0">
+            <h5 class="mb-1">Datos del cliente</h5>
+            <p class="text-muted mb-0">
+              Campos precargables desde participante, con edición controlada por el sistema.
+            </p>
+          </div>
+          <div class="card-body" formGroupName="client">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label">Nombre del cliente</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="clientName"
+                  [readonly]="isReadOnly || !allowClientDataEdition"
+                />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Edad</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="clientAge"
+                  min="0"
+                  [readonly]="isReadOnly || !allowClientDataEdition"
+                />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Sexo</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="clientSex"
+                  [readonly]="isReadOnly || !allowClientDataEdition"
+                />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Estado civil</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="clientMaritalStatus"
+                  [readonly]="isReadOnly || !allowClientDataEdition"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="card border-0 shadow-sm section-card">
+          <div class="card-body">
+            <app-case-discussion-family-table
+              [familyMembers]="familyMembers"
+              [readOnly]="isReadOnly"
+              [submitted]="submitted"
+              (addMember)="addFamilyMember()"
+              (removeMember)="removeFamilyMember($event)"
+            ></app-case-discussion-family-table>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="card border-0 shadow-sm section-card">
+          <div class="card-header bg-white border-0 pb-0">
+            <h5 class="mb-1">Desarrollo de la discusión</h5>
+            <p class="text-muted mb-0">Registra el análisis del caso y las recomendaciones de cada rol.</p>
+          </div>
+          <div class="card-body" formGroupName="development">
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label obligatorio">Situaciones que presenta</label>
+                <textarea
+                  class="form-control"
+                  rows="4"
+                  formControlName="presentingSituations"
+                  [readonly]="isReadOnly"
+                ></textarea>
+                <div
+                  class="invalid-feedback d-block"
+                  *ngIf="developmentGroup.get('presentingSituations')?.invalid && submitted"
+                >
+                  Este campo es requerido.
+                </div>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Personas más afectadas con la situación</label>
+                <textarea
+                  class="form-control"
+                  rows="3"
+                  formControlName="affectedPeople"
+                  [readonly]="isReadOnly"
+                ></textarea>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Recomendaciones del trabajador social</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  formControlName="socialWorkerRecommendations"
+                  [readonly]="isReadOnly || roleService.isSupervisor()"
+                ></textarea>
+                <div
+                  class="invalid-feedback d-block"
+                  *ngIf="developmentGroup.get('socialWorkerRecommendations')?.invalid && submitted"
+                >
+                  Este campo es requerido antes de finalizar.
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Recomendaciones del supervisor</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  formControlName="supervisorRecommendations"
+                  [readonly]="isReadOnly || (!roleService.isSupervisor() && !roleService.isAdmin())"
+                ></textarea>
+                <div
+                  class="invalid-feedback d-block"
+                  *ngIf="developmentGroup.get('supervisorRecommendations')?.invalid && submitted"
+                >
+                  Este campo es requerido antes de finalizar.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="card border-0 shadow-sm section-card sticky-actions-card">
+          <div class="card-body d-flex flex-wrap gap-2 justify-content-between align-items-center">
+            <div class="d-flex flex-wrap gap-2">
+              <button type="button" class="btn btn-outline-secondary" (click)="goBack()">Volver al caso</button>
+              <button
+                *ngIf="canAnnul"
+                type="button"
+                class="btn btn-outline-danger"
+                (click)="annulDiscussion()"
+                [disabled]="isSubmitting"
+              >
+                Anular discusión
+              </button>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 justify-content-end">
+              <button
+                *ngIf="discussionId"
+                type="button"
+                class="btn btn-outline-danger"
+                (click)="downloadPdf()"
+                [disabled]="isDownloadingPdf"
+              >
+                <span *ngIf="isDownloadingPdf" class="spinner-border spinner-border-sm me-1"></span>
+                Descargar PDF
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-primary"
+                (click)="saveDraft()"
+                [disabled]="isSubmitting || isReadOnly"
+              >
+                <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-1"></span>
+                {{ discussionId ? 'Actualizar discusión' : 'Guardar borrador' }}
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="finalizeDiscussion()"
+                [disabled]="isSubmitting || isReadOnly"
+              >
+                Finalizar discusión
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

@@ -386,6 +386,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         genderId: ['', Validators.required],
         maritalStatusId: ['', Validators.required],
         healthInsuranceId: ['', Validators.required],
+        countryId: [this.defaultCountryId || '', Validators.required],
         customHealthInsurance: [''],
         // Emergency Contact fields
         emergencyContactName: ['', Validators.required],
@@ -396,8 +397,6 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         emergencyContactState: [''],
         emergencyContactZipCode: [''],
         emergencyContactRelationship: ['', Validators.required],
-        country: ['', Validators.required],
-        countryId: [this.defaultCountryId || '', Validators.required],
       }),
     });
 
@@ -869,6 +868,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
    */
 
   onSubmit(): void {
+    console.log('Intentando enviar el formulario de participante...', this.participantForm);
     // Marcar todos los campos como touched para mostrar errores
     this.markFormGroupTouched(this.participantForm);
 

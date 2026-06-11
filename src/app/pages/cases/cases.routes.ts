@@ -82,6 +82,15 @@ export const CASES_ROUTES: Routes = [
     },
   },
   {
+    path: ':caseId/discussions',
+    loadChildren: () =>
+      import('./case-discussions/routes/case-discussions.routes').then((m) => m.CASE_DISCUSSION_ROUTES),
+    title: 'Case Discussions',
+    data: {
+      breadcrumb: 'Discusiones del caso',
+    },
+  },
+  {
     path: '**',
     redirectTo: 'list',
   },

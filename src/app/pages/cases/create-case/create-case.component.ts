@@ -11,6 +11,7 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { NgbNavModule, NgbProgressbarModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule } from '@ngneat/transloco';
 import { Subject, takeUntil, finalize } from 'rxjs';
@@ -43,6 +44,7 @@ import { ApproachType as ApproachTypeCatalog } from '../../configuration/approac
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterModule,
     NgbNavModule,
     NgbProgressbarModule,
     NgbDropdownModule,

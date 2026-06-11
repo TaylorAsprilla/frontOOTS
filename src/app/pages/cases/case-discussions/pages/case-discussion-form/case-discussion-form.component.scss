@@ -1,0 +1,27 @@
+.case-discussion-form-page {
+  padding-bottom: 2rem;
+}
+
+.section-card {
+  border-radius: 1rem;
+}
+
+.section-card .card-header h5 {
+  font-weight: 700;
+  color: #1f2a37;
+}
+
+.sticky-actions-card {
+  position: sticky;
+  bottom: 1rem;
+  z-index: 10;
+}
+
+.obligatorio::after {
+  content: ' *';
+  color: #dc3545;
+}
+
+textarea.form-control {
+  min-height: 120px;
+}

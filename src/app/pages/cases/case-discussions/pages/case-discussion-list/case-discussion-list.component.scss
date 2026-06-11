@@ -1,0 +1,33 @@
+.case-discussion-page {
+  padding-bottom: 1.5rem;
+}
+
+.page-header h3 {
+  font-weight: 700;
+  color: #243041;
+}
+
+.case-summary-card {
+  background: linear-gradient(135deg, #f7fbff 0%, #ffffff 100%);
+}
+
+.empty-state-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(13, 110, 253, 0.08);
+  color: #0d6efd;
+  font-size: 2rem;
+}
+
+.table thead th {
+  background: #f8fafc;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #667085;
+  border-bottom-width: 1px;
+}

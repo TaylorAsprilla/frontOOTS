@@ -1,0 +1,36 @@
+.case-discussion-detail-page {
+  padding-bottom: 2rem;
+}
+
+.detail-list {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.6rem 1rem;
+}
+
+.detail-list dt {
+  color: #667085;
+  font-weight: 600;
+}
+
+.detail-list dd {
+  margin: 0;
+  color: #101828;
+}
+
+.discussion-block {
+  padding: 1rem;
+  border-radius: 0.85rem;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+}
+
+.discussion-block__label {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #667085;
+}
