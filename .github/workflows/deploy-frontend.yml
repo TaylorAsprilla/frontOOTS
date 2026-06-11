@@ -39,7 +39,7 @@ jobs:
         run: npm ci
 
       - name: Build Angular production
-        run: npm run build -- --configuration=production
+        run: npm run build:pr
 
       - name: Validate build output
         run: |
