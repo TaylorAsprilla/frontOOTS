@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, isDevMode } from '@angular/core';
 import { Translation, translocoConfig, TranslocoLoader, TranslocoModule } from '@ngneat/transloco';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 /**
  * HTTP Loader para cargar traducciones desde assets/i18n/
@@ -16,7 +17,29 @@ export class TranslocoHttpLoaderService implements TranslocoLoader {
     const normalizedBaseHref = baseHref.endsWith('/') ? baseHref : `${baseHref}/`;
     const path = `${normalizedBaseHref}assets/i18n/${lang}.json`;
 
-    return this.http.get<Translation>(path);
+    return this.http.get(path, { responseType: 'text' }).pipe(
+      map((raw) => {
+        // Defensa contra CloudFront/S3 que devuelve index.html (HTML) en vez del JSON
+        const trimmed = (raw ?? '').trim();
+        if (!trimmed || trimmed.startsWith('<')) {
+          console.error(
+            `[Transloco] La respuesta para "${path}" no es JSON v\u00e1lido. ` +
+              `Revisa el deploy: el archivo no existe o CloudFront est\u00e1 devolviendo index.html.`,
+          );
+          return {} as Translation;
+        }
+        try {
+          return JSON.parse(trimmed) as Translation;
+        } catch (e) {
+          console.error(`[Transloco] No se pudo parsear "${path}":`, e);
+          return {} as Translation;
+        }
+      }),
+      catchError((err) => {
+        console.error(`[Transloco] Error cargando "${path}":`, err);
+        return of({} as Translation);
+      }),
+    );
   }
 }
 
