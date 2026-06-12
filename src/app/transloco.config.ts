@@ -12,12 +12,20 @@ export class TranslocoHttpLoaderService implements TranslocoLoader {
   private http = inject(HttpClient);
 
   getTranslation(lang: string): Observable<Translation> {
+    // Guarda contra llamadas con lang invalido (null, undefined, vacio, "null", "undefined").
+    // Esto evita peticiones a /assets/i18n/null.json cuando el active lang aun no se ha resuelto.
+    const langStr = String(lang ?? '').trim();
+    if (!langStr || langStr === 'null' || langStr === 'undefined') {
+      console.warn(`[Transloco] Se solicito cargar un idioma invalido: "${lang}". Se ignora.`);
+      return of({} as Translation);
+    }
+
     // Construir la ruta normalizando para evitar dobles slashes ("//"),
     // que en CloudFront caen en el SPA fallback y devuelven index.html.
     const rawBaseHref = document.querySelector('base')?.getAttribute('href') || '/';
     // Quita todos los slashes finales del baseHref y los slashes iniciales del lang.
     const baseHref = rawBaseHref.replace(/\/+$/, '');
-    const safeLang = String(lang).replace(/^\/+/, '');
+    const safeLang = langStr.replace(/^\/+/, '');
     const path = `${baseHref}/assets/i18n/${safeLang}.json`;
 
     return this.http.get(path, { responseType: 'text' }).pipe(
@@ -51,12 +59,12 @@ export class TranslocoHttpLoaderService implements TranslocoLoader {
  */
 export const translocoAppConfig = translocoConfig({
   availableLangs: [
-    { id: 'es-CO', label: 'Español (Colombia)' },
     { id: 'es-PR', label: 'Español (Puerto Rico)' },
+    { id: 'es-CO', label: 'Español (Colombia)' },
     { id: 'en', label: 'English' },
   ],
-  defaultLang: 'es-CO',
-  fallbackLang: 'es-CO',
+  defaultLang: 'es-PR',
+  fallbackLang: 'es-PR',
   reRenderOnLangChange: true,
   prodMode: !isDevMode(),
   missingHandler: {
