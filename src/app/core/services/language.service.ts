@@ -33,14 +33,17 @@ export class LanguageService {
   }
 
   /**
-   * Inicializa el idioma desde localStorage o usa el por defecto
+   * Inicializa el idioma desde localStorage o usa el por defecto.
+   *
+   * Politica del producto: el idioma por defecto SIEMPRE es Puerto Rico
+   * ("es-PR"). Solo se respeta otro idioma si el usuario lo eligio
+   * explicitamente y quedo guardado en localStorage.
+   * Se ignora deliberadamente `navigator.language` para no caer en
+   * idiomas del navegador (en, es, es-CO, etc.).
    */
   private initializeLanguage(): void {
     const savedLanguage = this.getSavedLanguage();
-    const browserLanguage = this.getBrowserLanguage();
-
-    // Prioridad: localStorage > browser > default
-    const initialLanguage = savedLanguage || browserLanguage || this.DEFAULT_LANGUAGE;
+    const initialLanguage = savedLanguage || this.DEFAULT_LANGUAGE;
 
     // Configurar el idioma inicial directamente
     this.transloco.setActiveLang(initialLanguage);
