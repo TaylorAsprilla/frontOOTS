@@ -1,0 +1,338 @@
+<div class="container-fluid">
+  <app-page-title [breadcrumbItems]="breadcrumbItems" title="adminCases.title"></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <!-- Header: búsqueda + total + refrescar -->
+          <div class="row justify-content-between align-items-center">
+            <div class="col-md-8">
+              <form class="d-flex flex-wrap align-items-center gap-3" [formGroup]="searchForm">
+                <label for="admin-cases-search" class="visually-hidden">{{ 'app.search' | transloco }}</label>
+                <div class="flex-grow-1" style="max-width: 360px">
+                  <input
+                    type="search"
+                    class="form-control"
+                    id="admin-cases-search"
+                    formControlName="searchTerm"
+                    [placeholder]="'adminCases.searchPlaceholder' | transloco"
+                  />
+                </div>
+                <div class="text-muted small">
+                  @if (!isLoading) {
+                    <span class="summary-pill">{{ total }} {{ 'adminCases.totalCases' | transloco }}</span>
+                  }
+                  @if (isLoading) {
+                    <span>{{ 'app.loading' | transloco }}</span>
+                  }
+                </div>
+              </form>
+            </div>
+
+            <div class="col-md-4 text-end mb-3">
+              <button
+                type="button"
+                class="btn btn-info"
+                (click)="loadCases()"
+                [disabled]="isLoading"
+                [attr.title]="'app.refresh' | transloco"
+              >
+                <i class="mdi" [ngClass]="isLoading ? 'mdi-loading mdi-spin' : 'mdi-refresh'"></i>
+                <span class="ms-1">{{ isLoading ? ('app.loading' | transloco) : ('app.refresh' | transloco) }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Loading -->
+          @if (isLoading) {
+            <div class="text-center py-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">{{ 'app.loading' | transloco }}</span>
+              </div>
+              <p class="mt-3 text-muted">{{ 'adminCases.loading' | transloco }}</p>
+            </div>
+          }
+
+          <!-- Error -->
+          @if (!isLoading && hasError) {
+            <div class="alert alert-danger d-flex align-items-center gap-2" role="alert">
+              <i class="mdi mdi-alert-circle-outline"></i>
+              <div class="flex-grow-1">
+                <strong>{{ 'adminCases.errorTitle' | transloco }}</strong>
+                <div class="small">
+                  {{ errorMessage || ('adminCases.errorMessage' | transloco) }}
+                </div>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadCases()">
+                <i class="mdi mdi-refresh me-1"></i>{{ 'app.tryAgain' | transloco }}
+              </button>
+            </div>
+          }
+
+          <!-- Tabla -->
+          @if (!isLoading && !hasError && filteredCases.length > 0) {
+            <div class="table-responsive">
+              <table class="table table-hover table-centered align-middle table-nowrap mb-0">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="border-0" style="width: 32px"></th>
+                    <th class="border-0">
+                      <i class="fas fa-hashtag me-1 text-primary"></i>
+                      {{ 'adminCases.caseNumber' | transloco }}
+                    </th>
+                    <th class="border-0">
+                      <i class="fas fa-flag me-1 text-primary"></i>
+                      {{ 'adminCases.status.label' | transloco }}
+                    </th>
+                    <th class="border-0">
+                      <i class="fas fa-user me-1 text-primary"></i>
+                      {{ 'adminCases.participant' | transloco }}
+                    </th>
+                    <th class="border-0">
+                      <i class="fas fa-id-card me-1 text-primary"></i>
+                      {{ 'adminCases.document' | transloco }}
+                    </th>
+                    <th class="border-0">
+                      <i class="fas fa-user-md me-1 text-primary"></i>
+                      {{ 'adminCases.professional' | transloco }}
+                    </th>
+                    <th class="border-0">
+                      <i class="fas fa-comment-medical me-1 text-primary"></i>
+                      {{ 'adminCases.consultationReason' | transloco }}
+                    </th>
+                    <th class="border-0">
+                      <i class="fas fa-calendar-alt me-1 text-primary"></i>
+                      {{ 'adminCases.createdAt' | transloco }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (caseItem of pageItems; track trackById($index, caseItem)) {
+                    <tr class="case-row" (click)="toggleExpand(caseItem)" style="cursor: pointer">
+                      <td class="text-center">
+                        <i
+                          class="mdi"
+                          [ngClass]="isExpanded(caseItem) ? 'mdi-chevron-down' : 'mdi-chevron-right'"
+                          [attr.aria-label]="'app.view' | transloco"
+                        ></i>
+                      </td>
+                      <td>
+                        <strong>{{ caseItem.caseNumber || '—' }}</strong>
+                        <div class="text-muted small">ID: {{ caseItem.id }}</div>
+                      </td>
+                      <td>
+                        <span [class]="getStatusBadgeClass(caseItem.status)">
+                          {{ getStatusLabelKey(caseItem.status) | transloco }}
+                        </span>
+                      </td>
+                      <td>
+                        @if (caseItem.participant) {
+                          <div class="entity-cell">
+                            <span class="entity-name">{{ getParticipantFullName(caseItem.participant) }}</span>
+                            @if (getLocation(caseItem.participant)) {
+                              <span class="entity-sub">
+                                <i class="mdi mdi-map-marker-outline"></i>
+                                {{ getLocation(caseItem.participant) }}
+                              </span>
+                            }
+                          </div>
+                        } @else {
+                          <span class="text-muted fst-italic">{{ 'adminCases.unknownParticipant' | transloco }}</span>
+                        }
+                      </td>
+                      <td>{{ caseItem.participant?.documentNumber || '—' }}</td>
+                      <td>
+                        @if (caseItem.createdBy) {
+                          <div class="entity-cell">
+                            <span class="entity-name">{{ getProfessionalFullName(caseItem.createdBy) }}</span>
+                            <span class="d-flex align-items-center gap-2 mt-1">
+                              @if (caseItem.createdBy.email) {
+                                <span class="entity-sub">{{ caseItem.createdBy.email }}</span>
+                              }
+                              @if (caseItem.createdBy.status) {
+                                <span [class]="getProfessionalStatusBadgeClass(caseItem.createdBy.status)">
+                                  {{ caseItem.createdBy.status }}
+                                </span>
+                              }
+                            </span>
+                          </div>
+                        } @else {
+                          <span class="badge bg-light text-dark border">
+                            <i class="mdi mdi-account-question-outline me-1"></i>
+                            {{ 'adminCases.unassignedProfessional' | transloco }}
+                          </span>
+                        }
+                      </td>
+                      <td class="reason-cell" [attr.title]="caseItem.consultationReason || ''">
+                        {{ caseItem.consultationReason || '—' }}
+                      </td>
+                      <td>
+                        @if (caseItem.createdAt) {
+                          {{ caseItem.createdAt | localizedDate }}
+                        } @else {
+                          <span class="text-muted">—</span>
+                        }
+                      </td>
+                    </tr>
+
+                    <!-- Fila expandida con la "info extra" en tags -->
+                    @if (isExpanded(caseItem)) {
+                      <tr class="case-extra-row">
+                        <td></td>
+                        <td colspan="7">
+                          <div class="case-extra">
+                            <div class="case-extra-tags">
+                              <span class="info-tag info-tag--neutral">
+                                <i class="mdi mdi-identifier"></i>
+                                <strong>ID:</strong> {{ caseItem.id }}
+                              </span>
+
+                              <span
+                                class="info-tag"
+                                [ngClass]="{
+                                  'info-tag--info': (caseItem.status || '') === 'open',
+                                  'info-tag--warning': (caseItem.status || '') === 'in_progress',
+                                  'info-tag--success': (caseItem.status || '') === 'closed',
+                                }"
+                              >
+                                <i class="mdi mdi-flag-outline"></i>
+                                <strong>{{ 'adminCases.status.label' | transloco }}:</strong>
+                                {{ getStatusLabelKey(caseItem.status) | transloco }}
+                              </span>
+
+                              @if (caseItem.updatedAt) {
+                                <span class="info-tag info-tag--neutral">
+                                  <i class="mdi mdi-clock-edit-outline"></i>
+                                  <strong>{{ 'adminCases.updatedAt' | transloco }}:</strong>
+                                  {{ caseItem.updatedAt | localizedDate }}
+                                </span>
+                              }
+
+                              @if (caseItem.closedAt) {
+                                <span class="info-tag info-tag--success">
+                                  <i class="mdi mdi-check-circle-outline"></i>
+                                  <strong>{{ 'adminCases.closedAt' | transloco }}:</strong>
+                                  {{ caseItem.closedAt | localizedDate }}
+                                </span>
+                              }
+
+                              @if (caseItem.participant && caseItem.participant.email) {
+                                <span class="info-tag info-tag--primary">
+                                  <i class="mdi mdi-email-outline"></i>
+                                  <strong>{{ 'adminCases.participantEmail' | transloco }}:</strong>
+                                  {{ caseItem.participant.email }}
+                                </span>
+                              }
+
+                              @if (caseItem.participant && caseItem.participant.phoneNumber) {
+                                <span class="info-tag info-tag--primary">
+                                  <i class="mdi mdi-phone-outline"></i>
+                                  <strong>{{ 'adminCases.participantPhone' | transloco }}:</strong>
+                                  {{ caseItem.participant.phoneNumber }}
+                                </span>
+                              }
+
+                              @if (caseItem.createdBy && caseItem.createdBy.username) {
+                                <span class="info-tag info-tag--neutral">
+                                  <i class="mdi mdi-account-tie-outline"></i>
+                                  <strong>{{ 'adminCases.professionalUsername' | transloco }}:</strong>
+                                  {{ caseItem.createdBy.username }}
+                                </span>
+                              }
+
+                              @if (caseItem.createdBy && caseItem.createdById != null) {
+                                <span class="info-tag info-tag--neutral">
+                                  <i class="mdi mdi-shield-account-outline"></i>
+                                  <strong>{{ 'adminCases.roleId' | transloco }}:</strong>
+                                  {{ caseItem.createdBy.roleId ?? '—' }}
+                                </span>
+                              }
+                            </div>
+
+                            @if (caseItem.intervention) {
+                              <div class="case-extra-block">
+                                <h6 class="text-uppercase text-muted mb-1">
+                                  {{ 'adminCases.intervention' | transloco }}
+                                </h6>
+                                <p class="mb-0">{{ caseItem.intervention }}</p>
+                              </div>
+                            }
+
+                            @if (caseItem.referrals) {
+                              <div class="case-extra-block">
+                                <h6 class="text-uppercase text-muted mb-1">
+                                  {{ 'adminCases.referrals' | transloco }}
+                                </h6>
+                                <p class="mb-0">{{ caseItem.referrals }}</p>
+                              </div>
+                            }
+
+                            @if (caseItem.closingNote) {
+                              <div class="case-extra-block">
+                                <h6 class="text-uppercase text-muted mb-1">
+                                  {{ 'adminCases.closingNote' | transloco }}
+                                </h6>
+                                <p class="mb-0">{{ caseItem.closingNote }}</p>
+                              </div>
+                            }
+                          </div>
+                        </td>
+                      </tr>
+                    }
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Paginación -->
+            @if (filteredCases.length > pageSize) {
+              <div class="d-flex justify-content-between align-items-center mt-4">
+                <div>
+                  <small class="text-muted">
+                    {{ 'app.showing' | transloco }}
+                    {{ (currentPage - 1) * pageSize + 1 }} -
+                    {{ Math.min(currentPage * pageSize, filteredCases.length) }}
+                    {{ 'app.of' | transloco }} {{ filteredCases.length }}
+                  </small>
+                </div>
+                <ngb-pagination
+                  [(page)]="currentPage"
+                  [pageSize]="pageSize"
+                  [collectionSize]="filteredCases.length"
+                  [maxSize]="5"
+                  [rotate]="true"
+                  [boundaryLinks]="true"
+                  (pageChange)="onPageChange($event)"
+                >
+                </ngb-pagination>
+              </div>
+            }
+          }
+
+          <!-- Vacío -->
+          @if (!isLoading && !hasError && filteredCases.length === 0) {
+            <div class="text-center py-5">
+              <div class="mb-3">
+                <i class="fas fa-folder-open display-4 text-muted"></i>
+              </div>
+              <h5 class="text-muted">
+                @if (searchForm.value.searchTerm) {
+                  {{ 'adminCases.noResults' | transloco }}
+                } @else {
+                  {{ 'adminCases.empty' | transloco }}
+                }
+              </h5>
+              @if (searchForm.value.searchTerm) {
+                <button type="button" class="btn btn-outline-secondary mt-2" (click)="clearSearch()">
+                  <i class="mdi mdi-filter-remove me-1"></i>
+                  {{ 'app.clearFilters' | transloco }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

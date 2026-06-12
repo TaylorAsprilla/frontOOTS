@@ -41,26 +41,24 @@
     <div id="sidebar-menu">
       <ul id="side-menu">
         @for (menu of menuItems; track menu) {
-          @if (!!isAdmin) {
-            @if (menu.isTitle) {
-              <li class="menu-title">
-                {{ menu.label | transloco }}
-              </li>
+          @if (menu.isTitle) {
+            <li class="menu-title">
+              {{ menu.label | transloco }}
+            </li>
+          }
+          @if (!menu.isTitle) {
+            @if (!hasSubmenu(menu)) {
+              <ng-container *ngTemplateOutlet="MenuItem; context: { menu: menu, linkClassName: 'side-nav-link-ref' }">
+              </ng-container>
             }
-            @if (!menu.isTitle) {
-              @if (!hasSubmenu(menu)) {
-                <ng-container *ngTemplateOutlet="MenuItem; context: { menu: menu, linkClassName: 'side-nav-link-ref' }">
-                </ng-container>
-              }
-              @if (hasSubmenu(menu)) {
-                <ng-container
-                  *ngTemplateOutlet="
-                    MenuItemWithChildren;
-                    context: { menu: menu, linkClassName: 'side-nav-link-ref', subMenuClassNames: 'nav-second-level' }
-                  "
-                >
-                </ng-container>
-              }
+            @if (hasSubmenu(menu)) {
+              <ng-container
+                *ngTemplateOutlet="
+                  MenuItemWithChildren;
+                  context: { menu: menu, linkClassName: 'side-nav-link-ref', subMenuClassNames: 'nav-second-level' }
+                "
+              >
+              </ng-container>
             }
           }
         }

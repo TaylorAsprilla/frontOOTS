@@ -2,6 +2,7 @@ import { MenuItem } from '../models/menu.model';
 
 // menu items for vertcal and detached layout
 const MENU_ITEMS: MenuItem[] = [
+  // ====== Navegación ======
   { key: 'navigation', label: 'navigation.Navigation', isTitle: true },
   {
     key: 'dashboards',
@@ -12,83 +13,86 @@ const MENU_ITEMS: MenuItem[] = [
     link: '/dashboard',
   },
 
-  { key: 'administrador', label: 'navigation.administrator', isTitle: true },
-
+  // ====== Administrador (solo ADMIN) ======
+  { key: 'admin-title', label: 'navigation.administrator', isTitle: true, adminOnly: true },
   {
-    key: 'user-management',
-    label: 'navigation.userManagement',
+    key: 'admin-section',
+    label: 'navigation.administrator',
     isTitle: false,
-    icon: 'users',
+    icon: 'shield',
     collapsed: true,
+    adminOnly: true,
     children: [
       {
-        key: 'users-create',
-        label: 'navigation.createUser',
-        link: '/users/create',
-        parentKey: 'user-management',
+        key: 'admin-user-management',
+        label: 'navigation.userManagement',
+        parentKey: 'admin-section',
+        adminOnly: true,
+        children: [
+          {
+            key: 'admin-users-list',
+            label: 'navigation.usersList',
+            link: '/users/list',
+            parentKey: 'admin-user-management',
+            adminOnly: true,
+          },
+          {
+            key: 'admin-users-create',
+            label: 'navigation.createUser',
+            link: '/users/create',
+            parentKey: 'admin-user-management',
+            adminOnly: true,
+          },
+        ],
       },
       {
-        key: 'users-details',
-        label: 'navigation.userDetails',
-        link: '/users/details',
-        parentKey: 'user-management',
+        key: 'admin-participants',
+        label: 'navigation.adminParticipants',
+        link: '/admin/participants',
+        parentKey: 'admin-section',
+        adminOnly: true,
+      },
+      {
+        key: 'admin-cases',
+        label: 'navigation.adminCases',
+        link: '/admin/cases',
+        parentKey: 'admin-section',
+        adminOnly: true,
       },
     ],
   },
 
+  // ====== Participantes ======
   { key: 'participants', label: 'navigation.participants', isTitle: true },
-
   {
-    key: 'participants-management',
+    key: 'participants-list',
     label: 'navigation.participants',
     isTitle: false,
     icon: 'users',
-    collapsed: true,
-    children: [
-      {
-        key: 'participants-list',
-        label: 'navigation.participantsList',
-        link: '/participants/list',
-        parentKey: 'participants-management',
-      },
-      {
-        key: 'participants-create',
-        label: 'navigation.createParticipant',
-        link: '/participants/create',
-        parentKey: 'participants-management',
-      },
-    ],
+    link: '/participants/list',
   },
-  {
-    key: 'participants-documents',
-    label: 'navigation.genogram',
-    link: '/forms/upload',
-    icon: 'file',
-  },
+  // Ocultos temporalmente
+  // {
+  //   key: 'participants-documents',
+  //   label: 'navigation.genogram',
+  //   link: '/forms/upload',
+  //   icon: 'file',
+  // },
+  // {
+  //   key: 'participants-multimedia',
+  //   label: 'navigation.documents',
+  //   link: '/forms/upload',
+  //   icon: 'file',
+  // },
 
-  {
-    key: 'participants-multimedia',
-    label: 'navigation.documents',
-    link: '/forms/upload',
-    icon: 'file',
-  },
-
+  // ====== Casos ======
   { key: 'cases', label: 'navigation.cases', isTitle: true },
-
   {
-    key: 'cases-management',
+    key: 'cases-list',
     label: 'navigation.cases',
     isTitle: false,
     icon: 'folder',
-    collapsed: true,
-    children: [
-      {
-        key: 'cases-list',
-        label: 'navigation.casesList',
-        link: '/cases/list',
-        parentKey: 'cases-management',
-      },
-    ],
+    link: '/cases/list',
   },
 
   // { key: 'apps', label: 'navigation.appointments', isTitle: true },

@@ -13,6 +13,15 @@ export const USER_MANAGEMENT_ROUTES: Routes = [
     pathMatch: 'full',
   },
   {
+    path: 'list',
+    title: 'user.list',
+    loadComponent: () => import('./user-details/user-details.component').then((c) => c.UserDetailsComponent),
+    data: {
+      breadcrumb: 'user.list',
+      description: 'List of all registered users',
+    },
+  },
+  {
     path: 'details',
     title: 'user.details',
     loadComponent: () => import('./user-details/user-details.component').then((c) => c.UserDetailsComponent),
@@ -81,7 +90,6 @@ export const USER_MANAGEMENT_ROUTES: Routes = [
     loadComponent: () => import('./audit-logs/audit-logs.component').then((c) => c.AuditLogsComponent),
     data: { breadcrumb: 'audit.title' },
   },
-
   {
     path: '**',
     redirectTo: 'list',

@@ -3,9 +3,10 @@ import feather from 'feather-icons';
 import { NgbCollapse } from '@ng-bootstrap/ng-bootstrap';
 import { NavigationEnd, Router } from '@angular/router';
 import { EventService } from 'src/app/core/services/event.service';
+import { RoleService } from 'src/app/core/services/role.service';
 import { TWO_COl_MENU_ITEMS } from '../../shared/config/menu-meta';
 import { MenuItem } from '../../shared/models/menu.model';
-import { findAllParent, findMenuItem } from '../../shared/helper/utils';
+import { findAllParent, findMenuItem, filterMenuByRole } from '../../shared/helper/utils';
 import { LEFT_SIDEBAR_TYPE_CONDENSED, LEFT_SIDEBAR_TYPE_DEFAULT } from '../../shared/config/layout.model';
 import { MainMenuComponent } from '../main-menu/main-menu.component';
 import { IconMenuComponent } from '../icon-menu/icon-menu.component';
@@ -25,7 +26,11 @@ export class LeftSidebarComponent implements OnInit {
   @Input() sidebarType!: string;
   @Input() showMobileMenu: boolean = true;
 
-  constructor(private router: Router, private eventService: EventService) {
+  constructor(
+    private router: Router,
+    private eventService: EventService,
+    private roleService: RoleService,
+  ) {
     router.events.forEach((event) => {
       if (event instanceof NavigationEnd) {
         this._activateMenu(); //actiavtes menu
@@ -55,7 +60,7 @@ export class LeftSidebarComponent implements OnInit {
    * initialize menuitems
    */
   initMenu(): void {
-    this.twoColumnMenuItems = TWO_COl_MENU_ITEMS;
+    this.twoColumnMenuItems = filterMenuByRole(TWO_COl_MENU_ITEMS, this.roleService.isAdmin());
   }
 
   /**

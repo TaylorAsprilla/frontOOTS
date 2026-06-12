@@ -41,6 +41,15 @@ const routes: Routes = [
       description: 'Comprehensive cases management system',
     },
   },
+  {
+    path: 'admin',
+    title: 'Administrator',
+    loadChildren: () => import('./admin/admin.routes').then((r) => r.ADMIN_ROUTES),
+    data: {
+      breadcrumb: 'adminParticipants.breadcrumbAdmin',
+      description: 'Administrator section (ADMIN only)',
+    },
+  },
   // --- Disabled (temporal) ---
   // { path: 'pages', loadChildren: () => import('./extra-pages/extra-pages.module').then(m => m.ExtraPagesModule) },
   // { path: 'charts', loadChildren: () => import('./charts/charts.module').then(m => m.ChartsModule) },

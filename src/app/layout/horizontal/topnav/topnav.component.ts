@@ -1,10 +1,11 @@
 import { Component, Input, OnInit, Type } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { HORIZONTAL_MENU_ITEMS, MENU_ITEMS, TWO_COl_MENU_ITEMS } from '../../shared/config/menu-meta';
-import { findAllParent, findMenuItem } from '../../shared/helper/utils';
+import { findAllParent, findMenuItem, filterMenuByRole } from '../../shared/helper/utils';
 import { MenuItem } from '../../shared/models/menu.model';
 import { CommonModule } from '@angular/common';
 import { NgbDropdownModule, NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
+import { RoleService } from 'src/app/core/services/role.service';
 
 @Component({
   selector: 'app-horizontal-topnav',
@@ -19,7 +20,10 @@ export class TopnavComponent implements OnInit {
   activeMenuItems: string[] = [];
   chunkSize: number = 7;
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private roleService: RoleService,
+  ) {
     router.events.forEach((event) => {
       if (event instanceof NavigationEnd) {
         this._activateMenu();
@@ -44,7 +48,7 @@ export class TopnavComponent implements OnInit {
    * Initializing menuitems and controlling how many menu items can be displayed in it
    */
   initMenu(): void {
-    this.menuItems = HORIZONTAL_MENU_ITEMS;
+    this.menuItems = filterMenuByRole(HORIZONTAL_MENU_ITEMS, this.roleService.isAdmin());
   }
 
   // split array for chumk size
