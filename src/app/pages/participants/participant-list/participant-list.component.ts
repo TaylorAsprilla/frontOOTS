@@ -5,7 +5,6 @@ import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { NgbPaginationModule, NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule } from '@ngneat/transloco';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
-import type { Observable } from 'rxjs';
 
 import { ParticipantService } from '../../../core/services/participant.service';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -116,64 +115,56 @@ export class ParticipantListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // ADMIN ve TODOS los participantes (endpoint /participants/all).
-    // Cualquier otro rol ve solo los suyos (endpoint /participants/by-user/:id).
-    // Tipamos como Observable<any> porque la forma de la respuesta cambia segun el endpoint
-    // y la normalizamos en el `next` (ver mas abajo).
-    const request$: Observable<any> = this.roleService.isAdmin()
-      ? this.participantService.getAllParticipants()
-      : this.participantService.getParticipantsByUser(currentUser.id);
+    // Usar el nuevo método que filtra por usuario (sin filtros adicionales en el backend)
+    this.participantService
+      .getParticipantsByUser(currentUser.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          // Obtener los participantes de la respuesta
+          const allParticipants = response?.data?.participants || [];
 
-    request$.pipe(takeUntil(this.destroy$)).subscribe({
-      next: (response: any) => {
-        // Normalizar la respuesta segun el endpoint usado:
-        //  - /all       -> { data: Participant[], total }
-        //  - /by-user/* -> { data: { participants: Participant[] } }
-        const allParticipants: Participant[] = Array.isArray(response?.data)
-          ? response.data
-          : (response?.data?.participants ?? []);
+          // Aplicar filtros localmente
+          let filteredData = [...allParticipants];
 
-        // Aplicar filtros localmente
-        let filteredData = [...allParticipants];
+          // Filtrar por búsqueda local
+          const searchTerm = this.searchForm.get('searchTerm')?.value?.toLowerCase() || '';
+          if (searchTerm) {
+            filteredData = filteredData.filter(
+              (participant) =>
+                participant.firstName?.toLowerCase().includes(searchTerm) ||
+                participant.firstLastName?.toLowerCase().includes(searchTerm) ||
+                participant.secondLastName?.toLowerCase().includes(searchTerm) ||
+                participant.email?.toLowerCase().includes(searchTerm) ||
+                participant.documentNumber?.includes(searchTerm),
+            );
+          }
 
-        // Filtrar por búsqueda local
-        const searchTerm = this.searchForm.get('searchTerm')?.value?.toLowerCase() || '';
-        if (searchTerm) {
-          filteredData = filteredData.filter(
-            (participant) =>
-              participant.firstName?.toLowerCase().includes(searchTerm) ||
-              participant.firstLastName?.toLowerCase().includes(searchTerm) ||
-              participant.secondLastName?.toLowerCase().includes(searchTerm) ||
-              participant.email?.toLowerCase().includes(searchTerm) ||
-              participant.documentNumber?.includes(searchTerm),
-          );
-        }
+          // Filtrar por estado local
+          if (this.statusFilter !== 'all') {
+            filteredData = filteredData.filter((participant) => participant.status === this.statusFilter);
+          }
 
-        // Filtrar por estado local
-        if (this.statusFilter !== 'all') {
-          filteredData = filteredData.filter((participant) => participant.status === this.statusFilter);
-        }
+          // Calcular total después de filtros
+          this.totalItems = filteredData.length;
 
-        // Calcular total después de filtros
-        this.totalItems = filteredData.length;
+          // Aplicar paginación local
+          const startIndex = (this.currentPage - 1) * this.pageSize;
+          const endIndex = startIndex + this.pageSize;
 
-        // Aplicar paginación local
-        const startIndex = (this.currentPage - 1) * this.pageSize;
-        const endIndex = startIndex + this.pageSize;
-
-        this.participants = allParticipants; // Guardar todos los participantes
-        this.filteredParticipants = filteredData.slice(startIndex, endIndex); // Mostrar solo la página actual
-        this.isLoading = false;
-        this.searchForm.get('searchTerm')?.enable({ emitEvent: false });
-      },
-      error: (error: unknown) => {
-        this.participants = [];
-        this.filteredParticipants = [];
-        this.totalItems = 0;
-        this.isLoading = false;
-        this.searchForm.get('searchTerm')?.enable({ emitEvent: false });
-      },
-    });
+          this.participants = allParticipants; // Guardar todos los participantes
+          this.filteredParticipants = filteredData.slice(startIndex, endIndex); // Mostrar solo la página actual
+          this.isLoading = false;
+          this.searchForm.get('searchTerm')?.enable({ emitEvent: false });
+        },
+        error: (error) => {
+          this.participants = [];
+          this.filteredParticipants = [];
+          this.totalItems = 0;
+          this.isLoading = false;
+          this.searchForm.get('searchTerm')?.enable({ emitEvent: false });
+        },
+      });
   }
 
   onStatusFilterChange(status: ParticipantStatus | 'all'): void {
