@@ -40,6 +40,10 @@ export class RoleService {
     return this.hasAnyRole('ORIENTADOR');
   }
 
+  isTrabajoSocial(): boolean {
+    return this.hasAnyRole('TRABAJO_SOCIAL');
+  }
+
   /** Puede acceder a auditoría: ADMIN, COORDINADOR o SUPERVISOR */
   canViewAuditLogs(): boolean {
     return this.hasAnyRole('ADMIN', 'COORDINADOR', 'SUPERVISOR');

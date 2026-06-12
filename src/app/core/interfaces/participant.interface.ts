@@ -213,3 +213,8 @@ export interface ParticipantByUserResponse {
   timestamp: string;
   path: string;
 }
+
+export interface ParticipantAllResponse {
+  data: Participant[];
+  total: number;
+}
