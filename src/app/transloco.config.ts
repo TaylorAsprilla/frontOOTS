@@ -12,10 +12,13 @@ export class TranslocoHttpLoaderService implements TranslocoLoader {
   private http = inject(HttpClient);
 
   getTranslation(lang: string): Observable<Translation> {
-    // Obtener el baseHref del documento para construir la ruta correcta
-    const baseHref = document.querySelector('base')?.getAttribute('href') || '/';
-    const normalizedBaseHref = baseHref.endsWith('/') ? baseHref : `${baseHref}/`;
-    const path = `${normalizedBaseHref}assets/i18n/${lang}.json`;
+    // Construir la ruta normalizando para evitar dobles slashes ("//"),
+    // que en CloudFront caen en el SPA fallback y devuelven index.html.
+    const rawBaseHref = document.querySelector('base')?.getAttribute('href') || '/';
+    // Quita todos los slashes finales del baseHref y los slashes iniciales del lang.
+    const baseHref = rawBaseHref.replace(/\/+$/, '');
+    const safeLang = String(lang).replace(/^\/+/, '');
+    const path = `${baseHref}/assets/i18n/${safeLang}.json`;
 
     return this.http.get(path, { responseType: 'text' }).pipe(
       map((raw) => {
