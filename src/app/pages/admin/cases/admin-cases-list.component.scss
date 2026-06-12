@@ -1,0 +1,121 @@
+.summary-pill {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background-color: rgba(13, 110, 253, 0.08);
+  color: var(--bs-primary, #0d6efd);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.case-row {
+  transition: background-color 0.15s ease-in-out;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.025);
+  }
+}
+
+.entity-cell {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+
+  .entity-name {
+    font-weight: 600;
+  }
+
+  .entity-sub {
+    font-size: 0.78rem;
+    color: var(--bs-secondary-color, #6c757d);
+    word-break: break-all;
+  }
+}
+
+.reason-cell {
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.case-extra-row > td {
+  background-color: rgba(13, 110, 253, 0.03);
+  border-top: none;
+}
+
+.case-extra {
+  padding: 0.75rem 0.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.case-extra-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.5rem;
+}
+
+.case-extra-block {
+  background: #fff;
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 0.5rem;
+  padding: 0.6rem 0.85rem;
+
+  h6 {
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+  }
+
+  p {
+    white-space: pre-line;
+    word-break: break-word;
+  }
+}
+
+.info-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.78rem;
+  border-radius: 999px;
+  background-color: #f1f3f5;
+  color: #495057;
+  border: 1px solid transparent;
+  white-space: nowrap;
+
+  i {
+    font-size: 0.9rem;
+  }
+
+  strong {
+    font-weight: 600;
+  }
+
+  &.info-tag--neutral {
+    background-color: #f1f3f5;
+    color: #495057;
+  }
+
+  &.info-tag--primary {
+    background-color: rgba(13, 110, 253, 0.08);
+    color: var(--bs-primary, #0d6efd);
+  }
+
+  &.info-tag--info {
+    background-color: rgba(13, 202, 240, 0.12);
+    color: #087990;
+  }
+
+  &.info-tag--warning {
+    background-color: rgba(255, 193, 7, 0.18);
+    color: #997404;
+  }
+
+  &.info-tag--success {
+    background-color: rgba(25, 135, 84, 0.12);
+    color: #146c43;
+  }
+}

@@ -6,7 +6,7 @@ import { AuthenticationService } from '../../../core/services/auth.service';
 import { RoleService } from 'src/app/core/services/role.service';
 import { MENU_ITEMS } from '../config/menu-meta';
 import { MenuItem } from '../models/menu.model';
-import { findAllParent, findMenuItem } from '../helper/utils';
+import { findAllParent, findMenuItem, filterMenuByRole } from '../helper/utils';
 import feather from 'feather-icons';
 import { CommonModule } from '@angular/common';
 import { SimplebarAngularModule } from 'simplebar-angular';
@@ -50,9 +50,9 @@ export class LeftSidebarComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.isAdmin = this.roleService.isAdmin();
     this.initMenu();
     this.loggedInUser = this.authService.currentUser();
-    this.isAdmin = this.roleService.isAdmin();
 
     this.eventService.subscribe('toggleTwoToneIcons', (enable) => {
       this.hasTwoToneIcons = enable;
@@ -86,7 +86,7 @@ export class LeftSidebarComponent implements OnInit, AfterViewInit {
    * initialize menuitems
    */
   initMenu(): void {
-    this.menuItems = MENU_ITEMS;
+    this.menuItems = filterMenuByRole(MENU_ITEMS, this.isAdmin);
   }
 
   /**

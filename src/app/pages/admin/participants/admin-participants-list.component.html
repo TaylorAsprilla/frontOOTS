@@ -1,0 +1,211 @@
+<div class="container-fluid">
+  <app-page-title [breadcrumbItems]="breadcrumbItems" title="adminParticipants.title"> </app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <!-- Header: búsqueda + total + refrescar -->
+          <div class="row justify-content-between align-items-center">
+            <div class="col-md-8">
+              <form class="d-flex flex-wrap align-items-center gap-3" [formGroup]="searchForm">
+                <label for="admin-participants-search" class="visually-hidden">{{ 'app.search' | transloco }}</label>
+                <div class="flex-grow-1" style="max-width: 360px">
+                  <input
+                    type="search"
+                    class="form-control"
+                    id="admin-participants-search"
+                    formControlName="searchTerm"
+                    [placeholder]="'adminParticipants.searchPlaceholder' | transloco"
+                  />
+                </div>
+                <div class="text-muted small">
+                  @if (!isLoading) {
+                    <span class="summary-pill">
+                      {{ total }} {{ 'adminParticipants.totalParticipants' | transloco }}
+                    </span>
+                  }
+                  @if (isLoading) {
+                    <span>{{ 'app.loading' | transloco }}</span>
+                  }
+                </div>
+              </form>
+            </div>
+
+            <div class="col-md-4 text-end mb-3">
+              <button
+                type="button"
+                class="btn btn-info"
+                (click)="loadParticipants()"
+                [disabled]="isLoading"
+                [attr.title]="'app.refresh' | transloco"
+              >
+                <i class="mdi" [ngClass]="isLoading ? 'mdi-loading mdi-spin' : 'mdi-refresh'"></i>
+                <span class="ms-1">{{ isLoading ? ('app.loading' | transloco) : ('app.refresh' | transloco) }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Loading -->
+          @if (isLoading) {
+            <div class="text-center py-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">{{ 'app.loading' | transloco }}</span>
+              </div>
+              <p class="mt-3 text-muted">{{ 'adminParticipants.loading' | transloco }}</p>
+            </div>
+          }
+
+          <!-- Error -->
+          @if (!isLoading && hasError) {
+            <div class="alert alert-danger d-flex align-items-center gap-2" role="alert">
+              <i class="mdi mdi-alert-circle-outline"></i>
+              <div class="flex-grow-1">
+                <strong>{{ 'adminParticipants.errorTitle' | transloco }}</strong>
+                <div class="small">
+                  {{ errorMessage || ('adminParticipants.errorMessage' | transloco) }}
+                </div>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="loadParticipants()">
+                <i class="mdi mdi-refresh me-1"></i>{{ 'app.retry' | transloco }}
+              </button>
+            </div>
+          }
+
+          <!-- Tabla -->
+          @if (!isLoading && !hasError && filteredParticipants.length > 0) {
+            <div class="table-responsive">
+              <table class="table table-hover table-centered align-middle table-nowrap mb-0">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="border-0">#</th>
+                    <th class="border-0">
+                      <i class="fas fa-user me-1 text-primary"></i>
+                      {{ 'adminParticipants.fullName' | transloco }}
+                    </th>
+                    <th class="border-0">
+                      <i class="fas fa-id-card me-1 text-primary"></i>
+                      {{ 'adminParticipants.document' | transloco }}
+                    </th>
+                    <th class="border-0">
+                      <i class="fas fa-phone me-1 text-primary"></i>
+                      {{ 'adminParticipants.phone' | transloco }}
+                    </th>
+                    <th class="border-0">
+                      <i class="fas fa-envelope me-1 text-primary"></i>
+                      {{ 'adminParticipants.email' | transloco }}
+                    </th>
+                    <th class="border-0">
+                      <i class="fas fa-map-marker-alt me-1 text-primary"></i>
+                      {{ 'adminParticipants.location' | transloco }}
+                    </th>
+                    <th class="border-0">
+                      <i class="fas fa-user-tie me-1 text-primary"></i>
+                      {{ 'adminParticipants.assignedTo' | transloco }}
+                    </th>
+                    <th class="border-0 text-center">
+                      <i class="fas fa-shield-alt me-1 text-primary"></i>
+                      {{ 'adminParticipants.assignedUserStatus' | transloco }}
+                    </th>
+                    <th class="border-0">
+                      <i class="fas fa-calendar-alt me-1 text-primary"></i>
+                      {{ 'adminParticipants.createdAt' | transloco }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (participant of pageItems; track trackById($index, participant)) {
+                    <tr class="participant-row">
+                      <td>{{ participant.id }}</td>
+                      <td>{{ getParticipantFullName(participant) }}</td>
+                      <td>{{ participant.documentNumber || '—' }}</td>
+                      <td>{{ participant.phoneNumber || '—' }}</td>
+                      <td>{{ participant.email || '—' }}</td>
+                      <td>{{ getLocation(participant) || '—' }}</td>
+                      <td>
+                        @if (participant.registeredBy) {
+                          <div class="assigned-user">
+                            <span class="assigned-user-name">{{ getAssignedUserFullName(participant) }}</span>
+                            @if (participant.registeredBy.email) {
+                              <span class="assigned-user-email">{{ participant.registeredBy.email }}</span>
+                            }
+                          </div>
+                        } @else {
+                          <span class="assigned-user-empty">
+                            {{ 'adminParticipants.unassigned' | transloco }}
+                          </span>
+                        }
+                      </td>
+                      <td class="text-center">
+                        @if (participant.registeredBy && participant.registeredBy.status) {
+                          <span [class]="getStatusBadgeClass(participant.registeredBy.status)">
+                            {{ participant.registeredBy.status }}
+                          </span>
+                        } @else {
+                          <span class="text-muted">—</span>
+                        }
+                      </td>
+                      <td>
+                        @if (participant.createdAt) {
+                          {{ participant.createdAt | localizedDate }}
+                        } @else {
+                          <span class="text-muted">—</span>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Paginación -->
+            @if (filteredParticipants.length > pageSize) {
+              <div class="d-flex justify-content-between align-items-center mt-4">
+                <div>
+                  <small class="text-muted">
+                    {{ 'app.showing' | transloco }}
+                    {{ (currentPage - 1) * pageSize + 1 }} -
+                    {{ Math.min(currentPage * pageSize, filteredParticipants.length) }}
+                    {{ 'app.of' | transloco }} {{ filteredParticipants.length }}
+                  </small>
+                </div>
+                <ngb-pagination
+                  [(page)]="currentPage"
+                  [pageSize]="pageSize"
+                  [collectionSize]="filteredParticipants.length"
+                  [maxSize]="5"
+                  [rotate]="true"
+                  [boundaryLinks]="true"
+                  (pageChange)="onPageChange($event)"
+                >
+                </ngb-pagination>
+              </div>
+            }
+          }
+
+          <!-- Vacío -->
+          @if (!isLoading && !hasError && filteredParticipants.length === 0) {
+            <div class="text-center py-5">
+              <div class="mb-3">
+                <i class="fas fa-user-slash display-4 text-muted"></i>
+              </div>
+              <h5 class="text-muted">
+                @if (searchForm.value.searchTerm) {
+                  {{ 'adminParticipants.noResults' | transloco }}
+                } @else {
+                  {{ 'adminParticipants.empty' | transloco }}
+                }
+              </h5>
+              @if (searchForm.value.searchTerm) {
+                <button type="button" class="btn btn-outline-secondary mt-2" (click)="clearSearch()">
+                  <i class="mdi mdi-filter-remove me-1"></i>
+                  {{ 'app.clearFilters' | transloco }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

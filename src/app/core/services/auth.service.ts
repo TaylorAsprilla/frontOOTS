@@ -51,6 +51,14 @@ export class AuthenticationService {
   }
 
   /**
+   * Indica si el usuario autenticado tiene rol ADMIN.
+   * Útil para mostrar/ocultar secciones administrativas en plantillas.
+   */
+  public isAdmin(): boolean {
+    return this.tokenStorage.getRole() === 'ADMIN';
+  }
+
+  /**
    * Performs the login authentication with backend API
    * @param email email of user
    * @param password password of user

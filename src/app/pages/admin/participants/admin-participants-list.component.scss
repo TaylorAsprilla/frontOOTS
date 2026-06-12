@@ -1,0 +1,38 @@
+.assigned-user {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+
+  .assigned-user-name {
+    font-weight: 600;
+  }
+
+  .assigned-user-email {
+    font-size: 0.78rem;
+    color: var(--bs-secondary-color, #6c757d);
+    word-break: break-all;
+  }
+
+  .assigned-user-empty {
+    font-style: italic;
+    color: var(--bs-secondary-color, #6c757d);
+  }
+}
+
+.participant-row {
+  transition: background-color 0.15s ease-in-out;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.025);
+  }
+}
+
+.summary-pill {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background-color: rgba(13, 110, 253, 0.08);
+  color: var(--bs-primary, #0d6efd);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
