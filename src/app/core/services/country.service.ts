@@ -233,38 +233,56 @@ export class CountryService {
   }
 
   private buildConfigs(configs: CountryConfig[]): void {
-    this.countryConfigs = configs.reduce(
+    // Filtra cualquier pais sin code o locale validos para evitar pasar {id: null}
+    // a Transloco (lo que dispara peticiones a /assets/i18n/null.json).
+    const valid = configs.filter((c) => !!c?.code && typeof c?.locale === 'string' && c.locale.trim().length > 0);
+
+    this.countryConfigs = valid.reduce(
       (acc, c) => {
         acc[c.code] = c;
         return acc;
       },
       {} as Record<string, CountryConfig>,
     );
-    const langs = configs.map((c) => ({ id: c.locale, label: c.name }));
-    this.translocoService.setAvailableLangs(langs);
+    const langs = valid.map((c) => ({ id: c.locale, label: c.name }));
+    if (langs.length > 0) {
+      this.translocoService.setAvailableLangs(langs);
+    }
   }
 
   private mapToConfigs(countries: BackendCountry[]): CountryConfig[] {
-    return countries
-      .filter((c) => c.isActive)
-      .map((c) => ({
-        id: c.id,
-        code: c.iso,
-        name: c.name,
-        locale: this.normalizeLocale(c.locale),
-        currency: c.currency,
-        phonePrefix: c.phonePrefix,
-        flag: c.flagUrl,
-      }));
+    return (
+      countries
+        .filter((c) => c.isActive)
+        .map((c) => ({
+          id: c.id,
+          code: c.iso,
+          name: c.name,
+          locale: this.normalizeLocale(c.locale),
+          currency: c.currency,
+          phonePrefix: c.phonePrefix,
+          flag: c.flagUrl,
+        }))
+        // Descarta cualquier pais sin locale (evita {id:null} en availableLangs)
+        .filter((c) => typeof c.locale === 'string' && c.locale.trim().length > 0)
+    );
   }
 
   private normalizeLocale(locale: string): string {
+    if (!locale) return locale;
     return LOCALE_NORMALIZATION[locale] ?? locale;
   }
 
   private initializeLanguage(): void {
     const saved = localStorage.getItem('app-language');
-    const lang = saved && this.isValidLanguage(saved) ? saved : DEFAULT_LANGUAGE;
+    // Considera invalidos: null, "", "null", "undefined" o cualquier valor no soportado
+    const isUsable =
+      typeof saved === 'string' &&
+      saved.trim() !== '' &&
+      saved !== 'null' &&
+      saved !== 'undefined' &&
+      this.isValidLanguage(saved);
+    const lang = isUsable ? (saved as string) : DEFAULT_LANGUAGE;
     this.translocoService.setActiveLang(lang);
     this.currentLanguageSubject.next(lang);
     // Persistir siempre el idioma resuelto para que no quede null en localStorage
