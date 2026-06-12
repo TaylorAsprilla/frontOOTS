@@ -8,6 +8,7 @@ import {
   ParticipantResponse,
   ParticipantListResponse,
   ParticipantByUserResponse,
+  ParticipantAllResponse,
   ParticipantStatus,
 } from '../interfaces/participant.interface';
 import {
@@ -117,6 +118,30 @@ export class ParticipantService {
         catchError((error) => {
           this.loadingSubject.next(false);
           this.notificationService.showError('Error al cargar los participantes del usuario');
+          return throwError(() => error);
+        }),
+      );
+  }
+
+  /**
+   * Get ALL participants (solo para ADMIN). Endpoint /participants/all
+   */
+  getAllParticipants(): Observable<ParticipantAllResponse> {
+    this.loadingSubject.next(true);
+
+    return this.http
+      .get<ParticipantAllResponse>(`${this.apiUrl}/all`, {
+        headers: this.getHeaders(),
+      })
+      .pipe(
+        map((response) => {
+          this.participantsSubject.next(response?.data ?? []);
+          this.loadingSubject.next(false);
+          return response;
+        }),
+        catchError((error) => {
+          this.loadingSubject.next(false);
+          this.notificationService.showError('Error al cargar los participantes');
           return throwError(() => error);
         }),
       );
