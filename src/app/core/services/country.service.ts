@@ -127,11 +127,23 @@ export class CountryService {
       return;
     }
     const config = this.countryConfigs[country];
+
+    // Si el pais no trae locale valido, no tocar Transloco para evitar
+    // que el pipe reciba un activeLang null/"" y revente en resolveLangAndScope.
+    const safeLocale = typeof config.locale === 'string' && config.locale.trim().length > 0 ? config.locale : null;
+
     localStorage.setItem('selectedCountry', country);
     this.currentCountrySubject.next(country);
-    this.translocoService.setActiveLang(config.locale);
-    this.currentLanguageSubject.next(config.locale);
-    localStorage.setItem('app-language', config.locale);
+
+    if (safeLocale) {
+      this.translocoService.setActiveLang(safeLocale);
+      this.currentLanguageSubject.next(safeLocale);
+      localStorage.setItem('app-language', safeLocale);
+    } else {
+      console.warn(
+        `[CountryService] El pais "${country}" no tiene "locale" configurado; se mantiene el idioma activo actual.`,
+      );
+    }
   }
 
   getLocaleForLanguage(baseLanguage: 'es' | 'en'): string {

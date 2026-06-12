@@ -4,7 +4,7 @@ import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@a
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { Title } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
-import { provideTransloco } from '@ngneat/transloco';
+import { provideTransloco, TranslocoService } from '@ngneat/transloco';
 
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { JoyrideModule } from 'ngx-joyride';
@@ -15,6 +15,31 @@ import { AuthInterceptor } from './app/core/interceptors/auth.interceptor';
 // import { FakeBackendProvider } from './app/core/helpers/fake-backend'; // Disabled for real backend
 import { routes } from './app/app.routes';
 import { TranslocoHttpLoaderService, translocoAppConfig } from './app/transloco.config';
+
+/**
+ * Endurece TranslocoService.setActiveLang para que NUNCA se acepte un valor
+ * vacio/null/undefined. Si llega algo invalido, mantiene el active lang actual.
+ *
+ * Esto evita el error en tiempo de ejecucion:
+ *   "Cannot read properties of null (reading 'replace')"
+ * que ocurre dentro de resolveLangAndScope -> getMappedScope -> toCamelCase
+ * cuando el active lang termina siendo null (por ejemplo si un consumidor
+ * llama setActiveLang con un valor no resuelto).
+ */
+function hardenTranslocoSetActiveLang(transloco: TranslocoService) {
+  const original = transloco.setActiveLang.bind(transloco);
+  transloco.setActiveLang = (lang: string) => {
+    const safe = typeof lang === 'string' ? lang.trim() : '';
+    if (!safe || safe === 'null' || safe === 'undefined') {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[Transloco] setActiveLang ignorado por valor invalido: "${lang}". Se mantiene "${transloco.getActiveLang()}".`,
+      );
+      return transloco;
+    }
+    return original(safe);
+  };
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -36,6 +61,14 @@ export const appConfig: ApplicationConfig = {
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (transloco: TranslocoService) => () => {
+        hardenTranslocoSetActiveLang(transloco);
+      },
+      deps: [TranslocoService],
+      multi: true,
+    },
     {
       provide: APP_INITIALIZER,
       useFactory: (countryService: CountryService) => () => countryService.loadCountries(),
