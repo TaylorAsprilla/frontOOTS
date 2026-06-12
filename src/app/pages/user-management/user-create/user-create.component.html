@@ -381,7 +381,6 @@
                         >
                           <option [ngValue]="null" disabled selected>Seleccione</option>
                           @for (country of countries; track country.code) {
-                            {{ country.name }}
                             <option [ngValue]="country.id">{{ country.name }}</option>
                           }
                         </select>

@@ -233,39 +233,43 @@ export class CountryService {
   }
 
   private buildConfigs(configs: CountryConfig[]): void {
-    // Filtra cualquier pais sin code o locale validos para evitar pasar {id: null}
-    // a Transloco (lo que dispara peticiones a /assets/i18n/null.json).
-    const valid = configs.filter((c) => !!c?.code && typeof c?.locale === 'string' && c.locale.trim().length > 0);
+    // Guarda TODOS los paises validos (con `code`) en countryConfigs para que el
+    // selector de "Pais de residencia" en formularios los muestre, aun si no
+    // tienen `locale` configurado en el backend.
+    const validForUi = configs.filter((c) => !!c?.code);
 
-    this.countryConfigs = valid.reduce(
+    this.countryConfigs = validForUi.reduce(
       (acc, c) => {
         acc[c.code] = c;
         return acc;
       },
       {} as Record<string, CountryConfig>,
     );
-    const langs = valid.map((c) => ({ id: c.locale, label: c.name }));
+
+    // Para Transloco solo registramos paises que ademas tengan un `locale` valido,
+    // evitando peticiones a /assets/i18n/null.json.
+    const langs = validForUi
+      .filter((c) => typeof c.locale === 'string' && c.locale.trim().length > 0)
+      .map((c) => ({ id: c.locale, label: c.name }));
     if (langs.length > 0) {
       this.translocoService.setAvailableLangs(langs);
     }
   }
 
   private mapToConfigs(countries: BackendCountry[]): CountryConfig[] {
-    return (
-      countries
-        .filter((c) => c.isActive)
-        .map((c) => ({
-          id: c.id,
-          code: c.iso,
-          name: c.name,
-          locale: this.normalizeLocale(c.locale),
-          currency: c.currency,
-          phonePrefix: c.phonePrefix,
-          flag: c.flagUrl,
-        }))
-        // Descarta cualquier pais sin locale (evita {id:null} en availableLangs)
-        .filter((c) => typeof c.locale === 'string' && c.locale.trim().length > 0)
-    );
+    // Devuelve todos los paises activos, incluso los que no tienen `locale`.
+    // El filtrado para Transloco se hace luego en buildConfigs().
+    return countries
+      .filter((c) => c.isActive)
+      .map((c) => ({
+        id: c.id,
+        code: c.iso,
+        name: c.name,
+        locale: this.normalizeLocale(c.locale),
+        currency: c.currency,
+        phonePrefix: c.phonePrefix,
+        flag: c.flagUrl,
+      }));
   }
 
   private normalizeLocale(locale: string): string {
