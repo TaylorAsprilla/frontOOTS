@@ -65,11 +65,25 @@ const MENU_ITEMS: MenuItem[] = [
   // ====== Participantes ======
   { key: 'participants', label: 'navigation.participants', isTitle: true },
   {
-    key: 'participants-list',
+    key: 'participants-section',
     label: 'navigation.participants',
     isTitle: false,
     icon: 'users',
-    link: '/participants/list',
+    collapsed: true,
+    children: [
+      {
+        key: 'participants-list',
+        label: 'navigation.participantsList',
+        link: '/participants/list',
+        parentKey: 'participants-section',
+      },
+      {
+        key: 'participants-create',
+        label: 'navigation.createParticipant',
+        link: '/participants/create',
+        parentKey: 'participants-section',
+      },
+    ],
   },
   // Ocultos temporalmente
   // {
