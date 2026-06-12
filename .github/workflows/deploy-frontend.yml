@@ -41,14 +41,56 @@ jobs:
       - name: Build Angular production
         run: npm run build:pr
 
+      - name: Inspect build output (debug)
+        run: |
+          echo "==> Contenido raiz de $BUILD_OUTPUT"
+          ls -la "$BUILD_OUTPUT" || true
+          echo ""
+          echo "==> Arbol completo (max depth 3)"
+          find "$BUILD_OUTPUT" -maxdepth 3 -type d | sort
+          echo ""
+          echo "==> Total de archivos en el build"
+          find "$BUILD_OUTPUT" -type f | wc -l
+          echo ""
+          echo "==> Contenido de assets/i18n (si existe)"
+          ls -la "$BUILD_OUTPUT/assets/i18n" 2>/dev/null || echo "(no existe)"
+
       - name: Validate build output
         run: |
-          ls -la $BUILD_OUTPUT
-          test -f $BUILD_OUTPUT/index.html
+          test -f "$BUILD_OUTPUT/index.html" || { echo "::error::Falta index.html en el build"; exit 1; }
+          # Asegura que los archivos de traduccion existan en el build
+          test -d "$BUILD_OUTPUT/assets" || { echo "::error::Falta la carpeta assets/ en el build. Revisa angular.json 'assets' del configuration production-pr."; exit 1; }
+          test -d "$BUILD_OUTPUT/assets/i18n" || { echo "::error::Falta la carpeta assets/i18n en el build"; exit 1; }
+          test -f "$BUILD_OUTPUT/assets/i18n/es-CO.json" || { echo "::error::Falta es-CO.json en el build"; exit 1; }
+          test -f "$BUILD_OUTPUT/assets/i18n/es-PR.json" || { echo "::error::Falta es-PR.json en el build"; exit 1; }
+          test -f "$BUILD_OUTPUT/assets/i18n/en.json"    || { echo "::error::Falta en.json en el build"; exit 1; }
+          echo "OK: traducciones presentes en el build"
 
       - name: Upload Angular build to S3
         run: |
           aws s3 sync "$BUILD_OUTPUT" s3://$S3_BUCKET --delete
+
+      - name: Force correct Content-Type for i18n JSON
+        run: |
+          # Re-sube los .json con Content-Type explicito por si s3 sync no lo detecto
+          aws s3 cp "$BUILD_OUTPUT/assets/i18n/" "s3://$S3_BUCKET/assets/i18n/" \
+            --recursive \
+            --exclude "*" \
+            --include "*.json" \
+            --content-type "application/json; charset=utf-8" \
+            --cache-control "public, max-age=300, must-revalidate" \
+            --metadata-directive REPLACE
+
+      - name: Verify assets/i18n landed in S3
+        run: |
+          echo "==> Objetos en s3://$S3_BUCKET/assets/i18n/"
+          aws s3 ls "s3://$S3_BUCKET/assets/i18n/" || true
+          COUNT=$(aws s3 ls "s3://$S3_BUCKET/assets/i18n/" | wc -l)
+          if [ "$COUNT" -lt 3 ]; then
+            echo "::error::Esperaba al menos 3 archivos en assets/i18n/, encontre $COUNT"
+            exit 1
+          fi
+          echo "OK: $COUNT archivos en assets/i18n/"
 
       - name: Set no-cache for index.html
         run: |
