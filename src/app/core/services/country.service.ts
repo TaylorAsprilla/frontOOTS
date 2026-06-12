@@ -267,12 +267,28 @@ export class CountryService {
     const lang = saved && this.isValidLanguage(saved) ? saved : DEFAULT_LANGUAGE;
     this.translocoService.setActiveLang(lang);
     this.currentLanguageSubject.next(lang);
+    // Persistir siempre el idioma resuelto para que no quede null en localStorage
+    try {
+      localStorage.setItem('app-language', lang);
+    } catch {
+      // localStorage no disponible (modo privado, etc.) — ignorar
+    }
   }
 
   private loadSavedCountry(): void {
     const saved = localStorage.getItem('selectedCountry');
     if (saved && this.countryConfigs[saved]) {
       this.currentCountrySubject.next(saved);
+      return;
+    }
+    // Si no hay pais guardado, persistir el actual (default 'PR') para evitar null en localStorage
+    const current = this.currentCountrySubject.value;
+    if (this.countryConfigs[current]) {
+      try {
+        localStorage.setItem('selectedCountry', current);
+      } catch {
+        // ignorar
+      }
     }
   }
 
