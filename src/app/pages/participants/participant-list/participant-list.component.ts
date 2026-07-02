@@ -35,9 +35,14 @@ import { RoleService } from '../../../core/services/role.service';
 export class ParticipantListComponent implements OnInit, OnDestroy {
   private readonly roleService = inject(RoleService);
   canCreateParticipant(): boolean {
-    // Solo ADMIN o COORDINADOR pueden crear
-    return this.roleService.hasAnyRole('ADMIN', 'COORDINADOR');
+    // ADMIN, COORDINADOR y TRABAJO_SOCIAL pueden crear
+    return this.roleService.hasAnyRole('ADMIN', 'COORDINADOR', 'TRABAJO_SOCIAL');
   }
+
+  canCreateCase(): boolean {
+    return this.roleService.hasAnyRole('ADMIN', 'COORDINADOR', 'TRABAJO_SOCIAL');
+  }
+
   private readonly participantService = inject(ParticipantService);
   private readonly notificationService = inject(NotificationService);
   private readonly authService = inject(AuthenticationService);

@@ -7,6 +7,7 @@ import { housingTypeResolver } from '../../core/resolvers/housing-type.resolver'
 import { processTypeResolver } from '../configuration/process-types/process-type.resolver';
 import { approachTypeResolver } from '../configuration/approach-types/approach-type.resolver';
 import { unsavedChangesGuard } from '../../core/guards/unsaved-changes.guard';
+import { roleGuard } from '../../core/guards/role.guard';
 
 /**
  * Cases module routes configuration
@@ -28,6 +29,7 @@ export const CASES_ROUTES: Routes = [
   },
   {
     path: 'create/:participantId',
+    canActivate: [roleGuard(['ADMIN', 'COORDINADOR', 'TRABAJO_SOCIAL'])],
     loadComponent: () => import('./create-case/create-case.component').then((m) => m.CreateCaseComponent),
     title: 'Cases - Create New',
     canDeactivate: [unsavedChangesGuard],
