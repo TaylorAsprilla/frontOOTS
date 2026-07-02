@@ -8,6 +8,7 @@ import { incomeSourceResolver } from '../../core/resolvers/income-source.resolve
 import { incomeLevelResolver } from '../../core/resolvers/income-level.resolver';
 import { housingTypeResolver } from '../../core/resolvers/housing-type.resolver';
 import { academicLevelResolver } from '../../core/resolvers/academic-level.resolver';
+import { roleGuard } from '../../core/guards/role.guard';
 
 /**
  * Participants module routes configuration
@@ -30,6 +31,7 @@ export const PARTICIPANTS_ROUTES: Routes = [
   },
   {
     path: 'create',
+    canActivate: [roleGuard(['ADMIN', 'COORDINADOR', 'TRABAJO_SOCIAL'])],
     loadComponent: () =>
       import('./create-participant/create-participant.component').then((m) => m.CreateParticipantComponent),
     title: 'Participants - Create New',

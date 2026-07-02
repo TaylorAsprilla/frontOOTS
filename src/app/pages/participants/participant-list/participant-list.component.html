@@ -136,14 +136,16 @@
                           >
                             <i class="fas fa-edit"></i>
                           </a>
-                          <a
-                            [routerLink]="['/cases/create', participant.id]"
-                            class="btn btn-sm btn-soft-success me-1"
-                            placement="top"
-                            ngbTooltip="{{ 'cases.addCase' | transloco }}"
-                          >
-                            <i class="fas fa-file-medical"></i>
-                          </a>
+                          @if (canCreateCase()) {
+                            <a
+                              [routerLink]="['/cases/create', participant.id]"
+                              class="btn btn-sm btn-soft-success me-1"
+                              placement="top"
+                              ngbTooltip="{{ 'cases.addCase' | transloco }}"
+                            >
+                              <i class="fas fa-file-medical"></i>
+                            </a>
+                          }
                           <button
                             (click)="deleteParticipant(participant)"
                             class="btn btn-sm btn-soft-danger"
@@ -206,10 +208,12 @@
                   {{ 'app.clearFilters' | transloco }}
                 </button>
               }
-              <a [routerLink]="['/participants/create']" class="btn btn-primary">
-                <i class="fas fa-plus me-1"></i>
-                {{ 'participants.createFirst' | transloco }}
-              </a>
+              @if (canCreateParticipant()) {
+                <a [routerLink]="['/participants/create']" class="btn btn-primary">
+                  <i class="fas fa-plus me-1"></i>
+                  {{ 'participants.createFirst' | transloco }}
+                </a>
+              }
             </div>
           }
         </div>
