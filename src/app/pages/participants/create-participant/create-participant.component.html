@@ -51,6 +51,9 @@
                                   id="mitaNumber"
                                   name="mitaNumber"
                                   formControlName="mitaNumber"
+                                  inputmode="numeric"
+                                  pattern="[0-9]*"
+                                  (input)="onMitaNumberInput($event)"
                                   (blur)="validateMitaNumber()"
                                   (keydown.enter)="validateMitaNumber()"
                                 />

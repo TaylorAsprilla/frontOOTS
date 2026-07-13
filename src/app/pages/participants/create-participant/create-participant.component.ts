@@ -367,7 +367,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     this.participantForm = this.formBuilder.group({
       // Personal Data
       personalData: this.formBuilder.group({
-        mitaNumber: ['', Validators.maxLength(50)],
+        mitaNumber: ['', [Validators.maxLength(50), Validators.pattern(/^\d*$/)]],
         firstName: ['', [Validators.required, Validators.maxLength(50)]],
         secondName: ['', Validators.maxLength(50)],
         firstLastName: ['', [Validators.required, Validators.maxLength(50)]],
@@ -567,6 +567,18 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
 
       this.checkEmailExists(email);
     }
+  }
+
+  onMitaNumberInput(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    const digitsOnly = input?.value.replace(/\D+/g, '') ?? '';
+
+    if (!input || input.value === digitsOnly) {
+      return;
+    }
+
+    input.value = digitsOnly;
+    this.participantForm.get('personalData.mitaNumber')?.setValue(digitsOnly, { emitEvent: false });
   }
 
   validateMitaNumber(): void {
@@ -868,7 +880,6 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
    */
 
   onSubmit(): void {
-    console.log('Intentando enviar el formulario de participante...', this.participantForm);
     // Marcar todos los campos como touched para mostrar errores
     this.markFormGroupTouched(this.participantForm);
 

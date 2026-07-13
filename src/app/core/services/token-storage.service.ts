@@ -100,7 +100,35 @@ export class TokenStorageService {
     const user = this.getUser();
     const role = (user as AuthenticatedUser)?.role;
     if (!role) return null;
-    return (typeof role === 'string' ? role : role.name) as UserRole;
+    const roleName = typeof role === 'string' ? role : role.name;
+    return this.normalizeRole(roleName);
+  }
+
+  /**
+   * Normaliza el nombre del rol para corregir typos del backend
+   * y variantes de formato (espacios, guiones, mayúsculas, tildes).
+   */
+  private normalizeRole(roleName: string): UserRole | null {
+    const VALID_ROLES: UserRole[] = ['ADMIN', 'COORDINADOR', 'SUPERVISOR', 'PSICOLOGO', 'ORIENTADOR', 'TRABAJO_SOCIAL'];
+
+    // Normalizar: quitar tildes, trim, UPPER_SNAKE_CASE
+    const normalized = roleName
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim()
+      .toUpperCase()
+      .replace(/[\s-]+/g, '_');
+
+    // Aliases: typos conocidos del backend → rol canónico
+    const ALIASES: Record<string, UserRole> = {
+      TRABAJADO_SOCIAL: 'TRABAJO_SOCIAL', // typo actual en BD
+      TRABAJADOR_SOCIAL: 'TRABAJO_SOCIAL',
+      TRABAJADORA_SOCIAL: 'TRABAJO_SOCIAL',
+      SOCIAL_WORKER: 'TRABAJO_SOCIAL',
+    };
+
+    const canonical = ALIASES[normalized] ?? normalized;
+    return VALID_ROLES.includes(canonical as UserRole) ? (canonical as UserRole) : null;
   }
 
   /**
