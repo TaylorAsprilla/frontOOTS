@@ -43,7 +43,7 @@ interface CountriesCache {
   cachedAt: string;
 }
 
-const CACHE_KEY = 'countries_cache';
+const CACHE_KEY = 'countries_cache_v2';
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 horas
 const DEFAULT_LANGUAGE = 'es-PR';
 

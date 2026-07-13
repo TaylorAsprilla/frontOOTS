@@ -26,10 +26,10 @@
 
               <!-- item-->
               @for (result of searchResults; track result) {
-              <a ngbDropdownItem href="javascript:void(0);" class="notify-item">
-                <i class="{{ result.icon }} me-1"></i>
-                <span>{{ result.text }}</span>
-              </a>
+                <a ngbDropdownItem href="javascript:void(0);" class="notify-item">
+                  <i class="{{ result.icon }} me-1"></i>
+                  <span>{{ result.text }}</span>
+                </a>
               }
 
               <!-- item-->
@@ -40,15 +40,15 @@
               <div class="notification-list">
                 <!-- item -->
                 @for (user of searchUsers; track user) {
-                <a ngbDropdownItem href="javascript:void(0);" class="notify-item">
-                  <div class="d-flex align-items-start">
-                    <img class="d-flex me-2 rounded-circle" [src]="user.profile" [alt]="user.name" height="32" />
-                    <div class="w-100">
-                      <h5 class="m-0 font-14">{{ user.name }}</h5>
-                      <span class="font-12 mb-0">{{ user.position }}</span>
+                  <a ngbDropdownItem href="javascript:void(0);" class="notify-item">
+                    <div class="d-flex align-items-start">
+                      <img class="d-flex me-2 rounded-circle" [src]="user.profile" [alt]="user.name" height="32" />
+                      <div class="w-100">
+                        <h5 class="m-0 font-14">{{ user.name }}</h5>
+                        <span class="font-12 mb-0">{{ user.position }}</span>
+                      </div>
                     </div>
-                  </div>
-                </a>
+                  </a>
                 }
               </div>
             </div>
@@ -91,10 +91,10 @@
       </li>
 
       <li class="notification-list topbar-dropdown" ngbDropdown>
-        <a class="nav-link waves-effect waves-light" href="javascript:void(0)" role="button" ngbDropdownToggle>
+        <!-- <a class="nav-link waves-effect waves-light" href="javascript:void(0)" role="button" ngbDropdownToggle>
           <i class="fe-bell noti-icon"></i>
           <span class="badge bg-danger rounded-circle noti-icon-badge">9</span>
-        </a>
+        </a> -->
         <div class="dropdown-menu-end dropdown-lg" ngbDropdownMenu>
           <!-- item-->
           <div class="dropdown-item noti-title">
@@ -110,21 +110,22 @@
           <ngx-simplebar class="noti-scroll">
             <!-- item -->
             @for (item of notificationList; track item) {
-            <a [routerLink]="[]" class="notify-item" [class.active]="item.isActive" ngbDropdownItem>
-              @if (item.avatar) {
-              <div class="notify-icon">
-                <img [src]="item.avatar" class="img-fluid rounded-circle" alt="" />
-              </div>
-              } @if (item.icon) {
-              <div class="notify-icon bg-{{ item.bgColor }}">
-                <i [class]="item.icon"></i>
-              </div>
-              }
-              <p class="notify-details">{{ item.text }}</p>
-              <p class="text-muted mb-0 user-msg">
-                <small>{{ item.subText }}</small>
-              </p>
-            </a>
+              <a [routerLink]="[]" class="notify-item" [class.active]="item.isActive" ngbDropdownItem>
+                @if (item.avatar) {
+                  <div class="notify-icon">
+                    <img [src]="item.avatar" class="img-fluid rounded-circle" alt="" />
+                  </div>
+                }
+                @if (item.icon) {
+                  <div class="notify-icon bg-{{ item.bgColor }}">
+                    <i [class]="item.icon"></i>
+                  </div>
+                }
+                <p class="notify-details">{{ item.text }}</p>
+                <p class="text-muted mb-0 user-msg">
+                  <small>{{ item.subText }}</small>
+                </p>
+              </a>
             }
           </ngx-simplebar>
 
@@ -164,10 +165,10 @@
           </div>
           <!-- item -->
           @for (option of profileOptions; track option) {
-          <a class="dropdown-item notify-item" [routerLink]="option.redirectTo" ngbDropdownItem>
-            <i class="{{ option.icon }} me-1"></i>
-            <span>{{ option.label | transloco }}</span>
-          </a>
+            <a class="dropdown-item notify-item" [routerLink]="option.redirectTo" ngbDropdownItem>
+              <i class="{{ option.icon }} me-1"></i>
+              <span>{{ option.label | transloco }}</span>
+            </a>
           }
         </div>
       </li>
@@ -181,9 +182,10 @@
         </span>
         <span class="logo-lg">
           @if (layoutType !== 'two-column') {
-          <img src="assets/images/logo-dark.png" alt="Logo Dark" height="50" />
-          } @if (layoutType === 'two-column') {
-          <img src="assets/images/logo-dark-2.png" alt="Logo Dark 2" height="50" />
+            <img src="assets/images/logo-dark.png" alt="Logo Dark" height="50" />
+          }
+          @if (layoutType === 'two-column') {
+            <img src="assets/images/logo-dark-2.png" alt="Logo Dark 2" height="50" />
           }
         </span>
       </a>
@@ -194,9 +196,10 @@
         </span>
         <span class="logo-lg">
           @if (layoutType !== 'two-column') {
-          <img src="assets/images/logo-light.png" alt="Logo Light" height="50" />
-          } @if (layoutType === 'two-column') {
-          <img src="assets/images/logo-light-2.png" alt="Logo Light 2" height="50" />
+            <img src="assets/images/logo-light.png" alt="Logo Light" height="50" />
+          }
+          @if (layoutType === 'two-column') {
+            <img src="assets/images/logo-light-2.png" alt="Logo Light 2" height="50" />
           }
         </span>
       </a>
@@ -205,38 +208,38 @@
     <ul class="list-unstyled topnav-menu topnav-menu-left m-0">
       <li>
         @if (layoutType !== 'horizontal') {
-        <button class="button-menu-mobile waves-effect waves-light d-none d-lg-block" (click)="changeSidebarWidth()">
-          <i class="fe-menu"></i>
-        </button>
+          <button class="button-menu-mobile waves-effect waves-light d-none d-lg-block" (click)="changeSidebarWidth()">
+            <i class="fe-menu"></i>
+          </button>
         }
       </li>
 
       <li>
         @if (layoutType !== 'horizontal') {
-        <button
-          class="button-menu-mobile open-left d-block d-lg-none waves-effect waves-light"
-          (click)="toggleMobileMenu($event)"
-        >
-          <i class="fe-menu"></i>
-        </button>
+          <button
+            class="button-menu-mobile open-left d-block d-lg-none waves-effect waves-light"
+            (click)="toggleMobileMenu($event)"
+          >
+            <i class="fe-menu"></i>
+          </button>
         }
       </li>
 
       <li>
         <!-- Mobile menu toggle (Horizontal Layout)-->
         @if (layoutType === 'horizontal') {
-        <a
-          class="navbar-toggle nav-link"
-          [class.open]="topnavCollapsed"
-          (click)="toggleMobileMenu($event)"
-          href="javascript:void(0);"
-        >
-          <div class="lines">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-        </a>
+          <a
+            class="navbar-toggle nav-link"
+            [class.open]="topnavCollapsed"
+            (click)="toggleMobileMenu($event)"
+            href="javascript:void(0);"
+          >
+            <div class="lines">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </a>
         }
         <!-- End mobile menu toggle-->
       </li>
