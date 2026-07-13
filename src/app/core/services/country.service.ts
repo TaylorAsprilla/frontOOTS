@@ -252,7 +252,11 @@ export class CountryService {
 
     this.countryConfigs = validForUi.reduce(
       (acc, c) => {
-        acc[c.code] = c;
+        // Fallback de bandera cuando el backend no tiene flagUrl configurado
+        acc[c.code] = {
+          ...c,
+          flag: c.flag || `https://flagcdn.com/w20/${c.code.toLowerCase()}.png`,
+        };
         return acc;
       },
       {} as Record<string, CountryConfig>,
@@ -280,7 +284,7 @@ export class CountryService {
         locale: this.normalizeLocale(c.locale),
         currency: c.currency,
         phonePrefix: c.phonePrefix,
-        flag: c.flagUrl,
+        flag: c.flagUrl || `https://flagcdn.com/w20/${c.iso.toLowerCase()}.png`,
       }));
   }
 
