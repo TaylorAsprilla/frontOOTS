@@ -28,6 +28,19 @@ export const ADMIN_ROUTES: Routes = [
         },
       },
       {
+        path: 'participants/detail/:id',
+        loadComponent: () =>
+          import('../participants/participant-detail/participant-detail.component').then(
+            (m) => m.ParticipantDetailComponent,
+          ),
+        title: 'Administrator - Participant Details',
+        data: {
+          breadcrumb: 'participants.detail',
+          backRoute: '/admin/participants',
+          adminView: true,
+        },
+      },
+      {
         path: 'cases',
         loadComponent: () => import('./cases/admin-cases-list.component').then((m) => m.AdminCasesListComponent),
         title: 'Administrator - Cases',

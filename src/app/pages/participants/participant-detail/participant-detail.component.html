@@ -43,7 +43,7 @@
                   <i class="fas fa-edit me-1"></i>
                   {{ 'app.edit' | transloco }}
                 </a>
-                <a [routerLink]="['/participants']" class="btn btn-secondary">
+                <a [routerLink]="[backRoute]" class="btn btn-secondary">
                   <i class="fas fa-arrow-left me-1"></i>
                   {{ 'app.back' | transloco }}
                 </a>
@@ -326,6 +326,77 @@
       </div>
     }
 
+    <!-- Associated Cases Section -->
+    <div class="row">
+      <div class="col-12 mb-4">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-folder-open text-primary me-2"></i>
+              {{ 'participants.associatedCases' | transloco }}
+            </h5>
+            <span class="badge bg-primary-subtle text-primary">{{ participant.cases.length || 0 }}</span>
+          </div>
+          <div class="card-body">
+            @if (participant.cases && participant.cases.length > 0) {
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>{{ 'participants.caseNumber' | transloco }}</th>
+                      <th>{{ 'participants.status' | transloco }}</th>
+                      <th>{{ 'participants.openingDate' | transloco }}</th>
+                      <th>{{ 'participants.closingDate' | transloco }}</th>
+                      <th class="text-center">{{ 'app.actions' | transloco }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (caseItem of participant.cases; track caseItem.id ?? $index) {
+                      <tr>
+                        <td>
+                          <strong>{{ caseItem.caseNumber || ('participants.noCaseNumber' | transloco) }}</strong>
+                        </td>
+                        <td>
+                          <span [class]="getCaseStatusBadgeClass(caseItem.status)">
+                            {{ caseItem.status || ('participants.unknown' | transloco) }}
+                          </span>
+                        </td>
+                        <td>
+                          {{ caseItem.openingDate ? (caseItem.openingDate | localizedDate: 'dd/MM/yyyy') : '—' }}
+                        </td>
+                        <td>
+                          {{ caseItem.closingDate ? (caseItem.closingDate | localizedDate: 'dd/MM/yyyy') : '—' }}
+                        </td>
+                        <td class="text-center">
+                          @if (caseItem.id) {
+                            <a
+                              [routerLink]="['/cases/detail', caseItem.id]"
+                              class="btn btn-sm btn-soft-info"
+                              placement="top"
+                              ngbTooltip="{{ 'app.view' | transloco }}"
+                            >
+                              <i class="fas fa-eye"></i>
+                            </a>
+                          } @else {
+                            <span class="text-muted">—</span>
+                          }
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            } @else {
+              <div class="text-center py-4 text-muted">
+                <i class="fas fa-folder-open display-6 mb-3 d-block"></i>
+                {{ 'participants.noAssociatedCases' | transloco }}
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- BioPsychosocial History Section -->
     @if (participant.bioPsychosocialHistory) {
       <div class="row">
@@ -488,7 +559,7 @@
       </div>
       <h5 class="text-muted">{{ 'participants.notFound' | transloco }}</h5>
       <p class="text-muted mb-4">{{ 'participants.notFoundMessage' | transloco }}</p>
-      <a [routerLink]="['/participants']" class="btn btn-primary">
+      <a [routerLink]="[backRoute]" class="btn btn-primary">
         <i class="mdi mdi-arrow-left me-1"></i>
         {{ 'participants.backToList' | transloco }}
       </a>

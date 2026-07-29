@@ -180,7 +180,7 @@ export class AdminParticipantsListComponent implements OnInit, OnDestroy {
   getStatusBadgeClass(status?: string | null): string {
     switch ((status ?? '').toUpperCase()) {
       case 'ACTIVE':
-        return 'badge bg-success';
+        return 'badge bg-success text-white';
       case 'INACTIVE':
         return 'badge bg-secondary';
       case 'SUSPENDED':
