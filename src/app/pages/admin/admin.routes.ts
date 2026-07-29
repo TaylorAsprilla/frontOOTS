@@ -30,7 +30,9 @@ export const ADMIN_ROUTES: Routes = [
       {
         path: 'participants/detail/:id',
         loadComponent: () =>
-          import('../participants/participant-detail/participant-detail.component').then((m) => m.ParticipantDetailComponent),
+          import('../participants/participant-detail/participant-detail.component').then(
+            (m) => m.ParticipantDetailComponent,
+          ),
         title: 'Administrator - Participant Details',
         data: {
           breadcrumb: 'participants.detail',
