@@ -431,6 +431,7 @@
     "backToList": "Back to List",
     "errorLoading": "Error loading participant",
     "confirmCreate": "Are you sure you want to create this participant?",
+    "confirmUpdate": "Are you sure you want to update this participant?",
     "createSuccess": "Participant created successfully",
     "createError": "Error creating participant",
     "confirmReset": "Are you sure you want to reset the form?",

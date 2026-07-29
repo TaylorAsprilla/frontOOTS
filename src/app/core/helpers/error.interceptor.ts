@@ -13,9 +13,9 @@ export class ErrorInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError((err) => {
         // Los errores 401 son manejados por AuthInterceptor (refresh token flow).
-        // Aquí solo se propagan otros errores para que los componentes los manejen.
-        const error = err?.error?.message || err?.statusText || err?.message || 'Unknown error';
-        return throwError(() => error);
+        // Aquí se propaga el HttpErrorResponse original para preservar
+        // el payload del backend, incluyendo `error.message` cuando es un arreglo.
+        return throwError(() => err);
       }),
     );
   }

@@ -431,6 +431,7 @@
     "backToList": "Volver a la Lista",
     "errorLoading": "Error al cargar el participante",
     "confirmCreate": "¿Está seguro de crear este participante?",
+    "confirmUpdate": "¿Está seguro de que desea actualizar este participante?",
     "createSuccess": "Participante creado exitosamente",
     "createError": "Error al crear el participante",
     "confirmReset": "¿Está seguro de restablecer el formulario?",

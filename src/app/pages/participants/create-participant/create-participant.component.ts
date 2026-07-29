@@ -20,6 +20,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { ValidationMessages } from '../../../core/interfaces/participant.interface';
+import { CreateParticipantDto } from '../../../core/interfaces/participant-create.interface';
 import { CaseService } from '../../../core/services/case.service';
 import { TokenStorageService } from '../../../core/services/token-storage.service';
 import { DocumentType } from '../../configuration/document-types/document-type.interface';
@@ -1019,10 +1020,27 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     }
   }
 
+  private normalizePhoneValue(phoneValue: unknown): string {
+    if (!phoneValue) {
+      return '';
+    }
+
+    if (typeof phoneValue === 'string') {
+      return phoneValue.trim();
+    }
+
+    if (typeof phoneValue === 'object' && 'internationalNumber' in (phoneValue as Record<string, unknown>)) {
+      const internationalNumber = (phoneValue as { internationalNumber?: string }).internationalNumber;
+      return internationalNumber?.trim() || '';
+    }
+
+    return '';
+  }
+
   /**
    * Map form data to API DTO
    */
-  private mapFormDataToDto(): any {
+  private mapFormDataToDto(): CreateParticipantDto {
     const formValue = this.participantForm.value;
     const personalData = formValue.personalData;
 
@@ -1034,15 +1052,13 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     const emergencyContacts = [
       {
         name: personalData.emergencyContactName,
-        phone: personalData.emergencyContactPhone?.internationalNumber,
+        phone: this.normalizePhoneValue(personalData.emergencyContactPhone),
         email: personalData.emergencyContactEmail,
         address: personalData.emergencyContactAddress,
         city: personalData.emergencyContactCity,
         state: personalData.emergencyContactState || undefined,
         zipCode: personalData.emergencyContactZipCode || undefined,
-        relationshipId: personalData.emergencyContactRelationship
-          ? Number(personalData.emergencyContactRelationship)
-          : null,
+        relationshipId: Number(personalData.emergencyContactRelationship),
       },
     ];
 
@@ -1053,9 +1069,9 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
       secondName: personalData.secondName || undefined,
       firstLastName: personalData.firstLastName,
       secondLastName: personalData.secondLastName || undefined,
-      phoneNumber: personalData.phoneNumber?.internationalNumber || undefined,
+      phoneNumber: this.normalizePhoneValue(personalData.phoneNumber),
       email: personalData.email && personalData.email.trim() !== '' ? personalData.email : undefined,
-      documentTypeId: personalData.documentTypeId ? Number(personalData.documentTypeId) : null,
+      documentTypeId: Number(personalData.documentTypeId),
       documentNumber: personalData.documentNumber,
       address: personalData.address,
       city: personalData.city,
@@ -1063,14 +1079,26 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
       zipCode: personalData.zipCode,
       birthDate: personalData.birthDate,
       religiousAffiliation: personalData.religiousAffiliation || undefined,
-      genderId: personalData.genderId ? Number(personalData.genderId) : null,
-      maritalStatusId: personalData.maritalStatusId ? Number(personalData.maritalStatusId) : null,
-      healthInsuranceId: personalData.healthInsuranceId ? Number(personalData.healthInsuranceId) : null,
+      genderId: Number(personalData.genderId),
+      maritalStatusId: Number(personalData.maritalStatusId),
+      healthInsuranceId: Number(personalData.healthInsuranceId),
       customHealthInsurance: personalData.customHealthInsurance || undefined,
       referralSource: personalData.referralSource || undefined,
       countryId: personalData.countryId ? Number(personalData.countryId) : null,
       registeredById,
       emergencyContacts,
+      familyMembers: [],
+      bioPsychosocialHistory: {
+        academicLevelId: null,
+        completedGrade: '',
+        institution: '',
+        profession: '',
+        incomeSourceId: null,
+        incomeLevelId: null,
+        occupationalHistory: '',
+        housingTypeId: null,
+        housing: '',
+      },
     };
 
     return dto;
@@ -1101,23 +1129,6 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           this.isSubmitting = false;
-          let errorMessage = 'Error al crear el participante';
-          if (error.error?.message) {
-            if (Array.isArray(error.error.message)) {
-              // Crear una lista HTML para múltiples errores
-              if (error.error.message.length === 1) {
-                errorMessage = error.error.message[0];
-              } else {
-                errorMessage =
-                  '<ul style="text-align: left; margin: 0;">' +
-                  error.error.message.map((msg: string) => `<li>${msg}</li>`).join('') +
-                  '</ul>';
-              }
-            } else {
-              errorMessage = error.error.message;
-            }
-          }
-          this.notificationService.showError(errorMessage);
         },
       });
   }
@@ -1126,7 +1137,8 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
    * Show confirmation dialog before submitting
    */
   private confirmSubmission(): void {
-    const message = this.translocoService.translate('participants.confirmCreate');
+    const messageKey = this.participantId ? 'participants.confirmUpdate' : 'participants.confirmCreate';
+    const message = this.translocoService.translate(messageKey);
     this.notificationService.showConfirmation(message).then((result) => {
       if (result.isConfirmed) {
         this.submitForm();
@@ -1155,7 +1167,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     const dto = this.mapFormDataToDto();
 
     this.participantService
-      .updateParticipantComplete(this.participantId, dto)
+      .updateParticipant(this.participantId, dto)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -1165,23 +1177,6 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           this.isSubmitting = false;
-          let errorMessage = 'Error al actualizar el participante';
-          if (error.error?.message) {
-            if (Array.isArray(error.error.message)) {
-              // Crear una lista HTML para múltiples errores
-              if (error.error.message.length === 1) {
-                errorMessage = error.error.message[0];
-              } else {
-                errorMessage =
-                  '<ul style="text-align: left; margin: 0;">' +
-                  error.error.message.map((msg: string) => `<li>${msg}</li>`).join('') +
-                  '</ul>';
-              }
-            } else {
-              errorMessage = error.error.message;
-            }
-          }
-          this.notificationService.showError(errorMessage);
         },
       });
   }

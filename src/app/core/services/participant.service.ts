@@ -12,6 +12,7 @@ import {
 } from '../interfaces/participant.interface';
 import {
   CreateParticipantDto,
+  UpdateParticipantDto,
   ParticipantResponse as CreateParticipantResponse,
 } from '../interfaces/participant-create.interface';
 import { NotificationService } from './notification.service';
@@ -174,39 +175,7 @@ export class ParticipantService {
   /**
    * Update existing participant (partial update)
    */
-  updateParticipant(
-    id: number | string,
-    participantData: Partial<ParticipantFormData>,
-  ): Observable<ParticipantResponse> {
-    this.loadingSubject.next(true);
-
-    return this.http.put<ParticipantResponse>(`${this.apiUrl}/${id}`, participantData).pipe(
-      map((response) => {
-        this.loadingSubject.next(false);
-        this.notificationService.showSuccess('Participant updated successfully');
-
-        // Update local state
-        const currentParticipants = this.participantsSubject.value;
-        const updatedParticipants = currentParticipants.map((p) => (p.id === Number(id) ? response.data : p));
-        this.participantsSubject.next(updatedParticipants);
-
-        return response;
-      }),
-      catchError((error) => {
-        this.loadingSubject.next(false);
-        this.notificationService.showError('Failed to update participant');
-        return throwError(() => error);
-      }),
-    );
-  }
-
-  /**
-   * Update participant with complete data (for edit form)
-   */
-  updateParticipantComplete(
-    id: number | string,
-    participantData: CreateParticipantDto,
-  ): Observable<CreateParticipantResponse> {
+  updateParticipant(id: number | string, participantData: UpdateParticipantDto): Observable<CreateParticipantResponse> {
     this.loadingSubject.next(true);
 
     return this.http
@@ -216,6 +185,7 @@ export class ParticipantService {
       .pipe(
         map((response) => {
           this.loadingSubject.next(false);
+          this.notificationService.showSuccess('Participante actualizado exitosamente');
 
           // Update local state
           const currentParticipants = this.participantsSubject.value;
@@ -233,6 +203,16 @@ export class ParticipantService {
           return throwError(() => error);
         }),
       );
+  }
+
+  /**
+   * Update participant with complete data (for edit form)
+   */
+  updateParticipantComplete(
+    id: number | string,
+    participantData: CreateParticipantDto,
+  ): Observable<CreateParticipantResponse> {
+    return this.updateParticipant(id, participantData);
   }
 
   /**
@@ -264,8 +244,8 @@ export class ParticipantService {
   /**
    * Update participant status
    */
-  updateParticipantStatus(id: string, status: ParticipantStatus): Observable<ParticipantResponse> {
-    return this.updateParticipant(id, { personalData: { status } as any });
+  updateParticipantStatus(id: string, status: ParticipantStatus): Observable<CreateParticipantResponse> {
+    return this.updateParticipant(id, { status });
   }
 
   /**

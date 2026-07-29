@@ -7,7 +7,7 @@ export interface CreateParticipantDto {
   firstLastName: string;
   secondLastName?: string;
   phoneNumber: string;
-  email: string;
+  email?: string;
   documentTypeId: number;
   documentNumber: string;
   address: string;
@@ -34,6 +34,10 @@ export interface CreateParticipantDto {
   bioPsychosocialHistory: CreateBioPsychosocialHistoryDto;
 }
 
+export interface UpdateParticipantDto extends Partial<CreateParticipantDto> {
+  status?: string;
+}
+
 export interface CreateEmergencyContactDto {
   name: string;
   phone: string;
@@ -54,14 +58,14 @@ export interface CreateFamilyMemberDto {
 }
 
 export interface CreateBioPsychosocialHistoryDto {
-  academicLevelId: number;
+  academicLevelId: number | null;
   completedGrade: string;
   institution: string;
   profession: string;
-  incomeLevelId: number;
-  incomeSourceId: number;
+  incomeLevelId: number | null;
+  incomeSourceId: number | null;
   occupationalHistory: string;
-  housingTypeId: number;
+  housingTypeId: number | null;
   housing: string;
 }
 
