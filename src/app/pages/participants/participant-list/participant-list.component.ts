@@ -206,7 +206,7 @@ export class ParticipantListComponent implements OnInit, OnDestroy {
   getStatusBadgeClass(status?: ParticipantStatus): string {
     switch (status) {
       case ParticipantStatus.ACTIVE:
-        return 'badge bg-success';
+        return 'badge bg-success text-white';
       case ParticipantStatus.INACTIVE:
         return 'badge bg-secondary';
       case ParticipantStatus.DISCHARGED:

@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule } from '@ngneat/transloco';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -10,11 +11,12 @@ import { PageTitleComponent } from '../../../shared/page-title/page-title.compon
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { Participant } from '../../../core/interfaces/participant-create.interface';
 import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
+import { CaseStatus } from '../../../core/interfaces/case.interface';
 
 @Component({
   selector: 'app-participant-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslocoModule, PageTitleComponent, LocalizedDatePipe],
+  imports: [CommonModule, RouterModule, NgbTooltipModule, TranslocoModule, PageTitleComponent, LocalizedDatePipe],
   templateUrl: './participant-detail.component.html',
   styleUrls: ['./participant-detail.component.scss'],
 })
@@ -27,6 +29,7 @@ export class ParticipantDetailComponent implements OnInit, OnDestroy {
   participant: Participant | null = null;
   isLoading = false;
   participantId: string | null = null;
+  backRoute = '/participants';
 
   calculateAge(birthDate: string): number {
     const today = new Date();
@@ -46,6 +49,15 @@ export class ParticipantDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.participantId = this.route.snapshot.paramMap.get('id');
+    this.backRoute = this.route.snapshot.data['backRoute'] || '/participants';
+    if (this.route.snapshot.data['adminView']) {
+      this.breadcrumbItems = [
+        { label: 'adminParticipants.breadcrumbAdmin', active: false },
+        { label: 'adminParticipants.breadcrumbParticipants', active: false },
+        { label: 'participants.detail', active: true },
+      ];
+    }
+
     if (this.participantId) {
       this.loadParticipant();
     }
@@ -73,5 +85,18 @@ export class ParticipantDetailComponent implements OnInit, OnDestroy {
           this.isLoading = false;
         },
       });
+  }
+
+  getCaseStatusBadgeClass(status?: string): string {
+    switch (status) {
+      case CaseStatus.OPEN:
+        return 'badge bg-success text-white';
+      case CaseStatus.IN_PROGRESS:
+        return 'badge bg-warning text-dark';
+      case CaseStatus.CLOSED:
+        return 'badge bg-secondary';
+      default:
+        return 'badge bg-light text-dark';
+    }
   }
 }
