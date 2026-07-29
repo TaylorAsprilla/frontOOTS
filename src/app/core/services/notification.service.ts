@@ -65,6 +65,23 @@ export class NotificationService {
     this.notificationsSubject.next(notification);
   }
 
+  private formatMessage(message: string | string[]): { text?: string; html?: string } {
+    if (Array.isArray(message)) {
+      if (message.length === 1) {
+        return { text: message[0] };
+      }
+
+      return {
+        html: `<ul style="text-align: left; margin: 0; padding-left: 1.25rem;">${message
+          .map((item) => `<li>${item}</li>`)
+          .join('')}</ul>`,
+      };
+    }
+
+    const containsHtml = /<[a-z][\s\S]*>/i.test(message);
+    return containsHtml ? { html: message } : { text: message };
+  }
+
   /**
    * Muestra una notificación de éxito
    */
@@ -84,15 +101,14 @@ export class NotificationService {
   /**
    * Muestra una notificación de error
    */
-  showError(message: string, options?: NotificationOptions): Promise<any> {
-    // Detectar si el mensaje contiene HTML
-    const containsHtml = /<[a-z][\s\S]*>/i.test(message);
+  showError(message: string | string[], options?: NotificationOptions): Promise<any> {
+    const content = this.formatMessage(message);
 
     const config: SweetAlertOptions = {
       ...this.defaultConfig,
       icon: 'error',
       title: options?.title || 'Error',
-      ...(containsHtml ? { html: message } : { text: message }),
+      ...content,
       timer: options?.timer ?? 5000,
       showConfirmButton: true,
       ...options,
@@ -104,12 +120,14 @@ export class NotificationService {
   /**
    * Muestra una notificación de advertencia
    */
-  showWarning(message: string, options?: NotificationOptions): Promise<any> {
+  showWarning(message: string | string[], options?: NotificationOptions): Promise<any> {
+    const content = this.formatMessage(message);
+
     const config: SweetAlertOptions = {
       ...this.defaultConfig,
       icon: 'warning',
       title: options?.title || 'Advertencia',
-      text: message,
+      ...content,
       timer: options?.timer ?? 6000,
       showConfirmButton: true,
       ...options,
