@@ -27,11 +27,11 @@ export interface CreateParticipantDto {
   // Contactos de emergencia
   emergencyContacts: CreateEmergencyContactDto[];
 
-  // Composición familiar
-  familyMembers: CreateFamilyMemberDto[];
+  // Composición familiar (se agrega al crear un caso, no al crear el participante)
+  familyMembers?: CreateFamilyMemberDto[];
 
-  // Historial biopsicosocial
-  bioPsychosocialHistory: CreateBioPsychosocialHistoryDto;
+  // Historial biopsicosocial (se agrega al crear un caso, no al crear el participante)
+  bioPsychosocialHistory?: CreateBioPsychosocialHistoryDto;
 }
 
 export interface UpdateParticipantDto extends Partial<CreateParticipantDto> {
