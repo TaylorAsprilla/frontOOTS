@@ -1087,18 +1087,6 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
       countryId: personalData.countryId ? Number(personalData.countryId) : null,
       registeredById,
       emergencyContacts,
-      familyMembers: [],
-      bioPsychosocialHistory: {
-        academicLevelId: null,
-        completedGrade: '',
-        institution: '',
-        profession: '',
-        incomeSourceId: null,
-        incomeLevelId: null,
-        occupationalHistory: '',
-        housingTypeId: null,
-        housing: '',
-      },
     };
 
     return dto;
