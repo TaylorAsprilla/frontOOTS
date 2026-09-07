@@ -1,7 +1,8 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, inject, ViewChild, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
+  FormsModule,
   FormBuilder,
   FormGroup,
   FormArray,
@@ -12,7 +13,15 @@ import {
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RouterModule } from '@angular/router';
-import { NgbNavModule, NgbProgressbarModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbNavModule,
+  NgbProgressbarModule,
+  NgbDropdownModule,
+  NgbCollapseModule,
+  NgbModal,
+  NgbModalModule,
+  NgbModalRef,
+} from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule } from '@ngneat/transloco';
 import { Subject, takeUntil, finalize } from 'rxjs';
 
@@ -30,7 +39,14 @@ import { IncomeLevel } from '../../configuration/income-level/income-level.inter
 import { HousingType } from '../../configuration/housing-type/housing-type.interface';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
-import { CreateCaseDto, ApproachType, CaseStatus } from '../../../core/interfaces/case.interface';
+import {
+  CreateCaseDto,
+  ApproachType,
+  CaseStatus,
+  CaseType,
+  ProgressNoteDto,
+  FamilyMemberDto,
+} from '../../../core/interfaces/case.interface';
 import { ProcessType } from '../../configuration/process-types/process-type.interface';
 import { ApproachType as ApproachTypeCatalog } from '../../configuration/approach-types/approach-type.interface';
 
@@ -44,17 +60,20 @@ import { ApproachType as ApproachTypeCatalog } from '../../configuration/approac
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     RouterModule,
     NgbNavModule,
     NgbProgressbarModule,
     NgbDropdownModule,
+    NgbCollapseModule,
+    NgbModalModule,
     TranslocoModule,
     PageTitleComponent,
   ],
   templateUrl: './create-case.component.html',
   styleUrls: ['./create-case.component.scss'],
 })
-export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges {
+export class CreateCaseComponent implements OnInit, AfterViewInit, OnDestroy, HasUnsavedChanges {
   private readonly formBuilder = inject(FormBuilder);
   private readonly caseService = inject(CaseService);
   private readonly casePdfService = inject(CasePdfService);
@@ -62,9 +81,17 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
   private readonly notificationService = inject(NotificationService);
   private readonly tokenStorageService = inject(TokenStorageService);
   private readonly identifiedSituationService = inject(IdentifiedSituationService);
+  private readonly modalService = inject(NgbModal);
   readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly destroy$ = new Subject<void>();
+
+  @ViewChild('caseTypeModal') caseTypeModal!: TemplateRef<unknown>;
+  private modalRef: NgbModalRef | null = null;
+  private shouldPromptCaseType = false;
+  readonly CaseType = CaseType;
+  selectedCaseType: CaseType = CaseType.ACTIVE_CASE;
+  briefConsultationReason = '';
 
   // Form
   caseForm!: FormGroup;
@@ -85,6 +112,9 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
   isGeneratingProcessCompletionPdf = false;
   /** Map of progress-note id -> generating flag (key '__index_<i>' when no id is available). */
   generatingProgressNotePdf: Record<string, boolean> = {};
+  isSavingProgressNotes = false;
+  /** Notas de progreso actualmente expandidas (por referencia al control) */
+  private expandedProgressNotes = new Set<AbstractControl>();
 
   // Document availability flags (computed when the case is loaded)
   hasInterventionPlanDocument = false;
@@ -113,6 +143,9 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
       this.caseId = params['id'] ? +params['id'] : undefined;
       this.isViewMode = this.route.snapshot.data['mode'] === 'view';
       this.isEditMode = !!this.caseId && !this.isViewMode;
+      this.activeWizardStep = 1;
+      // Solo se pregunta el tipo de caso la primera vez que se va a crear (caso nuevo); si no, siempre es caso activo
+      this.shouldPromptCaseType = !this.caseId && !this.isViewMode;
 
       this.setupBreadcrumb();
       this.loadParticipantName();
@@ -135,9 +168,75 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
     });
   }
 
+  ngAfterViewInit(): void {
+    if (this.shouldPromptCaseType) {
+      this.shouldPromptCaseType = false;
+      this.openCaseTypeModal();
+    }
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  /**
+   * Muestra el modal para elegir el tipo de caso (solo la primera vez, al crear un caso nuevo)
+   */
+  openCaseTypeModal(): void {
+    this.selectedCaseType = CaseType.ACTIVE_CASE;
+    this.briefConsultationReason = '';
+    this.modalRef = this.modalService.open(this.caseTypeModal, {
+      centered: true,
+      backdrop: 'static',
+      keyboard: false,
+    });
+  }
+
+  confirmCaseType(): void {
+    if (this.selectedCaseType === CaseType.BRIEF_CONSULTATION && !this.briefConsultationReason.trim()) {
+      this.notificationService.showWarning('Indique el motivo de la consulta breve para continuar');
+      return;
+    }
+    this.caseForm.get('caseType')?.setValue(this.selectedCaseType);
+    this.applyCaseTypeFormState(this.selectedCaseType);
+    this.modalRef?.close();
+    this.modalRef = null;
+    if (this.selectedCaseType === CaseType.BRIEF_CONSULTATION) {
+      this.createBriefConsultationCase(this.briefConsultationReason.trim());
+    } else {
+      this.activeWizardStep = 1;
+    }
+  }
+
+  /**
+   * En consulta breve se omiten los pasos 1-10: se deshabilitan sus grupos para que no
+   * bloqueen la validez del formulario (progressNotes/referrals/closingNote son los únicos exigibles)
+   */
+  private applyCaseTypeFormState(caseType: CaseType): void {
+    const isBrief = caseType === CaseType.BRIEF_CONSULTATION;
+    const skippedGroups = [
+      'familyMembers',
+      'bioPsychosocialHistory',
+      'consultationReason',
+      'identifiedSituations',
+      'intervention',
+      'followUpPlan',
+      'physicalHealthHistory',
+      'mentalHealthHistory',
+      'familyHealthHistory',
+      'assessment',
+      'interventionPlan',
+    ];
+    skippedGroups.forEach((name) => {
+      const control = this.caseForm.get(name);
+      if (!control) return;
+      if (isBrief) {
+        control.disable({ emitEvent: false });
+      } else if (control.disabled) {
+        control.enable({ emitEvent: false });
+      }
+    });
   }
 
   /**
@@ -301,6 +400,9 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
 
   private initializeForm(): void {
     this.caseForm = this.formBuilder.group({
+      // Tipo de caso (Consulta Breve / Caso Activo), elegido en el modal inicial
+      caseType: [CaseType.ACTIVE_CASE, Validators.required],
+
       // Step 1: Family Members (Composición Familiar)
       livesAlone: [false],
       familyMembers: this.formBuilder.array([this.createFamilyMemberForm()]),
@@ -390,7 +492,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
 
       // Step 13: Closing Note (optional, for closing cases)
       closingNote: this.formBuilder.group({
-        closureDate: [''],
+        closureDate: [new Date().toISOString().split('T')[0]],
         closureReason: [''],
         achievements: [''],
         recommendations: [''],
@@ -472,6 +574,14 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
    */
   private mapCaseDataToForm(caseData: any): void {
     try {
+      // 0. Tipo de caso persistido (si no viene, se asume caso activo)
+      const caseType = caseData.caseType || CaseType.ACTIVE_CASE;
+      this.caseForm.get('caseType')?.setValue(caseType);
+      // Consulta breve: los pasos 1-10 están ocultos, ir directo a Notas de Progreso
+      if (caseType === CaseType.BRIEF_CONSULTATION) {
+        this.activeWizardStep = 11;
+      }
+
       // 1. Cargar miembros de familia
       const livesAloneFromData =
         typeof caseData.livesAlone === 'boolean'
@@ -748,13 +858,25 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
         caseData.progressNotes.forEach((note: any) => {
           const noteGroup = this.formBuilder.group({
             id: [note.id ?? null],
-            date: [note.sessionDate || note.date || ''],
-            time: [note.time || ''],
-            approachType: [note.sessionType || note.approachType || ''],
-            process: [note.process || ''],
-            interventionSummary: [note.summary || note.interventionSummary || ''],
+            startDate: [note.startDate || note.sessionDate || note.date || ''],
+            startTime: [note.startTime || note.time || ''],
+            endDate: [note.endDate || ''],
+            endTime: [note.endTime || ''],
+            attended: [note.attended !== false],
+            absenceReason: [note.absenceReason || ''],
+            approachTypeId: [note.approachTypeId ?? ''],
+            processTypeId: [note.processTypeId ?? ''],
+            summary: [note.summary || note.interventionSummary || ''],
+            observations: [note.observations || ''],
             agreements: [note.agreements || ''],
           });
+          this.setupProgressNoteAttendanceToggle(noteGroup);
+          // Una nota ya guardada (con id) no se puede volver a editar
+          if (note.id) {
+            noteGroup.disable({ emitEvent: false });
+          } else {
+            this.expandedProgressNotes.add(noteGroup);
+          }
           this.progressNotesArray.push(noteGroup);
         });
       }
@@ -795,6 +917,10 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
       this.caseForm.updateValueAndValidity();
       this.caseForm.markAsPristine();
       this.caseForm.markAsUntouched();
+
+      // Aplicar al final: deshabilita los pasos omitidos en consulta breve (tiene la última palabra
+      // sobre grupos que otros toggles, como los de familyMembers, pudieran haber vuelto a habilitar)
+      this.applyCaseTypeFormState(caseType);
     } catch (error) {
       console.error('Error durante el mapeo de datos:', error);
       this.notificationService.showError('Error al cargar algunos datos del caso');
@@ -913,6 +1039,10 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
     return !!this.caseForm.get('livesAlone')?.value;
   }
 
+  get isBriefConsultation(): boolean {
+    return this.caseForm.get('caseType')?.value === CaseType.BRIEF_CONSULTATION;
+  }
+
   onLivesAloneChange(checked: boolean): void {
     this.caseForm.get('livesAlone')?.setValue(checked);
     this.toggleFamilyMembersValidators(checked);
@@ -1009,23 +1139,144 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
     return this.caseForm.get('progressNotes.notes') as FormArray;
   }
 
+  /** Índices de las notas de progreso en orden descendente (la más reciente primero) */
+  get progressNotesDisplayOrder(): number[] {
+    return Array.from({ length: this.progressNotesArray.length }, (_, i) => i).reverse();
+  }
+
+  isProgressNoteExpanded(note: AbstractControl): boolean {
+    return this.expandedProgressNotes.has(note);
+  }
+
+  toggleProgressNoteExpanded(note: AbstractControl): void {
+    if (this.expandedProgressNotes.has(note)) {
+      this.expandedProgressNotes.delete(note);
+    } else {
+      this.expandedProgressNotes.add(note);
+    }
+  }
+
+  getApproachTypeName(id: number | string | null | undefined): string {
+    if (!id) return '—';
+    return this.approachTypes.find((a) => a.id === Number(id))?.name || '—';
+  }
+
+  getProcessTypeName(id: number | string | null | undefined): string {
+    if (!id) return '—';
+    return this.processTypes.find((p) => p.id === Number(id))?.name || '—';
+  }
+
   addProgressNote(): void {
     const now = new Date();
     const currentDate = now.toISOString().split('T')[0];
     const currentTime = now.toTimeString().slice(0, 5);
+    const defaultEndTime = new Date(now.getTime() + 60 * 60 * 1000).toTimeString().slice(0, 5);
     const noteGroup = this.formBuilder.group({
       id: [null],
-      date: [currentDate],
-      time: [currentTime],
-      approachType: [''],
-      process: [''],
-      interventionSummary: [''],
+      startDate: [currentDate],
+      startTime: [currentTime],
+      endDate: [currentDate],
+      endTime: [defaultEndTime],
+      attended: [true],
+      absenceReason: [''],
+      approachTypeId: [''],
+      processTypeId: [''],
+      summary: [''],
+      observations: [''],
       agreements: [''],
     });
+    this.setupProgressNoteAttendanceToggle(noteGroup);
+    // Las notas nuevas inician expandidas para poder completarlas de una vez
+    this.expandedProgressNotes.add(noteGroup);
     this.progressNotesArray.push(noteGroup);
   }
 
+  /**
+   * Requiere el motivo de inasistencia solo cuando el participante no asistió a la cita
+   */
+  private setupProgressNoteAttendanceToggle(noteGroup: FormGroup): void {
+    const absenceReasonControl = noteGroup.get('absenceReason');
+    noteGroup
+      .get('attended')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe((attended) => {
+        absenceReasonControl?.setValidators(attended ? [] : [Validators.required]);
+        absenceReasonControl?.updateValueAndValidity();
+      });
+  }
+
+  /**
+   * Convierte una nota de progreso del formulario al DTO esperado por el backend
+   */
+  private mapProgressNoteToDto(note: any): ProgressNoteDto {
+    const attended = note.attended !== false;
+    if (!attended) {
+      return {
+        startDate: note.startDate,
+        attended: false,
+        absenceReason: note.absenceReason,
+      };
+    }
+    return {
+      startDate: note.startDate,
+      endDate: note.endDate || undefined,
+      startTime: note.startTime,
+      endTime: note.endTime || undefined,
+      attended: true,
+      approachTypeId: Number(note.approachTypeId),
+      processTypeId: Number(note.processTypeId),
+      summary: note.summary,
+      observations: note.observations,
+      agreements: note.agreements,
+    };
+  }
+
+  /**
+   * Guarda las notas de progreso sin avanzar al siguiente paso del wizard
+   */
+  saveProgressNotes(): void {
+    if (!this.caseId || this.isSavingProgressNotes) return;
+
+    const partial = this.mapStepDataToDto(11);
+    if (!partial) return;
+
+    this.isSavingProgressNotes = true;
+    this.caseService
+      .updateCase(this.caseId, partial)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => (this.isSavingProgressNotes = false)),
+      )
+      .subscribe({
+        next: (response) => {
+          this.notificationService.showSuccess('Las notas de progreso se guardaron correctamente');
+          const savedNotes = (response?.data as any)?.progressNotes;
+          if (Array.isArray(savedNotes)) {
+            savedNotes.forEach((savedNote: any, index: number) => {
+              const noteGroup = this.progressNotesArray.at(index) as FormGroup;
+              if (noteGroup && savedNote?.id && !noteGroup.get('id')?.value) {
+                noteGroup.get('id')?.setValue(savedNote.id, { emitEvent: false });
+              }
+            });
+          }
+          // Una vez guardada, la nota queda bloqueada para edición y se colapsa
+          this.progressNotesArray.controls.forEach((control) => {
+            if (control.get('id')?.value) {
+              control.disable({ emitEvent: false });
+              this.expandedProgressNotes.delete(control);
+            }
+          });
+        },
+        error: (error) => {
+          console.error('Error al guardar las notas de progreso', error);
+          this.notificationService.showError('No se pudieron guardar las notas de progreso');
+        },
+      });
+  }
+
   removeProgressNote(index: number): void {
+    const noteGroup = this.progressNotesArray.at(index);
+    this.expandedProgressNotes.delete(noteGroup);
     this.progressNotesArray.removeAt(index);
   }
 
@@ -1446,17 +1697,38 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
     }
 
     const formValue = this.caseForm.getRawValue();
-    const caseDto: CreateCaseDto = {
+    const familyMembers = formValue.livesAlone
+      ? []
+      : formValue.familyMembers.map((member: any) => ({
+          name: member.name,
+          birthDate: member.birthDate || null,
+          occupation: member.occupation || null,
+          familyRelationshipId: member.familyRelationshipId ? Number(member.familyRelationshipId) : null,
+          academicLevelId: member.academicLevelId ? Number(member.academicLevelId) : null,
+        }));
+
+    this.submitNewCase(this.buildEmptyCaseDto(familyMembers, CaseType.ACTIVE_CASE), 2);
+  }
+
+  /**
+   * Consulta breve: crea el caso con datos mínimos y omite los pasos 1 a 10
+   */
+  private createBriefConsultationCase(consultationReason: string): void {
+    this.submitNewCase(this.buildEmptyCaseDto([], CaseType.BRIEF_CONSULTATION, consultationReason), 11);
+  }
+
+  /**
+   * DTO base para la creación de un caso nuevo, con las secciones aún no diligenciadas vacías
+   */
+  private buildEmptyCaseDto(
+    familyMembers: FamilyMemberDto[],
+    caseType: CaseType,
+    consultationReason = '',
+  ): CreateCaseDto {
+    return {
       participantId: this.participantId,
-      familyMembers: formValue.livesAlone
-        ? []
-        : formValue.familyMembers.map((member: any) => ({
-            name: member.name,
-            birthDate: member.birthDate || null,
-            occupation: member.occupation || null,
-            familyRelationshipId: member.familyRelationshipId ? Number(member.familyRelationshipId) : null,
-            academicLevelId: member.academicLevelId ? Number(member.academicLevelId) : null,
-          })),
+      caseType,
+      familyMembers,
       bioPsychosocialHistory: {
         academicLevelId: null,
         completedGrade: '',
@@ -1468,7 +1740,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
         housingTypeId: null,
         housing: '',
       },
-      consultationReason: '',
+      consultationReason,
       identifiedSituations: [],
       intervention: '',
       followUpPlan: [],
@@ -1489,7 +1761,9 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
       progressNotes: [],
       referrals: '',
     };
+  }
 
+  private submitNewCase(caseDto: CreateCaseDto, nextStep: number): void {
     this.isCreatingCase = true;
     this.caseService
       .createCase(caseDto)
@@ -1499,7 +1773,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
           this.caseId = response.data.id;
           this.isEditMode = true;
           this.isCreatingCase = false;
-          this.activeWizardStep = 2;
+          this.activeWizardStep = nextStep;
         },
         error: () => {
           this.isCreatingCase = false;
@@ -1605,12 +1879,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
         };
       case 11:
         return {
-          progressNotes: formValue.progressNotes.notes.map((n: any) => ({
-            sessionDate: n.date,
-            sessionType: n.approachType,
-            summary: n.interventionSummary,
-            agreements: n.agreements,
-          })),
+          progressNotes: formValue.progressNotes.notes.map((n: any) => this.mapProgressNoteToDto(n)),
         };
       case 12:
         return { referrals: formValue.referrals.referralsJustification };
@@ -1654,6 +1923,7 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
 
     return {
       participantId: this.participantId,
+      caseType: formValue.caseType,
       familyMembers: formValue.livesAlone
         ? []
         : formValue.familyMembers.map((member: any) => ({
@@ -1734,14 +2004,9 @@ export class CreateCaseComponent implements OnInit, OnDestroy, HasUnsavedChanges
         responsible: intervention.responsiblePerson,
         evaluationCriteria: intervention.evaluationCriteria,
       })),
-      progressNotes: formValue.progressNotes.notes.map((note: any) => ({
-        sessionDate: note.date,
-        sessionType: note.approachType,
-        summary: note.interventionSummary,
-        agreements: note.agreements,
-      })),
+      progressNotes: formValue.progressNotes.notes.map((note: any) => this.mapProgressNoteToDto(note)),
       referrals: formValue.referrals.referralsJustification,
-      closingNote: formValue.closingNote.closureDate
+      closingNote: formValue.closingNote.closureReason
         ? {
             closingDate: formValue.closingNote.closureDate,
             reason: formValue.closingNote.closureReason,

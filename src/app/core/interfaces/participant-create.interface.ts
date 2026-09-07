@@ -8,8 +8,8 @@ export interface CreateParticipantDto {
   secondLastName?: string;
   phoneNumber: string;
   email?: string;
-  documentTypeId: number;
-  documentNumber: string;
+  documentTypeId?: number;
+  documentNumber?: string;
   address: string;
   city: string;
   state?: string;

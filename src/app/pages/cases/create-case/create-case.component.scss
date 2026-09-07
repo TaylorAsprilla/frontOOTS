@@ -29,6 +29,17 @@
   color: #dc3545;
 }
 
+.case-wizard-tab-label {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin-top: 0.25rem;
+  font-size: 0.7rem;
+  line-height: 1.1;
+  text-align: center;
+}
+
 /* ─── Form typography & controls ─── */
 
 // Labels

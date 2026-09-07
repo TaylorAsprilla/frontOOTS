@@ -11,6 +11,11 @@ export enum CaseStatus {
   CLOSED = 'closed',
 }
 
+export enum CaseType {
+  ACTIVE_CASE = 'active_case',
+  BRIEF_CONSULTATION = 'brief_consultation',
+}
+
 export enum ApproachType {
   IN_PERSON = 'CP',
   EMAIL = 'E',
@@ -27,6 +32,7 @@ export interface Case {
   id?: number;
   participantId: number;
   caseNumber?: string;
+  caseType?: CaseType;
   status: CaseStatus;
   openingDate: string;
   closingDate?: string;
@@ -250,6 +256,7 @@ export interface ClosingNote {
  */
 export interface CreateCaseDto {
   participantId: number;
+  caseType?: CaseType;
   familyMembers?: FamilyMemberDto[];
   bioPsychosocialHistory?: BioPsychosocialHistoryDto;
   consultationReason: string;
@@ -333,11 +340,17 @@ export interface InterventionPlanDto {
 }
 
 export interface ProgressNoteDto {
-  sessionDate: string;
-  sessionType: string;
-  summary: string;
-  observations: string;
-  agreements: string;
+  startDate: string;
+  endDate?: string;
+  startTime?: string;
+  endTime?: string;
+  attended: boolean;
+  absenceReason?: string;
+  approachTypeId?: number;
+  processTypeId?: number;
+  summary?: string;
+  observations?: string;
+  agreements?: string;
 }
 
 export interface ClosingNoteDto {
@@ -398,10 +411,45 @@ export interface CasesByUserResponse {
     intervention: string;
     createdAt: string;
     updatedAt: string;
+    closedAt?: string | null;
+    progressNotes?: unknown[] | null;
+    progressNotesCount?: number | null;
     participant: {
       id: number;
       fullName: string;
       documentNumber: string;
+      countryId?: number | null;
+      country?: { id: number; name: string; code?: string; flagUrl?: string } | null;
     };
   }>;
+}
+
+/**
+ * DTO to transfer a case to another professional (SUPERVISOR/COORDINADOR/ADMIN only)
+ */
+export interface TransferCaseDto {
+  toProfessionalId: number;
+  reason: string;
+}
+
+/**
+ * A single case transfer history entry
+ */
+export interface CaseTransfer {
+  id: number;
+  caseId: number;
+  fromProfessionalId?: number | null;
+  fromProfessional?: { id: number; firstName?: string; firstLastName?: string; fullName?: string } | null;
+  toProfessionalId: number;
+  toProfessional?: { id: number; firstName?: string; firstLastName?: string; fullName?: string } | null;
+  reason: string;
+  transferredById?: number | null;
+  transferredBy?: { id: number; firstName?: string; firstLastName?: string; fullName?: string } | null;
+  createdAt?: string;
+}
+
+export interface CaseTransferListResponse {
+  data: CaseTransfer[];
+  statusCode?: number;
+  message?: string;
 }

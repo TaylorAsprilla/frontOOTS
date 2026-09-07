@@ -77,8 +77,7 @@
                 <thead class="bg-light">
                   <tr>
                     <th class="border-0" style="width: 32px"></th>
-                    <th class="border-0">
-                      <i class="fas fa-hashtag me-1 text-primary"></i>
+                    <th class="border-0" style="width: 110px">
                       {{ 'adminCases.caseNumber' | transloco }}
                     </th>
                     <th class="border-0">
@@ -90,10 +89,6 @@
                       {{ 'adminCases.participant' | transloco }}
                     </th>
                     <th class="border-0">
-                      <i class="fas fa-id-card me-1 text-primary"></i>
-                      {{ 'adminCases.document' | transloco }}
-                    </th>
-                    <th class="border-0">
                       <i class="fas fa-user-md me-1 text-primary"></i>
                       {{ 'adminCases.professional' | transloco }}
                     </th>
@@ -101,10 +96,19 @@
                       <i class="fas fa-comment-medical me-1 text-primary"></i>
                       {{ 'adminCases.consultationReason' | transloco }}
                     </th>
+                    <th class="border-0 text-center" style="width: 90px">
+                      <i class="fas fa-hourglass-half me-1 text-primary"></i>
+                      {{ 'adminCases.daysOpen' | transloco }}
+                    </th>
+                    <th class="border-0 text-center" style="width: 80px">
+                      <i class="fas fa-clipboard-list me-1 text-primary"></i>
+                      {{ 'adminCases.progressNotesCount' | transloco }}
+                    </th>
                     <th class="border-0">
                       <i class="fas fa-calendar-alt me-1 text-primary"></i>
                       {{ 'adminCases.createdAt' | transloco }}
                     </th>
+                    <th class="border-0 text-center">{{ 'app.actions' | transloco }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -117,7 +121,7 @@
                           [attr.aria-label]="'app.view' | transloco"
                         ></i>
                       </td>
-                      <td>
+                      <td style="white-space: normal">
                         <strong>{{ caseItem.caseNumber || '—' }}</strong>
                         <div class="text-muted small">ID: {{ caseItem.id }}</div>
                       </td>
@@ -129,7 +133,25 @@
                       <td>
                         @if (caseItem.participant) {
                           <div class="entity-cell">
-                            <span class="entity-name">{{ getParticipantFullName(caseItem.participant) }}</span>
+                            <span class="entity-name">
+                              @if (getCountryFlag(caseItem.participant); as flagUrl) {
+                                <img
+                                  [src]="flagUrl"
+                                  [ngbTooltip]="getCountryName(caseItem.participant)"
+                                  placement="top"
+                                  class="me-1"
+                                  style="width: 16px; height: 12px; object-fit: cover"
+                                  alt=""
+                                />
+                              }
+                              {{ getParticipantFullName(caseItem.participant) }}
+                            </span>
+                            @if (caseItem.participant.documentNumber) {
+                              <span class="entity-sub">
+                                <i class="mdi mdi-card-account-details-outline"></i>
+                                {{ caseItem.participant.documentNumber }}
+                              </span>
+                            }
                             @if (getLocation(caseItem.participant)) {
                               <span class="entity-sub">
                                 <i class="mdi mdi-map-marker-outline"></i>
@@ -141,7 +163,6 @@
                           <span class="text-muted fst-italic">{{ 'adminCases.unknownParticipant' | transloco }}</span>
                         }
                       </td>
-                      <td>{{ caseItem.participant?.documentNumber || '—' }}</td>
                       <td>
                         @if (caseItem.createdBy) {
                           <div class="entity-cell">
@@ -167,6 +188,12 @@
                       <td class="reason-cell" [attr.title]="caseItem.consultationReason || ''">
                         {{ caseItem.consultationReason || '—' }}
                       </td>
+                      <td class="text-center">{{ getDaysOpen(caseItem) ?? '—' }}</td>
+                      <td class="text-center">
+                        <span class="badge bg-secondary-subtle text-secondary">
+                          <i class="mdi mdi-file-document-outline me-1"></i>{{ getProgressNotesCount(caseItem) }}
+                        </span>
+                      </td>
                       <td>
                         @if (caseItem.createdAt) {
                           {{ caseItem.createdAt | localizedDate }}
@@ -174,13 +201,36 @@
                           <span class="text-muted">—</span>
                         }
                       </td>
+                      <td class="text-center" (click)="$event.stopPropagation()">
+                        <div class="d-flex justify-content-center gap-1">
+                          <a
+                            [routerLink]="['/cases/detail', caseItem.id]"
+                            class="btn btn-sm btn-light btn-icon"
+                            ngbTooltip="Ver caso completo"
+                            placement="top"
+                          >
+                            <i class="mdi mdi-eye text-info"></i>
+                          </a>
+                          @if (canTransferCase()) {
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-light btn-icon"
+                              ngbTooltip="Transferir caso"
+                              placement="top"
+                              (click)="openTransferModal(caseItem, $event)"
+                            >
+                              <i class="mdi mdi-account-switch text-warning"></i>
+                            </button>
+                          }
+                        </div>
+                      </td>
                     </tr>
 
                     <!-- Fila expandida con la "info extra" en tags -->
                     @if (isExpanded(caseItem)) {
                       <tr class="case-extra-row">
                         <td></td>
-                        <td colspan="7">
+                        <td colspan="9">
                           <div class="case-extra">
                             <div class="case-extra-tags">
                               <span class="info-tag info-tag--neutral">
@@ -336,3 +386,92 @@
     </div>
   </div>
 </div>
+
+<ng-template #transferModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <i class="mdi mdi-account-switch text-warning me-2"></i>Transferir Caso
+      @if (transferTargetCase) {
+        <span class="text-muted fs-6"> — {{ transferTargetCase.caseNumber || 'ID: ' + transferTargetCase.id }}</span>
+      }
+    </h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <div class="mb-3">
+      <label class="form-label fw-semibold" for="transferProfessional">Profesional destino</label>
+      <select
+        id="transferProfessional"
+        class="form-select"
+        [(ngModel)]="transferToProfessionalId"
+        [ngModelOptions]="{ standalone: true }"
+      >
+        <option [ngValue]="null" disabled>
+          {{ isLoadingProfessionals ? 'Cargando...' : 'Seleccione un profesional' }}
+        </option>
+        @for (professional of professionals; track professional.id) {
+          <option [ngValue]="professional.id">
+            {{ professional.firstName }} {{ professional.firstLastName }} ({{ professional.roleName }})
+          </option>
+        }
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label fw-semibold" for="transferReason">Motivo de la transferencia</label>
+      <textarea
+        id="transferReason"
+        class="form-control"
+        rows="3"
+        [(ngModel)]="transferReason"
+        [ngModelOptions]="{ standalone: true }"
+        placeholder="Explique el motivo de la transferencia..."
+      ></textarea>
+    </div>
+    <div class="text-end mb-4">
+      <button type="button" class="btn btn-warning" [disabled]="isTransferring" (click)="confirmTransfer()">
+        @if (isTransferring) {
+          <span class="spinner-border spinner-border-sm me-1"></span>
+        } @else {
+          <i class="mdi mdi-account-switch me-1"></i>
+        }
+        Transferir Caso
+      </button>
+    </div>
+
+    <hr />
+
+    <h6 class="mb-3"><i class="mdi mdi-history me-1"></i>Historial de Transferencias</h6>
+    @if (isLoadingTransferHistory) {
+      <div class="text-center py-3">
+        <span class="spinner-border spinner-border-sm"></span>
+      </div>
+    } @else if (transferHistory.length === 0) {
+      <p class="text-muted small mb-0">Este caso no tiene transferencias registradas.</p>
+    } @else {
+      <div class="table-responsive">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Fecha</th>
+              <th>De</th>
+              <th>Para</th>
+              <th>Motivo</th>
+              <th>Transferido por</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (entry of transferHistory; track entry.id) {
+              <tr>
+                <td>{{ entry.createdAt ? (entry.createdAt | localizedDate: 'short') : '—' }}</td>
+                <td>{{ getPersonName(entry.fromProfessional) }}</td>
+                <td>{{ getPersonName(entry.toProfessional) }}</td>
+                <td>{{ entry.reason }}</td>
+                <td>{{ getPersonName(entry.transferredBy) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</ng-template>

@@ -1,13 +1,26 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, ViewChild, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
-import { NgbPaginationModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import {
+  NgbPaginationModule,
+  NgbTooltipModule,
+  NgbModal,
+  NgbModalModule,
+  NgbModalRef,
+} from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule } from '@ngneat/transloco';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 
 import { AdminCasesService } from '../../../core/services/admin-cases.service';
 import { AdminCase, AdminCaseParticipant, AdminCaseProfessional } from '../../../core/interfaces/admin-case.interface';
+import { CaseService } from '../../../core/services/case.service';
+import { CaseTransfer } from '../../../core/interfaces/case.interface';
+import { UserService } from '../../../core/services/user.service';
+import { UserModel } from '../../../core/models/user.model';
+import { NotificationService } from '../../../core/services/notification.service';
+import { RoleService } from '../../../core/services/role.service';
+import { CountryService } from '../../../core/services/country.service';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
@@ -19,8 +32,10 @@ import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
+    FormsModule,
     NgbPaginationModule,
     NgbTooltipModule,
+    NgbModalModule,
     TranslocoModule,
     PageTitleComponent,
     LocalizedDatePipe,
@@ -30,6 +45,12 @@ import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
 })
 export class AdminCasesListComponent implements OnInit, OnDestroy {
   private readonly adminCasesService = inject(AdminCasesService);
+  private readonly caseService = inject(CaseService);
+  private readonly userService = inject(UserService);
+  private readonly notificationService = inject(NotificationService);
+  private readonly roleService = inject(RoleService);
+  private readonly countryService = inject(CountryService);
+  private readonly modalService = inject(NgbModal);
   private readonly formBuilder = inject(FormBuilder);
   private readonly destroy$ = new Subject<void>();
 
@@ -51,6 +72,18 @@ export class AdminCasesListComponent implements OnInit, OnDestroy {
 
   // Expansión de fila para ver "info extra"
   expandedCaseId: number | null = null;
+
+  // Transferencia de casos
+  @ViewChild('transferModal') transferModal!: TemplateRef<unknown>;
+  private transferModalRef: NgbModalRef | null = null;
+  transferTargetCase: AdminCase | null = null;
+  professionals: UserModel[] = [];
+  transferToProfessionalId: number | null = null;
+  transferReason = '';
+  isTransferring = false;
+  isLoadingProfessionals = false;
+  transferHistory: CaseTransfer[] = [];
+  isLoadingTransferHistory = false;
 
   breadcrumbItems: BreadcrumbItem[] = [
     { label: 'adminParticipants.breadcrumbAdmin', active: false },
@@ -180,11 +213,50 @@ export class AdminCasesListComponent implements OnInit, OnDestroy {
     return [p.city, p.state].filter((part) => !!part && part.toString().trim().length > 0).join(' / ');
   }
 
+  /** URL de la bandera del país del participante (o null si no se puede determinar). */
+  getCountryFlag(p?: AdminCaseParticipant | null): string | null {
+    if (!p) return null;
+    if (p.country?.flagUrl) return p.country.flagUrl;
+    if (p.countryId) {
+      const config = this.countryService.getAvailableCountries().find((c) => c.id === p.countryId);
+      if (config?.flag) return config.flag;
+    }
+    return null;
+  }
+
+  /** Nombre del país del participante (para el tooltip de la bandera). */
+  getCountryName(p?: AdminCaseParticipant | null): string {
+    if (!p) return '';
+    if (p.country?.name) return p.country.name;
+    if (p.countryId) {
+      const config = this.countryService.getAvailableCountries().find((c) => c.id === p.countryId);
+      if (config?.name) return config.name;
+    }
+    return '';
+  }
+
+  /** Cantidad de notas de progreso registradas en el caso. */
+  getProgressNotesCount(caseItem: AdminCase): number {
+    if (typeof caseItem.progressNotesCount === 'number') return caseItem.progressNotesCount;
+    if (Array.isArray(caseItem.progressNotes)) return caseItem.progressNotes.length;
+    return 0;
+  }
+
+  /** Días transcurridos desde la apertura del caso (null si el caso ya está cerrado). */
+  getDaysOpen(caseItem: AdminCase): number | null {
+    if ((caseItem.status ?? '').toString().toLowerCase() === 'closed') return null;
+    if (!caseItem.createdAt) return null;
+    const start = new Date(caseItem.createdAt).getTime();
+    const end = Date.now();
+    if (Number.isNaN(start) || end < start) return 0;
+    return Math.floor((end - start) / (1000 * 60 * 60 * 24));
+  }
+
   /** Clase de badge según el estado del caso. */
   getStatusBadgeClass(status?: string | null): string {
     switch ((status ?? '').toLowerCase()) {
       case 'open':
-        return 'badge bg-info';
+        return 'badge bg-info text-white';
       case 'in_progress':
         return 'badge bg-warning text-dark';
       case 'closed':
@@ -226,5 +298,99 @@ export class AdminCasesListComponent implements OnInit, OnDestroy {
 
   trackById(_index: number, item: AdminCase): number {
     return item.id;
+  }
+
+  canTransferCase(): boolean {
+    return this.roleService.canTransferCases();
+  }
+
+  /**
+   * Abre el modal para transferir un caso a otro profesional (y muestra su historial)
+   */
+  openTransferModal(caseItem: AdminCase, event?: Event): void {
+    event?.stopPropagation();
+    if (!caseItem.id) return;
+
+    this.transferTargetCase = caseItem;
+    this.transferToProfessionalId = null;
+    this.transferReason = '';
+    this.transferHistory = [];
+    this.loadProfessionals();
+    this.loadTransferHistory(caseItem.id);
+
+    this.transferModalRef = this.modalService.open(this.transferModal, { centered: true, size: 'lg' });
+  }
+
+  private loadProfessionals(): void {
+    if (this.professionals.length > 0) return;
+
+    this.isLoadingProfessionals = true;
+    this.userService
+      .getUsers(1, 100)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (users) => {
+          this.professionals = users.filter(
+            (u) => u.isActive && ['PSICOLOGO', 'ORIENTADOR', 'TRABAJO_SOCIAL'].includes(u.roleName || ''),
+          );
+          this.isLoadingProfessionals = false;
+        },
+        error: () => {
+          this.isLoadingProfessionals = false;
+        },
+      });
+  }
+
+  private loadTransferHistory(caseId: number): void {
+    this.isLoadingTransferHistory = true;
+    this.caseService
+      .getCaseTransfers(caseId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (transfers) => {
+          this.transferHistory = transfers;
+          this.isLoadingTransferHistory = false;
+        },
+        error: () => {
+          this.isLoadingTransferHistory = false;
+        },
+      });
+  }
+
+  confirmTransfer(): void {
+    if (!this.transferTargetCase?.id || this.isTransferring) return;
+
+    if (!this.transferToProfessionalId) {
+      this.notificationService.showWarning('Seleccione el profesional al que se transferirá el caso');
+      return;
+    }
+    if (!this.transferReason.trim()) {
+      this.notificationService.showWarning('Indique el motivo de la transferencia');
+      return;
+    }
+
+    this.isTransferring = true;
+    this.caseService
+      .transferCase(this.transferTargetCase.id, {
+        toProfessionalId: this.transferToProfessionalId,
+        reason: this.transferReason.trim(),
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isTransferring = false;
+          this.transferModalRef?.close();
+          this.transferModalRef = null;
+          this.loadCases();
+        },
+        error: () => {
+          this.isTransferring = false;
+        },
+      });
+  }
+
+  getPersonName(person?: { firstName?: string | null; firstLastName?: string | null } | null): string {
+    if (!person) return '—';
+    return [person.firstName, person.firstLastName].filter(Boolean).join(' ') || '—';
   }
 }

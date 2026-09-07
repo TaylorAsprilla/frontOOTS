@@ -11,7 +11,7 @@ import { PageTitleComponent } from '../../../shared/page-title/page-title.compon
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { Participant } from '../../../core/interfaces/participant-create.interface';
 import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
-import { CaseStatus } from '../../../core/interfaces/case.interface';
+import { CaseStatus, CaseType } from '../../../core/interfaces/case.interface';
 
 @Component({
   selector: 'app-participant-detail',
@@ -98,5 +98,19 @@ export class ParticipantDetailComponent implements OnInit, OnDestroy {
       default:
         return 'badge bg-light text-dark';
     }
+  }
+
+  isBriefConsultation(caseItem: { caseType?: CaseType }): boolean {
+    return caseItem.caseType === CaseType.BRIEF_CONSULTATION;
+  }
+
+  getCaseTypeLabel(caseItem: { caseType?: CaseType }): string {
+    return this.isBriefConsultation(caseItem) ? 'cases.briefConsultation' : 'cases.activeCase';
+  }
+
+  getCaseTypeBadgeClass(caseItem: { caseType?: CaseType }): string {
+    return this.isBriefConsultation(caseItem)
+      ? 'badge bg-warning-subtle text-warning'
+      : 'badge bg-info-subtle text-info';
   }
 }
