@@ -73,6 +73,12 @@
                   <tr>
                     <th class="border-0">
                       <div class="d-flex align-items-center">
+                        <i class="fas fa-hashtag me-2 text-primary"></i>
+                        {{ 'participants.id' | transloco }}
+                      </div>
+                    </th>
+                    <th class="border-0">
+                      <div class="d-flex align-items-center">
                         <i class="fas fa-user me-2 text-primary"></i>
                         {{ 'participants.fullName' | transloco }}
                       </div>
@@ -110,6 +116,7 @@
                 <tbody>
                   @for (participant of filteredParticipants; track participant.id) {
                     <tr class="participant-row" (click)="viewParticipant(participant)" style="cursor: pointer">
+                      <td>{{ participant.id }}</td>
                       <td>
                         {{ participant.firstName }} {{ participant.secondName }} {{ participant.firstLastName }}
                         {{ participant.secondLastName }}

@@ -11,6 +11,11 @@ export enum CaseStatus {
   CLOSED = 'closed',
 }
 
+export enum CaseType {
+  ACTIVE_CASE = 'active_case',
+  BRIEF_CONSULTATION = 'brief_consultation',
+}
+
 export enum ApproachType {
   IN_PERSON = 'CP',
   EMAIL = 'E',
@@ -27,6 +32,7 @@ export interface Case {
   id?: number;
   participantId: number;
   caseNumber?: string;
+  caseType?: CaseType;
   status: CaseStatus;
   openingDate: string;
   closingDate?: string;
@@ -250,6 +256,7 @@ export interface ClosingNote {
  */
 export interface CreateCaseDto {
   participantId: number;
+  caseType?: CaseType;
   familyMembers?: FamilyMemberDto[];
   bioPsychosocialHistory?: BioPsychosocialHistoryDto;
   consultationReason: string;
@@ -333,11 +340,17 @@ export interface InterventionPlanDto {
 }
 
 export interface ProgressNoteDto {
-  sessionDate: string;
-  sessionType: string;
-  summary: string;
-  observations: string;
-  agreements: string;
+  startDate: string;
+  endDate?: string;
+  startTime?: string;
+  endTime?: string;
+  attended: boolean;
+  absenceReason?: string;
+  approachTypeId?: number;
+  processTypeId?: number;
+  summary?: string;
+  observations?: string;
+  agreements?: string;
 }
 
 export interface ClosingNoteDto {

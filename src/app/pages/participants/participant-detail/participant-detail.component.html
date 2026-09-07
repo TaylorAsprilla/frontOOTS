@@ -344,6 +344,7 @@
                   <thead class="table-light">
                     <tr>
                       <th>{{ 'participants.caseNumber' | transloco }}</th>
+                      <th>{{ 'cases.caseType' | transloco }}</th>
                       <th>{{ 'participants.status' | transloco }}</th>
                       <th>{{ 'participants.openingDate' | transloco }}</th>
                       <th>{{ 'participants.closingDate' | transloco }}</th>
@@ -355,6 +356,11 @@
                       <tr>
                         <td>
                           <strong>{{ caseItem.caseNumber || ('participants.noCaseNumber' | transloco) }}</strong>
+                        </td>
+                        <td>
+                          <span [class]="getCaseTypeBadgeClass(caseItem)">
+                            {{ getCaseTypeLabel(caseItem) | transloco }}
+                          </span>
                         </td>
                         <td>
                           <span [class]="getCaseStatusBadgeClass(caseItem.status)">

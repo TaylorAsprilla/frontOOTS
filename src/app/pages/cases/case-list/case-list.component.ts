@@ -11,7 +11,7 @@ import { TokenStorageService } from '../../../core/services/token-storage.servic
 import { NotificationService } from '../../../core/services/notification.service';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
-import { CaseStatus } from '../../../core/interfaces/case.interface';
+import { CaseStatus, CaseType } from '../../../core/interfaces/case.interface';
 import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
 import { RoleService } from '../../../core/services/role.service';
 
@@ -225,6 +225,20 @@ export class CaseListComponent implements OnInit, OnDestroy {
   getStatusLabel(status: CaseStatus | 'all'): string {
     const option = this.statusOptions.find((s) => s.value === status);
     return option?.label || 'cases.unknown';
+  }
+
+  isBriefConsultation(caseItem: { caseType?: CaseType }): boolean {
+    return caseItem.caseType === CaseType.BRIEF_CONSULTATION;
+  }
+
+  getCaseTypeLabel(caseItem: { caseType?: CaseType }): string {
+    return this.isBriefConsultation(caseItem) ? 'cases.briefConsultation' : 'cases.activeCase';
+  }
+
+  getCaseTypeBadgeClass(caseItem: { caseType?: CaseType }): string {
+    return this.isBriefConsultation(caseItem)
+      ? 'badge bg-warning-subtle text-warning'
+      : 'badge bg-info-subtle text-info';
   }
 
   getParticipantName(caseItem: any): string {
