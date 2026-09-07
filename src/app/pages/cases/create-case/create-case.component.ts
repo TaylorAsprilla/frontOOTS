@@ -577,6 +577,10 @@ export class CreateCaseComponent implements OnInit, AfterViewInit, OnDestroy, Ha
       // 0. Tipo de caso persistido (si no viene, se asume caso activo)
       const caseType = caseData.caseType || CaseType.ACTIVE_CASE;
       this.caseForm.get('caseType')?.setValue(caseType);
+      // Consulta breve: los pasos 1-10 están ocultos, ir directo a Notas de Progreso
+      if (caseType === CaseType.BRIEF_CONSULTATION) {
+        this.activeWizardStep = 11;
+      }
 
       // 1. Cargar miembros de familia
       const livesAloneFromData =
