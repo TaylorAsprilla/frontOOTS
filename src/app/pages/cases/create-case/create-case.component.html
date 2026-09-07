@@ -17,6 +17,19 @@
           } @else if (caseForm) {
             <div class="wizard-container">
               @if (caseId) {
+                <div class="mb-3">
+                  <span
+                    [class]="
+                      isBriefConsultation ? 'badge bg-warning-subtle text-warning' : 'badge bg-info-subtle text-info'
+                    "
+                  >
+                    <i
+                      class="mdi"
+                      [ngClass]="isBriefConsultation ? 'mdi-clock-fast' : 'mdi-folder-account-outline'"
+                    ></i>
+                    {{ (isBriefConsultation ? 'cases.briefConsultation' : 'cases.activeCase') | transloco }}
+                  </span>
+                </div>
                 <div class="case-documents-bar mb-3">
                   <div class="case-documents-bar__icon">
                     <i class="mdi mdi-file-document-multiple-outline"></i>
