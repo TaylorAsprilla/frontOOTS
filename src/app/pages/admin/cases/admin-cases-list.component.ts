@@ -242,12 +242,13 @@ export class AdminCasesListComponent implements OnInit, OnDestroy {
     return 0;
   }
 
-  /** Días transcurridos desde la apertura del caso (hasta el cierre, o hasta hoy si sigue abierto). */
+  /** Días transcurridos desde la apertura del caso (null si el caso ya está cerrado). */
   getDaysOpen(caseItem: AdminCase): number | null {
+    if ((caseItem.status ?? '').toString().toLowerCase() === 'closed') return null;
     if (!caseItem.createdAt) return null;
     const start = new Date(caseItem.createdAt).getTime();
-    const end = caseItem.closedAt ? new Date(caseItem.closedAt).getTime() : Date.now();
-    if (Number.isNaN(start) || Number.isNaN(end) || end < start) return 0;
+    const end = Date.now();
+    if (Number.isNaN(start) || end < start) return 0;
     return Math.floor((end - start) / (1000 * 60 * 60 * 24));
   }
 

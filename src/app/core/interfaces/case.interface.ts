@@ -411,10 +411,15 @@ export interface CasesByUserResponse {
     intervention: string;
     createdAt: string;
     updatedAt: string;
+    closedAt?: string | null;
+    progressNotes?: unknown[] | null;
+    progressNotesCount?: number | null;
     participant: {
       id: number;
       fullName: string;
       documentNumber: string;
+      countryId?: number | null;
+      country?: { id: number; name: string; code?: string; flagUrl?: string } | null;
     };
   }>;
 }

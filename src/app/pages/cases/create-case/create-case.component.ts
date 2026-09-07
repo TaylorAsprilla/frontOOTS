@@ -492,7 +492,7 @@ export class CreateCaseComponent implements OnInit, AfterViewInit, OnDestroy, Ha
 
       // Step 13: Closing Note (optional, for closing cases)
       closingNote: this.formBuilder.group({
-        closureDate: [''],
+        closureDate: [new Date().toISOString().split('T')[0]],
         closureReason: [''],
         achievements: [''],
         recommendations: [''],
@@ -2002,7 +2002,7 @@ export class CreateCaseComponent implements OnInit, AfterViewInit, OnDestroy, Ha
       })),
       progressNotes: formValue.progressNotes.notes.map((note: any) => this.mapProgressNoteToDto(note)),
       referrals: formValue.referrals.referralsJustification,
-      closingNote: formValue.closingNote.closureDate
+      closingNote: formValue.closingNote.closureReason
         ? {
             closingDate: formValue.closingNote.closureDate,
             reason: formValue.closingNote.closureReason,

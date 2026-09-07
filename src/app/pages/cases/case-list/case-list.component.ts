@@ -14,6 +14,7 @@ import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { CaseStatus, CaseType } from '../../../core/interfaces/case.interface';
 import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
 import { RoleService } from '../../../core/services/role.service';
+import { CountryService } from '../../../core/services/country.service';
 
 @Component({
   selector: 'app-case-list',
@@ -41,6 +42,7 @@ export class CaseListComponent implements OnInit, OnDestroy {
   private readonly caseService = inject(CaseService);
   private readonly tokenStorageService = inject(TokenStorageService);
   private readonly notificationService = inject(NotificationService);
+  private readonly countryService = inject(CountryService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly translocoService = inject(TranslocoService);
   private readonly destroy$ = new Subject<void>();
@@ -239,6 +241,47 @@ export class CaseListComponent implements OnInit, OnDestroy {
     return this.isBriefConsultation(caseItem)
       ? 'badge bg-warning-subtle text-warning'
       : 'badge bg-info-subtle text-info';
+  }
+
+  /** URL de la bandera del país del participante (o null si no se puede determinar). */
+  getCountryFlag(caseItem: any): string | null {
+    const participant = caseItem?.participant;
+    if (!participant) return null;
+    if (participant.country?.flagUrl) return participant.country.flagUrl;
+    if (participant.countryId) {
+      const config = this.countryService.getAvailableCountries().find((c) => c.id === participant.countryId);
+      if (config?.flag) return config.flag;
+    }
+    return null;
+  }
+
+  /** Nombre del país del participante (para el tooltip de la bandera). */
+  getCountryName(caseItem: any): string {
+    const participant = caseItem?.participant;
+    if (!participant) return '';
+    if (participant.country?.name) return participant.country.name;
+    if (participant.countryId) {
+      const config = this.countryService.getAvailableCountries().find((c) => c.id === participant.countryId);
+      if (config?.name) return config.name;
+    }
+    return '';
+  }
+
+  /** Cantidad de notas de progreso registradas en el caso. */
+  getProgressNotesCount(caseItem: any): number {
+    if (typeof caseItem?.progressNotesCount === 'number') return caseItem.progressNotesCount;
+    if (Array.isArray(caseItem?.progressNotes)) return caseItem.progressNotes.length;
+    return 0;
+  }
+
+  /** Días transcurridos desde la apertura del caso (null si el caso ya está cerrado). */
+  getDaysOpen(caseItem: any): number | null {
+    if ((caseItem?.status ?? '').toString().toLowerCase() === 'closed') return null;
+    if (!caseItem?.createdAt) return null;
+    const start = new Date(caseItem.createdAt).getTime();
+    const end = Date.now();
+    if (Number.isNaN(start) || end < start) return 0;
+    return Math.floor((end - start) / (1000 * 60 * 60 * 24));
   }
 
   getParticipantName(caseItem: any): string {
