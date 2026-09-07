@@ -418,3 +418,33 @@ export interface CasesByUserResponse {
     };
   }>;
 }
+
+/**
+ * DTO to transfer a case to another professional (SUPERVISOR/COORDINADOR/ADMIN only)
+ */
+export interface TransferCaseDto {
+  toProfessionalId: number;
+  reason: string;
+}
+
+/**
+ * A single case transfer history entry
+ */
+export interface CaseTransfer {
+  id: number;
+  caseId: number;
+  fromProfessionalId?: number | null;
+  fromProfessional?: { id: number; firstName?: string; firstLastName?: string; fullName?: string } | null;
+  toProfessionalId: number;
+  toProfessional?: { id: number; firstName?: string; firstLastName?: string; fullName?: string } | null;
+  reason: string;
+  transferredById?: number | null;
+  transferredBy?: { id: number; firstName?: string; firstLastName?: string; fullName?: string } | null;
+  createdAt?: string;
+}
+
+export interface CaseTransferListResponse {
+  data: CaseTransfer[];
+  statusCode?: number;
+  message?: string;
+}

@@ -53,4 +53,9 @@ export class RoleService {
   canManageUsers(): boolean {
     return this.hasAnyRole('ADMIN', 'COORDINADOR');
   }
+
+  /** Puede transferir casos entre profesionales: ADMIN, COORDINADOR o SUPERVISOR */
+  canTransferCases(): boolean {
+    return this.hasAnyRole('ADMIN', 'COORDINADOR', 'SUPERVISOR');
+  }
 }

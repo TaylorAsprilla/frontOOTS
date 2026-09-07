@@ -16,6 +16,8 @@ export interface AdminCaseParticipant {
   phoneNumber?: string | null;
   city?: string | null;
   state?: string | null;
+  countryId?: number | null;
+  country?: { id: number; name: string; code?: string; flagUrl?: string } | null;
 }
 
 export interface AdminCaseProfessional {
@@ -41,6 +43,8 @@ export interface AdminCase {
   createdAt?: string | null;
   updatedAt?: string | null;
   closedAt?: string | null;
+  progressNotes?: unknown[] | null;
+  progressNotesCount?: number | null;
 
   participantId?: number | null;
   participant?: AdminCaseParticipant | null;

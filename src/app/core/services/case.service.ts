@@ -13,6 +13,9 @@ import {
   CasesByUserResponse,
   CreateCaseDto,
   CaseStatus,
+  TransferCaseDto,
+  CaseTransfer,
+  CaseTransferListResponse,
 } from '../interfaces/case.interface';
 
 /**
@@ -220,6 +223,36 @@ export class CaseService {
         }),
         catchError((error) => {
           this.notificationService.showError(error.error?.message || 'Error al cerrar el caso');
+          return throwError(() => error);
+        }),
+      );
+  }
+
+  /**
+   * Transfer a case to another professional (SUPERVISOR/COORDINADOR/ADMIN only)
+   */
+  transferCase(id: number, dto: TransferCaseDto): Observable<CaseResponse> {
+    return this.http.patch<CaseResponse>(`${this.apiUrl}/${id}/transfer`, dto, { headers: this.getHeaders() }).pipe(
+      tap(() => {
+        this.notificationService.showSuccess('Caso transferido correctamente');
+      }),
+      catchError((error) => {
+        this.notificationService.showError(error.error?.message || 'Error al transferir el caso');
+        return throwError(() => error);
+      }),
+    );
+  }
+
+  /**
+   * Get the transfer history of a case
+   */
+  getCaseTransfers(id: number): Observable<CaseTransfer[]> {
+    return this.http
+      .get<CaseTransferListResponse>(`${this.apiUrl}/${id}/transfers`, { headers: this.getHeaders() })
+      .pipe(
+        map((response) => response.data || []),
+        catchError((error) => {
+          this.notificationService.showError(error.error?.message || 'Error al cargar el historial de transferencias');
           return throwError(() => error);
         }),
       );
