@@ -46,6 +46,7 @@ export interface Case {
   assessment: Assessment;
   interventionPlan: InterventionPlan;
   progressNotes: ProgressNote[];
+  progressNotesCount?: number | null;
   referrals: Referral[];
   closingNote?: ClosingNote;
   createdAt?: string;
