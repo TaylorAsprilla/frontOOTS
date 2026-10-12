@@ -109,7 +109,15 @@ export class TokenStorageService {
    * y variantes de formato (espacios, guiones, mayúsculas, tildes).
    */
   private normalizeRole(roleName: string): UserRole | null {
-    const VALID_ROLES: UserRole[] = ['ADMIN', 'COORDINADOR', 'SUPERVISOR', 'PSICOLOGO', 'ORIENTADOR', 'TRABAJO_SOCIAL'];
+    const VALID_ROLES: UserRole[] = [
+      'ADMIN',
+      'ADMIN_COUNTRY',
+      'COORDINADOR',
+      'SUPERVISOR',
+      'PSICOLOGO',
+      'ORIENTADOR',
+      'TRABAJO_SOCIAL',
+    ];
 
     // Normalizar: quitar tildes, trim, UPPER_SNAKE_CASE
     const normalized = roleName
@@ -121,6 +129,7 @@ export class TokenStorageService {
 
     // Aliases: typos conocidos del backend → rol canónico
     const ALIASES: Record<string, UserRole> = {
+      ADMIN_PAIS: 'ADMIN_COUNTRY',
       TRABAJADO_SOCIAL: 'TRABAJO_SOCIAL', // typo actual en BD
       TRABAJADOR_SOCIAL: 'TRABAJO_SOCIAL',
       TRABAJADORA_SOCIAL: 'TRABAJO_SOCIAL',

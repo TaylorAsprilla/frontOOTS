@@ -43,6 +43,10 @@ export class ParticipantListComponent implements OnInit, OnDestroy {
     return this.roleService.hasAnyRole('ADMIN', 'COORDINADOR', 'TRABAJO_SOCIAL');
   }
 
+  canEditParticipant(): boolean {
+    return this.roleService.hasAnyRole('ADMIN', 'ADMIN_COUNTRY', 'TRABAJO_SOCIAL');
+  }
+
   private readonly participantService = inject(ParticipantService);
   private readonly notificationService = inject(NotificationService);
   private readonly authService = inject(AuthenticationService);

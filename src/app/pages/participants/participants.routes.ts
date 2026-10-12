@@ -52,6 +52,7 @@ export const PARTICIPANTS_ROUTES: Routes = [
   },
   {
     path: 'edit/:id',
+    canActivate: [roleGuard(['ADMIN', 'ADMIN_COUNTRY', 'TRABAJO_SOCIAL'])],
     loadComponent: () =>
       import('./create-participant/create-participant.component').then((m) => m.CreateParticipantComponent),
     title: 'Participants - Edit',

@@ -266,7 +266,9 @@
                                 >
                                   <option value="" disabled selected>{{ 'app.select' | transloco }}</option>
                                   @for (healthInsurance of healthInsurances; track healthInsurance.id) {
-                                    <option [value]="healthInsurance.id">{{ healthInsurance.name }}</option>
+                                    @if (healthInsurance.id !== OTHER_HEALTH_INSURANCE_ID) {
+                                      <option [value]="healthInsurance.id">{{ healthInsurance.name }}</option>
+                                    }
                                   }
                                   <option value="other">{{ 'participants.other' | transloco }}</option>
                                 </select>
