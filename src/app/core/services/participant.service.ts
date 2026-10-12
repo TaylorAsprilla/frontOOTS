@@ -60,17 +60,17 @@ export class ParticipantService {
 
     // Obtener usuario autenticado
     const user = this.tokenStorageService.getUser();
-    const role = (user as any)?.role;
-    const countryId = (user as any)?.countryId;
+    const role = this.tokenStorageService.getRole();
+    const countryId = (user as any)?.countryId || (user as any)?.country?.id;
     const userId = (user as any)?.id;
 
     // Clonar filtros para no mutar el objeto original
     const mergedFilters: any = { ...filters };
 
     // Filtrado automático según rol
-    if (role === 'ADMIN_PAIS' && countryId) {
+    if (role === 'ADMIN_COUNTRY' && countryId) {
       mergedFilters.countryId = countryId;
-    } else if (role === 'USUARIO' && userId) {
+    } else if (role === 'USER' && userId) {
       mergedFilters.userId = userId;
     }
 

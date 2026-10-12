@@ -5,6 +5,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { UserModel, UserBackendResponse } from '../models/user.model';
 import { NotificationService } from './notification.service';
+import { TokenStorageService } from './token-storage.service';
 import { ApiResponse, PaginatedUsersResponse, UpdateUserRequest } from '../interfaces/user.interface';
 
 @Injectable({
@@ -13,6 +14,7 @@ import { ApiResponse, PaginatedUsersResponse, UpdateUserRequest } from '../inter
 export class UserService {
   private readonly http = inject(HttpClient);
   private readonly notificationService = inject(NotificationService);
+  private readonly tokenStorageService = inject(TokenStorageService);
   private readonly apiUrl = `${environment.apiUrl}/users`;
   private readonly apiUrlRegister = `${environment.apiUrl}`;
 
@@ -47,10 +49,10 @@ export class UserService {
     let params = new HttpParams();
 
     // Obtener usuario autenticado
-    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    const role = user?.role;
-    const countryId = user?.countryId;
-    const userId = user?.id;
+    const user = this.tokenStorageService.getUser();
+    const role = this.tokenStorageService.getRole();
+    const countryId = (user as any)?.countryId || (user as any)?.country?.id;
+    const userId = (user as any)?.id;
 
     if (page !== undefined) {
       params = params.set('page', page.toString());
@@ -61,9 +63,9 @@ export class UserService {
     }
 
     // Filtrado automático según rol
-    if (role === 'ADMIN_PAIS' && countryId) {
+    if (role === 'ADMIN_COUNTRY' && countryId) {
       params = params.set('countryId', countryId.toString());
-    } else if (role === 'USUARIO' && userId) {
+    } else if (role === 'USER' && userId) {
       params = params.set('userId', userId.toString());
     }
 

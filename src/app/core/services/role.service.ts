@@ -24,6 +24,10 @@ export class RoleService {
     return this.hasAnyRole('ADMIN');
   }
 
+  isAdminCountry(): boolean {
+    return this.hasAnyRole('ADMIN_COUNTRY');
+  }
+
   isCoordinador(): boolean {
     return this.hasAnyRole('COORDINADOR');
   }

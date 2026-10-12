@@ -117,6 +117,7 @@ export class TokenStorageService {
       'PSICOLOGO',
       'ORIENTADOR',
       'TRABAJO_SOCIAL',
+      'USER',
     ];
 
     // Normalizar: quitar tildes, trim, UPPER_SNAKE_CASE
@@ -130,6 +131,7 @@ export class TokenStorageService {
     // Aliases: typos conocidos del backend → rol canónico
     const ALIASES: Record<string, UserRole> = {
       ADMIN_PAIS: 'ADMIN_COUNTRY',
+      USUARIO: 'USER',
       TRABAJADO_SOCIAL: 'TRABAJO_SOCIAL', // typo actual en BD
       TRABAJADOR_SOCIAL: 'TRABAJO_SOCIAL',
       TRABAJADORA_SOCIAL: 'TRABAJO_SOCIAL',

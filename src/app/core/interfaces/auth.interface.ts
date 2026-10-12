@@ -8,7 +8,8 @@ export type UserRole =
   | 'SUPERVISOR'
   | 'PSICOLOGO'
   | 'ORIENTADOR'
-  | 'TRABAJO_SOCIAL';
+  | 'TRABAJO_SOCIAL'
+  | 'USER';
 
 /**
  * Interface para la solicitud de login
