@@ -276,6 +276,7 @@ export interface CreateCaseDto {
 
 export interface FamilyMemberDto {
   name: string;
+  age?: number | null;
   birthDate?: string | null;
   occupation?: string | null;
   familyRelationshipId?: number | null;

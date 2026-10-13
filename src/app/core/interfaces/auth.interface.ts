@@ -1,7 +1,15 @@
 /**
  * Roles de usuario disponibles en el sistema (RBAC)
  */
-export type UserRole = 'ADMIN' | 'COORDINADOR' | 'SUPERVISOR' | 'PSICOLOGO' | 'ORIENTADOR' | 'TRABAJO_SOCIAL';
+export type UserRole =
+  | 'ADMIN'
+  | 'ADMIN_COUNTRY'
+  | 'COORDINADOR'
+  | 'SUPERVISOR'
+  | 'PSICOLOGO'
+  | 'ORIENTADOR'
+  | 'TRABAJO_SOCIAL'
+  | 'USER';
 
 /**
  * Interface para la solicitud de login

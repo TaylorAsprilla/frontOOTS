@@ -312,7 +312,15 @@
                         <td>
                           <span class="badge bg-info-subtle text-info">{{ member.familyRelationship.name }}</span>
                         </td>
-                        <td>{{ calculateAge(member.birthDate) }} {{ 'participants.years' | transloco }}</td>
+                        <td>
+                          @if (member.age != null) {
+                            {{ member.age }} {{ 'participants.years' | transloco }}
+                          } @else if (member.birthDate) {
+                            {{ calculateAge(member.birthDate) }} {{ 'participants.years' | transloco }}
+                          } @else {
+                            -
+                          }
+                        </td>
                         <td>{{ member.occupation || '-' }}</td>
                         <td>{{ member.academicLevel.name }}</td>
                       </tr>

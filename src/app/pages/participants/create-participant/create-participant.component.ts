@@ -84,6 +84,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
 
   // Health Insurances from resolver
   healthInsurances: HealthInsurance[] = [];
+  readonly OTHER_HEALTH_INSURANCE_ID = 10;
 
   // Family Relationships from resolver
   familyRelationships: FamilyRelationship[] = [];
@@ -449,7 +450,7 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
 
     if (healthInsuranceControl && customHealthInsuranceControl) {
       healthInsuranceControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
-        if (value === 'other') {
+        if (this.isOtherHealthInsuranceValue(value)) {
           customHealthInsuranceControl.setValidators([Validators.required]);
         } else {
           customHealthInsuranceControl.clearValidators();
@@ -950,7 +951,10 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     // Validación especial para seguro médico personalizado
     const healthInsuranceId = personalData.get('healthInsuranceId')?.value;
     const customHealthInsurance = personalData.get('customHealthInsurance');
-    if (healthInsuranceId === 'other' && (!customHealthInsurance?.value || customHealthInsurance.value.trim() === '')) {
+    if (
+      this.isOtherHealthInsuranceValue(healthInsuranceId) &&
+      (!customHealthInsurance?.value || customHealthInsurance.value.trim() === '')
+    ) {
       missingFields.push('Especifique el seguro médico');
       customHealthInsurance?.markAsTouched();
     }
@@ -1079,7 +1083,11 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
       religiousAffiliation: personalData.religiousAffiliation || undefined,
       genderId: Number(personalData.genderId),
       maritalStatusId: Number(personalData.maritalStatusId),
-      healthInsuranceId: Number(personalData.healthInsuranceId),
+      healthInsuranceId: Number(
+        personalData.healthInsuranceId === 'other'
+          ? this.OTHER_HEALTH_INSURANCE_ID
+          : personalData.healthInsuranceId,
+      ),
       customHealthInsurance: personalData.customHealthInsurance || undefined,
       referralSource: personalData.referralSource || undefined,
       countryId: personalData.countryId ? Number(personalData.countryId) : null,
@@ -1249,7 +1257,13 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
    * Check if health insurance "other" option is selected
    */
   isHealthInsuranceOther(): boolean {
-    return this.participantForm.get('personalData.healthInsuranceId')?.value === 'other';
+    return this.isOtherHealthInsuranceValue(
+      this.participantForm.get('personalData.healthInsuranceId')?.value,
+    );
+  }
+
+  private isOtherHealthInsuranceValue(value: unknown): boolean {
+    return value === 'other' || Number(value) === this.OTHER_HEALTH_INSURANCE_ID;
   }
 
   /**

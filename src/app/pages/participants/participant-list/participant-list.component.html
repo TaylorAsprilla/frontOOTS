@@ -135,14 +135,16 @@
                           >
                             <i class="fas fa-eye"></i>
                           </a>
-                          <a
-                            [routerLink]="['/participants/edit', participant.id]"
-                            class="btn btn-sm btn-soft-warning me-1"
-                            placement="top"
-                            ngbTooltip="{{ 'app.edit' | transloco }}"
-                          >
-                            <i class="fas fa-edit"></i>
-                          </a>
+                          @if (canEditParticipant()) {
+                            <a
+                              [routerLink]="['/participants/edit', participant.id]"
+                              class="btn btn-sm btn-soft-warning me-1"
+                              placement="top"
+                              ngbTooltip="{{ 'app.edit' | transloco }}"
+                            >
+                              <i class="fas fa-edit"></i>
+                            </a>
+                          }
                           @if (canCreateCase()) {
                             <a
                               [routerLink]="['/cases/create', participant.id]"

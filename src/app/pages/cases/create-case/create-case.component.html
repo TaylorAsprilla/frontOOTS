@@ -267,15 +267,18 @@
                                     </div>
 
                                     <div class="row mb-3">
-                                      <label class="col-md-3 col-form-label obligatorio" [for]="'birthDate_' + i">{{
-                                        'cases.birthDate' | transloco
+                                      <label class="col-md-3 col-form-label obligatorio" [for]="'age_' + i">{{
+                                        'cases.age' | transloco
                                       }}</label>
                                       <div class="col-md-9">
                                         <input
-                                          type="date"
-                                          [id]="'birthDate_' + i"
+                                          type="number"
+                                          min="0"
+                                          max="130"
+                                          [id]="'age_' + i"
                                           class="form-control"
-                                          formControlName="birthDate"
+                                          formControlName="age"
+                                          placeholder="Ej: 25"
                                         />
                                       </div>
                                     </div>
@@ -1858,6 +1861,11 @@
                                       <div class="small text-muted ms-4 mt-1">
                                         <i class="mdi mdi-calendar-outline me-1"></i
                                         >{{ note.get('startDate')?.value || '—' }}
+                                        @if (note.get('startTime')?.value) {
+                                          <span class="ms-2">
+                                            <i class="mdi mdi-clock-outline me-1"></i>{{ note.get('startTime')?.value }}
+                                          </span>
+                                        }
                                         @if (note.get('attended')?.value) {
                                           <span class="ms-2">
                                             <i class="mdi mdi-tag-outline me-1"></i
@@ -1963,6 +1971,12 @@
                                             <i class="mdi mdi-calendar me-1"></i>Fecha
                                           </label>
                                           <input type="date" formControlName="startDate" class="form-control" />
+                                        </div>
+                                        <div class="col-md-6">
+                                          <label class="form-label fw-semibold text-secondary small text-uppercase">
+                                            <i class="mdi mdi-clock-outline me-1"></i>Hora
+                                          </label>
+                                          <input type="time" formControlName="startTime" class="form-control" />
                                         </div>
                                       </div>
                                       <div class="mb-0">
