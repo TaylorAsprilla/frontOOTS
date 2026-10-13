@@ -1203,6 +1203,7 @@
     "removeFamilyMember": "Remove family member",
     "family": "Family Member",
     "name": "Name",
+    "age": "Age",
     "birthDate": "Birth Date",
     "occupation": "Occupation",
     "relationship": "Relationship",

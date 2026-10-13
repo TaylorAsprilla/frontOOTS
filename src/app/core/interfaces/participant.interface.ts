@@ -24,6 +24,7 @@ export interface PersonalData {
 
 export interface FamilyMember {
   name: string;
+  age?: number;
   birthDate?: string;
   occupation?: string;
   relationshipId?: string;

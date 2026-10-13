@@ -209,7 +209,8 @@ export interface FamilyRelationship {
 export interface FamilyMember {
   id: number;
   name: string;
-  birthDate: string;
+  age?: number | null;
+  birthDate?: string;
   occupation: string;
   participantId: number;
   familyRelationshipId: number;

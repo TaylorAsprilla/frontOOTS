@@ -1203,6 +1203,7 @@
     "removeFamilyMember": "Eliminar familiar",
     "family": "Familiar",
     "name": "Nombre",
+    "age": "Edad",
     "birthDate": "Fecha de Nacimiento",
     "occupation": "Ocupación",
     "relationship": "Parentesco",

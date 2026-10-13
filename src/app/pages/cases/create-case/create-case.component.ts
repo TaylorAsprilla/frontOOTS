@@ -606,6 +606,7 @@ export class CreateCaseComponent implements OnInit, AfterViewInit, OnDestroy, Ha
               : '';
           memberGroup.patchValue({
             name: member.name || '',
+            age: member.age != null ? member.age : member.birthDate ? this.calculateAge(member.birthDate) : '',
             birthDate: member.birthDate || '',
             occupation: member.occupation || '',
             familyRelationshipId,
@@ -1015,9 +1016,21 @@ export class CreateCaseComponent implements OnInit, AfterViewInit, OnDestroy, Ha
     return this.caseForm.get('familyMembers') as FormArray;
   }
 
+  calculateAge(birthDate: string): number {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  }
+
   createFamilyMemberForm(): FormGroup {
     return this.formBuilder.group({
       name: ['', Validators.required],
+      age: ['', [Validators.required, Validators.min(0), Validators.max(130)]],
       birthDate: [''],
       occupation: ['', Validators.required],
       familyRelationshipId: ['', Validators.required],
@@ -1213,6 +1226,7 @@ export class CreateCaseComponent implements OnInit, AfterViewInit, OnDestroy, Ha
     if (!attended) {
       return {
         startDate: note.startDate,
+        startTime: note.startTime || undefined,
         attended: false,
         absenceReason: note.absenceReason,
       };
@@ -1701,6 +1715,7 @@ export class CreateCaseComponent implements OnInit, AfterViewInit, OnDestroy, Ha
       ? []
       : formValue.familyMembers.map((member: any) => ({
           name: member.name,
+          age: member.age != null && member.age !== '' ? Number(member.age) : null,
           birthDate: member.birthDate || null,
           occupation: member.occupation || null,
           familyRelationshipId: member.familyRelationshipId ? Number(member.familyRelationshipId) : null,
@@ -1928,6 +1943,7 @@ export class CreateCaseComponent implements OnInit, AfterViewInit, OnDestroy, Ha
         ? []
         : formValue.familyMembers.map((member: any) => ({
             name: member.name,
+            age: member.age != null && member.age !== '' ? Number(member.age) : null,
             birthDate: member.birthDate || null,
             occupation: member.occupation || null,
             familyRelationshipId: member.familyRelationshipId ? Number(member.familyRelationshipId) : null,
