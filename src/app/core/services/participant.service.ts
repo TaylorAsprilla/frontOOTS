@@ -8,6 +8,7 @@ import {
   ParticipantResponse,
   ParticipantListResponse,
   ParticipantByUserResponse,
+  ParticipantByCountryResponse,
   ParticipantStatus,
 } from '../interfaces/participant.interface';
 import {
@@ -123,6 +124,27 @@ export class ParticipantService {
       );
   }
 
+  getParticipantsByCountry(countryId: number): Observable<ParticipantByCountryResponse> {
+    this.loadingSubject.next(true);
+
+    return this.http
+      .get<ParticipantByCountryResponse>(`${this.apiUrl}/by-country/${countryId}`, {
+        headers: this.getHeaders(),
+      })
+      .pipe(
+        map((response) => {
+          this.participantsSubject.next(response.data.participants);
+          this.loadingSubject.next(false);
+          return response;
+        }),
+        catchError((error) => {
+          this.loadingSubject.next(false);
+          this.notificationService.showError('Error al cargar los participantes del país');
+          return throwError(() => error);
+        }),
+      );
+  }
+
   /**
    * Get participant by ID
    */
@@ -178,8 +200,13 @@ export class ParticipantService {
   updateParticipant(id: number | string, participantData: UpdateParticipantDto): Observable<CreateParticipantResponse> {
     this.loadingSubject.next(true);
 
+    // The edit form also uses the creation mapper; registration ownership is immutable.
+    const { registeredById: _registeredById, ...updateData }: UpdateParticipantDto & {
+      registeredById?: number;
+    } = participantData;
+
     return this.http
-      .patch<CreateParticipantResponse>(`${this.apiUrl}/${id}`, participantData, {
+      .patch<CreateParticipantResponse>(`${this.apiUrl}/${id}`, updateData, {
         headers: this.getHeaders(),
       })
       .pipe(

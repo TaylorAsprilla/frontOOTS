@@ -4,7 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { NgbPaginationModule, NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule } from '@ngneat/transloco';
-import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Subject, takeUntil, debounceTime, distinctUntilChanged, map } from 'rxjs';
 
 import { ParticipantService } from '../../../core/services/participant.service';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -124,56 +124,66 @@ export class ParticipantListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Usar el nuevo método que filtra por usuario (sin filtros adicionales en el backend)
-    this.participantService
-      .getParticipantsByUser(currentUser.id)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          // Obtener los participantes de la respuesta
-          const allParticipants = response?.data?.participants || [];
+    const participantsRequest = this.roleService.isAdminCountry()
+      ? currentUser.country?.id
+        ? this.participantService
+            .getParticipantsByCountry(currentUser.country.id)
+            .pipe(map((response) => response.data.participants))
+        : null
+      : this.participantService
+          .getParticipantsByUser(currentUser.id)
+          .pipe(map((response) => response.data.participants));
 
-          // Aplicar filtros localmente
-          let filteredData = [...allParticipants];
+    if (!participantsRequest) {
+      this.notificationService.showError('No se pudo obtener el país asignado al usuario');
+      this.isLoading = false;
+      this.searchForm.get('searchTerm')?.enable({ emitEvent: false });
+      return;
+    }
 
-          // Filtrar por búsqueda local
-          const searchTerm = this.searchForm.get('searchTerm')?.value?.toLowerCase() || '';
-          if (searchTerm) {
-            filteredData = filteredData.filter(
-              (participant) =>
-                participant.firstName?.toLowerCase().includes(searchTerm) ||
-                participant.firstLastName?.toLowerCase().includes(searchTerm) ||
-                participant.secondLastName?.toLowerCase().includes(searchTerm) ||
-                participant.email?.toLowerCase().includes(searchTerm) ||
-                participant.documentNumber?.includes(searchTerm),
-            );
-          }
+    participantsRequest.pipe(takeUntil(this.destroy$)).subscribe({
+      next: (allParticipants) => {
+        // Aplicar filtros localmente
+        let filteredData = [...allParticipants];
 
-          // Filtrar por estado local
-          if (this.statusFilter !== 'all') {
-            filteredData = filteredData.filter((participant) => participant.status === this.statusFilter);
-          }
+        // Filtrar por búsqueda local
+        const searchTerm = this.searchForm.get('searchTerm')?.value?.toLowerCase() || '';
+        if (searchTerm) {
+          filteredData = filteredData.filter(
+            (participant) =>
+              participant.firstName?.toLowerCase().includes(searchTerm) ||
+              participant.firstLastName?.toLowerCase().includes(searchTerm) ||
+              participant.secondLastName?.toLowerCase().includes(searchTerm) ||
+              participant.email?.toLowerCase().includes(searchTerm) ||
+              participant.documentNumber?.includes(searchTerm),
+          );
+        }
 
-          // Calcular total después de filtros
-          this.totalItems = filteredData.length;
+        // Filtrar por estado local
+        if (this.statusFilter !== 'all') {
+          filteredData = filteredData.filter((participant) => participant.status === this.statusFilter);
+        }
 
-          // Aplicar paginación local
-          const startIndex = (this.currentPage - 1) * this.pageSize;
-          const endIndex = startIndex + this.pageSize;
+        // Calcular total después de filtros
+        this.totalItems = filteredData.length;
 
-          this.participants = allParticipants; // Guardar todos los participantes
-          this.filteredParticipants = filteredData.slice(startIndex, endIndex); // Mostrar solo la página actual
-          this.isLoading = false;
-          this.searchForm.get('searchTerm')?.enable({ emitEvent: false });
-        },
-        error: (error) => {
-          this.participants = [];
-          this.filteredParticipants = [];
-          this.totalItems = 0;
-          this.isLoading = false;
-          this.searchForm.get('searchTerm')?.enable({ emitEvent: false });
-        },
-      });
+        // Aplicar paginación local
+        const startIndex = (this.currentPage - 1) * this.pageSize;
+        const endIndex = startIndex + this.pageSize;
+
+        this.participants = allParticipants; // Guardar todos los participantes
+        this.filteredParticipants = filteredData.slice(startIndex, endIndex); // Mostrar solo la página actual
+        this.isLoading = false;
+        this.searchForm.get('searchTerm')?.enable({ emitEvent: false });
+      },
+      error: (error) => {
+        this.participants = [];
+        this.filteredParticipants = [];
+        this.totalItems = 0;
+        this.isLoading = false;
+        this.searchForm.get('searchTerm')?.enable({ emitEvent: false });
+      },
+    });
   }
 
   onStatusFilterChange(status: ParticipantStatus | 'all'): void {
