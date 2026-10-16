@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import 'jsvectormap';
-import 'jsvectormap/dist/maps/italy.js';
+import '../country-map-registry';
+import 'jsvectormap-country-maps/dist/maps/italy.js';
 
 @Component({
   selector: 'app-widget-italy-map',

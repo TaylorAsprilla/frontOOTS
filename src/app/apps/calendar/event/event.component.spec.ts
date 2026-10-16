@@ -1,20 +1,25 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EventComponent } from './event.component';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CalendarEventComponent } from './event.component';
 
-describe('EventComponent', () => {
-  let component: EventComponent;
-  let fixture: ComponentFixture<EventComponent>;
+describe('CalendarEventComponent', () => {
+  let component: CalendarEventComponent;
+  let fixture: ComponentFixture<CalendarEventComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [EventComponent]
+    imports: [CalendarEventComponent]
 })
+    .overrideComponent(CalendarEventComponent, {
+      add: { imports: [CommonModule, FormsModule] }
+    })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EventComponent);
+    fixture = TestBed.createComponent(CalendarEventComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
