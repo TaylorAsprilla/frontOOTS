@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
+import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { CasePdfService } from './case-pdf.service';
 import { TokenStorageService } from './token-storage.service';
@@ -27,6 +27,35 @@ describe('CasePdfService on-demand downloads', () => {
   });
 
   afterEach(() => http.verify());
+
+  it('shows the actionable closing-note message from a JSON blob response', async () => {
+    const message = 'Aún no puede descargar la nota de cierre. Registre y guarde la nota en la sección «Nota de cierre» del caso y vuelva a intentarlo.';
+    await service.handlePdfError(new HttpErrorResponse({
+      status: 404,
+      error: new Blob([JSON.stringify({ message: [message] })], { type: 'application/json' }),
+    }));
+    expect(notifications.showError).toHaveBeenCalledOnceWith(message);
+  });
+
+  it('uses a clear fallback when the server response is not JSON', async () => {
+    await service.handlePdfError(new HttpErrorResponse({
+      status: 404,
+      error: new Blob(['Not found'], { type: 'text/plain' }),
+    }));
+    expect(notifications.showError).toHaveBeenCalledOnceWith(
+      'No se encontró el documento solicitado. Verifique que esté registrado y guardado en el caso.',
+    );
+  });
+
+  it('does not expose internal server errors to the user', async () => {
+    await service.handlePdfError(new HttpErrorResponse({
+      status: 500,
+      error: { message: 'Internal database error' },
+    }));
+    expect(notifications.showError).toHaveBeenCalledOnceWith(
+      'No fue posible generar el PDF. Intente nuevamente. Si el problema continúa, contacte al administrador.',
+    );
+  });
 
   it('shares only in-flight downloads and requests a fresh PDF after completion', () => {
     const results: Blob[] = [];

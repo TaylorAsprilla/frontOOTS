@@ -439,6 +439,26 @@ npm run test
 
 Los tests se ejecutan con Karma y Jasmine.
 
+Para ejecutar las pruebas de PDF sin modo observador (requiere Chrome):
+
+```bash
+npm test -- --watch=false --browsers=ChromeHeadless --include=src/app/core/services/case-pdf.service.spec.ts
+```
+
+Angular CLI descubre los tests y aplica `--include`; no se debe agregar
+`require.context` al bootstrap de pruebas.
+
+Los errores de descarga de PDF se gestionan en `CasePdfService.handlePdfError`.
+Este servicio lee las respuestas JSON recibidas como Blob y muestra el motivo
+y la acción requerida para documentos faltantes. Los errores internos del
+servidor se muestran con un mensaje genérico, sin detalles técnicos.
+
+Los mapas de países usan el alias `jsvectormap-country-maps`, fijado a la
+distribución oficial `jsvectormap@1.3.0`, porque la versión 1.7 solo incluye
+los mapas mundiales. Solo se importan sus datos, no su runtime.
+El adaptador `country-map-registry` conserva la compatibilidad entre su API
+de registro antigua y el runtime actual de `jsvectormap`.
+
 ### Ejecutar Tests E2E
 
 ```bash

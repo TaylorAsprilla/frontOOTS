@@ -78,23 +78,43 @@ export class CasePdfService {
   }
 
   /** Centralised error handling for PDF requests. */
-  handlePdfError(error: unknown, fallbackMessage = 'No fue posible generar el PDF.'): void {
+  async handlePdfError(error: unknown, fallbackMessage = 'No fue posible generar el PDF. Intente nuevamente. Si el problema continúa, contacte al administrador.'): Promise<void> {
     let message = fallbackMessage;
     if (error instanceof HttpErrorResponse) {
       if (error.status === 404) {
-        message = 'El documento no está disponible.';
+        message = 'No se encontró el documento solicitado. Verifique que esté registrado y guardado en el caso.';
+      } else if (error.status === 401) {
+        message = 'Su sesión expiró o no es válida. Inicie sesión nuevamente para descargar el documento.';
       } else if (error.status === 403) {
         message = 'No tiene permiso para descargar documentos de este caso.';
       } else if (error.status === 409) {
-        message = 'El expediente no tiene un histórico disponible. Contacte al administrador.';
+        message = 'No se puede generar el documento con el estado actual del expediente. Contacte al administrador.';
       } else if (error.status === 422) {
-        message = 'El caso no tiene la información necesaria para generar este documento.';
+        message = 'Complete y guarde la información necesaria del caso antes de descargar este documento.';
+      } else if (error.status === 429) {
+        message = 'Se han solicitado demasiadas descargas. Espere unos momentos e intente nuevamente.';
       } else if (error.status === 0) {
         message = 'No fue posible conectarse al servidor para generar el PDF.';
-      } else if (typeof error.error === 'string' && error.error.trim().length > 0) {
-        message = error.error;
-      } else if ((error.error as any)?.message) {
-        message = (error.error as any).message;
+      }
+      if ([400, 404, 409, 422].includes(error.status)) {
+        let body: unknown = error.error;
+        if (body instanceof Blob || typeof body === 'string') {
+          try {
+            body = JSON.parse(body instanceof Blob ? await body.text() : body);
+          } catch {
+            // Non-JSON responses use the user-facing status message.
+            body = undefined;
+          }
+        }
+        if (typeof body === 'object' && body !== null && 'message' in body) {
+          const detail = body.message;
+          if (typeof detail === 'string' && detail.trim()) {
+            message = detail;
+          } else if (Array.isArray(detail)) {
+            const messages = detail.filter((item): item is string => typeof item === 'string' && item.trim().length > 0);
+            if (messages.length) message = messages.join(' ');
+          }
+        }
       }
     }
     this.notificationService.showError(message);

@@ -7,6 +7,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 
 import { CaseService } from '../../../core/services/case.service';
+import { CasePdfService } from '../../../core/services/case-pdf.service';
 import { TokenStorageService } from '../../../core/services/token-storage.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
@@ -40,6 +41,7 @@ export class CaseListComponent implements OnInit, OnDestroy {
     return this.roleService.hasAnyRole('ADMIN', 'COORDINADOR', 'TRABAJO_SOCIAL');
   }
   private readonly caseService = inject(CaseService);
+  private readonly casePdfService = inject(CasePdfService);
   private readonly tokenStorageService = inject(TokenStorageService);
   private readonly notificationService = inject(NotificationService);
   private readonly countryService = inject(CountryService);
@@ -190,8 +192,8 @@ export class CaseListComponent implements OnInit, OnDestroy {
           anchor.click();
           URL.revokeObjectURL(url);
         },
-        error: () => {
-          this.notificationService.showError('Error al descargar el PDF del caso');
+        error: (error) => {
+          void this.casePdfService.handlePdfError(error);
         },
       });
   }
