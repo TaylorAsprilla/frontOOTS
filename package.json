@@ -84,6 +84,7 @@
     "@angular/cli": "~20.1.5",
     "@angular/compiler-cli": "20.1.8",
     "@angular/localize": "20.1.8",
+    "@types/google-libphonenumber": "^7.4.31",
     "@types/jasmine": "~5.1.8",
     "@types/node": "^24.2.1",
     "jasmine-core": "~5.9.0",

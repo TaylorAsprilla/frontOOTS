@@ -75,7 +75,7 @@
                 </div>
                 <div class="flex-grow-1">
                   <small class="text-muted d-block">{{ 'participants.document' | transloco }}</small>
-                  <strong>{{ participant.documentType.name }} {{ participant.documentNumber }}</strong>
+                  <strong>{{ participant.documentType?.name || '—' }} {{ participant.documentNumber }}</strong>
                 </div>
               </div>
             </div>
@@ -104,7 +104,7 @@
                 </div>
                 <div class="flex-grow-1">
                   <small class="text-muted d-block">{{ 'participants.gender' | transloco }}</small>
-                  <strong>{{ participant.gender.name }}</strong>
+                  <strong>{{ participant.gender?.name || '—' }}</strong>
                 </div>
               </div>
             </div>
@@ -116,7 +116,7 @@
                 </div>
                 <div class="flex-grow-1">
                   <small class="text-muted d-block">{{ 'participants.maritalStatus' | transloco }}</small>
-                  <strong>{{ participant.maritalStatus.name }}</strong>
+                  <strong>{{ participant.maritalStatus?.name || '—' }}</strong>
                 </div>
               </div>
             </div>
@@ -254,22 +254,22 @@
                           <i class="fas fa-user-shield text-danger"></i>
                         </div>
                         <div class="flex-grow-1">
-                          <h6 class="mb-1">{{ contact.emergencyContact.name }}</h6>
-                          <span class="badge bg-danger-subtle text-danger">{{ contact.relationship.name }}</span>
+                          <h6 class="mb-1">{{ contact.emergencyContact?.name || '—' }}</h6>
+                          <span class="badge bg-danger-subtle text-danger">{{ contact.relationship?.name || '—' }}</span>
                         </div>
                       </div>
                       <div class="contact-details ms-5">
                         <div class="mb-1">
                           <i class="fas fa-phone text-muted me-2"></i>
-                          <small>{{ contact.emergencyContact.phone }}</small>
+                          <small>{{ contact.emergencyContact?.phone || '—' }}</small>
                         </div>
                         <div class="mb-1">
                           <i class="fas fa-envelope text-muted me-2"></i>
-                          <small>{{ contact.emergencyContact.email }}</small>
+                          <small>{{ contact.emergencyContact?.email || '—' }}</small>
                         </div>
                         <div class="mb-1">
                           <i class="fas fa-map-marker-alt text-muted me-2"></i>
-                          <small>{{ contact.emergencyContact.address }}, {{ contact.emergencyContact.city }}</small>
+                          <small>{{ contact.emergencyContact?.address || '—' }}, {{ contact.emergencyContact?.city || '—' }}</small>
                         </div>
                       </div>
                     </div>
@@ -312,7 +312,7 @@
                           <strong>{{ member.name }}</strong>
                         </td>
                         <td>
-                          <span class="badge bg-info-subtle text-info">{{ member.familyRelationship.name }}</span>
+                          <span class="badge bg-info-subtle text-info">{{ member.familyRelationship?.name || '—' }}</span>
                         </td>
                         <td>
                           @if (member.age != null) {
@@ -324,7 +324,7 @@
                           }
                         </td>
                         <td>{{ member.occupation || '-' }}</td>
-                        <td>{{ member.academicLevel.name }}</td>
+                        <td>{{ member.academicLevel?.name || '—' }}</td>
                       </tr>
                     }
                   </tbody>
@@ -345,7 +345,7 @@
               <i class="fas fa-folder-open text-primary me-2"></i>
               {{ 'participants.associatedCases' | transloco }}
             </h5>
-            <span class="badge bg-primary-subtle text-primary">{{ participant.cases.length || 0 }}</span>
+            <span class="badge bg-primary-subtle text-primary">{{ participant.cases?.length || 0 }}</span>
           </div>
           <div class="card-body">
             @if (participant.cases && participant.cases.length > 0) {
@@ -440,7 +440,7 @@
                       </div>
                       <div class="flex-grow-1">
                         <small class="text-muted d-block">{{ 'participants.academicLevel' | transloco }}</small>
-                        <strong>{{ participant.bioPsychosocialHistory.academicLevel.name }}</strong>
+                        <strong>{{ participant.bioPsychosocialHistory.academicLevel?.name || '—' }}</strong>
                       </div>
                     </div>
                   </div>
@@ -502,7 +502,7 @@
                       </div>
                       <div class="flex-grow-1">
                         <small class="text-muted d-block">{{ 'participants.incomeLevel' | transloco }}</small>
-                        <strong>{{ participant.bioPsychosocialHistory.incomeLevel.name }}</strong>
+                        <strong>{{ participant.bioPsychosocialHistory.incomeLevel?.name || '—' }}</strong>
                       </div>
                     </div>
                   </div>
@@ -514,7 +514,7 @@
                       </div>
                       <div class="flex-grow-1">
                         <small class="text-muted d-block">{{ 'participants.incomeSource' | transloco }}</small>
-                        <strong>{{ participant.bioPsychosocialHistory.incomeSource.name }}</strong>
+                        <strong>{{ participant.bioPsychosocialHistory.incomeSource?.name || '—' }}</strong>
                       </div>
                     </div>
                   </div>
@@ -540,7 +540,7 @@
                       </div>
                       <div class="flex-grow-1">
                         <small class="text-muted d-block">{{ 'participants.housingType' | transloco }}</small>
-                        <strong>{{ participant.bioPsychosocialHistory.housingType.name }}</strong>
+                        <strong>{{ participant.bioPsychosocialHistory.housingType?.name || '—' }}</strong>
                       </div>
                     </div>
                   </div>

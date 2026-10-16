@@ -459,6 +459,16 @@ mensajes expresados como claves de idioma deben resolverse con Transloco
 antes de pasarlos a `NotificationService`. Las validaciones que impiden
 avanzar en un formulario deben indicar qué información falta.
 
+La ficha de participantes admite relaciones de catálogo nulas y muestra
+`—` cuando no hay un valor registrado, sin bloquear el resto de la información.
+
+La tabla administrativa de participantes agrupa nombre, documento y correo,
+muestra `casesCount` del endpoint `/participants/all` y permite abrir correo,
+WhatsApp y Telegram. Los teléfonos nacionales requieren el código ISO del
+país; los inválidos deshabilitan los accesos. Telegram depende de la cuenta
+y privacidad del participante. El conteo requiere desplegar también el backend,
+pero no necesita una migración de base de datos.
+
 Los mapas de países usan el alias `jsvectormap-country-maps`, fijado a la
 distribución oficial `jsvectormap@1.3.0`, porque la versión 1.7 solo incluye
 los mapas mundiales. Solo se importan sus datos, no su runtime.

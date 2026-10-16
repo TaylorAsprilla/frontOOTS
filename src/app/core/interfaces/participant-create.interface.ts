@@ -88,7 +88,7 @@ export interface Participant {
   phoneNumber: string;
   email: string;
   documentTypeId: number;
-  documentType: DocumentType;
+  documentType: DocumentType | null;
   documentNumber: string;
   address: string;
   city: string;
@@ -97,11 +97,11 @@ export interface Participant {
   birthDate: string;
   religiousAffiliation?: string;
   genderId: number;
-  gender: Gender;
+  gender: Gender | null;
   maritalStatusId: number;
-  maritalStatus: MaritalStatus;
+  maritalStatus: MaritalStatus | null;
   healthInsuranceId: number;
-  healthInsurance: HealthInsurance;
+  healthInsurance: HealthInsurance | null;
   customHealthInsurance?: string;
   referralSource?: string;
   registeredById: number;
@@ -110,10 +110,10 @@ export interface Participant {
   createdAt: string;
   updatedAt: string;
   deletedAt?: string;
-  emergencyContacts: ParticipantEmergencyContact[];
-  familyMembers: FamilyMember[];
-  bioPsychosocialHistory: BioPsychosocialHistory;
-  cases: any[];
+  emergencyContacts: ParticipantEmergencyContact[] | null;
+  familyMembers: FamilyMember[] | null;
+  bioPsychosocialHistory: BioPsychosocialHistory | null;
+  cases: any[] | null;
 }
 
 export interface DocumentType {
@@ -180,8 +180,8 @@ export interface ParticipantEmergencyContact {
   relationshipId: number;
   createdAt: string;
   updatedAt: string;
-  emergencyContact: EmergencyContact;
-  relationship: FamilyRelationship;
+  emergencyContact: EmergencyContact | null;
+  relationship: FamilyRelationship | null;
 }
 
 export interface EmergencyContact {
@@ -215,8 +215,8 @@ export interface FamilyMember {
   participantId: number;
   familyRelationshipId: number;
   academicLevelId: number;
-  familyRelationship: FamilyRelationship;
-  academicLevel: AcademicLevel;
+  familyRelationship: FamilyRelationship | null;
+  academicLevel: AcademicLevel | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -241,10 +241,10 @@ export interface BioPsychosocialHistory {
   incomeSourceId: number;
   incomeLevelId: number;
   housingTypeId: number;
-  academicLevel: AcademicLevel;
-  incomeSource: IncomeSource;
-  incomeLevel: IncomeLevel;
-  housingType: HousingType;
+  academicLevel: AcademicLevel | null;
+  incomeSource: IncomeSource | null;
+  incomeLevel: IncomeLevel | null;
+  housingType: HousingType | null;
   createdAt: string;
   updatedAt: string;
 }

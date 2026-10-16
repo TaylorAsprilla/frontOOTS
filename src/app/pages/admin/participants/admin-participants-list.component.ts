@@ -11,6 +11,7 @@ import { AdminParticipant } from '../../../core/interfaces/admin-participant.int
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
+import { PhoneNumber, PhoneNumberFormat, PhoneNumberUtil } from 'google-libphonenumber';
 
 @Component({
   selector: 'app-admin-participants-list',
@@ -176,20 +177,35 @@ export class AdminParticipantsListComponent implements OnInit, OnDestroy {
     return parts.join(' / ');
   }
 
-  /** Clase de badge según el estado del usuario asignado. */
-  getStatusBadgeClass(status?: string | null): string {
-    switch ((status ?? '').toUpperCase()) {
-      case 'ACTIVE':
-        return 'badge bg-success text-white';
-      case 'INACTIVE':
-        return 'badge bg-secondary';
-      case 'SUSPENDED':
-        return 'badge bg-warning text-dark';
-      case 'BLOCKED':
-        return 'badge bg-danger';
-      default:
-        return 'badge bg-light text-dark';
+  getMessagingPhone(participant: AdminParticipant): string | null {
+    if (!participant.phoneNumber) return null;
+    const phoneUtil = PhoneNumberUtil.getInstance();
+    let phone: PhoneNumber;
+    try {
+      phone = phoneUtil.parseAndKeepRawInput(
+        participant.phoneNumber,
+        participant.country?.iso?.toUpperCase(),
+      );
+    } catch (error) {
+      const parseErrors = [
+        'Invalid country calling code',
+        'The string supplied did not seem to be a phone number',
+        'Phone number too short after IDD',
+        'The string supplied is too short to be a phone number',
+        'The string supplied is too long to be a phone number',
+      ];
+      if (!(error instanceof Error) || !parseErrors.includes(error.message)) {
+        throw error;
+      }
+      return null;
     }
+    return phoneUtil.isValidNumber(phone)
+      ? phoneUtil.format(phone, PhoneNumberFormat.E164).replace('+', '')
+      : null;
+  }
+
+  getEmailLink(email: string): string {
+    return `mailto:${encodeURIComponent(email.trim())}`;
   }
 
   trackById(_index: number, item: AdminParticipant): number {
