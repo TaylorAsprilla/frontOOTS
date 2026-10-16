@@ -186,20 +186,24 @@
                           >
                             <i class="mdi mdi-eye text-info"></i>
                           </a>
-                          <a
-                            [routerLink]="['/cases/edit', caseItem.id]"
-                            class="btn btn-sm btn-light btn-icon"
-                            [ngbTooltip]="'app.edit' | transloco"
-                            placement="top"
-                          >
-                            <i class="mdi mdi-pencil text-primary"></i>
-                          </a>
+                          @if (caseItem.status !== 'closed') {
+                            <a
+                              [routerLink]="['/cases/edit', caseItem.id]"
+                              class="btn btn-sm btn-light btn-icon"
+                              [ngbTooltip]="'app.edit' | transloco"
+                              placement="top"
+                            >
+                              <i class="mdi mdi-pencil text-primary"></i>
+                            </a>
+                          }
                           <button
                             type="button"
                             class="btn btn-sm btn-light btn-icon"
                             [ngbTooltip]="'cases.downloadPdf' | transloco"
                             placement="top"
                             (click)="downloadPdf(caseItem)"
+                            [disabled]="downloadingPdf.has(caseItem.id)"
+                            [attr.aria-busy]="downloadingPdf.has(caseItem.id)"
                           >
                             <i class="mdi mdi-file-pdf-box text-danger"></i>
                           </button>

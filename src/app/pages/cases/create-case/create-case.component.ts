@@ -541,6 +541,11 @@ export class CreateCaseComponent implements OnInit, AfterViewInit, OnDestroy, Ha
           const caseData = response.data;
 
           if (caseData) {
+            this.isCaseClosed = caseData.status === CaseStatus.CLOSED;
+            if (this.isCaseClosed) {
+              this.isViewMode = true;
+              this.isEditMode = false;
+            }
             // Resolve participant info (id + name) from case payload when route lacks :participantId
             this.resolveParticipantFromCase(caseData);
 
