@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { NgbPaginationModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { AcademicLevelService } from '../../../../core/services/academic-level.service';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -22,6 +22,7 @@ import { BreadcrumbItem } from '../../../../shared/page-title/page-title.model';
 export class AcademicLevelListComponent implements OnInit, OnDestroy {
   private readonly academicLevelService = inject(AcademicLevelService);
   private readonly notificationService = inject(NotificationService);
+  private readonly translocoService = inject(TranslocoService);
   private readonly router = inject(Router);
   private readonly destroy$ = new Subject<void>();
   private searchSubject = new Subject<string>();
@@ -79,7 +80,7 @@ export class AcademicLevelListComponent implements OnInit, OnDestroy {
         error: (error) => {
           this.isLoading = false;
           console.error('Error loading academic levels:', error);
-          this.notificationService.showError('academicLevel.loadError');
+          this.notificationService.showError(this.translocoService.translate('academicLevel.loadError'));
         },
       });
   }
@@ -222,14 +223,14 @@ export class AcademicLevelListComponent implements OnInit, OnDestroy {
               next: (response) => {
                 this.isLoading = false;
                 if (response.statusCode === 200) {
-                  this.notificationService.showSuccess('academicLevel.deleteSuccess');
+                  this.notificationService.showSuccess(this.translocoService.translate('academicLevel.deleteSuccess'));
                   this.loadAcademicLevels();
                 }
               },
               error: (error) => {
                 this.isLoading = false;
                 console.error('Error deleting academic level:', error);
-                this.notificationService.showError('academicLevel.deleteError');
+                this.notificationService.showError(this.translocoService.translate('academicLevel.deleteError'));
               },
             });
         }
@@ -262,7 +263,7 @@ export class AcademicLevelListComponent implements OnInit, OnDestroy {
             error: (error) => {
               this.isLoading = false;
               console.error('Error toggling active status:', error);
-              this.notificationService.showError('academicLevel.updateError');
+              this.notificationService.showError(this.translocoService.translate('academicLevel.updateError'));
             },
           });
       }

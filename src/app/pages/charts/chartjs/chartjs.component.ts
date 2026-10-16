@@ -12,12 +12,12 @@ export class ChartjsComponent implements OnInit {
 
   pageTitle: BreadcrumbItem[] = [];
   //chart config
-  lineChartOptions!: ChartjsOptions;
-  barChartOptions!: ChartjsOptions;
-  pieChartOptions!: ChartjsOptions;
-  donutChartOptions!: ChartjsOptions;
-  polarChartOptions!: ChartjsOptions;
-  radarChartOptions!: ChartjsOptions;
+  lineChartOptions!: ChartjsOptions<'line'>;
+  barChartOptions!: ChartjsOptions<'bar'>;
+  pieChartOptions!: ChartjsOptions<'pie'>;
+  donutChartOptions!: ChartjsOptions<'doughnut'>;
+  polarChartOptions!: ChartjsOptions<'polarArea'>;
+  radarChartOptions!: ChartjsOptions<'radar'>;
 
   @ViewChild('barChart', { static: true }) barChart!: ElementRef;
 

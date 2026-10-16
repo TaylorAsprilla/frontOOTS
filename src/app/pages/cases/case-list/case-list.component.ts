@@ -4,9 +4,10 @@ import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { NgbPaginationModule, NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Subject, takeUntil, debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 
 import { CaseService } from '../../../core/services/case.service';
+import { CasePdfService } from '../../../core/services/case-pdf.service';
 import { TokenStorageService } from '../../../core/services/token-storage.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
@@ -40,6 +41,7 @@ export class CaseListComponent implements OnInit, OnDestroy {
     return this.roleService.hasAnyRole('ADMIN', 'COORDINADOR', 'TRABAJO_SOCIAL');
   }
   private readonly caseService = inject(CaseService);
+  private readonly casePdfService = inject(CasePdfService);
   private readonly tokenStorageService = inject(TokenStorageService);
   private readonly notificationService = inject(NotificationService);
   private readonly countryService = inject(CountryService);
@@ -52,6 +54,7 @@ export class CaseListComponent implements OnInit, OnDestroy {
   filteredCases: any[] = [];
   private allCasesFromApi: any[] = [];
   isLoading = false;
+  readonly downloadingPdf = new Set<number>();
 
   // Pagination
   currentPage = 1;
@@ -172,9 +175,14 @@ export class CaseListComponent implements OnInit, OnDestroy {
   }
 
   downloadPdf(caseItem: any): void {
+    if (!caseItem.id || this.downloadingPdf.has(caseItem.id)) return;
+    this.downloadingPdf.add(caseItem.id);
     this.caseService
       .downloadCasePdf(caseItem.id)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.downloadingPdf.delete(caseItem.id)),
+      )
       .subscribe({
         next: (blob: Blob) => {
           const url = URL.createObjectURL(blob);
@@ -184,8 +192,8 @@ export class CaseListComponent implements OnInit, OnDestroy {
           anchor.click();
           URL.revokeObjectURL(url);
         },
-        error: () => {
-          this.notificationService.showError('Error al descargar el PDF del caso');
+        error: (error) => {
+          void this.casePdfService.handlePdfError(error);
         },
       });
   }

@@ -214,3 +214,15 @@ export interface ParticipantByUserResponse {
   timestamp: string;
   path: string;
 }
+
+export interface ParticipantByCountryResponse {
+  data: {
+    countryId: number;
+    total: number;
+    participants: Participant[];
+  };
+  statusCode: number;
+  message: string;
+  timestamp: string;
+  path: string;
+}

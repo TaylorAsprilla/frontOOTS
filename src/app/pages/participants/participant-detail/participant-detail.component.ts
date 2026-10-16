@@ -12,6 +12,8 @@ import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { Participant } from '../../../core/interfaces/participant-create.interface';
 import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
 import { CaseStatus, CaseType } from '../../../core/interfaces/case.interface';
+import { AuthenticationService } from '../../../core/services/auth.service';
+import { RoleService } from '../../../core/services/role.service';
 
 @Component({
   selector: 'app-participant-detail',
@@ -24,12 +26,31 @@ export class ParticipantDetailComponent implements OnInit, OnDestroy {
   private readonly participantService = inject(ParticipantService);
   private readonly notificationService = inject(NotificationService);
   private readonly route = inject(ActivatedRoute);
+  private readonly authService = inject(AuthenticationService);
+  private readonly roleService = inject(RoleService);
   private readonly destroy$ = new Subject<void>();
 
   participant: Participant | null = null;
   isLoading = false;
   participantId: string | null = null;
   backRoute = '/participants';
+
+  canEditParticipant(): boolean {
+    const user = this.authService.currentUser();
+    if (!user || !this.participant) {
+      return false;
+    }
+
+    if (this.roleService.isAdmin()) {
+      return true;
+    }
+
+    if (this.roleService.isAdminCountry()) {
+      return user.country?.id != null && Number(this.participant.countryId) === Number(user.country.id);
+    }
+
+    return this.roleService.isTrabajoSocial() && Number(this.participant.registeredById) === Number(user.id);
+  }
 
   calculateAge(birthDate: string): number {
     const today = new Date();
@@ -81,7 +102,6 @@ export class ParticipantDetailComponent implements OnInit, OnDestroy {
           this.isLoading = false;
         },
         error: (error) => {
-          this.notificationService.showError('participants.errorLoading');
           this.isLoading = false;
         },
       });

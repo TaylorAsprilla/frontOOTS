@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, defer } from 'rxjs';
+import { finalize, shareReplay } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
 import { TokenStorageService } from './token-storage.service';
@@ -22,6 +22,7 @@ export class CasePdfService {
   private readonly notificationService = inject(NotificationService);
 
   private readonly baseUrl = `${environment.apiUrl}/cases`;
+  private readonly inFlight = new Map<string, Observable<Blob>>();
 
   /** PDF: Culminación del proceso de ayuda */
   getHelpProcessCompletionPdf(caseId: number | string): Observable<Blob> {
@@ -54,6 +55,7 @@ export class CasePdfService {
     const url = URL.createObjectURL(file);
     const win = window.open(url, '_blank');
     if (!win) {
+      URL.revokeObjectURL(url);
       // Pop-up blocked: fall back to download
       this.downloadPdf(blob, fileName);
       return;
@@ -76,17 +78,43 @@ export class CasePdfService {
   }
 
   /** Centralised error handling for PDF requests. */
-  handlePdfError(error: unknown, fallbackMessage = 'No fue posible generar el PDF.'): void {
+  async handlePdfError(error: unknown, fallbackMessage = 'No fue posible generar el PDF. Intente nuevamente. Si el problema continúa, contacte al administrador.'): Promise<void> {
     let message = fallbackMessage;
     if (error instanceof HttpErrorResponse) {
       if (error.status === 404) {
-        message = 'El documento no está disponible.';
+        message = 'No se encontró el documento solicitado. Verifique que esté registrado y guardado en el caso.';
+      } else if (error.status === 401) {
+        message = 'Su sesión expiró o no es válida. Inicie sesión nuevamente para descargar el documento.';
+      } else if (error.status === 403) {
+        message = 'No tiene permiso para descargar documentos de este caso.';
+      } else if (error.status === 409) {
+        message = 'No se puede generar el documento con el estado actual del expediente. Contacte al administrador.';
+      } else if (error.status === 422) {
+        message = 'Complete y guarde la información necesaria del caso antes de descargar este documento.';
+      } else if (error.status === 429) {
+        message = 'Se han solicitado demasiadas descargas. Espere unos momentos e intente nuevamente.';
       } else if (error.status === 0) {
         message = 'No fue posible conectarse al servidor para generar el PDF.';
-      } else if (typeof error.error === 'string' && error.error.trim().length > 0) {
-        message = error.error;
-      } else if ((error.error as any)?.message) {
-        message = (error.error as any).message;
+      }
+      if ([400, 404, 409, 422].includes(error.status)) {
+        let body: unknown = error.error;
+        if (body instanceof Blob || typeof body === 'string') {
+          try {
+            body = JSON.parse(body instanceof Blob ? await body.text() : body);
+          } catch {
+            // Non-JSON responses use the user-facing status message.
+            body = undefined;
+          }
+        }
+        if (typeof body === 'object' && body !== null && 'message' in body) {
+          const detail = body.message;
+          if (typeof detail === 'string' && detail.trim()) {
+            message = detail;
+          } else if (Array.isArray(detail)) {
+            const messages = detail.filter((item): item is string => typeof item === 'string' && item.trim().length > 0);
+            if (messages.length) message = messages.join(' ');
+          }
+        }
       }
     }
     this.notificationService.showError(message);
@@ -95,12 +123,22 @@ export class CasePdfService {
   // --- internals ---------------------------------------------------------
 
   private requestPdf(url: string): Observable<Blob> {
-    const token = this.tokenStorageService.getToken();
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/pdf',
+    return defer(() => {
+      const token = this.tokenStorageService.getToken();
+      const key = `${token}:${url}`;
+      const pending = this.inFlight.get(key);
+      if (pending) return pending;
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/pdf',
+      });
+      const request = this.http.get(url, { headers, responseType: 'blob' }).pipe(
+        finalize(() => this.inFlight.delete(key)),
+        shareReplay({ bufferSize: 1, refCount: true }),
+      );
+      this.inFlight.set(key, request);
+      return request;
     });
-    return this.http.get(url, { headers, responseType: 'blob' }).pipe(catchError((error) => throwError(() => error)));
   }
 
   private ensurePdfBlob(blob: Blob): Blob {

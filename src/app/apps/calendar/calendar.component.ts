@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import {
-  FullCalendarModule,
   FullCalendarComponent,
 } from "@fullcalendar/angular";
 import {
@@ -64,17 +63,15 @@ export class CalendarComponent implements OnInit {
    * initialize calendar config
    */
   initCalendar(): void {
-    FullCalendarModule.registerPlugins([
-      // register FullCalendar plugins
-      dayGridPlugin,
-      interactionPlugin,
-      bootstrapPlugin,
-      timeGridPlugin,
-      listPlugin,
-    ]);
-
     // full calendar config
     this.calendarOptions = {
+      plugins: [
+        dayGridPlugin,
+        interactionPlugin,
+        bootstrapPlugin,
+        timeGridPlugin,
+        listPlugin,
+      ],
       themeSystem: "bootstrap",
       bootstrapFontAwesome: false,
       buttonText: {
