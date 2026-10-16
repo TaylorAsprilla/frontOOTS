@@ -11,6 +11,9 @@ import { AdminParticipant } from '../../../core/interfaces/admin-participant.int
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
+import {
+  participantFullName, assignedUserFullName, participantLocation, messagingPhone, participantEmailLink,
+} from '../../../shared/participant-table-helpers';
 
 @Component({
   selector: 'app-admin-participants-list',
@@ -148,49 +151,18 @@ export class AdminParticipantsListComponent implements OnInit, OnDestroy {
   }
 
   /** Concatena nombres del participante saltando valores null/undefined/vacíos. */
-  getParticipantFullName(p: AdminParticipant): string {
-    return [p.firstName, p.secondName, p.firstLastName, p.secondLastName]
-      .filter((part) => !!part && part.toString().trim().length > 0)
-      .join(' ')
-      .trim();
-  }
+  getParticipantFullName = participantFullName;
 
   /**
    * Nombre completo del usuario que registró o tiene asignado el participante.
    * Si no existe `registeredBy`, devuelve cadena vacía (la plantilla muestra "Sin asignar").
    */
-  getAssignedUserFullName(p: AdminParticipant): string {
-    const user = p.registeredBy;
-    if (!user) {
-      return '';
-    }
-    return [user.firstName, user.secondName, user.firstLastName, user.secondLastName]
-      .filter((part) => !!part && part.toString().trim().length > 0)
-      .join(' ')
-      .trim();
-  }
+  getAssignedUserFullName = assignedUserFullName;
 
   /** Ciudad / Estado en una sola celda. */
-  getLocation(p: AdminParticipant): string {
-    const parts = [p.city, p.state].filter((part) => !!part && part.toString().trim().length > 0);
-    return parts.join(' / ');
-  }
-
-  /** Clase de badge según el estado del usuario asignado. */
-  getStatusBadgeClass(status?: string | null): string {
-    switch ((status ?? '').toUpperCase()) {
-      case 'ACTIVE':
-        return 'badge bg-success text-white';
-      case 'INACTIVE':
-        return 'badge bg-secondary';
-      case 'SUSPENDED':
-        return 'badge bg-warning text-dark';
-      case 'BLOCKED':
-        return 'badge bg-danger';
-      default:
-        return 'badge bg-light text-dark';
-    }
-  }
+  getLocation = participantLocation;
+  getMessagingPhone = messagingPhone;
+  getEmailLink = participantEmailLink;
 
   trackById(_index: number, item: AdminParticipant): number {
     return item.id;

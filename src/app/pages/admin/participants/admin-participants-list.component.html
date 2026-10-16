@@ -78,22 +78,17 @@
               <table class="table table-hover table-centered align-middle table-nowrap mb-0">
                 <thead class="bg-light">
                   <tr>
-                    <th class="border-0">#</th>
                     <th class="border-0">
                       <i class="fas fa-user me-1 text-primary"></i>
                       {{ 'adminParticipants.fullName' | transloco }}
                     </th>
                     <th class="border-0">
-                      <i class="fas fa-id-card me-1 text-primary"></i>
-                      {{ 'adminParticipants.document' | transloco }}
-                    </th>
-                    <th class="border-0">
                       <i class="fas fa-phone me-1 text-primary"></i>
-                      {{ 'adminParticipants.phone' | transloco }}
+                      {{ 'adminParticipants.contact' | transloco }}
                     </th>
                     <th class="border-0">
-                      <i class="fas fa-envelope me-1 text-primary"></i>
-                      {{ 'adminParticipants.email' | transloco }}
+                      <i class="fas fa-folder-open me-1 text-primary"></i>
+                      {{ 'adminParticipants.casesCount' | transloco }}
                     </th>
                     <th class="border-0">
                       <i class="fas fa-map-marker-alt me-1 text-primary"></i>
@@ -102,10 +97,6 @@
                     <th class="border-0">
                       <i class="fas fa-user-tie me-1 text-primary"></i>
                       {{ 'adminParticipants.assignedTo' | transloco }}
-                    </th>
-                    <th class="border-0 text-center">
-                      <i class="fas fa-shield-alt me-1 text-primary"></i>
-                      {{ 'adminParticipants.assignedUserStatus' | transloco }}
                     </th>
                     <th class="border-0">
                       <i class="fas fa-calendar-alt me-1 text-primary"></i>
@@ -120,11 +111,73 @@
                 <tbody>
                   @for (participant of pageItems; track trackById($index, participant)) {
                     <tr class="participant-row">
-                      <td>{{ participant.id }}</td>
-                      <td>{{ getParticipantFullName(participant) }}</td>
-                      <td>{{ participant.documentNumber || '—' }}</td>
-                      <td>{{ participant.phoneNumber || '—' }}</td>
-                      <td>{{ participant.email || '—' }}</td>
+                      <td>
+                        <div class="participant-identity">
+                          <a class="participant-name" [routerLink]="['/admin/participants/detail', participant.id]">
+                            {{ getParticipantFullName(participant) }}
+                          </a>
+                          <span class="participant-meta">
+                            <i class="fas fa-id-card me-1" aria-hidden="true"></i>
+                            {{ participant.documentNumber || ('adminParticipants.noDocument' | transloco) }}
+                          </span>
+                          @if (participant.email) {
+                            <a class="participant-meta participant-email" [href]="getEmailLink(participant.email)">
+                              <i class="fas fa-envelope me-1" aria-hidden="true"></i>{{ participant.email }}
+                            </a>
+                          } @else {
+                            <span class="participant-meta">{{ 'adminParticipants.noEmail' | transloco }}</span>
+                          }
+                        </div>
+                      </td>
+                      <td>
+                        <div class="participant-contact">
+                          <span>{{ participant.phoneNumber || ('adminParticipants.noPhone' | transloco) }}</span>
+                          <ng-template #telegramTooltip>
+                            <strong class="participant-contact-tooltip-title">Telegram</strong>
+                            <span>{{ 'adminParticipants.telegramPrivacy' | transloco }}</span>
+                          </ng-template>
+                          <div class="d-flex gap-2">
+                            @if (getMessagingPhone(participant); as phone) {
+                              <a class="btn btn-sm btn-soft-success" [href]="'https://wa.me/' + phone"
+                                target="_blank" rel="noopener noreferrer"
+                                [attr.aria-label]="'adminParticipants.whatsapp' | transloco"
+                                container="body" placement="top" tooltipClass="participant-contact-tooltip"
+                                [ngbTooltip]="'adminParticipants.whatsapp' | transloco">
+                                <i class="fab fa-whatsapp" aria-hidden="true"></i>
+                              </a>
+                              <a class="btn btn-sm btn-soft-info" [href]="'https://t.me/+' + phone"
+                                target="_blank" rel="noopener noreferrer"
+                                [attr.aria-label]="'adminParticipants.telegram' | transloco"
+                                container="body" placement="top" tooltipClass="participant-contact-tooltip"
+                                [ngbTooltip]="telegramTooltip">
+                                <i class="fab fa-telegram-plane" aria-hidden="true"></i>
+                              </a>
+                            } @else {
+                              <span tabindex="0" container="body" placement="top"
+                                tooltipClass="participant-contact-tooltip"
+                                [ngbTooltip]="'adminParticipants.invalidPhone' | transloco">
+                                <button type="button" class="btn btn-sm btn-light" disabled
+                                  [attr.aria-label]="'adminParticipants.invalidPhone' | transloco">
+                                  <i class="fab fa-whatsapp" aria-hidden="true"></i>
+                                </button>
+                              </span>
+                              <span tabindex="0" container="body" placement="top"
+                                tooltipClass="participant-contact-tooltip"
+                                [ngbTooltip]="'adminParticipants.invalidPhone' | transloco">
+                                <button type="button" class="btn btn-sm btn-light" disabled
+                                  [attr.aria-label]="'adminParticipants.invalidPhone' | transloco">
+                                  <i class="fab fa-telegram-plane" aria-hidden="true"></i>
+                                </button>
+                              </span>
+                            }
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
+                          {{ participant.casesCount ?? '—' }}
+                        </span>
+                      </td>
                       <td>{{ getLocation(participant) || '—' }}</td>
                       <td>
                         @if (participant.registeredBy) {
@@ -138,15 +191,6 @@
                           <span class="assigned-user-empty">
                             {{ 'adminParticipants.unassigned' | transloco }}
                           </span>
-                        }
-                      </td>
-                      <td class="text-center">
-                        @if (participant.registeredBy && participant.registeredBy.status) {
-                          <span [class]="getStatusBadgeClass(participant.registeredBy.status)">
-                            {{ participant.registeredBy.status }}
-                          </span>
-                        } @else {
-                          <span class="text-muted">—</span>
                         }
                       </td>
                       <td>

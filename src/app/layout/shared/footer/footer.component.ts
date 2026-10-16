@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { TranslocoModule } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-footer',
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
-  imports: [CommonModule, DatePipe, TranslocoModule],
+  imports: [CommonModule, DatePipe],
   standalone: true,
 })
 export class FooterComponent implements OnInit {

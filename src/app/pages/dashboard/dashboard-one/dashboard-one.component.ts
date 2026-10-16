@@ -1,7 +1,7 @@
 import { Component, Injectable, OnInit, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { NgbDatepickerModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule } from '@ngneat/transloco';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -78,13 +78,12 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
   private readonly authService = inject(AuthenticationService);
   private readonly caseService = inject(CaseService);
   private readonly calendar = inject(NgbCalendar);
-  private readonly router = inject(Router);
   private readonly destroy$ = new Subject<void>();
 
   statisticsCardData: StatisticsCard1[] = [];
-  revenuChart!: Partial<ChartOptions>;
   salesAnalyticsChart!: Partial<ChartOptions>;
   casesByStatusChart!: Partial<ChartOptions>;
+  caseStatusSummary: Array<{ label: string; count: number; percentage: number; color: string }> = [];
   userBalanceData: UserBalance[] = [];
   revenueHistoryData: RevenueHistory[] = [];
   totalParticipants: number = 0;
@@ -92,7 +91,6 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
   openCases: number = 0;
   closedCases: number = 0;
   pendingFollowUps: number = 0;
-  recentParticipants: any[] = [];
   recentCases: any[] = [];
   casesByMonth: { [key: string]: number } = {};
   closedCasesByMonth: { [key: string]: number } = {};
@@ -155,10 +153,6 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
   private applyStats(cases: any[], participants: any[]): void {
     this.totalParticipants = participants.length;
     this.totalCases = cases.length;
-
-    this.recentParticipants = [...participants]
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      .slice(0, 5);
 
     this.recentCases = [...cases]
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -267,9 +261,6 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
       },
     ];
 
-    // Update total cases in radial chart
-    this.updateRevenuChart();
-
     // Update sales analytics chart
     this.updateSalesAnalyticsChart();
 
@@ -348,20 +339,8 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
     this.salesAnalyticsChart.labels = monthNames;
   }
 
-  /**
-   * Update revenue chart with total cases
-   */
-  updateRevenuChart(): void {
-    if (this.totalParticipants > 0) {
-      // Calcular el porcentaje de participantes que tienen casos
-      const percentage = Math.round((this.totalCases / this.totalParticipants) * 100);
-      this.revenuChart.series = [percentage > 100 ? 100 : percentage];
-      // Actualizar la etiqueta del gráfico
-      this.revenuChart.labels = ['Casos vs Participantes'];
-    } else {
-      this.revenuChart.series = [0];
-      this.revenuChart.labels = ['Casos vs Participantes'];
-    }
+  get averageCasesPerParticipant(): number | null {
+    return this.totalParticipants > 0 ? this.totalCases / this.totalParticipants : null;
   }
 
   /**
@@ -444,27 +423,6 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Get initials from full name for avatar
-   */
-  getInitials(fullName: string): string {
-    if (!fullName) return '??';
-    const names = fullName.split(' ');
-    if (names.length >= 2) {
-      return (names[0][0] + names[1][0]).toUpperCase();
-    }
-    return fullName.substring(0, 2).toUpperCase();
-  }
-
-  /**
-   * Navigate to participant detail view
-   */
-  viewParticipant(participant: any): void {
-    if (participant.id) {
-      this.router.navigate(['/participants/detail', participant.id]);
-    }
-  }
-
-  /**
    * Update cases-by-status donut chart with real data
    */
   updateCasesByStatusChart(): void {
@@ -472,25 +430,35 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
     const closedCount = this.closedCases;
     const otherCount = this.totalCases - openCount - closedCount;
 
+    this.caseStatusSummary = [
+      { label: 'dashboard.charts.openInProgress', count: openCount, color: '#1abc9c' },
+      { label: 'dashboard.charts.closedCases', count: closedCount, color: '#4a81d4' },
+      { label: 'dashboard.charts.otherCases', count: Math.max(otherCount, 0), color: '#f7b731' },
+    ].map((item) => ({
+      ...item,
+      percentage: this.totalCases > 0 ? Math.round(item.count / this.totalCases * 100) : 0,
+    }));
+
     this.casesByStatusChart = {
       series: [openCount, closedCount, otherCount > 0 ? otherCount : 0],
       chart: {
-        height: 240,
+        height: 280,
         type: 'donut',
       },
       labels: ['Abiertos / En Progreso', 'Cerrados', 'Otros'],
       colors: ['#1abc9c', '#4a81d4', '#f7b731'],
       legend: {
-        position: 'bottom',
+        show: false,
       },
       dataLabels: {
         enabled: true,
         formatter: (val: number) => `${Math.round(val)}%`,
+        dropShadow: { enabled: false },
       },
       plotOptions: {
         pie: {
           donut: {
-            size: '65%',
+            size: '72%',
           },
         },
       },
@@ -498,7 +466,7 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
         {
           breakpoint: 600,
           options: {
-            chart: { height: 200 },
+            chart: { height: 280 },
             legend: { show: false },
           },
         },
@@ -510,23 +478,6 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
    * initialize charts
    */
   initChart(): void {
-    this.revenuChart = {
-      series: [68],
-      chart: {
-        height: 242,
-        type: 'radialBar',
-      },
-      plotOptions: {
-        radialBar: {
-          hollow: {
-            size: '65%',
-          },
-        },
-      },
-      colors: ['#f86262'],
-      labels: ['Revenue'],
-    };
-
     this.salesAnalyticsChart = {
       series: [
         {

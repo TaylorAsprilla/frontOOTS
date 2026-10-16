@@ -14,6 +14,9 @@ import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { Participant, ParticipantStatus } from '../../../core/interfaces/participant.interface';
 import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
 import { RoleService } from '../../../core/services/role.service';
+import {
+  participantFullName, assignedUserFullName, participantLocation, messagingPhone, participantEmailLink,
+} from '../../../shared/participant-table-helpers';
 
 @Component({
   selector: 'app-participant-list',
@@ -33,6 +36,17 @@ import { RoleService } from '../../../core/services/role.service';
   styleUrls: ['./participant-list.component.scss'],
 })
 export class ParticipantListComponent implements OnInit, OnDestroy {
+  getParticipantFullName = participantFullName;
+  getAssignedUserFullName = assignedUserFullName;
+  getLocation = participantLocation;
+  getEmailLink = participantEmailLink;
+
+  getMessagingPhone(participant: Participant): string | null {
+    return messagingPhone({
+      phoneNumber: participant.phoneNumber,
+      country: typeof participant.country === 'object' ? participant.country : null,
+    });
+  }
   private readonly roleService = inject(RoleService);
   canCreateParticipant(): boolean {
     // ADMIN, COORDINADOR y TRABAJO_SOCIAL pueden crear
@@ -151,9 +165,9 @@ export class ParticipantListComponent implements OnInit, OnDestroy {
         if (searchTerm) {
           filteredData = filteredData.filter(
             (participant) =>
-              participant.firstName?.toLowerCase().includes(searchTerm) ||
-              participant.firstLastName?.toLowerCase().includes(searchTerm) ||
-              participant.secondLastName?.toLowerCase().includes(searchTerm) ||
+              this.getParticipantFullName(participant).toLowerCase().includes(searchTerm) ||
+              this.getAssignedUserFullName(participant).toLowerCase().includes(searchTerm) ||
+              participant.registeredBy?.email?.toLowerCase().includes(searchTerm) ||
               participant.email?.toLowerCase().includes(searchTerm) ||
               participant.documentNumber?.includes(searchTerm),
           );

@@ -16,6 +16,7 @@ import { CaseStatus, CaseType } from '../../../core/interfaces/case.interface';
 import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
 import { RoleService } from '../../../core/services/role.service';
 import { CountryService } from '../../../core/services/country.service';
+import { participantFullName } from '../../../shared/participant-table-helpers';
 
 @Component({
   selector: 'app-case-list',
@@ -60,6 +61,8 @@ export class CaseListComponent implements OnInit, OnDestroy {
   currentPage = 1;
   pageSize = 10;
   totalItems = 0;
+  expandedCaseId: number | null = null;
+  getProfessionalFullName = participantFullName;
 
   // Filters
   searchForm!: FormGroup;
@@ -112,6 +115,7 @@ export class CaseListComponent implements OnInit, OnDestroy {
 
   loadCases(): void {
     this.isLoading = true;
+    this.expandedCaseId = null;
 
     const userId = this.tokenStorageService.getUser()?.id;
     if (!userId) {
@@ -142,8 +146,11 @@ export class CaseListComponent implements OnInit, OnDestroy {
     if (searchTerm) {
       filtered = filtered.filter(
         (c) =>
+          c.id.toString().includes(searchTerm.replace(/^#/, '')) ||
           c.participant?.fullName?.toLowerCase().includes(searchTerm) ||
           c.caseNumber?.toLowerCase().includes(searchTerm) ||
+          this.getProfessionalFullName(c.createdBy).toLowerCase().includes(searchTerm) ||
+          c.participant?.documentNumber?.toLowerCase().includes(searchTerm) ||
           c.consultationReason?.toLowerCase().includes(searchTerm),
       );
     }
@@ -171,6 +178,7 @@ export class CaseListComponent implements OnInit, OnDestroy {
 
   onPageChange(page: number): void {
     this.currentPage = page;
+    this.expandedCaseId = null;
     this.applyFiltersAndPagination();
   }
 
@@ -222,11 +230,11 @@ export class CaseListComponent implements OnInit, OnDestroy {
   getStatusBadgeClass(status?: CaseStatus): string {
     switch (status) {
       case CaseStatus.OPEN:
-        return 'badge bg-success text-white';
+        return 'badge bg-info text-white';
       case CaseStatus.IN_PROGRESS:
-        return 'badge bg-primary text-white';
+        return 'badge bg-warning text-dark';
       case CaseStatus.CLOSED:
-        return 'badge bg-secondary text-white';
+        return 'badge bg-success text-white';
       default:
         return 'badge bg-light text-dark';
     }
@@ -235,6 +243,14 @@ export class CaseListComponent implements OnInit, OnDestroy {
   getStatusLabel(status: CaseStatus | 'all'): string {
     const option = this.statusOptions.find((s) => s.value === status);
     return option?.label || 'cases.unknown';
+  }
+
+  toggleExpand(caseItem: { id: number }): void {
+    this.expandedCaseId = this.expandedCaseId === caseItem.id ? null : caseItem.id;
+  }
+
+  isExpanded(caseItem: { id: number }): boolean {
+    return this.expandedCaseId === caseItem.id;
   }
 
   isBriefConsultation(caseItem: { caseType?: CaseType }): boolean {
@@ -297,6 +313,12 @@ export class CaseListComponent implements OnInit, OnDestroy {
       return caseItem.participant.fullName;
     }
     return this.translocoService.translate('cases.loadingParticipant');
+  }
+
+  getLocation(caseItem: { participant?: { city?: string | null; state?: string | null } | null }): string {
+    return [caseItem.participant?.city, caseItem.participant?.state]
+      .filter((part) => !!part && part.trim().length > 0)
+      .join(' / ');
   }
 
   clearSearch(): void {

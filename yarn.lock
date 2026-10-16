@@ -1997,6 +1997,11 @@
   resolved "https://registry.npmjs.org/@types/file-saver/-/file-saver-2.0.7.tgz"
   integrity sha512-dNKVfHd/jk0SkR/exKGj2ggkB45MAkzvWCaqLUUgkyjITkGNzH8H+yUwr+BLJUBjZOe9w8X3wgmXhZDRg1ED6A==
 
+"@types/google-libphonenumber@^7.4.31":
+  version "7.4.31"
+  resolved "https://registry.npmjs.org/@types/google-libphonenumber/-/google-libphonenumber-7.4.31.tgz"
+  integrity sha512-NqtRPbLfRbCsqYTVb2UHM67AhMUfTYarxy32u14QilQq7i2C37jtvxbEmb0U0oCMMZtFfpoAtbuhrXwF7/EyVg==
+
 "@types/googlemaps@3.43.3":
   version "3.43.3"
   resolved "https://registry.npmjs.org/@types/googlemaps/-/googlemaps-3.43.3.tgz"

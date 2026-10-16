@@ -30,6 +30,8 @@ export interface AdminParticipant {
   createdAt?: string | null;
   registeredById?: number | null;
   registeredBy?: RegisteredByUser | null;
+  casesCount?: number;
+  country?: { iso?: string | null } | null;
 }
 
 export interface ParticipantsAllResponse {

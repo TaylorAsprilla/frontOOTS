@@ -510,8 +510,12 @@
       "cases": "Casos",
       "average": "Promedio",
       "casesPerParticipant": "casos por participante",
+      "averageExplanation": "Total de casos dividido entre participantes del período seleccionado. Un participante puede tener varios casos.",
+      "averageUnavailable": "Promedio no disponible: no hay participantes en el período seleccionado.",
       "casesPerMonth": "Casos Realizados por Mes",
       "casesByStatus": "Casos por Estado",
+      "openInProgress": "Abiertos / En Progreso",
+      "otherCases": "Otros estados",
       "totalCases": "Total de Casos",
       "closedCases": "Casos Cerrados",
       "noData": "Sin datos disponibles — crea el primer caso."
@@ -1526,6 +1530,15 @@
     }
   },
   "adminParticipants": {
+    "contact": "Contacto",
+    "telegramPrivacy": "La disponibilidad depende de la cuenta y privacidad del participante.",
+    "casesCount": "Casos",
+    "noDocument": "Sin documento registrado",
+    "noEmail": "Sin correo registrado",
+    "noPhone": "Sin teléfono registrado",
+    "invalidPhone": "Registre un teléfono válido con código internacional o país para contactar al participante.",
+    "whatsapp": "Contactar por WhatsApp",
+    "telegram": "Contactar por Telegram (según la privacidad del participante)",
     "title": "Administrador · Todos los Participantes",
     "breadcrumbAdmin": "Administrador",
     "breadcrumbParticipants": "Todos los Participantes",

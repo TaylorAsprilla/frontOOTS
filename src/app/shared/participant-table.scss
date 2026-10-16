@@ -1,0 +1,87 @@
+.assigned-user {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+
+  .assigned-user-name {
+    font-weight: 600;
+  }
+
+  .assigned-user-email {
+    font-size: 0.78rem;
+    color: var(--bs-secondary-color, #6c757d);
+    word-break: break-all;
+  }
+
+}
+
+.assigned-user-empty {
+  font-style: italic;
+  color: var(--bs-secondary-color, #6c757d);
+}
+
+.participant-row {
+  transition: background-color 0.15s ease-in-out;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.025);
+  }
+}
+
+.summary-pill {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background-color: rgba(13, 110, 253, 0.08);
+  color: var(--bs-primary, #0d6efd);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.participant-identity,
+.participant-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.participant-identity {
+  min-width: 220px;
+  max-width: 340px;
+  white-space: normal;
+}
+
+.participant-name {
+  font-weight: 600;
+  color: var(--bs-body-color);
+}
+
+.participant-meta {
+  font-size: 0.82rem;
+  color: var(--bs-secondary-color, #6c757d);
+}
+
+.participant-email {
+  overflow-wrap: anywhere;
+
+  &:hover {
+    color: var(--bs-primary);
+    text-decoration: underline;
+  }
+}
+
+.participant-contact a.btn {
+  &:hover,
+  &:focus-visible {
+    background-color: #fff;
+  }
+
+  &.btn-soft-success:hover,
+  &.btn-soft-success:focus-visible {
+    color: #157347;
+  }
+
+  &.btn-soft-info:hover,
+  &.btn-soft-info:focus-visible {
+    color: #087990;
+  }
+}

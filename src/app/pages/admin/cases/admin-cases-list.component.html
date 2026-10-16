@@ -77,12 +77,8 @@
                 <thead class="bg-light">
                   <tr>
                     <th class="border-0" style="width: 32px"></th>
-                    <th class="border-0" style="width: 110px">
-                      {{ 'adminCases.caseNumber' | transloco }}
-                    </th>
                     <th class="border-0">
-                      <i class="fas fa-flag me-1 text-primary"></i>
-                      {{ 'adminCases.status.label' | transloco }}
+                      {{ 'adminCases.caseNumber' | transloco }}
                     </th>
                     <th class="border-0">
                       <i class="fas fa-user me-1 text-primary"></i>
@@ -104,10 +100,6 @@
                       <i class="fas fa-clipboard-list me-1 text-primary"></i>
                       {{ 'adminCases.progressNotesCount' | transloco }}
                     </th>
-                    <th class="border-0">
-                      <i class="fas fa-calendar-alt me-1 text-primary"></i>
-                      {{ 'adminCases.createdAt' | transloco }}
-                    </th>
                     <th class="border-0 text-center">{{ 'app.actions' | transloco }}</th>
                   </tr>
                 </thead>
@@ -121,14 +113,16 @@
                           [attr.aria-label]="'app.view' | transloco"
                         ></i>
                       </td>
-                      <td style="white-space: normal">
-                        <strong>{{ caseItem.caseNumber || '—' }}</strong>
-                        <div class="text-muted small">ID: {{ caseItem.id }}</div>
-                      </td>
                       <td>
-                        <span [class]="getStatusBadgeClass(caseItem.status)">
-                          {{ getStatusLabelKey(caseItem.status) | transloco }}
-                        </span>
+                        <div class="case-identity">
+                          <strong>#{{ caseItem.id }}</strong>
+                          <span [class]="getStatusBadgeClass(caseItem.status)">
+                            {{ getStatusLabelKey(caseItem.status) | transloco }}
+                          </span>
+                        </div>
+                        <div class="case-created-at" [attr.title]="'adminCases.createdAt' | transloco">
+                          {{ caseItem.createdAt ? (caseItem.createdAt | localizedDate) : '—' }}
+                        </div>
                       </td>
                       <td>
                         @if (caseItem.participant) {
@@ -194,13 +188,6 @@
                           <i class="mdi mdi-file-document-outline me-1"></i>{{ getProgressNotesCount(caseItem) }}
                         </span>
                       </td>
-                      <td>
-                        @if (caseItem.createdAt) {
-                          {{ caseItem.createdAt | localizedDate }}
-                        } @else {
-                          <span class="text-muted">—</span>
-                        }
-                      </td>
                       <td class="text-center" (click)="$event.stopPropagation()">
                         <div class="d-flex justify-content-center gap-1">
                           <a
@@ -230,7 +217,7 @@
                     @if (isExpanded(caseItem)) {
                       <tr class="case-extra-row">
                         <td></td>
-                        <td colspan="9">
+                        <td colspan="7">
                           <div class="case-extra">
                             <div class="case-extra-tags">
                               <span class="info-tag info-tag--neutral">

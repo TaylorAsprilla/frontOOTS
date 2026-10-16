@@ -6,3 +6,63 @@
 
 // UBold Icons
 @import "./icons.scss";
+
+.cases-by-status-chart .apexcharts-datalabel {
+  fill: #fff !important;
+}
+
+app-dashboard-one {
+  --case-status-number-color: #000;
+}
+
+body[data-layout-color='dark'] app-dashboard-one {
+  --case-status-number-color: #fff;
+}
+
+.participant-contact-tooltip,
+.appointment-alert-tooltip {
+  --bs-tooltip-max-width: 250px;
+  --bs-tooltip-bg: #fff;
+  --bs-tooltip-color: #343a40;
+  --bs-tooltip-opacity: 1;
+  --bs-tooltip-padding-x: 0.9rem;
+  --bs-tooltip-padding-y: 0.65rem;
+  --bs-tooltip-border-radius: 0.65rem;
+
+  &.show {
+    opacity: 1;
+  }
+
+  .tooltip-inner {
+    background-color: #fff;
+    color: #343a40;
+    border: 1px solid var(--bs-border-color, #dee2e6);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    font-size: 0.8rem;
+    line-height: 1.5;
+    text-align: left;
+    white-space: normal;
+  }
+
+  &.bs-tooltip-top .tooltip-arrow::before {
+    border-top-color: #fff;
+  }
+
+  &.bs-tooltip-bottom .tooltip-arrow::before {
+    border-bottom-color: #fff;
+  }
+
+  &.bs-tooltip-start .tooltip-arrow::before {
+    border-left-color: #fff;
+  }
+
+  &.bs-tooltip-end .tooltip-arrow::before {
+    border-right-color: #fff;
+  }
+
+  .participant-contact-tooltip-title {
+    display: block;
+    margin-bottom: 0.2rem;
+    font-size: 0.85rem;
+  }
+}
