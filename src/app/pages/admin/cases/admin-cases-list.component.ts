@@ -156,6 +156,7 @@ export class AdminCasesListComponent implements OnInit, OnDestroy {
         const status = (c.status ?? '').toString().toLowerCase();
 
         return (
+          c.id.toString().includes(term.replace(/^#/, '')) ||
           caseNumber.includes(term) ||
           participant.includes(term) ||
           document.includes(term) ||

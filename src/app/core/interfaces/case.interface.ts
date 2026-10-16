@@ -407,6 +407,20 @@ export interface CasesByUserResponse {
   total: number;
   cases: Array<{
     id: number;
+    createdById?: number | null;
+    createdBy?: {
+      id: number;
+      firstName?: string | null;
+      secondName?: string | null;
+      firstLastName?: string | null;
+      secondLastName?: string | null;
+      email?: string | null;
+      username?: string | null;
+      status?: string | null;
+      roleId?: number | null;
+    } | null;
+    referrals?: string | null;
+    closingNote?: string | null;
     caseNumber: string;
     status: string;
     consultationReason: string;
@@ -420,6 +434,10 @@ export interface CasesByUserResponse {
       id: number;
       fullName: string;
       documentNumber: string;
+      email?: string | null;
+      phoneNumber?: string | null;
+      city?: string | null;
+      state?: string | null;
       countryId?: number | null;
       country?: { id: number; name: string; code?: string; flagUrl?: string } | null;
     };

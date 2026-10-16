@@ -22,7 +22,7 @@
                 </div>
                 <div class="text-muted small">
                   @if (!isLoading) {
-                    <span>{{ totalItems }} {{ 'participants.participants' | transloco }}</span>
+                    <span class="summary-pill">{{ totalItems }} {{ 'participants.participants' | transloco }}</span>
                   }
                   @if (isLoading) {
                     <span>{{ 'app.loading' | transloco }}</span>
@@ -73,33 +73,31 @@
                   <tr>
                     <th class="border-0">
                       <div class="d-flex align-items-center">
-                        <i class="fas fa-hashtag me-2 text-primary"></i>
-                        {{ 'participants.id' | transloco }}
-                      </div>
-                    </th>
-                    <th class="border-0">
-                      <div class="d-flex align-items-center">
                         <i class="fas fa-user me-2 text-primary"></i>
                         {{ 'participants.fullName' | transloco }}
                       </div>
                     </th>
                     <th class="border-0">
                       <div class="d-flex align-items-center">
-                        <i class="fas fa-id-card me-2 text-primary"></i>
-                        {{ 'participants.document' | transloco }}
+                        <i class="fas fa-phone me-1 text-primary"></i>
+                        {{ 'adminParticipants.contact' | transloco }}
                       </div>
                     </th>
                     <th class="border-0">
                       <div class="d-flex align-items-center">
-                        <i class="fas fa-envelope me-2 text-primary"></i>
-                        {{ 'participants.email' | transloco }}
+                        <i class="fas fa-folder-open me-1 text-primary"></i>
+                        {{ 'adminParticipants.casesCount' | transloco }}
                       </div>
                     </th>
                     <th class="border-0">
                       <div class="d-flex align-items-center">
-                        <i class="fas fa-phone me-2 text-primary"></i>
-                        {{ 'participants.phone' | transloco }}
+                        <i class="fas fa-map-marker-alt me-1 text-primary"></i>
+                        {{ 'adminParticipants.location' | transloco }}
                       </div>
+                    </th>
+                    <th class="border-0">
+                      <i class="fas fa-user-tie me-1 text-primary"></i>
+                      {{ 'adminParticipants.assignedTo' | transloco }}
                     </th>
                     <th class="border-0">
                       <div class="d-flex align-items-center">
@@ -116,15 +114,93 @@
                 <tbody>
                   @for (participant of filteredParticipants; track participant.id) {
                     <tr class="participant-row" (click)="viewParticipant(participant)" style="cursor: pointer">
-                      <td>{{ participant.id }}</td>
-                      <td>
-                        {{ participant.firstName }} {{ participant.secondName }} {{ participant.firstLastName }}
-                        {{ participant.secondLastName }}
+                      <td (click)="$event.stopPropagation()">
+                        <div class="participant-identity">
+                          <a class="participant-name" [routerLink]="['/participants/detail', participant.id]">
+                            {{ getParticipantFullName(participant) }}
+                          </a>
+                          <span class="participant-meta">
+                            <i class="fas fa-id-card me-1" aria-hidden="true"></i>
+                            {{ participant.documentNumber || ('adminParticipants.noDocument' | transloco) }}
+                          </span>
+                          @if (participant.email) {
+                            <a class="participant-meta participant-email" [href]="getEmailLink(participant.email)">
+                              <i class="fas fa-envelope me-1" aria-hidden="true"></i>{{ participant.email }}
+                            </a>
+                          } @else {
+                            <span class="participant-meta">{{ 'adminParticipants.noEmail' | transloco }}</span>
+                          }
+                        </div>
                       </td>
-                      <td>{{ participant.documentNumber }}</td>
-                      <td>{{ participant.email }}</td>
-                      <td>{{ participant.phoneNumber }}</td>
-                      <td>{{ participant.createdAt | localizedDate }}</td>
+                      <td (click)="$event.stopPropagation()">
+                        <div class="participant-contact">
+                          <span>{{ participant.phoneNumber || ('adminParticipants.noPhone' | transloco) }}</span>
+                          <ng-template #telegramTooltip>
+                            <strong class="participant-contact-tooltip-title">Telegram</strong>
+                            <span>{{ 'adminParticipants.telegramPrivacy' | transloco }}</span>
+                          </ng-template>
+                          <div class="d-flex gap-2">
+                            @if (getMessagingPhone(participant); as phone) {
+                              <a class="btn btn-sm btn-soft-success" [href]="'https://wa.me/' + phone"
+                                target="_blank" rel="noopener noreferrer"
+                                [attr.aria-label]="'adminParticipants.whatsapp' | transloco"
+                                container="body" placement="top" tooltipClass="participant-contact-tooltip"
+                                [ngbTooltip]="'adminParticipants.whatsapp' | transloco">
+                                <i class="fab fa-whatsapp" aria-hidden="true"></i>
+                              </a>
+                              <a class="btn btn-sm btn-soft-info" [href]="'https://t.me/+' + phone"
+                                target="_blank" rel="noopener noreferrer"
+                                [attr.aria-label]="'adminParticipants.telegram' | transloco"
+                                container="body" placement="top" tooltipClass="participant-contact-tooltip"
+                                [ngbTooltip]="telegramTooltip">
+                                <i class="fab fa-telegram-plane" aria-hidden="true"></i>
+                              </a>
+                            } @else {
+                              <span tabindex="0" container="body" placement="top"
+                                tooltipClass="participant-contact-tooltip"
+                                [ngbTooltip]="'adminParticipants.invalidPhone' | transloco">
+                                <button type="button" class="btn btn-sm btn-light" disabled
+                                  [attr.aria-label]="'adminParticipants.invalidPhone' | transloco">
+                                  <i class="fab fa-whatsapp" aria-hidden="true"></i>
+                                </button>
+                              </span>
+                              <span tabindex="0" container="body" placement="top"
+                                tooltipClass="participant-contact-tooltip"
+                                [ngbTooltip]="'adminParticipants.invalidPhone' | transloco">
+                                <button type="button" class="btn btn-sm btn-light" disabled
+                                  [attr.aria-label]="'adminParticipants.invalidPhone' | transloco">
+                                  <i class="fab fa-telegram-plane" aria-hidden="true"></i>
+                                </button>
+                              </span>
+                            }
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
+                          {{ participant.casesCount ?? '—' }}
+                        </span>
+                      </td>
+                      <td>{{ getLocation(participant) || '—' }}</td>
+                      <td>
+                        @if (participant.registeredBy) {
+                          <div class="assigned-user">
+                            <span class="assigned-user-name">{{ getAssignedUserFullName(participant) }}</span>
+                            @if (participant.registeredBy.email) {
+                              <span class="assigned-user-email">{{ participant.registeredBy.email }}</span>
+                            }
+                          </div>
+                        } @else {
+                          <span class="assigned-user-empty">{{ 'adminParticipants.unassigned' | transloco }}</span>
+                        }
+                      </td>
+                      <td>
+                        @if (participant.createdAt) {
+                          {{ participant.createdAt | localizedDate }}
+                        } @else {
+                          <span class="text-muted">—</span>
+                        }
+                      </td>
                       <td class="text-center" (click)="$event.stopPropagation()">
                         <div class="action-buttons">
                           <a

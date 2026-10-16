@@ -11,7 +11,9 @@ import { AdminParticipant } from '../../../core/interfaces/admin-participant.int
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
-import { PhoneNumber, PhoneNumberFormat, PhoneNumberUtil } from 'google-libphonenumber';
+import {
+  participantFullName, assignedUserFullName, participantLocation, messagingPhone, participantEmailLink,
+} from '../../../shared/participant-table-helpers';
 
 @Component({
   selector: 'app-admin-participants-list',
@@ -149,64 +151,18 @@ export class AdminParticipantsListComponent implements OnInit, OnDestroy {
   }
 
   /** Concatena nombres del participante saltando valores null/undefined/vacíos. */
-  getParticipantFullName(p: AdminParticipant): string {
-    return [p.firstName, p.secondName, p.firstLastName, p.secondLastName]
-      .filter((part) => !!part && part.toString().trim().length > 0)
-      .join(' ')
-      .trim();
-  }
+  getParticipantFullName = participantFullName;
 
   /**
    * Nombre completo del usuario que registró o tiene asignado el participante.
    * Si no existe `registeredBy`, devuelve cadena vacía (la plantilla muestra "Sin asignar").
    */
-  getAssignedUserFullName(p: AdminParticipant): string {
-    const user = p.registeredBy;
-    if (!user) {
-      return '';
-    }
-    return [user.firstName, user.secondName, user.firstLastName, user.secondLastName]
-      .filter((part) => !!part && part.toString().trim().length > 0)
-      .join(' ')
-      .trim();
-  }
+  getAssignedUserFullName = assignedUserFullName;
 
   /** Ciudad / Estado en una sola celda. */
-  getLocation(p: AdminParticipant): string {
-    const parts = [p.city, p.state].filter((part) => !!part && part.toString().trim().length > 0);
-    return parts.join(' / ');
-  }
-
-  getMessagingPhone(participant: AdminParticipant): string | null {
-    if (!participant.phoneNumber) return null;
-    const phoneUtil = PhoneNumberUtil.getInstance();
-    let phone: PhoneNumber;
-    try {
-      phone = phoneUtil.parseAndKeepRawInput(
-        participant.phoneNumber,
-        participant.country?.iso?.toUpperCase(),
-      );
-    } catch (error) {
-      const parseErrors = [
-        'Invalid country calling code',
-        'The string supplied did not seem to be a phone number',
-        'Phone number too short after IDD',
-        'The string supplied is too short to be a phone number',
-        'The string supplied is too long to be a phone number',
-      ];
-      if (!(error instanceof Error) || !parseErrors.includes(error.message)) {
-        throw error;
-      }
-      return null;
-    }
-    return phoneUtil.isValidNumber(phone)
-      ? phoneUtil.format(phone, PhoneNumberFormat.E164).replace('+', '')
-      : null;
-  }
-
-  getEmailLink(email: string): string {
-    return `mailto:${encodeURIComponent(email.trim())}`;
-  }
+  getLocation = participantLocation;
+  getMessagingPhone = messagingPhone;
+  getEmailLink = participantEmailLink;
 
   trackById(_index: number, item: AdminParticipant): number {
     return item.id;

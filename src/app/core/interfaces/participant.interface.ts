@@ -1,3 +1,5 @@
+import { RegisteredByUser } from './admin-participant.interface';
+
 /**
  * Participant-related interfaces for type safety and data structure
  */
@@ -129,7 +131,9 @@ export interface Participant {
   healthInsuranceId: number;
   customHealthInsurance?: string;
   referralSource?: string;
-  country: string;
+  country: string | { iso?: string | null } | null;
+  registeredBy?: RegisteredByUser | null;
+  casesCount?: number;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;

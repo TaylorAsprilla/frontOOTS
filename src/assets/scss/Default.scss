@@ -7,7 +7,20 @@
 // UBold Icons
 @import "./icons.scss";
 
-.participant-contact-tooltip {
+.cases-by-status-chart .apexcharts-datalabel {
+  fill: #fff !important;
+}
+
+app-dashboard-one {
+  --case-status-number-color: #000;
+}
+
+body[data-layout-color='dark'] app-dashboard-one {
+  --case-status-number-color: #fff;
+}
+
+.participant-contact-tooltip,
+.appointment-alert-tooltip {
   --bs-tooltip-max-width: 250px;
   --bs-tooltip-bg: #fff;
   --bs-tooltip-color: #343a40;

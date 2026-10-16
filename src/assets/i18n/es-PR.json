@@ -509,8 +509,12 @@
       "cases": "Casos",
       "average": "Promedio",
       "casesPerParticipant": "casos por participante",
+      "averageExplanation": "Total de casos dividido entre participantes del período seleccionado. Un participante puede tener varios casos.",
+      "averageUnavailable": "Promedio no disponible: no hay participantes en el período seleccionado.",
       "casesPerMonth": "Casos Realizados por Mes",
       "casesByStatus": "Casos por Estado",
+      "openInProgress": "Abiertos / En Progreso",
+      "otherCases": "Otros estados",
       "totalCases": "Total de Casos",
       "closedCases": "Casos Cerrados",
       "noData": "Sin datos disponibles — crea el primer caso."

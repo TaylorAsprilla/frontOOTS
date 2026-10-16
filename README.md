@@ -469,6 +469,32 @@ país; los inválidos deshabilitan los accesos. Telegram depende de la cuenta
 y privacidad del participante. El conteo requiere desplegar también el backend,
 pero no necesita una migración de base de datos.
 
+En "Todos los casos", la columna "# Caso" muestra el ID junto a la etiqueta
+de estado, sin una columna de estado separada. La búsqueda admite el ID
+con o sin `#` y conserva la búsqueda por el número de caso anterior.
+El listado de casos de Trabajo Social usa la misma presentación y conserva
+los filtros de estado y las alertas de citas junto al ID.
+Comparte el estilo visual del administrador: encabezados, filas, colores de
+estado, datos del participante y acciones, sin modificar los permisos.
+Ambos listados permiten leer el motivo completo en una columna ampliada
+con texto en varias líneas. Trabajo Social no muestra la columna de profesional.
+Sus filas de casos se expanden para mostrar información adicional.
+La fecha de creación se muestra debajo del ID y estado dentro de "# Caso",
+sin columna de fecha independiente. El calendario del encabezado de Trabajo
+Social conserva la ordenación por fecha de creación.
+
+El gráfico "Casos por Estado" muestra el total en el centro y un resumen
+con cantidad y porcentaje por grupo debajo. Los porcentajes sobre la dona
+son blancos en ambos temas; el total y el resumen se adaptan al tema
+claro u oscuro y respetan el filtro de fechas del tablero.
+La tarjeta "Casos / Participantes" muestra el promedio con dos decimales,
+sin porcentaje ni límite superior. Divide los totales del período seleccionado;
+si no hay participantes, el promedio no está disponible y se muestra `—`.
+La tabla de participantes de Trabajo Social comparte las columnas de identidad,
+contacto, casos, ubicación, usuario asignado, fecha y acciones del administrador.
+Los listados por usuario y país entregan el conteo calculado y los datos de
+contacto necesarios, sin cambiar los filtros de acceso ni requerir migraciones.
+
 Los mapas de países usan el alias `jsvectormap-country-maps`, fijado a la
 distribución oficial `jsvectormap@1.3.0`, porque la versión 1.7 solo incluye
 los mapas mundiales. Solo se importan sus datos, no su runtime.

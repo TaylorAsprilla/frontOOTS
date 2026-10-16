@@ -6,21 +6,11 @@
     <div class="col-12">
       <div class="card">
         <div class="card-body">
-          <!-- Header Actions -->
-          <div class="row align-items-center mb-4">
-            <div class="col-sm-6">
-              <h4 class="card-title mb-0">
-                <i class="mdi mdi-folder-open me-2 text-primary"></i>
-                {{ 'cases.listTitle' | transloco }}
-              </h4>
-            </div>
-          </div>
-
           <!-- Filters and Search -->
           <div class="row mb-3">
             <div class="col-md-6">
-              <form [formGroup]="searchForm">
-                <div class="input-group">
+              <form class="d-flex flex-wrap align-items-center gap-3" [formGroup]="searchForm">
+                <div class="input-group" style="max-width: 360px">
                   <input
                     type="text"
                     class="form-control"
@@ -31,10 +21,17 @@
                     <i class="mdi mdi-close"></i>
                   </button>
                 </div>
+                @if (!isLoading) {
+                  <span class="summary-pill">{{ totalItems }} {{ 'adminCases.totalCases' | transloco }}</span>
+                }
               </form>
             </div>
             <div class="col-md-6">
-              <div class="d-flex justify-content-end">
+              <div class="d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-info" (click)="loadCases()" [disabled]="isLoading">
+                  <i class="mdi" [ngClass]="isLoading ? 'mdi-loading mdi-spin' : 'mdi-refresh'"></i>
+                  <span class="ms-1">{{ 'app.refresh' | transloco }}</span>
+                </button>
                 <div ngbDropdown class="d-inline-block">
                   <button class="btn btn-outline-primary dropdown-toggle" ngbDropdownToggle id="statusFilter">
                     <i class="mdi mdi-filter me-1"></i>
@@ -69,54 +66,78 @@
           <!-- Cases Table -->
           @if (!isLoading && filteredCases.length > 0) {
             <div class="table-responsive">
-              <table class="table table-hover">
-                <thead class="table-light">
+              <table class="table table-hover table-centered align-middle table-nowrap mb-0">
+                <thead class="bg-light">
                   <tr>
-                    <th class="cursor-pointer" (click)="sortBy('id')" style="width: 110px">
+                    <th class="border-0" style="width: 32px"></th>
+                    <th class="border-0 cursor-pointer" (click)="sortBy('id')">
                       {{ 'cases.caseNumber' | transloco }}
                       <i [class]="getSortIcon('id')" class="ms-1"></i>
+                      <button type="button" class="btn btn-link btn-sm p-0 ms-2"
+                        (click)="$event.stopPropagation(); sortBy('createdAt')"
+                        [attr.aria-label]="'cases.createdDate' | transloco"
+                        [ngbTooltip]="'cases.createdDate' | transloco">
+                        <i [class]="getSortIcon('createdAt')" class="ms-1" aria-hidden="true"></i>
+                      </button>
                     </th>
-                    <th class="cursor-pointer" (click)="sortBy('participantName')">
+                    <th class="border-0 cursor-pointer" (click)="sortBy('participantName')">
                       <i class="fas fa-user me-1 text-primary"></i>
                       {{ 'cases.participantName' | transloco }}
                       <i [class]="getSortIcon('participantName')" class="ms-1"></i>
                     </th>
-                    <th class="cursor-pointer" (click)="sortBy('status')">
-                      <i class="fas fa-flag me-1 text-primary"></i>
-                      {{ 'cases.status' | transloco }}
-                      <i [class]="getSortIcon('status')" class="ms-1"></i>
-                    </th>
-                    <th>
+                    <th class="border-0">
                       <i class="fas fa-comment-medical me-1 text-primary"></i>
                       {{ 'cases.consultationReason' | transloco }}
                     </th>
-                    <th class="text-center" style="width: 90px">
+                    <th class="border-0 text-center" style="width: 90px">
                       <i class="fas fa-hourglass-half me-1 text-primary"></i>
                       {{ 'cases.daysOpen' | transloco }}
                     </th>
-                    <th class="text-center" style="width: 80px">
+                    <th class="border-0 text-center" style="width: 80px">
                       <i class="fas fa-clipboard-list me-1 text-primary"></i>
                       {{ 'cases.progressNotesCount' | transloco }}
                     </th>
-                    <th class="cursor-pointer" (click)="sortBy('createdAt')">
-                      <i class="fas fa-calendar-alt me-1 text-primary"></i>
-                      {{ 'cases.createdDate' | transloco }}
-                      <i [class]="getSortIcon('createdAt')" class="ms-1"></i>
-                    </th>
-                    <th class="text-end">{{ 'app.actions' | transloco }}</th>
+                    <th class="border-0 text-center">{{ 'app.actions' | transloco }}</th>
                   </tr>
                 </thead>
                 <tbody>
                   @for (caseItem of filteredCases; track caseItem.id) {
-                    <tr>
-                      <td>
-                        <strong class="text-primary">{{ caseItem.caseNumber || '—' }}</strong>
-                        <div class="text-muted small">ID: {{ caseItem.id }}</div>
+                    <tr class="case-row cursor-pointer" (click)="toggleExpand(caseItem)">
+                      <td class="text-center">
+                        <i class="mdi"
+                          [ngClass]="isExpanded(caseItem) ? 'mdi-chevron-down' : 'mdi-chevron-right'"
+                          [attr.aria-label]="'app.view' | transloco"></i>
                       </td>
                       <td>
-                        <div class="d-flex align-items-center">
-                          <div>
-                            <h6 class="mb-0">
+                        <div class="case-identity">
+                          <strong>#{{ caseItem.id }}</strong>
+                          <span [class]="getStatusBadgeClass(caseItem.status)">
+                            {{ getStatusLabel(caseItem.status) | transloco }}
+                          </span>
+                          @if (getAppointmentAlert(caseItem); as alertLevel) {
+                            <span
+                              [class]="getAppointmentAlertClass(caseItem)"
+                              [ngbTooltip]="getAppointmentAlertLabel(caseItem)"
+                              container="body"
+                              tooltipClass="appointment-alert-tooltip"
+                              placement="top"
+                            >
+                              <i
+                                class="mdi"
+                                [class.mdi-calendar-alert]="alertLevel === 'overdue'"
+                                [class.mdi-calendar-clock]="alertLevel === 'today'"
+                                [class.mdi-calendar-check]="alertLevel === 'soon'"
+                              ></i>
+                            </span>
+                          }
+                        </div>
+                        <div class="case-created-at" [attr.title]="'cases.createdDate' | transloco">
+                          {{ caseItem.createdAt ? (caseItem.createdAt | localizedDate) : '—' }}
+                        </div>
+                      </td>
+                      <td>
+                        <div class="entity-cell">
+                            <span class="entity-name">
                               @if (getCountryFlag(caseItem); as flagUrl) {
                                 <img
                                   [src]="flagUrl"
@@ -128,40 +149,23 @@
                                 />
                               }
                               {{ getParticipantName(caseItem) }}
-                            </h6>
-                          </div>
+                            </span>
+                            @if (caseItem.participant?.documentNumber) {
+                              <span class="entity-sub">
+                                <i class="mdi mdi-card-account-details-outline"></i>
+                                {{ caseItem.participant.documentNumber }}
+                              </span>
+                            }
+                            @if (getLocation(caseItem)) {
+                              <span class="entity-sub">
+                                <i class="mdi mdi-map-marker-outline"></i>
+                                {{ getLocation(caseItem) }}
+                              </span>
+                            }
                         </div>
                       </td>
-                      <td>
-                        <span [class]="getStatusBadgeClass(caseItem.status)">
-                          {{ 'cases.' + caseItem.status | transloco }}
-                        </span>
-                        @if (getAppointmentAlert(caseItem); as alertLevel) {
-                          <span
-                            [class]="getAppointmentAlertClass(caseItem)"
-                            [ngbTooltip]="getAppointmentAlertLabel(caseItem)"
-                            placement="top"
-                          >
-                            <i
-                              class="mdi"
-                              [class.mdi-calendar-alert]="alertLevel === 'overdue'"
-                              [class.mdi-calendar-clock]="alertLevel === 'today'"
-                              [class.mdi-calendar-check]="alertLevel === 'soon'"
-                            ></i>
-                          </span>
-                        }
-                      </td>
-                      <td>
-                        <span
-                          [ngbTooltip]="caseItem.consultationReason?.length > 120 ? caseItem.consultationReason : ''"
-                          placement="top"
-                        >
-                          {{
-                            caseItem.consultationReason?.length > 120
-                              ? (caseItem.consultationReason | slice: 0 : 120) + '…'
-                              : caseItem.consultationReason
-                          }}
-                        </span>
+                      <td class="reason-cell" [attr.title]="caseItem.consultationReason || ''">
+                        {{ caseItem.consultationReason || '—' }}
                       </td>
                       <td class="text-center">{{ getDaysOpen(caseItem) ?? '—' }}</td>
                       <td class="text-center">
@@ -169,14 +173,7 @@
                           <i class="mdi mdi-file-document-outline me-1"></i>{{ getProgressNotesCount(caseItem) }}
                         </span>
                       </td>
-                      <td>
-                        @if (caseItem.createdAt) {
-                          <span>{{ caseItem.createdAt | localizedDate: 'short' }}</span>
-                        } @else {
-                          <span class="text-muted">{{ 'app.notAvailable' | transloco }}</span>
-                        }
-                      </td>
-                      <td class="text-center">
+                      <td class="text-center" (click)="$event.stopPropagation()">
                         <div class="action-buttons d-flex justify-content-center gap-1">
                           <a
                             [routerLink]="['/cases/detail', caseItem.id]"
@@ -219,6 +216,89 @@
                         </div>
                       </td>
                     </tr>
+                    @if (isExpanded(caseItem)) {
+                      <tr class="case-extra-row">
+                        <td></td>
+                        <td colspan="6">
+                          <div class="case-extra">
+                            <div class="case-extra-tags">
+                              <span class="info-tag info-tag--neutral">
+                                <i class="mdi mdi-identifier"></i><strong>ID:</strong> {{ caseItem.id }}
+                              </span>
+                              <span class="info-tag" [ngClass]="{
+                                'info-tag--info': caseItem.status === 'open',
+                                'info-tag--warning': caseItem.status === 'in_progress',
+                                'info-tag--success': caseItem.status === 'closed'
+                              }">
+                                <i class="mdi mdi-flag-outline"></i>
+                                <strong>{{ 'adminCases.status.label' | transloco }}:</strong>
+                                {{ getStatusLabel(caseItem.status) | transloco }}
+                              </span>
+                              @if (caseItem.updatedAt) {
+                                <span class="info-tag info-tag--neutral">
+                                  <i class="mdi mdi-clock-edit-outline"></i>
+                                  <strong>{{ 'adminCases.updatedAt' | transloco }}:</strong>
+                                  {{ caseItem.updatedAt | localizedDate }}
+                                </span>
+                              }
+                              @if (caseItem.closedAt) {
+                                <span class="info-tag info-tag--success">
+                                  <i class="mdi mdi-check-circle-outline"></i>
+                                  <strong>{{ 'adminCases.closedAt' | transloco }}:</strong>
+                                  {{ caseItem.closedAt | localizedDate }}
+                                </span>
+                              }
+                              @if (caseItem.participant?.email) {
+                                <span class="info-tag info-tag--primary">
+                                  <i class="mdi mdi-email-outline"></i>
+                                  <strong>{{ 'adminCases.participantEmail' | transloco }}:</strong>
+                                  {{ caseItem.participant.email }}
+                                </span>
+                              }
+                              @if (caseItem.participant?.phoneNumber) {
+                                <span class="info-tag info-tag--primary">
+                                  <i class="mdi mdi-phone-outline"></i>
+                                  <strong>{{ 'adminCases.participantPhone' | transloco }}:</strong>
+                                  {{ caseItem.participant.phoneNumber }}
+                                </span>
+                              }
+                              @if (caseItem.createdBy?.username) {
+                                <span class="info-tag info-tag--neutral">
+                                  <i class="mdi mdi-account-tie-outline"></i>
+                                  <strong>{{ 'adminCases.professionalUsername' | transloco }}:</strong>
+                                  {{ caseItem.createdBy.username }}
+                                </span>
+                              }
+                              @if (caseItem.createdBy && caseItem.createdById != null) {
+                                <span class="info-tag info-tag--neutral">
+                                  <i class="mdi mdi-shield-account-outline"></i>
+                                  <strong>{{ 'adminCases.roleId' | transloco }}:</strong>
+                                  {{ caseItem.createdBy.roleId ?? '—' }}
+                                </span>
+                              }
+                            </div>
+                            @if (caseItem.intervention) {
+                              <div class="case-extra-block">
+                                <h6 class="text-uppercase text-muted mb-1">{{ 'adminCases.intervention' | transloco }}</h6>
+                                <p class="mb-0">{{ caseItem.intervention }}</p>
+                              </div>
+                            }
+                            @if (caseItem.referrals) {
+                              <div class="case-extra-block">
+                                <h6 class="text-uppercase text-muted mb-1">{{ 'adminCases.referrals' | transloco }}</h6>
+                                <p class="mb-0">{{ caseItem.referrals }}</p>
+                              </div>
+                            }
+                            @if (caseItem.closingNote) {
+                              <div class="case-extra-block">
+                                <h6 class="text-uppercase text-muted mb-1">{{ 'adminCases.closingNote' | transloco }}</h6>
+                                <p class="mb-0">{{ caseItem.closingNote }}</p>
+                              </div>
+                            }
+                          </div>
+                        </td>
+                      </tr>
+                    }
                   }
                 </tbody>
               </table>

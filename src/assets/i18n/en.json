@@ -510,8 +510,12 @@
       "cases": "Cases",
       "average": "Average",
       "casesPerParticipant": "cases per participant",
+      "averageExplanation": "Total cases divided by participants in the selected period. A participant may have multiple cases.",
+      "averageUnavailable": "Average unavailable: there are no participants in the selected period.",
       "casesPerMonth": "Cases Performed by Month",
       "casesByStatus": "Cases by Status",
+      "openInProgress": "Open / In Progress",
+      "otherCases": "Other statuses",
       "totalCases": "Total Cases",
       "closedCases": "Closed Cases",
       "noData": "No data yet — create the first case."
