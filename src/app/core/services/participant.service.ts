@@ -94,7 +94,7 @@ export class ParticipantService {
       }),
       catchError((error) => {
         this.loadingSubject.next(false);
-        this.notificationService.showError('Failed to load participants');
+        this.notificationService.showError('No se pudo cargar la lista de participantes. Verifique su conexión e intente nuevamente.');
         return throwError(() => error);
       }),
     );
@@ -158,7 +158,7 @@ export class ParticipantService {
       }),
       catchError((error) => {
         this.loadingSubject.next(false);
-        this.notificationService.showError('Failed to load participant details');
+        this.notificationService.showError('No se pudo cargar la información del participante. Verifique su conexión y vuelva a intentarlo.');
         return throwError(() => error);
       }),
     );
@@ -251,7 +251,7 @@ export class ParticipantService {
     return this.http.delete<{ success: boolean; message?: string }>(`${this.apiUrl}/${id}`).pipe(
       map((response) => {
         this.loadingSubject.next(false);
-        this.notificationService.showSuccess('Participant deleted successfully');
+        this.notificationService.showSuccess('Participante eliminado correctamente.');
 
         // Update local state
         const currentParticipants = this.participantsSubject.value;
@@ -262,7 +262,7 @@ export class ParticipantService {
       }),
       catchError((error) => {
         this.loadingSubject.next(false);
-        this.notificationService.showError('Failed to delete participant');
+        this.notificationService.showError('No se pudo eliminar el participante. Verifique sus permisos y vuelva a intentarlo.');
         return throwError(() => error);
       }),
     );

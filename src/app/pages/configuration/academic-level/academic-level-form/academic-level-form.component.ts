@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AcademicLevelService } from '../../../../core/services/academic-level.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { PageTitleComponent } from '../../../../shared/page-title/page-title.component';
@@ -21,6 +21,7 @@ export class AcademicLevelFormComponent implements OnInit, OnDestroy {
   private readonly formBuilder = inject(FormBuilder);
   private readonly academicLevelService = inject(AcademicLevelService);
   private readonly notificationService = inject(NotificationService);
+  private readonly translocoService = inject(TranslocoService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly destroy$ = new Subject<void>();
@@ -94,7 +95,7 @@ export class AcademicLevelFormComponent implements OnInit, OnDestroy {
         error: (error) => {
           this.isLoading = false;
           console.error('Error loading academic level:', error);
-          this.notificationService.showError('academicLevel.loadError');
+          this.notificationService.showError(this.translocoService.translate('academicLevel.loadError'));
           this.router.navigate(['/configuration/academic-level']);
         },
       });
@@ -106,7 +107,7 @@ export class AcademicLevelFormComponent implements OnInit, OnDestroy {
   onSubmit(): void {
     if (this.academicLevelForm.invalid) {
       this.markFormGroupTouched(this.academicLevelForm);
-      this.notificationService.showWarning('common.formValidationError');
+      this.notificationService.showWarning(this.translocoService.translate('common.formValidationError'));
       return;
     }
 
@@ -122,7 +123,7 @@ export class AcademicLevelFormComponent implements OnInit, OnDestroy {
         this.isSubmitting = false;
         if (response.statusCode === 200 || response.statusCode === 201) {
           const successMessage = this.isEditMode ? 'academicLevel.updateSuccess' : 'academicLevel.createSuccess';
-          this.notificationService.showSuccess(successMessage);
+          this.notificationService.showSuccess(this.translocoService.translate(successMessage));
           this.router.navigate(['/configuration/academic-level']);
         }
       },
@@ -135,7 +136,7 @@ export class AcademicLevelFormComponent implements OnInit, OnDestroy {
         if (error.error && error.error.message) {
           this.notificationService.showError(error.error.message);
         } else {
-          this.notificationService.showError(errorMessage);
+          this.notificationService.showError(this.translocoService.translate(errorMessage));
         }
       },
     });

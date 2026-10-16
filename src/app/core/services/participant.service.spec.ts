@@ -6,6 +6,10 @@ import { ParticipantService } from './participant.service';
 import { TokenStorageService } from './token-storage.service';
 import { NotificationService } from './notification.service';
 import { CreateParticipantDto } from '../interfaces/participant-create.interface';
+import { ParticipantDetailComponent } from '../../pages/participants/participant-detail/participant-detail.component';
+import { ActivatedRoute } from '@angular/router';
+import { AuthenticationService } from './auth.service';
+import { RoleService } from './role.service';
 
 describe('ParticipantService update payload', () => {
   let service: ParticipantService;
@@ -32,6 +36,9 @@ describe('ParticipantService update payload', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         ParticipantService,
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => '21' }, data: {} } } },
+        { provide: AuthenticationService, useValue: {} },
+        { provide: RoleService, useValue: {} },
         { provide: TokenStorageService, useValue: { getToken: () => 'test-token' } },
         {
           provide: NotificationService,
@@ -44,6 +51,25 @@ describe('ParticipantService update payload', () => {
   });
 
   afterEach(() => http.verify());
+
+  it('shows a single readable notification when participant details fail to load', () => {
+    const component = TestBed.runInInjectionContext(() => new ParticipantDetailComponent());
+    component.ngOnInit();
+    http.expectOne(`${environment.apiUrl}/participants/21`).flush({}, { status: 500, statusText: 'Server Error' });
+    expect(TestBed.inject(NotificationService).showError).toHaveBeenCalledOnceWith(
+      'No se pudo cargar la información del participante. Verifique su conexión y vuelva a intentarlo.',
+    );
+    expect(component.isLoading).toBeFalse();
+    component.ngOnDestroy();
+  });
+
+  it('confirms participant deletion in Spanish', () => {
+    service.deleteParticipant(21).subscribe();
+    http.expectOne(`${environment.apiUrl}/participants/21`).flush({ success: true });
+    expect(TestBed.inject(NotificationService).showSuccess).toHaveBeenCalledOnceWith(
+      'Participante eliminado correctamente.',
+    );
+  });
 
   it('omits registeredById from PATCH while preserving the editable fields and input', () => {
     service.updateParticipant(21, participantData).subscribe();

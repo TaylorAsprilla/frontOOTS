@@ -453,6 +453,12 @@ Este servicio lee las respuestas JSON recibidas como Blob y muestra el motivo
 y la acción requerida para documentos faltantes. Los errores internos del
 servidor se muestran con un mensaje genérico, sin detalles técnicos.
 
+Las operaciones de casos y participantes ya notifican desde sus servicios;
+las pantallas no deben repetir ese aviso al manejar el mismo error. Los
+mensajes expresados como claves de idioma deben resolverse con Transloco
+antes de pasarlos a `NotificationService`. Las validaciones que impiden
+avanzar en un formulario deben indicar qué información falta.
+
 Los mapas de países usan el alias `jsvectormap-country-maps`, fijado a la
 distribución oficial `jsvectormap@1.3.0`, porque la versión 1.7 solo incluye
 los mapas mundiales. Solo se importan sus datos, no su runtime.

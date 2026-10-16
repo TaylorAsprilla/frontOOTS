@@ -568,7 +568,6 @@ export class CreateCaseComponent implements OnInit, AfterViewInit, OnDestroy, Ha
         error: (error) => {
           console.error('Error al cargar el caso:', error);
           this.isLoadingCase = false;
-          this.notificationService.showError('Error al cargar el caso: ' + (error.message || 'Error desconocido'));
           this.router.navigate(['/cases/list']);
         },
       });
@@ -1313,7 +1312,10 @@ export class CreateCaseComponent implements OnInit, AfterViewInit, OnDestroy, Ha
       if (this.activeWizardStep === 6) {
         const followUpGroup = this.caseForm.get('followUpPlan');
         followUpGroup?.markAllAsTouched();
-        if (followUpGroup?.invalid) return;
+        if (followUpGroup?.invalid) {
+          this.notificationService.showWarning('Seleccione una opción del plan de seguimiento y complete los campos requeridos antes de continuar.');
+          return;
+        }
       }
       // Step 6: if processCompleted is selected, close the case instead of advancing
       if (
