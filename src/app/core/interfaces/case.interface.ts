@@ -402,6 +402,10 @@ export interface CaseListResponse {
 /**
  * Response for cases by user
  */
+export interface CasesByCountryResponse extends Omit<CasesByUserResponse, 'userId'> {
+  countryId: number;
+}
+
 export interface CasesByUserResponse {
   userId: number;
   total: number;

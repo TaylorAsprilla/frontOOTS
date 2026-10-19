@@ -15,6 +15,8 @@ import { REVENUEHISTORYDATA, USERBALANCEDATA } from './data';
 import { ParticipantService } from 'src/app/core/services/participant.service';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { CaseService } from 'src/app/core/services/case.service';
+import { RoleService } from 'src/app/core/services/role.service';
+import { NotificationService } from 'src/app/core/services/notification.service';
 import { Subject, takeUntil, forkJoin } from 'rxjs';
 
 /**
@@ -77,6 +79,8 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
   private readonly participantService = inject(ParticipantService);
   private readonly authService = inject(AuthenticationService);
   private readonly caseService = inject(CaseService);
+  private readonly roleService = inject(RoleService);
+  private readonly notificationService = inject(NotificationService);
   private readonly calendar = inject(NgbCalendar);
   private readonly destroy$ = new Subject<void>();
 
@@ -126,10 +130,22 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Load participants and cases in parallel
+    const isAdminCountry = this.roleService.isAdminCountry();
+    if (isAdminCountry && !currentUser.country?.id) {
+      this.notificationService.showError('No se pudo obtener el país asignado al usuario');
+      return;
+    }
+
+    const participants = isAdminCountry && currentUser.country
+      ? this.participantService.getParticipantsByCountry(currentUser.country.id)
+      : this.participantService.getParticipantsByUser(currentUser.id);
+    const cases = isAdminCountry && currentUser.country
+      ? this.caseService.getCasesByCountry(currentUser.country.id)
+      : this.caseService.getCasesByUserId(currentUser.id);
+
     forkJoin({
-      participants: this.participantService.getParticipantsByUser(currentUser.id),
-      cases: this.caseService.getCasesByUserId(currentUser.id),
+      participants,
+      cases,
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -348,25 +364,7 @@ export class DashboardOneComponent implements OnInit, OnDestroy {
    * @deprecated Use loadDashboardData instead
    */
   loadParticipantsCount(): void {
-    const currentUser = this.authService.currentUser();
-
-    if (!currentUser || !currentUser.id) {
-      return;
-    }
-
-    this.participantService
-      .getParticipantsByUser(currentUser.id)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          this.totalParticipants = response.data.total;
-          // Actualizar la tarjeta de estadísticas de participantes
-          this._updateParticipantsCard();
-        },
-        error: (error) => {
-          console.error('Error loading participants count:', error);
-        },
-      });
+    this.loadDashboardData();
   }
 
   /**
