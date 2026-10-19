@@ -57,7 +57,7 @@ describe('Social work case list', () => {
         { provide: CasePdfService, useValue: {} },
         { provide: TokenStorageService, useValue: { getUser: () => ({ id: 10 }) } },
         { provide: NotificationService, useValue: {} },
-        { provide: RoleService, useValue: { hasAnyRole: () => true } },
+        { provide: RoleService, useValue: { hasAnyRole: () => true, isAdminCountry: () => false } },
         { provide: CountryService, useValue: { getAvailableCountries: () => [] } },
       ],
     }).compileComponents();
@@ -121,4 +121,31 @@ describe('Social work case list', () => {
     expect(fixture.componentInstance.filteredCases.map((item) => item.id)).toEqual([38, 37, 36]);
     fixture.destroy();
   }));
+
+  it('loads all cases in the assigned country instead of cases created by the administrator', () => {
+    spyOn(TestBed.inject(RoleService), 'isAdminCountry').and.returnValue(true);
+    spyOn(TestBed.inject(TokenStorageService), 'getUser').and.returnValue({
+      id: 10,
+      firstName: 'Admin', firstLastName: 'Country', email: 'admin@example.test',
+      country: { id: 3, name: 'USA', iso: 'US', locale: 'en-US' },
+      token: 'test-token', tokenType: 'Bearer', expiresAt: new Date(),
+    });
+    const service = TestBed.inject(CaseService);
+    const byUser = spyOn(service, 'getCasesByUserId');
+    const byCountry = jasmine.createSpy().and.returnValue(of({
+      countryId: 3,
+      total: 2,
+      cases: [{ id: 41, createdById: 7 }, { id: 42, createdById: 8 }],
+    }));
+    service.getCasesByCountry = byCountry;
+    const fixture = TestBed.createComponent(CaseListComponent);
+    fixture.detectChanges();
+    expect(byCountry).toHaveBeenCalledOnceWith(3);
+    expect(byUser).not.toHaveBeenCalled();
+    expect(fixture.componentInstance.totalItems).toBe(2);
+    expect(fixture.nativeElement.querySelector('a[href="/cases/edit/41"]')).toBeNull();
+    expect(fixture.nativeElement.querySelector('a[href="/cases/detail/41"]')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('tbody .mdi-delete')).toBeNull();
+    fixture.destroy();
+  });
 });

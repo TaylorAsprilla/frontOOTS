@@ -11,6 +11,7 @@ import {
   CaseResponse,
   CaseListResponse,
   CasesByUserResponse,
+  CasesByCountryResponse,
   CreateCaseDto,
   CaseStatus,
   TransferCaseDto,
@@ -142,6 +143,23 @@ export class CaseService {
         catchError((error) => {
           this.loadingSubject.next(false);
           this.notificationService.showError(error.error?.message || 'Error al cargar los casos del usuario');
+          return throwError(() => error);
+        }),
+      );
+  }
+
+  getCasesByCountry(countryId: number): Observable<CasesByCountryResponse> {
+    this.loadingSubject.next(true);
+    return this.http
+      .get<{ data: CasesByCountryResponse }>(`${this.apiUrl}/by-country/${countryId}`, {
+        headers: this.getHeaders(),
+      })
+      .pipe(
+        map((response) => response.data),
+        tap(() => this.loadingSubject.next(false)),
+        catchError((error) => {
+          this.loadingSubject.next(false);
+          this.notificationService.showError(error.error?.message || 'Error al cargar los casos del país');
           return throwError(() => error);
         }),
       );

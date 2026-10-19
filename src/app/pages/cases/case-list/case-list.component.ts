@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { NgbPaginationModule, NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { Subject, takeUntil, debounceTime, distinctUntilChanged, finalize } from 'rxjs';
+import { Observable, Subject, takeUntil, debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 
 import { CaseService } from '../../../core/services/case.service';
 import { CasePdfService } from '../../../core/services/case-pdf.service';
@@ -12,7 +12,7 @@ import { TokenStorageService } from '../../../core/services/token-storage.servic
 import { NotificationService } from '../../../core/services/notification.service';
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
-import { CaseStatus, CaseType } from '../../../core/interfaces/case.interface';
+import { CasesByUserResponse, CaseStatus, CaseType } from '../../../core/interfaces/case.interface';
 import { LocalizedDatePipe } from '../../../core/pipes/localized-date.pipe';
 import { RoleService } from '../../../core/services/role.service';
 import { CountryService } from '../../../core/services/country.service';
@@ -40,6 +40,14 @@ export class CaseListComponent implements OnInit, OnDestroy {
   canCreateCase(): boolean {
     // ADMIN, COORDINADOR y TRABAJO_SOCIAL pueden crear
     return this.roleService.hasAnyRole('ADMIN', 'COORDINADOR', 'TRABAJO_SOCIAL');
+  }
+  canManageCase(caseItem: { createdById?: number | null }): boolean {
+    return !this.roleService.isAdminCountry() ||
+      caseItem.createdById === this.tokenStorageService.getUser()?.id;
+  }
+
+  canEditCase(caseItem: { status: string; createdById?: number | null }): boolean {
+    return caseItem.status !== 'closed' && this.canManageCase(caseItem);
   }
   private readonly caseService = inject(CaseService);
   private readonly casePdfService = inject(CasePdfService);
@@ -117,16 +125,26 @@ export class CaseListComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.expandedCaseId = null;
 
-    const userId = this.tokenStorageService.getUser()?.id;
-    if (!userId) {
+    const user = this.tokenStorageService.getUser();
+    if (!user?.id) {
       this.isLoading = false;
       this.notificationService.showError('No se pudo identificar al usuario en sesión');
       return;
     }
 
-    this.caseService
-      .getCasesByUserId(userId)
-      .pipe(takeUntil(this.destroy$))
+    const isAdminCountry = this.roleService.isAdminCountry();
+    const countryId = 'country' in user ? user.country?.id : undefined;
+    if (isAdminCountry && !countryId) {
+      this.isLoading = false;
+      this.notificationService.showError('No se pudo obtener el país asignado al usuario');
+      return;
+    }
+
+    const request: Observable<Pick<CasesByUserResponse, 'cases' | 'total'>> = isAdminCountry && countryId
+      ? this.caseService.getCasesByCountry(countryId)
+      : this.caseService.getCasesByUserId(user.id);
+
+    request.pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           this.allCasesFromApi = response.cases;

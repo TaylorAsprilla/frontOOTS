@@ -35,6 +35,12 @@ Aplicación web moderna para la gestión integral de participantes en programas 
 - **Diseño Responsivo** - Interfaz adaptable a cualquier dispositivo
 - **Calendario** - Gestión de citas y agenda
 
+### Alcance de ADMIN_COUNTRY
+
+El listado de participantes, el listado de casos y el dashboard consolidan los datos del país asignado al administrador, sin limitarse a los registros creados por él. Las consultas de usuarios también se limitan al mismo país y no habilitan su gestión. Sin país asignado no se realizan consultas alternativas sin alcance.
+
+El backend verifica el país en cada consulta, incluidos accesos por URL directa, discusiones y descargas PDF. La interfaz no sustituye esa autorización. Los PDF conservan además la restricción del país histórico de apertura del caso. No se agregan permisos de edición de casos ajenos, transferencia, auditoría ni administración global.
+
 ## Tecnologías
 
 ### Core

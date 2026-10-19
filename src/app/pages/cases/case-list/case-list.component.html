@@ -183,7 +183,7 @@
                           >
                             <i class="mdi mdi-eye text-info"></i>
                           </a>
-                          @if (caseItem.status !== 'closed') {
+                          @if (canEditCase(caseItem)) {
                             <a
                               [routerLink]="['/cases/edit', caseItem.id]"
                               class="btn btn-sm btn-light btn-icon"
@@ -204,15 +204,17 @@
                           >
                             <i class="mdi mdi-file-pdf-box text-danger"></i>
                           </button>
-                          <button
-                            type="button"
-                            class="btn btn-sm btn-light btn-icon"
-                            [ngbTooltip]="'app.delete' | transloco"
-                            placement="top"
-                            (click)="deleteCase(caseItem)"
-                          >
-                            <i class="mdi mdi-delete text-danger"></i>
-                          </button>
+                          @if (canManageCase(caseItem)) {
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-light btn-icon"
+                              [ngbTooltip]="'app.delete' | transloco"
+                              placement="top"
+                              (click)="deleteCase(caseItem)"
+                            >
+                              <i class="mdi mdi-delete text-danger"></i>
+                            </button>
+                          }
                         </div>
                       </td>
                     </tr>

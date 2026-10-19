@@ -7,6 +7,9 @@ import { DashboardOneComponent } from './dashboard-one.component';
 import { ParticipantService } from '../../../core/services/participant.service';
 import { CaseService } from '../../../core/services/case.service';
 import { AuthenticationService } from '../../../core/services/auth.service';
+import { RoleService } from '../../../core/services/role.service';
+import { NotificationService } from '../../../core/services/notification.service';
+import { of } from 'rxjs';
 
 describe('Cases by status summary', () => {
   beforeEach(async () => {
@@ -21,9 +24,30 @@ describe('Cases by status summary', () => {
       ],
       providers: [
         provideRouter([]),
-        { provide: ParticipantService, useValue: {} },
-        { provide: CaseService, useValue: {} },
-        { provide: AuthenticationService, useValue: {} },
+        {
+          provide: ParticipantService,
+          useValue: {
+            getParticipantsByCountry: jasmine.createSpy().and.returnValue(of({
+              data: { participants: [{ id: 12, registeredById: 7 }, { id: 13, registeredById: 8 }] },
+            })),
+            getParticipantsByUser: jasmine.createSpy().and.returnValue(of({ data: { participants: [] } })),
+          },
+        },
+        {
+          provide: CaseService,
+          useValue: {
+            getCasesByCountry: jasmine.createSpy().and.returnValue(of({
+              cases: [{ id: 41, createdById: 7, status: 'open' }, { id: 42, createdById: 8, status: 'closed' }],
+            })),
+            getCasesByUserId: jasmine.createSpy().and.returnValue(of({ cases: [] })),
+          },
+        },
+        {
+          provide: AuthenticationService,
+          useValue: { currentUser: () => ({ id: 99, country: { id: 3 } }) },
+        },
+        { provide: RoleService, useValue: { isAdminCountry: () => false } },
+        { provide: NotificationService, useValue: { showError: jasmine.createSpy() } },
       ],
     }).overrideComponent(DashboardOneComponent, {
       remove: { imports: [NgApexchartsModule] },
@@ -65,6 +89,45 @@ describe('Cases by status summary', () => {
     expect(fixture.componentInstance.caseStatusSummary.map((item) => item.percentage)).toEqual([0, 0, 0]);
     expect(fixture.nativeElement.querySelector('.case-status-total')).toBeNull();
     expect(fixture.nativeElement.textContent).toContain('dashboard.charts.noData');
+  });
+
+  it('consolidates country participants and cases across professionals for ADMIN_COUNTRY', () => {
+    spyOn(TestBed.inject(RoleService), 'isAdminCountry').and.returnValue(true);
+    const component = TestBed.createComponent(DashboardOneComponent).componentInstance;
+    component.initChart();
+    component.loadDashboardData();
+    const participants = TestBed.inject(ParticipantService);
+    const cases = TestBed.inject(CaseService);
+    expect(participants.getParticipantsByCountry).toHaveBeenCalledOnceWith(3);
+    expect(cases.getCasesByCountry).toHaveBeenCalledOnceWith(3);
+    expect(participants.getParticipantsByUser).not.toHaveBeenCalled();
+    expect(cases.getCasesByUserId).not.toHaveBeenCalled();
+    expect(component.totalParticipants).toBe(2);
+    expect(component.totalCases).toBe(2);
+    expect(component.openCases).toBe(1);
+    expect(component.closedCases).toBe(1);
+  });
+
+  it('preserves user-scoped dashboard queries for other roles', () => {
+    const component = TestBed.createComponent(DashboardOneComponent).componentInstance;
+    component.initChart();
+    component.loadDashboardData();
+    expect(TestBed.inject(ParticipantService).getParticipantsByUser).toHaveBeenCalledOnceWith(99);
+    expect(TestBed.inject(CaseService).getCasesByUserId).toHaveBeenCalledOnceWith(99);
+    expect(TestBed.inject(CaseService).getCasesByCountry).not.toHaveBeenCalled();
+  });
+
+  it('does not fall back to unscoped queries when the administrator has no country', () => {
+    spyOn(TestBed.inject(RoleService), 'isAdminCountry').and.returnValue(true);
+    const auth = TestBed.inject(AuthenticationService);
+    const user = auth.currentUser();
+    if (!user) throw new Error('Expected an authenticated test user');
+    spyOn(auth, 'currentUser').and.returnValue({ ...user, country: undefined });
+    const component = TestBed.createComponent(DashboardOneComponent).componentInstance;
+    component.loadDashboardData();
+    expect(TestBed.inject(CaseService).getCasesByCountry).not.toHaveBeenCalled();
+    expect(TestBed.inject(CaseService).getCasesByUserId).not.toHaveBeenCalled();
+    expect(TestBed.inject(NotificationService).showError).toHaveBeenCalled();
   });
 
   it('renders the average without a percentage or cap and updates when totals change', () => {

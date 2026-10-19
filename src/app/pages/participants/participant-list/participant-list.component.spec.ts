@@ -97,4 +97,23 @@ describe('Social work participant table', () => {
     }
     fixture.destroy();
   }));
+
+  it('loads the assigned country across professionals for ADMIN_COUNTRY', () => {
+    spyOn(roleService, 'isAdminCountry').and.returnValue(true);
+    const auth = TestBed.inject(AuthenticationService);
+    const user = auth.currentUser();
+    if (!user) throw new Error('Expected an authenticated test user');
+    spyOn(auth, 'currentUser').and.returnValue({
+      ...user, country: { id: 3, name: 'USA', iso: 'US', locale: 'en-US' },
+    });
+    service.getParticipantsByCountry.and.returnValue(of({
+      data: { participants: [participant, { ...participant, id: 13, registeredBy: { id: 8 } }] },
+    }));
+    const fixture = TestBed.createComponent(ParticipantListComponent);
+    fixture.detectChanges();
+    expect(service.getParticipantsByCountry).toHaveBeenCalledOnceWith(3);
+    expect(service.getParticipantsByUser).not.toHaveBeenCalled();
+    expect(fixture.componentInstance.participants.map((item) => item.id)).toEqual([12, 13]);
+    fixture.destroy();
+  });
 });

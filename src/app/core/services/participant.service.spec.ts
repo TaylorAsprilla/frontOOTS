@@ -10,6 +10,7 @@ import { ParticipantDetailComponent } from '../../pages/participants/participant
 import { ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from './auth.service';
 import { RoleService } from './role.service';
+import { CaseService } from './case.service';
 
 describe('ParticipantService update payload', () => {
   let service: ParticipantService;
@@ -71,6 +72,19 @@ describe('ParticipantService update payload', () => {
     );
   });
 
+  it('loads country case summaries using the country endpoint', () => {
+    const countryCases = { countryId: 3, total: 2, cases: [{ id: 41 }, { id: 42 }] };
+    TestBed.inject(CaseService).getCasesByCountry(3).subscribe((response) => {
+      expect(response.countryId).toBe(3);
+      expect(response.total).toBe(2);
+      expect(response.cases.map((item) => item.id)).toEqual([41, 42]);
+    });
+    const request = http.expectOne(`${environment.apiUrl}/cases/by-country/3`);
+    expect(request.request.method).toBe('GET');
+    expect(request.request.headers.get('Authorization')).toBe('Bearer test-token');
+    request.flush({ data: countryCases });
+  });
+
   it('omits registeredById from PATCH while preserving the editable fields and input', () => {
     service.updateParticipant(21, participantData).subscribe();
 
@@ -89,6 +103,22 @@ describe('ParticipantService update payload', () => {
     expect(request.request.method).toBe('PATCH');
     expect(request.request.body.registeredById).toBeUndefined();
     expect(request.request.body.firstName).toBe(participantData.firstName);
+    request.flush({ data: { id: 21 } });
+  });
+
+  it('sends null for optional names that are intentionally cleared', () => {
+    service
+      .updateParticipant(21, {
+        secondName: null,
+        secondLastName: null,
+      })
+      .subscribe();
+
+    const request = http.expectOne(`${environment.apiUrl}/participants/21`);
+    expect(request.request.body).toEqual({
+      secondName: null,
+      secondLastName: null,
+    });
     request.flush({ data: { id: 21 } });
   });
 
