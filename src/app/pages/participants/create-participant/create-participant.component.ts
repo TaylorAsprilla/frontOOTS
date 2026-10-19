@@ -1158,7 +1158,12 @@ export class CreateParticipantComponent implements OnInit, OnDestroy {
     if (!this.participantId) return;
 
     this.isSubmitting = true;
-    const dto = this.mapFormDataToDto();
+    const personalData = this.participantForm.value.personalData;
+    const dto = {
+      ...this.mapFormDataToDto(),
+      secondName: personalData.secondName?.trim() || null,
+      secondLastName: personalData.secondLastName?.trim() || null,
+    };
 
     this.participantService
       .updateParticipant(this.participantId, dto)

@@ -92,6 +92,22 @@ describe('ParticipantService update payload', () => {
     request.flush({ data: { id: 21 } });
   });
 
+  it('sends null for optional names that are intentionally cleared', () => {
+    service
+      .updateParticipant(21, {
+        secondName: null,
+        secondLastName: null,
+      })
+      .subscribe();
+
+    const request = http.expectOne(`${environment.apiUrl}/participants/21`);
+    expect(request.request.body).toEqual({
+      secondName: null,
+      secondLastName: null,
+    });
+    request.flush({ data: { id: 21 } });
+  });
+
   it('preserves the registration field when creating a participant', () => {
     service.createParticipant(participantData).subscribe();
 

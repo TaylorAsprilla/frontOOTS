@@ -34,7 +34,12 @@ export interface CreateParticipantDto {
   bioPsychosocialHistory?: CreateBioPsychosocialHistoryDto;
 }
 
-export interface UpdateParticipantDto extends Partial<Omit<CreateParticipantDto, 'registeredById'>> {
+export interface UpdateParticipantDto
+  extends Partial<
+    Omit<CreateParticipantDto, 'registeredById' | 'secondName' | 'secondLastName'>
+  > {
+  secondName?: string | null;
+  secondLastName?: string | null;
   status?: string;
 }
 
