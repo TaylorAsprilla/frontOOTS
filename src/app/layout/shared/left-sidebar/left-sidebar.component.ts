@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, inject } from '@angular/core';
+import { ProfileAvatarService } from '../../../core/services/profile-avatar.service';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbCollapse } from '@ng-bootstrap/ng-bootstrap';
 import { EventService } from 'src/app/core/services/event.service';
@@ -29,6 +30,7 @@ export class LeftSidebarComponent implements OnInit, AfterViewInit {
   leftSidebarClass = 'sidebar-enable';
   activeMenuItems: string[] = [];
 
+  readonly profileAvatar = inject(ProfileAvatarService);
   loggedInUser: any = {};
 
   isAdmin = false;
@@ -53,6 +55,7 @@ export class LeftSidebarComponent implements OnInit, AfterViewInit {
     this.isAdmin = this.roleService.isAdmin();
     this.initMenu();
     this.loggedInUser = this.authService.currentUser();
+    this.profileAvatar.ensureLoaded();
 
     this.eventService.subscribe('toggleTwoToneIcons', (enable) => {
       this.hasTwoToneIcons = enable;

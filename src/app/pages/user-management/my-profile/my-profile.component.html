@@ -6,14 +6,39 @@
     <div class="card mb-3">
       <div class="card-body">
         <div class="d-flex align-items-center gap-3">
-          <div
-            class="avatar-lg bg-primary rounded-circle d-flex align-items-center justify-content-center text-white fs-3 fw-bold flex-shrink-0"
-          >
-            {{ getInitials() }}
+          <div class="position-relative flex-shrink-0">
+            @if (profileAvatar.url(); as avatarUrl) {
+              <img [src]="avatarUrl" alt="" class="rounded-circle" style="width: 72px; height: 72px; object-fit: cover" />
+            } @else {
+              <div
+                class="avatar-lg bg-primary rounded-circle d-flex align-items-center justify-content-center text-white fs-3 fw-bold"
+              >
+                {{ getInitials() }}
+              </div>
+            }
           </div>
           <div>
             <h4 class="mb-0">{{ profileForm.value.firstName }} {{ profileForm.value.firstLastName }}</h4>
-            <p class="text-muted mb-0">{{ profileForm.value.position || ('profile.noPosition' | transloco) }}</p>
+            <p class="text-muted mb-1">{{ profileForm.value.position || ('profile.noPosition' | transloco) }}</p>
+            <input #avatarInput type="file" class="d-none" [accept]="avatarAccept" (change)="onAvatarSelected($event)" />
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-sm me-1"
+              [disabled]="isUploadingAvatar"
+              (click)="avatarInput.click()"
+            >
+              @if (isUploadingAvatar) {
+                <span class="spinner-border spinner-border-sm me-1"></span>
+              } @else {
+                <i class="mdi mdi-camera me-1"></i>
+              }
+              Cambiar foto
+            </button>
+            @if (profileAvatar.url()) {
+              <button type="button" class="btn btn-outline-danger btn-sm" [disabled]="isUploadingAvatar" (click)="removeAvatar()">
+                <i class="mdi mdi-delete-outline me-1"></i>Quitar
+              </button>
+            }
           </div>
           <div class="ms-auto">
             <a routerLink="/change-password" class="btn btn-outline-secondary btn-sm">

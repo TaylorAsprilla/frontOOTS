@@ -37,6 +37,10 @@ import { participantFullName } from '../../../shared/participant-table-helpers';
 })
 export class CaseListComponent implements OnInit, OnDestroy {
   private readonly roleService = inject(RoleService);
+  canSupervise(): boolean {
+    return this.roleService.canSupervise();
+  }
+
   canCreateCase(): boolean {
     // ADMIN, COORDINADOR y TRABAJO_SOCIAL pueden crear
     return this.roleService.hasAnyRole('ADMIN', 'COORDINADOR', 'TRABAJO_SOCIAL');

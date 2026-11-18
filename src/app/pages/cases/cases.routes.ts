@@ -48,6 +48,16 @@ export const CASES_ROUTES: Routes = [
     },
   },
   {
+    path: 'supervision',
+    canActivate: [roleGuard(['ADMIN', 'ADMIN_COUNTRY', 'SUPERVISOR'])],
+    loadComponent: () =>
+      import('../supervision/supervision-reviews/supervision-reviews.component').then((m) => m.SupervisionReviewsComponent),
+    title: 'Supervision',
+    data: {
+      breadcrumb: 'Supervisión',
+    },
+  },
+  {
     path: 'create/:participantId',
     canActivate: [roleGuard(['ADMIN', 'ADMIN_COUNTRY', 'COORDINADOR', 'TRABAJO_SOCIAL'])],
     loadComponent: () => import('./create-case/create-case.component').then((m) => m.CreateCaseComponent),

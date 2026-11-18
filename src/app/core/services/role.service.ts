@@ -68,6 +68,16 @@ export class RoleService {
     return this.hasAnyRole('ADMIN', 'ADMIN_COUNTRY', 'SUPERVISOR');
   }
 
+  /** Puede consultar revisiones de supervisión: SUPERVISOR, ADMIN o ADMIN_COUNTRY (solo su país) */
+  canViewSupervision(): boolean {
+    return this.hasAnyRole('ADMIN', 'ADMIN_COUNTRY', 'SUPERVISOR');
+  }
+
+  /** Puede elaborar y firmar revisiones de supervisión: SUPERVISOR o ADMIN */
+  canSupervise(): boolean {
+    return this.hasAnyRole('ADMIN', 'SUPERVISOR');
+  }
+
   /** Puede elaborar informes de transferencia (profesionales que tienen casos asignados) */
   canWriteTransferReports(): boolean {
     return this.hasAnyRole('ADMIN', 'COORDINADOR', 'SUPERVISOR', 'PSICOLOGO', 'ORIENTADOR', 'TRABAJO_SOCIAL');

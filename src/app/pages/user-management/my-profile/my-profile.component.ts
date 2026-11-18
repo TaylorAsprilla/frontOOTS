@@ -10,6 +10,11 @@ import { NotificationService } from '../../../core/services/notification.service
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { UpdateProfileDto } from '../../../core/interfaces/auth.interface';
+import {
+  AVATAR_ACCEPTED_TYPES,
+  AVATAR_MAX_SOURCE_MB,
+  ProfileAvatarService,
+} from '../../../core/services/profile-avatar.service';
 
 @Component({
   selector: 'app-my-profile',
@@ -23,6 +28,9 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   private readonly authService = inject(AuthenticationService);
   private readonly notificationService = inject(NotificationService);
   private readonly destroy$ = new Subject<void>();
+  readonly profileAvatar = inject(ProfileAvatarService);
+  readonly avatarAccept = AVATAR_ACCEPTED_TYPES.join(',');
+  isUploadingAvatar = false;
 
   profileForm!: FormGroup;
   isSaving = false;
@@ -31,6 +39,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   breadcrumbItems: BreadcrumbItem[] = [{ label: 'profile.title', active: true }];
 
   ngOnInit(): void {
+    this.profileAvatar.ensureLoaded();
     this.buildForm();
     this.loadProfile();
   }
@@ -116,6 +125,61 @@ export class MyProfileComponent implements OnInit, OnDestroy {
         error: () => {
           this.notificationService.showError('No se pudo actualizar el perfil. Intenta de nuevo.');
           this.isSaving = false;
+        },
+      });
+  }
+
+  async onAvatarSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file || this.isUploadingAvatar) return;
+
+    if (!AVATAR_ACCEPTED_TYPES.includes(file.type)) {
+      this.notificationService.showWarning('Formato no permitido. Use una imagen JPG, PNG o WebP');
+      return;
+    }
+    if (file.size > AVATAR_MAX_SOURCE_MB * 1024 * 1024) {
+      this.notificationService.showWarning(`La imagen supera los ${AVATAR_MAX_SOURCE_MB} MB`);
+      return;
+    }
+
+    this.isUploadingAvatar = true;
+    try {
+      const prepared = await this.profileAvatar.prepare(file);
+      this.profileAvatar
+        .upload(prepared)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            this.isUploadingAvatar = false;
+            this.notificationService.showSuccess('Foto de perfil actualizada');
+          },
+          error: (error) => {
+            this.isUploadingAvatar = false;
+            this.notificationService.showError(error?.error?.message || 'No fue posible actualizar la foto');
+          },
+        });
+    } catch {
+      this.isUploadingAvatar = false;
+      this.notificationService.showError('No fue posible procesar la imagen seleccionada');
+    }
+  }
+
+  removeAvatar(): void {
+    if (this.isUploadingAvatar || !window.confirm('¿Quitar su foto de perfil?')) return;
+    this.isUploadingAvatar = true;
+    this.profileAvatar
+      .remove()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isUploadingAvatar = false;
+          this.notificationService.showSuccess('Foto de perfil eliminada');
+        },
+        error: (error) => {
+          this.isUploadingAvatar = false;
+          this.notificationService.showError(error?.error?.message || 'No fue posible quitar la foto');
         },
       });
   }

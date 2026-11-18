@@ -130,6 +130,14 @@ const MENU_ITEMS: MenuItem[] = [
     link: '/cases/transfer-reports',
     reporterOnly: true,
   },
+  {
+    key: 'cases-supervision',
+    label: 'navigation.supervision',
+    isTitle: false,
+    icon: 'clipboard',
+    link: '/cases/supervision',
+    approverOnly: true,
+  },
 
   // { key: 'apps', label: 'navigation.appointments', isTitle: true },
   // {

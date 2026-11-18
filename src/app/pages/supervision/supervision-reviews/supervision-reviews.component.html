@@ -1,0 +1,256 @@
+<div class="container-fluid py-3">
+  <h4 class="mb-1"><i class="mdi mdi-clipboard-check-outline me-2"></i>Supervisión</h4>
+  <p class="text-muted">
+    Control de calidad de expedientes: el del participante (Orden de Expediente) y el del supervisado (Orden de
+    Expediente de Supervisión).
+  </p>
+
+  @if (!current) {
+    <!-- ── Lista ─────────────────────────────────────────────────────── -->
+    <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
+      <select class="form-select w-auto" [(ngModel)]="filterType" (ngModelChange)="load()">
+        <option value="">Todos los tipos</option>
+        <option value="CASE_FILE">{{ typeLabels.CASE_FILE }}</option>
+        <option value="SUPERVISEE_FILE">{{ typeLabels.SUPERVISEE_FILE }}</option>
+      </select>
+      @if (canEdit) {
+        <select class="form-select w-auto" [(ngModel)]="filterSuperviseeId" (ngModelChange)="load()">
+          <option [ngValue]="null">Todos los supervisados</option>
+          @for (person of supervisees; track person.id) {
+            <option [ngValue]="person.id">{{ person.firstName }} {{ person.firstLastName }}</option>
+          }
+        </select>
+      }
+      @if (filterCaseId) {
+        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="clearCaseFilter()">
+          Caso {{ filterCaseId }} <i class="mdi mdi-close ms-1"></i>
+        </button>
+      }
+      @if (canEdit) {
+        <button type="button" class="btn btn-primary" (click)="showCreate = !showCreate">
+          <i class="mdi mdi-plus me-1"></i>Nueva revisión
+        </button>
+      }
+    </div>
+
+    @if (showCreate && canEdit) {
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label fw-semibold" for="newType">Tipo de revisión</label>
+              <select id="newType" class="form-select" [(ngModel)]="newType">
+                <option value="SUPERVISEE_FILE">{{ typeLabels.SUPERVISEE_FILE }}</option>
+                <option value="CASE_FILE">{{ typeLabels.CASE_FILE }}</option>
+              </select>
+            </div>
+            @if (newType === 'CASE_FILE') {
+              <div class="col-md-4">
+                <label class="form-label fw-semibold" for="newCase">Caso (número de expediente, nombre o documento)</label>
+                <input
+                  id="newCase"
+                  type="text"
+                  class="form-control"
+                  autocomplete="off"
+                  placeholder="Escriba al menos 2 caracteres..."
+                  [(ngModel)]="caseTerm"
+                  (ngModelChange)="onCaseTermChange($event)"
+                />
+                @if (caseResults.length > 0) {
+                  <div class="list-group position-absolute shadow-sm" style="z-index: 10; max-height: 240px; overflow-y: auto">
+                    @for (result of caseResults; track result.id) {
+                      <button type="button" class="list-group-item list-group-item-action" (click)="pickCase(result)">
+                        <strong>{{ result.caseNumber || 'Caso ' + result.id }}</strong> — {{ result.participantName }}
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="col-md-4">
+                <label class="form-label fw-semibold" for="newSupervisee">Supervisado</label>
+                <select id="newSupervisee" class="form-select" [(ngModel)]="newSuperviseeId">
+                  <option [ngValue]="null" disabled>Seleccione un profesional</option>
+                  @for (person of supervisees; track person.id) {
+                    <option [ngValue]="person.id">
+                      {{ person.firstName }} {{ person.firstLastName }} ({{ person.roleName }})
+                    </option>
+                  }
+                </select>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label fw-semibold" for="newPeriod">Mes</label>
+                <input id="newPeriod" type="month" class="form-control" [(ngModel)]="newPeriod" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label fw-semibold" for="newCases">Cantidad de casos</label>
+                <input id="newCases" type="number" min="0" class="form-control" [(ngModel)]="newCasesCount" />
+              </div>
+            }
+          </div>
+          <div class="text-end mt-3">
+            <button type="button" class="btn btn-primary" [disabled]="isCreating" (click)="create()">
+              @if (isCreating) {
+                <span class="spinner-border spinner-border-sm me-1"></span>
+              }
+              Crear borrador
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (isLoading) {
+      <div class="text-center py-5"><span class="spinner-border"></span></div>
+    } @else if (reviews.length === 0) {
+      <div class="alert alert-light border">No hay revisiones registradas.</div>
+    } @else {
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Fecha</th>
+              <th>Tipo</th>
+              <th>Revisado</th>
+              <th>Periodo</th>
+              <th>Supervisor</th>
+              <th>Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (review of reviews; track review.id) {
+              <tr>
+                <td>{{ review.createdAt | localizedDate: 'short' }}</td>
+                <td>{{ typeLabels[review.type] }}</td>
+                <td>{{ subject(review) }}</td>
+                <td>{{ review.period || '—' }}</td>
+                <td>{{ personName(review.reviewer) }}</td>
+                <td>
+                  <span [class]="review.status === 'SIGNED' ? 'badge bg-success' : 'badge bg-warning text-dark'">
+                    {{ review.status === 'SIGNED' ? 'Firmada' : 'Borrador' }}
+                  </span>
+                </td>
+                <td class="text-end text-nowrap">
+                  <button type="button" class="btn btn-sm btn-outline-secondary me-1" (click)="openById(review)">
+                    {{ review.status === 'DRAFT' && canEdit ? 'Editar' : 'Ver' }}
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-primary" (click)="downloadPdf(review)">
+                    <i class="mdi mdi-file-pdf-box"></i> PDF
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  } @else {
+    <!-- ── Editor de la lista de revisión ───────────────────────────── -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+      <button type="button" class="btn btn-outline-secondary" (click)="close()">
+        <i class="mdi mdi-arrow-left me-1"></i>Volver
+      </button>
+      <div>
+        <strong>{{ typeLabels[current.type] }}</strong> — {{ subject(current) }}
+        <span [class]="current.status === 'SIGNED' ? 'badge bg-success ms-2' : 'badge bg-warning text-dark ms-2'">
+          {{ current.status === 'SIGNED' ? 'Firmada' : 'Borrador' }}
+        </span>
+      </div>
+    </div>
+
+    @if (current.type === 'SUPERVISEE_FILE') {
+      <div class="row g-3 mb-3">
+        <div class="col-md-3">
+          <label class="form-label fw-semibold" for="period">Al mes de</label>
+          <input id="period" type="month" class="form-control" [disabled]="readOnly" [(ngModel)]="current.period" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold" for="casesCount">Cantidad de casos</label>
+          <input
+            id="casesCount"
+            type="number"
+            min="0"
+            class="form-control"
+            [disabled]="readOnly"
+            [(ngModel)]="current.casesCount"
+          />
+        </div>
+      </div>
+    }
+
+    <div class="small text-muted mb-2">
+      @for (status of statuses; track status.value) {
+        <span class="me-3"
+          ><strong>{{ status.symbol }}</strong> {{ status.label }}</span
+        >
+      }
+    </div>
+
+    @if (current.type === 'CASE_FILE' && !readOnly) {
+      <button type="button" class="btn btn-sm btn-outline-info mb-3" (click)="applySuggestions()">
+        <i class="mdi mdi-auto-fix me-1"></i>Precompletar con lo registrado en el sistema
+      </button>
+    }
+
+    @for (group of groups(); track group.name) {
+      <div class="card mb-3">
+        <div class="card-header fw-semibold">{{ group.name }}</div>
+        <ul class="list-group list-group-flush">
+          @for (item of group.items; track item.key) {
+            <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center gap-2">
+              <span>{{ item.label }}</span>
+              <div class="btn-group btn-group-sm" role="group" [attr.aria-label]="item.label">
+                @for (status of statuses; track status.value) {
+                  <button
+                    type="button"
+                    class="btn"
+                    [class.btn-primary]="current.items[item.key] === status.value"
+                    [class.btn-outline-secondary]="current.items[item.key] !== status.value"
+                    [disabled]="readOnly"
+                    [title]="status.label"
+                    (click)="setItem(item.key, status.value)"
+                  >
+                    {{ status.symbol }}
+                  </button>
+                }
+              </div>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold" for="recommendations">Recomendaciones</label>
+      <textarea
+        id="recommendations"
+        class="form-control"
+        rows="4"
+        [disabled]="readOnly"
+        [(ngModel)]="current.recommendations"
+      ></textarea>
+    </div>
+
+    @if (current.status === 'SIGNED') {
+      <p class="text-muted small">
+        Firmada por {{ personName(current.reviewer) }} el
+        {{ current.signedAt ? (current.signedAt | localizedDate: 'short') : '' }}.
+      </p>
+    }
+
+    <div class="d-flex flex-wrap gap-2 justify-content-end">
+      <button type="button" class="btn btn-outline-primary" (click)="downloadPdf(current)">
+        <i class="mdi mdi-file-pdf-box me-1"></i>PDF
+      </button>
+      @if (!readOnly) {
+        <button type="button" class="btn btn-outline-secondary" [disabled]="isSaving" (click)="save()">
+          Guardar borrador
+        </button>
+        <button type="button" class="btn btn-success" [disabled]="isSaving" (click)="sign()">
+          <i class="mdi mdi-check me-1"></i>Firmar ({{ pendingCount() }} pendientes)
+        </button>
+      }
+    </div>
+  }
+</div>
