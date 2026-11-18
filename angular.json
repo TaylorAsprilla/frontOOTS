@@ -233,6 +233,7 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
+            "exclude": ["src/app/apps/**", "src/app/pages/ui/**", "src/app/pages/forms/**", "src/app/pages/charts/**", "src/app/pages/icons/**", "src/app/pages/widgets/**", "src/app/pages/extended-ui/**", "src/app/pages/tables/**", "src/app/pages/extra-pages/**", "src/app/shared/widget/**"],
             "inlineStyleLanguage": "scss",
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": ["src/assets/scss/Default.scss"],

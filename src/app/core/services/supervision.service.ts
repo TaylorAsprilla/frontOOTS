@@ -33,6 +33,13 @@ export interface SupervisionPerson {
   roleName?: string;
 }
 
+export interface CaseSearchResult {
+  id: number;
+  caseNumber?: string;
+  status?: string;
+  participantName: string;
+}
+
 export interface SupervisionReview {
   id: number;
   type: ReviewType;
@@ -89,15 +96,24 @@ export class SupervisionService {
       .pipe(map((response) => response.data ?? []));
   }
 
+  searchCases(term: string): Observable<CaseSearchResult[]> {
+    const params = new HttpParams().set('q', term);
+    return this.http
+      .get<{ data: CaseSearchResult[] }>(`${this.apiUrl}/cases/search`, { headers: this.headers(), params })
+      .pipe(map((response) => response.data ?? []));
+  }
+
   suggestions(caseId: number): Observable<Record<string, ItemStatus>> {
     return this.http
       .get<{ data: Record<string, ItemStatus> }>(`${this.apiUrl}/suggestions/${caseId}`, { headers: this.headers() })
       .pipe(map((response) => response.data ?? {}));
   }
 
-  list(type?: ReviewType): Observable<SupervisionReview[]> {
+  list(filters: { type?: ReviewType; caseId?: number; superviseeId?: number } = {}): Observable<SupervisionReview[]> {
     let params = new HttpParams();
-    if (type) params = params.set('type', type);
+    if (filters.type) params = params.set('type', filters.type);
+    if (filters.caseId) params = params.set('caseId', filters.caseId);
+    if (filters.superviseeId) params = params.set('superviseeId', filters.superviseeId);
     return this.http
       .get<{ data: SupervisionReview[] }>(this.apiUrl, { headers: this.headers(), params })
       .pipe(map((response) => response.data ?? []));

@@ -148,19 +148,19 @@
         >
           <span class="account-user-avatar">
             <img
-              [src]="loggedInUser.avatar || 'assets/images/users/user-1.jpg'"
+              [src]="loggedInUser?.avatar || 'assets/images/users/user-1.jpg'"
               alt="user-image"
               class="rounded-circle"
             />
           </span>
-          <span class="pro-user-name ms-1"> {{ loggedInUser.firstName }} <i class="mdi mdi-chevron-down"></i> </span>
+          <span class="pro-user-name ms-1"> {{ loggedInUser?.firstName }} <i class="mdi mdi-chevron-down"></i> </span>
         </a>
         <div ngbDropdownMenu aria-labelledby="profileMenuDropdown" class="dropdown-menu-end profile-dropdown">
           <!-- item -->
           <div ngbDropdownItem class="dropdown-header noti-title">
-            <h6 class="text-overflow m-0">{{ loggedInUser.firstName }} {{ loggedInUser.firstLastName }}</h6>
+            <h6 class="text-overflow m-0">{{ loggedInUser?.firstName }} {{ loggedInUser?.firstLastName }}</h6>
             <p class="text-muted mb-0">
-              <small>{{ loggedInUser.email }}</small>
+              <small>{{ loggedInUser?.email }}</small>
             </p>
           </div>
           <!-- item -->

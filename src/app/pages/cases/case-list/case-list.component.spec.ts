@@ -57,7 +57,7 @@ describe('Social work case list', () => {
         { provide: CasePdfService, useValue: {} },
         { provide: TokenStorageService, useValue: { getUser: () => ({ id: 10 }) } },
         { provide: NotificationService, useValue: {} },
-        { provide: RoleService, useValue: { hasAnyRole: () => true, isAdminCountry: () => false } },
+        { provide: RoleService, useValue: { hasAnyRole: () => true, isAdminCountry: () => false, canSupervise: () => false } },
         { provide: CountryService, useValue: { getAvailableCountries: () => [] } },
       ],
     }).compileComponents();

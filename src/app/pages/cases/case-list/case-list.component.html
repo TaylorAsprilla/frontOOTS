@@ -183,6 +183,17 @@
                           >
                             <i class="mdi mdi-eye text-info"></i>
                           </a>
+                          @if (canSupervise()) {
+                            <a
+                              [routerLink]="['/cases/supervision']"
+                              [queryParams]="{ caseId: caseItem.id }"
+                              class="btn btn-sm btn-light btn-icon"
+                              ngbTooltip="Revisar expediente"
+                              placement="top"
+                            >
+                              <i class="mdi mdi-clipboard-check-outline text-success"></i>
+                            </a>
+                          }
                           @if (canEditCase(caseItem)) {
                             <a
                               [routerLink]="['/cases/edit', caseItem.id]"

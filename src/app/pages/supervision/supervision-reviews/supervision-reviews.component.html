@@ -14,6 +14,19 @@
         <option value="SUPERVISEE_FILE">{{ typeLabels.SUPERVISEE_FILE }}</option>
       </select>
       @if (canEdit) {
+        <select class="form-select w-auto" [(ngModel)]="filterSuperviseeId" (ngModelChange)="load()">
+          <option [ngValue]="null">Todos los supervisados</option>
+          @for (person of supervisees; track person.id) {
+            <option [ngValue]="person.id">{{ person.firstName }} {{ person.firstLastName }}</option>
+          }
+        </select>
+      }
+      @if (filterCaseId) {
+        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="clearCaseFilter()">
+          Caso {{ filterCaseId }} <i class="mdi mdi-close ms-1"></i>
+        </button>
+      }
+      @if (canEdit) {
         <button type="button" class="btn btn-primary" (click)="showCreate = !showCreate">
           <i class="mdi mdi-plus me-1"></i>Nueva revisión
         </button>
@@ -33,8 +46,25 @@
             </div>
             @if (newType === 'CASE_FILE') {
               <div class="col-md-4">
-                <label class="form-label fw-semibold" for="newCaseId">ID del caso</label>
-                <input id="newCaseId" type="number" min="1" class="form-control" [(ngModel)]="newCaseId" />
+                <label class="form-label fw-semibold" for="newCase">Caso (número de expediente, nombre o documento)</label>
+                <input
+                  id="newCase"
+                  type="text"
+                  class="form-control"
+                  autocomplete="off"
+                  placeholder="Escriba al menos 2 caracteres..."
+                  [(ngModel)]="caseTerm"
+                  (ngModelChange)="onCaseTermChange($event)"
+                />
+                @if (caseResults.length > 0) {
+                  <div class="list-group position-absolute shadow-sm" style="z-index: 10; max-height: 240px; overflow-y: auto">
+                    @for (result of caseResults; track result.id) {
+                      <button type="button" class="list-group-item list-group-item-action" (click)="pickCase(result)">
+                        <strong>{{ result.caseNumber || 'Caso ' + result.id }}</strong> — {{ result.participantName }}
+                      </button>
+                    }
+                  </div>
+                }
               </div>
             } @else {
               <div class="col-md-4">

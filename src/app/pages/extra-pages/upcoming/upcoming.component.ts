@@ -2,13 +2,12 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
 import { DefaultLayoutComponent } from 'src/app/shared/ui/default-layout/default-layout.component';
-import { UpcomingRoutingModule } from './upcoming-routing.module';
 
 @Component({
   selector: 'app-upcoming',
   templateUrl: './upcoming.component.html',
   styleUrls: ['./upcoming.component.scss'],
-  imports: [DefaultLayoutComponent, CommonModule, UpcomingRoutingModule],
+  imports: [DefaultLayoutComponent, CommonModule],
 })
 export class UpcomingComponent implements OnInit, AfterViewInit {
   remainingTime: string[] = [];

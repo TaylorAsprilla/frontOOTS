@@ -178,6 +178,9 @@
                   </div>
                 </div>
               }
+              @if (caseId && isViewMode) {
+                <app-supervision-history [caseId]="caseId"></app-supervision-history>
+              }
               @if (caseId) {
                 <app-case-attachments
                   [caseId]="caseId"

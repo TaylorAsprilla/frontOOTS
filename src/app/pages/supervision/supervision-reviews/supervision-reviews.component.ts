@@ -1,9 +1,11 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { Subject, debounceTime, distinctUntilChanged, of, switchMap, takeUntil } from 'rxjs';
 
 import {
+  CaseSearchResult,
   CatalogItem,
   ITEM_STATUSES,
   ItemStatus,
@@ -32,7 +34,9 @@ export class SupervisionReviewsComponent implements OnInit, OnDestroy {
   private readonly service = inject(SupervisionService);
   private readonly roleService = inject(RoleService);
   private readonly notifications = inject(NotificationService);
+  private readonly route = inject(ActivatedRoute);
   private readonly destroy$ = new Subject<void>();
+  private readonly caseSearch$ = new Subject<string>();
 
   readonly statuses = ITEM_STATUSES;
   readonly typeLabels: Record<ReviewType, string> = {
@@ -47,6 +51,13 @@ export class SupervisionReviewsComponent implements OnInit, OnDestroy {
   supervisees: SupervisionPerson[] = [];
   isLoading = false;
   filterType: ReviewType | '' = '';
+  filterSuperviseeId: number | null = null;
+  filterCaseId: number | null = null;
+
+  // Buscador de casos
+  caseTerm = '';
+  caseResults: CaseSearchResult[] = [];
+  selectedCase: CaseSearchResult | null = null;
 
   // Nueva revisión
   showCreate = false;
@@ -72,7 +83,40 @@ export class SupervisionReviewsComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe((rows) => (this.supervisees = rows));
     }
+    this.caseSearch$
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((term) => (term.trim().length < 2 ? of([]) : this.service.searchCases(term))),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((rows) => (this.caseResults = rows));
+
+    // Acceso desde el expediente: /cases/supervision?caseId=ID
+    const caseId = Number(this.route.snapshot.queryParamMap.get('caseId'));
+    if (Number.isInteger(caseId) && caseId > 0) {
+      this.filterCaseId = caseId;
+      if (this.canEdit) {
+        this.showCreate = true;
+        this.newType = 'CASE_FILE';
+        this.newCaseId = caseId;
+        this.caseTerm = `Caso ${caseId}`;
+      }
+    }
     this.load();
+  }
+
+  onCaseTermChange(term: string): void {
+    this.selectedCase = null;
+    this.newCaseId = null;
+    this.caseSearch$.next(term);
+  }
+
+  pickCase(result: CaseSearchResult): void {
+    this.selectedCase = result;
+    this.newCaseId = result.id;
+    this.caseTerm = `${result.caseNumber ?? 'Caso ' + result.id} — ${result.participantName}`;
+    this.caseResults = [];
   }
 
   ngOnDestroy(): void {
@@ -83,7 +127,11 @@ export class SupervisionReviewsComponent implements OnInit, OnDestroy {
   load(): void {
     this.isLoading = true;
     this.service
-      .list(this.filterType || undefined)
+      .list({
+        type: this.filterType || undefined,
+        caseId: this.filterCaseId ?? undefined,
+        superviseeId: this.filterSuperviseeId ?? undefined,
+      })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (rows) => {
@@ -101,7 +149,7 @@ export class SupervisionReviewsComponent implements OnInit, OnDestroy {
   create(): void {
     if (this.isCreating) return;
     if (this.newType === 'CASE_FILE' && !this.newCaseId) {
-      this.notifications.showWarning('Indique el ID del caso a revisar');
+      this.notifications.showWarning('Busque y seleccione el caso a revisar');
       return;
     }
     if (this.newType === 'SUPERVISEE_FILE' && !this.newSuperviseeId) {
@@ -136,6 +184,11 @@ export class SupervisionReviewsComponent implements OnInit, OnDestroy {
   // ── Edición ───────────────────────────────────────────────────────────
   open(review: SupervisionReview): void {
     this.current = { ...review, items: { ...(review.items ?? {}) } };
+  }
+
+  clearCaseFilter(): void {
+    this.filterCaseId = null;
+    this.load();
   }
 
   openById(review: SupervisionReview): void {
