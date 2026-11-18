@@ -53,13 +53,13 @@ export class RoleService {
     return this.hasAnyRole('ADMIN', 'COORDINADOR', 'SUPERVISOR');
   }
 
-  /** Puede gestionar usuarios: ADMIN o COORDINADOR */
+  /** Puede gestionar usuarios: ADMIN, ADMIN_COUNTRY (solo su país, lo valida el backend) o COORDINADOR */
   canManageUsers(): boolean {
-    return this.hasAnyRole('ADMIN', 'COORDINADOR');
+    return this.hasAnyRole('ADMIN', 'ADMIN_COUNTRY', 'COORDINADOR');
   }
 
-  /** Puede transferir casos entre profesionales: ADMIN, COORDINADOR o SUPERVISOR */
+  /** Puede transferir casos entre profesionales: ADMIN, ADMIN_COUNTRY (casos de su país), COORDINADOR o SUPERVISOR */
   canTransferCases(): boolean {
-    return this.hasAnyRole('ADMIN', 'COORDINADOR', 'SUPERVISOR');
+    return this.hasAnyRole('ADMIN', 'ADMIN_COUNTRY', 'COORDINADOR', 'SUPERVISOR');
   }
 }

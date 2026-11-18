@@ -4,8 +4,8 @@ import { roleGuard } from '../../core/guards/role.guard';
 /**
  * Rutas de la sección Administrador.
  *
- * Toda la sección está protegida con `roleGuard(['ADMIN'])`:
- * un usuario sin rol ADMIN que intente entrar por URL directa
+ * Toda la sección está protegida con `roleGuard(['ADMIN', 'ADMIN_COUNTRY'])`:
+ * un usuario sin rol ADMIN o ADMIN_COUNTRY (cuyos datos el backend limita a su país) que intente entrar por URL directa
  * será redirigido al dashboard por el guard.
  *
  * Pensado para crecer en el futuro con más opciones administrativas
@@ -14,8 +14,8 @@ import { roleGuard } from '../../core/guards/role.guard';
 export const ADMIN_ROUTES: Routes = [
   {
     path: '',
-    canActivate: [roleGuard(['ADMIN'])],
-    canActivateChild: [roleGuard(['ADMIN'])],
+    canActivate: [roleGuard(['ADMIN', 'ADMIN_COUNTRY'])],
+    canActivateChild: [roleGuard(['ADMIN', 'ADMIN_COUNTRY'])],
     children: [
       { path: '', redirectTo: 'participants', pathMatch: 'full' },
       {

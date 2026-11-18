@@ -6,7 +6,7 @@ import { environment } from '../../../environments/environment';
 import { UserModel, UserBackendResponse } from '../models/user.model';
 import { NotificationService } from './notification.service';
 import { TokenStorageService } from './token-storage.service';
-import { ApiResponse, PaginatedUsersResponse, UpdateUserRequest } from '../interfaces/user.interface';
+import { ApiResponse, PaginatedUsersResponse, TransferCandidate, UpdateUserRequest } from '../interfaces/user.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -328,6 +328,19 @@ export class UserService {
         return Array.isArray(response) ? response : [];
       }),
       catchError((error) => this.handleError(error, 'Error al obtener roles')),
+    );
+  }
+
+  /**
+   * Profesionales (de cualquier país) que pueden recibir un caso transferido
+   */
+  getTransferCandidates(): Observable<TransferCandidate[]> {
+    return this.http.get<any>(`${this.apiUrl}/transfer-candidates`).pipe(
+      map((response) => {
+        const data = response?.data ?? response;
+        return Array.isArray(data) ? (data as TransferCandidate[]) : [];
+      }),
+      catchError((error) => this.handleError(error, 'Error al obtener los profesionales')),
     );
   }
 

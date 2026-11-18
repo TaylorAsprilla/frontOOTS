@@ -48,7 +48,7 @@ export class TopnavComponent implements OnInit {
    * Initializing menuitems and controlling how many menu items can be displayed in it
    */
   initMenu(): void {
-    this.menuItems = filterMenuByRole(HORIZONTAL_MENU_ITEMS, this.roleService.isAdmin());
+    this.menuItems = filterMenuByRole(HORIZONTAL_MENU_ITEMS, this.roleService.isAdmin(), this.roleService.isAdminCountry());
   }
 
   // split array for chumk size

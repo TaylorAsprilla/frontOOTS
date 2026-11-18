@@ -14,7 +14,7 @@ const MENU_ITEMS: MenuItem[] = [
   },
 
   // ====== Administrador (solo ADMIN) ======
-  { key: 'admin-title', label: 'navigation.administrator', isTitle: true, adminOnly: true },
+  { key: 'admin-title', label: 'navigation.administrator', isTitle: true, adminOnly: true, countryAdminAllowed: true },
   {
     key: 'admin-section',
     label: 'navigation.administrator',
@@ -22,12 +22,14 @@ const MENU_ITEMS: MenuItem[] = [
     icon: 'shield',
     collapsed: true,
     adminOnly: true,
+    countryAdminAllowed: true,
     children: [
       {
         key: 'admin-user-management',
         label: 'navigation.userManagement',
         parentKey: 'admin-section',
         adminOnly: true,
+        countryAdminAllowed: true,
         children: [
           {
             key: 'admin-users-list',
@@ -35,6 +37,7 @@ const MENU_ITEMS: MenuItem[] = [
             link: '/users/list',
             parentKey: 'admin-user-management',
             adminOnly: true,
+            countryAdminAllowed: true,
           },
           {
             key: 'admin-users-create',
@@ -42,6 +45,7 @@ const MENU_ITEMS: MenuItem[] = [
             link: '/users/create',
             parentKey: 'admin-user-management',
             adminOnly: true,
+            countryAdminAllowed: true,
           },
         ],
       },
@@ -51,6 +55,7 @@ const MENU_ITEMS: MenuItem[] = [
         link: '/admin/participants',
         parentKey: 'admin-section',
         adminOnly: true,
+        countryAdminAllowed: true,
       },
       {
         key: 'admin-cases',
@@ -58,6 +63,7 @@ const MENU_ITEMS: MenuItem[] = [
         link: '/admin/cases',
         parentKey: 'admin-section',
         adminOnly: true,
+        countryAdminAllowed: true,
       },
     ],
   },

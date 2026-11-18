@@ -105,18 +105,19 @@ const getLayoutConfig = (layoutType: string = 'vertical'): LayoutConfig => {
  * Filtra ítems de menú según el rol del usuario.
  *
  * Cualquier ítem (o hijo) marcado con `adminOnly: true` se omite
- * cuando `isAdmin === false`. Si un padre es eliminado, sus hijos
+ * cuando `isAdmin === false`, salvo que además tenga `countryAdminAllowed: true`
+ * y el usuario sea ADMIN_COUNTRY. Si un padre es eliminado, sus hijos
  * también desaparecen porque ya no se itera por él.
  *
  * No muta el array original.
  */
-const filterMenuByRole = (menuItems: MenuItem[], isAdmin: boolean): MenuItem[] => {
+const filterMenuByRole = (menuItems: MenuItem[], isAdmin: boolean, isAdminCountry = false): MenuItem[] => {
   if (!menuItems) return [];
   return menuItems
-    .filter((item) => isAdmin || !item.adminOnly)
+    .filter((item) => isAdmin || !item.adminOnly || (isAdminCountry && !!item.countryAdminAllowed))
     .map((item) => {
       if (item.children && item.children.length) {
-        return { ...item, children: filterMenuByRole(item.children, isAdmin) };
+        return { ...item, children: filterMenuByRole(item.children, isAdmin, isAdminCountry) };
       }
       return item;
     });

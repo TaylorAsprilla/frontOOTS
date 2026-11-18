@@ -103,3 +103,17 @@ export interface UserInfoInterface {
   casos?: number;
   proximasCitas?: number;
 }
+
+/**
+ * Profesional que puede recibir un caso transferido (datos mínimos, de cualquier país).
+ */
+export interface TransferCandidate {
+  id: number;
+  firstName: string;
+  secondName: string | null;
+  firstLastName: string;
+  secondLastName: string | null;
+  roleName: string | null;
+  countryId: number | null;
+  countryName: string | null;
+}

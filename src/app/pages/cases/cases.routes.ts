@@ -29,7 +29,7 @@ export const CASES_ROUTES: Routes = [
   },
   {
     path: 'create/:participantId',
-    canActivate: [roleGuard(['ADMIN', 'COORDINADOR', 'TRABAJO_SOCIAL'])],
+    canActivate: [roleGuard(['ADMIN', 'ADMIN_COUNTRY', 'COORDINADOR', 'TRABAJO_SOCIAL'])],
     loadComponent: () => import('./create-case/create-case.component').then((m) => m.CreateCaseComponent),
     title: 'Cases - Create New',
     canDeactivate: [unsavedChangesGuard],
