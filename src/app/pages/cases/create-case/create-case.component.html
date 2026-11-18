@@ -178,6 +178,21 @@
                   </div>
                 </div>
               }
+              @if (caseId) {
+                <app-case-attachments
+                  [caseId]="caseId"
+                  context="CONSENT"
+                  [readOnly]="isViewMode || isCaseClosed"
+                  [showSignedAt]="true"
+                  title="Documentación y Consentimientos"
+                  description="En esta sección se registran los documentos firmados por el participante como parte de su proceso de atención y participación en OOTS."
+                ></app-case-attachments>
+              } @else {
+                <div class="alert alert-light border small">
+                  <strong>Documentación y Consentimientos:</strong> guarde el caso para poder adjuntar los documentos
+                  firmados por el participante.
+                </div>
+              }
               <form [formGroup]="caseForm" (ngSubmit)="onSubmit()" novalidate>
                 <div id="caseWizard">
                   <ul
@@ -887,6 +902,21 @@
                                       rows="3"
                                       [placeholder]="'cases.followUpPlan.referralDetailsPlaceholder' | transloco"
                                     ></textarea>
+                                    <div class="mt-3">
+                                      @if (caseId) {
+                                        <app-case-attachments
+                                          [caseId]="caseId"
+                                          context="FOLLOW_UP_REFERRAL"
+                                          [readOnly]="isViewMode || isCaseClosed"
+                                          title="Documentos del referido"
+                                          description="Adjunte los documentos relacionados con el referido (PDF o Word)."
+                                        ></app-case-attachments>
+                                      } @else {
+                                        <p class="small text-muted mb-0">
+                                          Guarde el caso para poder adjuntar documentos del referido.
+                                        </p>
+                                      }
+                                    </div>
                                   </div>
                                 }
                               </div>
@@ -2173,6 +2203,18 @@
                               }
                             </div>
                           </div>
+
+                          @if (caseId) {
+                            <div class="mt-3">
+                              <app-case-attachments
+                                [caseId]="caseId"
+                                context="REFERRAL"
+                                [readOnly]="isViewMode || isCaseClosed"
+                                title="Documentos de los referidos"
+                                description="Adjunte, consulte y descargue los documentos de los referidos de este expediente."
+                              ></app-case-attachments>
+                            </div>
+                          }
 
                           <div class="card shadow-sm border-start border-primary border-3 mt-3">
                             <div class="card-body">

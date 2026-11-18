@@ -49,6 +49,7 @@ import {
 } from '../../../core/interfaces/case.interface';
 import { ProcessType } from '../../configuration/process-types/process-type.interface';
 import { ApproachType as ApproachTypeCatalog } from '../../configuration/approach-types/approach-type.interface';
+import { CaseAttachmentsComponent } from '../../../shared/components/case-attachments/case-attachments.component';
 
 /**
  * Component for creating and editing cases
@@ -69,6 +70,7 @@ import { ApproachType as ApproachTypeCatalog } from '../../configuration/approac
     NgbModalModule,
     TranslocoModule,
     PageTitleComponent,
+    CaseAttachmentsComponent,
   ],
   templateUrl: './create-case.component.html',
   styleUrls: ['./create-case.component.scss'],
