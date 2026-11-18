@@ -116,14 +116,16 @@ const filterMenuByRole = (
   isAdmin: boolean,
   isAdminCountry = false,
   canApproveTransfers = false,
+  canWriteTransferReports = false,
 ): MenuItem[] => {
   if (!menuItems) return [];
   return menuItems
     .filter((item) => !item.approverOnly || isAdmin || isAdminCountry || canApproveTransfers)
+    .filter((item) => !item.reporterOnly || isAdmin || canWriteTransferReports)
     .filter((item) => isAdmin || !item.adminOnly || (isAdminCountry && !!item.countryAdminAllowed))
     .map((item) => {
       if (item.children && item.children.length) {
-        return { ...item, children: filterMenuByRole(item.children, isAdmin, isAdminCountry, canApproveTransfers) };
+        return { ...item, children: filterMenuByRole(item.children, isAdmin, isAdminCountry, canApproveTransfers, canWriteTransferReports) };
       }
       return item;
     });

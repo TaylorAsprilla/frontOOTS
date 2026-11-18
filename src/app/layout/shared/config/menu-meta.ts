@@ -122,6 +122,14 @@ const MENU_ITEMS: MenuItem[] = [
     link: '/cases/transfer-approvals',
     approverOnly: true,
   },
+  {
+    key: 'cases-transfer-reports',
+    label: 'navigation.transferReports',
+    isTitle: false,
+    icon: 'file-text',
+    link: '/cases/transfer-reports',
+    reporterOnly: true,
+  },
 
   // { key: 'apps', label: 'navigation.appointments', isTitle: true },
   // {

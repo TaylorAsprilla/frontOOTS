@@ -67,4 +67,9 @@ export class RoleService {
   canApproveTransfers(): boolean {
     return this.hasAnyRole('ADMIN', 'ADMIN_COUNTRY', 'SUPERVISOR');
   }
+
+  /** Puede elaborar informes de transferencia (profesionales que tienen casos asignados) */
+  canWriteTransferReports(): boolean {
+    return this.hasAnyRole('ADMIN', 'COORDINADOR', 'SUPERVISOR', 'PSICOLOGO', 'ORIENTADOR', 'TRABAJO_SOCIAL');
+  }
 }

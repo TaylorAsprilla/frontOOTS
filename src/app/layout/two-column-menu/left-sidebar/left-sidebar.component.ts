@@ -60,7 +60,7 @@ export class LeftSidebarComponent implements OnInit {
    * initialize menuitems
    */
   initMenu(): void {
-    this.twoColumnMenuItems = filterMenuByRole(TWO_COl_MENU_ITEMS, this.roleService.isAdmin(), this.roleService.isAdminCountry(), this.roleService.canApproveTransfers());
+    this.twoColumnMenuItems = filterMenuByRole(TWO_COl_MENU_ITEMS, this.roleService.isAdmin(), this.roleService.isAdminCountry(), this.roleService.canApproveTransfers(), this.roleService.canWriteTransferReports());
   }
 
   /**
