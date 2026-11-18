@@ -17,7 +17,7 @@ import { AdminCase, AdminCaseParticipant, AdminCaseProfessional } from '../../..
 import { CaseService } from '../../../core/services/case.service';
 import { CaseTransfer } from '../../../core/interfaces/case.interface';
 import { UserService } from '../../../core/services/user.service';
-import { UserModel } from '../../../core/models/user.model';
+import { TransferCandidate } from '../../../core/interfaces/user.interface';
 import { NotificationService } from '../../../core/services/notification.service';
 import { RoleService } from '../../../core/services/role.service';
 import { CountryService } from '../../../core/services/country.service';
@@ -77,7 +77,7 @@ export class AdminCasesListComponent implements OnInit, OnDestroy {
   @ViewChild('transferModal') transferModal!: TemplateRef<unknown>;
   private transferModalRef: NgbModalRef | null = null;
   transferTargetCase: AdminCase | null = null;
-  professionals: UserModel[] = [];
+  professionals: TransferCandidate[] = [];
   transferToProfessionalId: number | null = null;
   transferReason = '';
   isTransferring = false;
@@ -327,13 +327,11 @@ export class AdminCasesListComponent implements OnInit, OnDestroy {
 
     this.isLoadingProfessionals = true;
     this.userService
-      .getUsers(1, 100)
+      .getTransferCandidates()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (users) => {
-          this.professionals = users.filter(
-            (u) => u.isActive && ['PSICOLOGO', 'ORIENTADOR', 'TRABAJO_SOCIAL'].includes(u.roleName || ''),
-          );
+        next: (professionals) => {
+          this.professionals = professionals;
           this.isLoadingProfessionals = false;
         },
         error: () => {

@@ -398,7 +398,7 @@
         </option>
         @for (professional of professionals; track professional.id) {
           <option [ngValue]="professional.id">
-            {{ professional.firstName }} {{ professional.firstLastName }} ({{ professional.roleName }})
+            {{ professional.firstName }} {{ professional.firstLastName }} ({{ professional.roleName }}{{ professional.countryName ? ' - ' + professional.countryName : '' }})
           </option>
         }
       </select>

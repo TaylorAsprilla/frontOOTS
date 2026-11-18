@@ -10,6 +10,8 @@ import { UserService } from '../../../core/services/user.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { LanguageService, SupportedLanguage } from '../../../core/services/language.service';
 import { CountryService, CountryConfig } from '../../../core/services/country.service';
+import { RoleService } from '../../../core/services/role.service';
+import { TokenStorageService } from '../../../core/services/token-storage.service';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { UpdateUserRequest } from '../../../core/interfaces/user.interface';
 import { UserModel } from '../../../core/models/user.model';
@@ -30,6 +32,8 @@ export class UserCreateComponent implements OnInit, OnDestroy {
   private readonly notificationService = inject(NotificationService);
   private readonly languageService = inject(LanguageService);
   private readonly countryService = inject(CountryService);
+  private readonly roleService = inject(RoleService);
+  private readonly tokenStorageService = inject(TokenStorageService);
   private readonly destroy$ = new Subject<void>();
 
   pageTitle: BreadcrumbItem[] = [];
@@ -119,7 +123,17 @@ export class UserCreateComponent implements OnInit, OnDestroy {
   }
 
   private loadCountries(): void {
-    this.countries = this.countryService.getAvailableCountries();
+    const available = this.countryService.getAvailableCountries();
+    // ADMIN_COUNTRY solo puede registrar usuarios de su propio país
+    this.countries = this.roleService.isAdminCountry()
+      ? available.filter((country) => Number(country.id) === Number(this.ownCountryId))
+      : available;
+  }
+
+  /** País asignado al usuario autenticado (solo relevante para ADMIN_COUNTRY) */
+  private get ownCountryId(): number | null {
+    const user = this.tokenStorageService.getUser() as any;
+    return user?.countryId ?? user?.country?.id ?? null;
   }
 
   private loadRoles(): void {
@@ -128,7 +142,10 @@ export class UserCreateComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (roles) => {
-          this.roles = roles;
+          // ADMIN_COUNTRY no puede asignar roles de administrador (el backend también lo rechaza)
+          this.roles = this.roleService.isAdminCountry()
+            ? roles.filter((role) => !['ADMIN', 'ADMIN_COUNTRY'].includes(role?.name))
+            : roles;
         },
         error: (error) => {
           console.error('Error loading roles:', error);
@@ -155,6 +172,10 @@ export class UserCreateComponent implements OnInit, OnDestroy {
       headquarters: ['', [Validators.required, Validators.maxLength(100)]],
       roleId: [null, [Validators.required]],
     });
+
+    if (this.roleService.isAdminCountry() && this.ownCountryId != null) {
+      this.userForm.patchValue({ countryId: this.ownCountryId });
+    }
   }
 
   private loadUser(): void {

@@ -10,4 +10,6 @@ export interface MenuItem {
   badge?: any;
   parentKey?: number;
   adminOnly?: boolean;
+  /** Con adminOnly: también visible para ADMIN_COUNTRY (sus datos se filtran por país en el backend). */
+  countryAdminAllowed?: boolean;
 }
