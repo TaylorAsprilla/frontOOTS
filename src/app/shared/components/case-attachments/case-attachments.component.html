@@ -1,0 +1,151 @@
+<div class="card shadow-sm mb-3">
+  <div class="card-body">
+    @if (title) {
+      <h5 class="mb-1"><i class="mdi mdi-paperclip me-1 text-primary"></i>{{ title }}</h5>
+    }
+    @if (description) {
+      <p class="text-muted small mb-3">{{ description }}</p>
+    }
+
+    @if (!readOnly) {
+      <div class="mb-3">
+        <label class="btn btn-outline-primary btn-sm mb-0">
+          <i class="mdi mdi-plus me-1"></i>Adjuntar documento
+          <input type="file" class="d-none" multiple [accept]="accept" (change)="onFilesSelected($event)" />
+        </label>
+        <span class="text-muted small ms-2">PDF o Word (.doc, .docx) · máximo {{ maxMb }} MB por archivo</span>
+      </div>
+
+      @for (item of queue; track item) {
+        <div class="border rounded p-3 mb-2">
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="fw-semibold text-break">
+              <i class="mdi mdi-file-document-outline me-1"></i>{{ item.file.name }}
+              <span class="text-muted small">({{ sizeLabel(item.file.size) }})</span>
+            </div>
+            <button type="button" class="btn btn-sm btn-link text-danger p-0" (click)="cancel(item)">
+              {{ item.uploading ? 'Cancelar carga' : 'Quitar' }}
+            </button>
+          </div>
+
+          <div class="row g-2 mt-1">
+            <div class="col-md-5">
+              <label class="form-label small mb-1">Tipo de documento <span class="text-danger">*</span></label>
+              <select class="form-select form-select-sm" [(ngModel)]="item.category" [disabled]="item.uploading">
+                <option value="" disabled>Seleccionar categoría</option>
+                @for (category of categories; track category) {
+                  <option [value]="category">{{ label(category) }}</option>
+                }
+              </select>
+            </div>
+            @if (showSignedAt) {
+              <div class="col-md-3">
+                <label class="form-label small mb-1">Fecha de firma</label>
+                <input
+                  type="date"
+                  class="form-control form-control-sm"
+                  [(ngModel)]="item.signedAt"
+                  [disabled]="item.uploading"
+                />
+              </div>
+            }
+            <div class="col">
+              <label class="form-label small mb-1">
+                {{ needsDescription(item) ? 'Nombre o descripción del documento *' : 'Descripción (opcional)' }}
+              </label>
+              <input
+                type="text"
+                class="form-control form-control-sm"
+                maxlength="1000"
+                [(ngModel)]="item.description"
+                [disabled]="item.uploading"
+              />
+            </div>
+          </div>
+
+          @if (item.uploading) {
+            <div class="progress mt-2" style="height: 6px">
+              <div class="progress-bar" [style.width.%]="item.progress"></div>
+            </div>
+          }
+          @if (item.error) {
+            <div class="text-danger small mt-2">{{ item.error }}</div>
+          }
+
+          <div class="text-end mt-2">
+            <button type="button" class="btn btn-primary btn-sm" [disabled]="!canUpload(item)" (click)="upload(item)">
+              <i class="mdi mdi-content-save me-1"></i>Guardar documento
+            </button>
+          </div>
+        </div>
+      }
+    } @else {
+      <p class="text-muted small">Expediente en modo consulta: puede ver y descargar los documentos, no modificarlos.</p>
+    }
+
+    <h6 class="mt-3">Documentos cargados</h6>
+    @if (isLoading) {
+      <div class="text-center py-2"><span class="spinner-border spinner-border-sm"></span></div>
+    } @else if (attachments.length === 0) {
+      <p class="text-muted small mb-0">No hay documentos cargados.</p>
+    } @else {
+      <div class="table-responsive">
+        <table class="table table-sm table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Tipo de documento</th>
+              <th>Archivo</th>
+              <th>Fecha de carga</th>
+              @if (showSignedAt) {
+                <th>Fecha de firma</th>
+              }
+              <th>Cargado por</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (attachment of attachments; track attachment.id) {
+              <tr>
+                <td>
+                  {{ label(attachment.category) }}
+                  @if (attachment.description) {
+                    <div class="small text-muted">{{ attachment.description }}</div>
+                  }
+                </td>
+                <td class="text-break">
+                  {{ attachment.originalName }}
+                  <span class="text-muted small">({{ sizeLabel(attachment.size) }})</span>
+                </td>
+                <td>{{ attachment.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+                @if (showSignedAt) {
+                  <td>{{ attachment.signedAt ? (attachment.signedAt | date: 'dd/MM/yyyy') : '—' }}</td>
+                }
+                <td>{{ attachment.uploadedBy?.name || '—' }}</td>
+                <td class="text-end text-nowrap">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    [disabled]="downloadingId === attachment.id"
+                    (click)="download(attachment)"
+                  >
+                    <i class="mdi mdi-download"></i> Descargar
+                  </button>
+                  @if (!readOnly) {
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-danger ms-1"
+                      [disabled]="deletingId === attachment.id"
+                      (click)="remove(attachment)"
+                    >
+                      <i class="mdi mdi-delete-outline"></i>
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
