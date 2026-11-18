@@ -86,7 +86,7 @@ export class LeftSidebarComponent implements OnInit, AfterViewInit {
    * initialize menuitems
    */
   initMenu(): void {
-    this.menuItems = filterMenuByRole(MENU_ITEMS, this.isAdmin, this.roleService.isAdminCountry());
+    this.menuItems = filterMenuByRole(MENU_ITEMS, this.isAdmin, this.roleService.isAdminCountry(), this.roleService.canApproveTransfers());
   }
 
   /**

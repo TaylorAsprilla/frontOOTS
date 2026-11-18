@@ -449,27 +449,54 @@ export interface CasesByUserResponse {
 }
 
 /**
- * DTO to transfer a case to another professional (SUPERVISOR/COORDINADOR/ADMIN only)
+ * Informe de transferencia (formulario 27). Todos los campos son obligatorios.
+ * El caso solo cambia de profesional cuando un supervisor aprueba el informe.
  */
 export interface TransferCaseDto {
   toProfessionalId: number;
+  /** Motivo de la transferencia */
   reason: string;
+  /** Resumen de la labor realizada */
+  workSummary: string;
+  /** Ponderación */
+  assessment: string;
+  achievements: string;
+  recommendations: string;
+}
+
+export type TransferStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
+export interface TransferPerson {
+  id: number;
+  firstName?: string;
+  firstLastName?: string;
 }
 
 /**
- * A single case transfer history entry
+ * A single case transfer report / history entry
  */
 export interface CaseTransfer {
   id: number;
   caseId: number;
-  fromProfessionalId?: number | null;
-  fromProfessional?: { id: number; firstName?: string; firstLastName?: string; fullName?: string } | null;
-  toProfessionalId: number;
-  toProfessional?: { id: number; firstName?: string; firstLastName?: string; fullName?: string } | null;
+  fromUserId?: number | null;
+  fromUser?: TransferPerson | null;
+  toUserId: number;
+  toUser?: TransferPerson | null;
   reason: string;
+  workSummary?: string | null;
+  assessment?: string | null;
+  achievements?: string | null;
+  recommendations?: string | null;
+  status: TransferStatus;
   transferredById?: number | null;
-  transferredBy?: { id: number; firstName?: string; firstLastName?: string; fullName?: string } | null;
+  transferredBy?: TransferPerson | null;
+  reviewedById?: number | null;
+  reviewedBy?: TransferPerson | null;
+  reviewedAt?: string | null;
+  reviewNote?: string | null;
   createdAt?: string;
+  /** Solo en la lista de pendientes */
+  case?: { id: number; caseNumber?: string; participant?: { firstName?: string; firstLastName?: string } };
 }
 
 export interface CaseTransferListResponse {

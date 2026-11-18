@@ -111,13 +111,19 @@ const getLayoutConfig = (layoutType: string = 'vertical'): LayoutConfig => {
  *
  * No muta el array original.
  */
-const filterMenuByRole = (menuItems: MenuItem[], isAdmin: boolean, isAdminCountry = false): MenuItem[] => {
+const filterMenuByRole = (
+  menuItems: MenuItem[],
+  isAdmin: boolean,
+  isAdminCountry = false,
+  canApproveTransfers = false,
+): MenuItem[] => {
   if (!menuItems) return [];
   return menuItems
+    .filter((item) => !item.approverOnly || isAdmin || isAdminCountry || canApproveTransfers)
     .filter((item) => isAdmin || !item.adminOnly || (isAdminCountry && !!item.countryAdminAllowed))
     .map((item) => {
       if (item.children && item.children.length) {
-        return { ...item, children: filterMenuByRole(item.children, isAdmin, isAdminCountry) };
+        return { ...item, children: filterMenuByRole(item.children, isAdmin, isAdminCountry, canApproveTransfers) };
       }
       return item;
     });

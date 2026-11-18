@@ -80,6 +80,11 @@ export class AdminCasesListComponent implements OnInit, OnDestroy {
   professionals: TransferCandidate[] = [];
   transferToProfessionalId: number | null = null;
   transferReason = '';
+  transferWorkSummary = '';
+  transferAssessment = '';
+  transferAchievements = '';
+  transferRecommendations = '';
+  downloadingTransferPdfId: number | null = null;
   isTransferring = false;
   isLoadingProfessionals = false;
   transferHistory: CaseTransfer[] = [];
@@ -315,11 +320,15 @@ export class AdminCasesListComponent implements OnInit, OnDestroy {
     this.transferTargetCase = caseItem;
     this.transferToProfessionalId = null;
     this.transferReason = '';
+    this.transferWorkSummary = '';
+    this.transferAssessment = '';
+    this.transferAchievements = '';
+    this.transferRecommendations = '';
     this.transferHistory = [];
     this.loadProfessionals();
     this.loadTransferHistory(caseItem.id);
 
-    this.transferModalRef = this.modalService.open(this.transferModal, { centered: true, size: 'lg' });
+    this.transferModalRef = this.modalService.open(this.transferModal, { centered: true, size: 'xl', scrollable: true });
   }
 
   private loadProfessionals(): void {
@@ -363,8 +372,16 @@ export class AdminCasesListComponent implements OnInit, OnDestroy {
       this.notificationService.showWarning('Seleccione el profesional al que se transferirá el caso');
       return;
     }
-    if (!this.transferReason.trim()) {
-      this.notificationService.showWarning('Indique el motivo de la transferencia');
+    const required: [string, string][] = [
+      [this.transferWorkSummary, 'el resumen de la labor realizada'],
+      [this.transferAssessment, 'la ponderación'],
+      [this.transferAchievements, 'los logros'],
+      [this.transferReason, 'el motivo de la transferencia'],
+      [this.transferRecommendations, 'las recomendaciones'],
+    ];
+    const missing = required.find(([value]) => !value.trim());
+    if (missing) {
+      this.notificationService.showWarning(`Complete ${missing[1]}`);
       return;
     }
 
@@ -373,6 +390,10 @@ export class AdminCasesListComponent implements OnInit, OnDestroy {
       .transferCase(this.transferTargetCase.id, {
         toProfessionalId: this.transferToProfessionalId,
         reason: this.transferReason.trim(),
+        workSummary: this.transferWorkSummary.trim(),
+        assessment: this.transferAssessment.trim(),
+        achievements: this.transferAchievements.trim(),
+        recommendations: this.transferRecommendations.trim(),
       })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -386,6 +407,41 @@ export class AdminCasesListComponent implements OnInit, OnDestroy {
           this.isTransferring = false;
         },
       });
+  }
+
+  downloadTransferPdf(entry: CaseTransfer): void {
+    if (this.downloadingTransferPdfId !== null) return;
+    this.downloadingTransferPdfId = entry.id;
+    this.caseService
+      .downloadTransferPdf(entry.caseId, entry.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (blob: Blob) => {
+          const url = URL.createObjectURL(blob);
+          const anchor = document.createElement('a');
+          anchor.href = url;
+          anchor.download = `informe-transferencia-${entry.id}.pdf`;
+          anchor.click();
+          URL.revokeObjectURL(url);
+          this.downloadingTransferPdfId = null;
+        },
+        error: () => {
+          this.downloadingTransferPdfId = null;
+          this.notificationService.showError('No fue posible descargar el informe en PDF');
+        },
+      });
+  }
+
+  getTransferStatusLabel(status: string): string {
+    return status === 'APPROVED' ? 'Aprobado' : status === 'REJECTED' ? 'Rechazado' : 'Pendiente de aprobación';
+  }
+
+  getTransferStatusClass(status: string): string {
+    return status === 'APPROVED'
+      ? 'badge bg-success'
+      : status === 'REJECTED'
+        ? 'badge bg-danger'
+        : 'badge bg-warning text-dark';
   }
 
   getPersonName(person?: { firstName?: string | null; firstLastName?: string | null } | null): string {

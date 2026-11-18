@@ -62,4 +62,9 @@ export class RoleService {
   canTransferCases(): boolean {
     return this.hasAnyRole('ADMIN', 'ADMIN_COUNTRY', 'COORDINADOR', 'SUPERVISOR');
   }
+
+  /** Puede aprobar informes de transferencia: SUPERVISOR, ADMIN o ADMIN_COUNTRY (casos de su país) */
+  canApproveTransfers(): boolean {
+    return this.hasAnyRole('ADMIN', 'ADMIN_COUNTRY', 'SUPERVISOR');
+  }
 }

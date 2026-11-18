@@ -114,6 +114,14 @@ const MENU_ITEMS: MenuItem[] = [
     icon: 'folder',
     link: '/cases/list',
   },
+  {
+    key: 'cases-transfer-approvals',
+    label: 'navigation.transferApprovals',
+    isTitle: false,
+    icon: 'check-circle',
+    link: '/cases/transfer-approvals',
+    approverOnly: true,
+  },
 
   // { key: 'apps', label: 'navigation.appointments', isTitle: true },
   // {
