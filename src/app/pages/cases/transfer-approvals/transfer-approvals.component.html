@@ -1,0 +1,66 @@
+<div class="container-fluid py-3">
+  <h4 class="mb-1"><i class="mdi mdi-check-circle-outline me-2"></i>Aprobación de transferencias</h4>
+  <p class="text-muted">
+    Informes de transferencia pendientes. El caso cambia de profesional solo al aprobar; no puede aprobar quien elaboró el informe.
+  </p>
+
+  @if (isLoading) {
+    <div class="text-center py-5"><span class="spinner-border"></span></div>
+  } @else if (transfers.length === 0) {
+    <div class="alert alert-light border">No hay informes pendientes de aprobación.</div>
+  } @else {
+    @for (transfer of transfers; track transfer.id) {
+      <div class="card mb-3">
+        <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div>
+            <strong>Expediente {{ transfer.case?.caseNumber || transfer.caseId }}</strong>
+            <span class="text-muted ms-2">{{ personName(transfer.case?.participant) }}</span>
+          </div>
+          <div class="small text-muted">
+            {{ transfer.createdAt ? (transfer.createdAt | localizedDate: 'short') : '' }} ·
+            {{ personName(transfer.fromUser) }} → {{ personName(transfer.toUser) }} · elaborado por
+            {{ personName(transfer.transferredBy) }}
+          </div>
+        </div>
+        <div class="card-body">
+          <h6>Resumen de la labor realizada</h6>
+          <p style="white-space: pre-wrap">{{ transfer.workSummary }}</p>
+          <h6>Ponderación</h6>
+          <p style="white-space: pre-wrap">{{ transfer.assessment }}</p>
+          <h6>Logros</h6>
+          <p style="white-space: pre-wrap">{{ transfer.achievements }}</p>
+          <h6>Motivo de la transferencia</h6>
+          <p style="white-space: pre-wrap">{{ transfer.reason }}</p>
+          <h6>Recomendaciones</h6>
+          <p style="white-space: pre-wrap">{{ transfer.recommendations }}</p>
+
+          <label class="form-label fw-semibold" [for]="'note-' + transfer.id">Observación (obligatoria al rechazar)</label>
+          <textarea
+            class="form-control mb-3"
+            rows="2"
+            [id]="'note-' + transfer.id"
+            [ngModel]="notes[transfer.id]"
+            (ngModelChange)="notes[transfer.id] = $event"
+          ></textarea>
+
+          <div class="d-flex flex-wrap gap-2 justify-content-end">
+            <button type="button" class="btn btn-outline-primary" (click)="downloadPdf(transfer)">
+              <i class="mdi mdi-file-pdf-box me-1"></i>PDF
+            </button>
+            <button type="button" class="btn btn-outline-danger" [disabled]="busyId !== null" (click)="reject(transfer)">
+              <i class="mdi mdi-close me-1"></i>Rechazar
+            </button>
+            <button type="button" class="btn btn-success" [disabled]="busyId !== null" (click)="approve(transfer)">
+              @if (busyId === transfer.id) {
+                <span class="spinner-border spinner-border-sm me-1"></span>
+              } @else {
+                <i class="mdi mdi-check me-1"></i>
+              }
+              Aprobar y reasignar
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>

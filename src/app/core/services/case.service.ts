@@ -247,18 +247,62 @@ export class CaseService {
   }
 
   /**
-   * Transfer a case to another professional (SUPERVISOR/COORDINADOR/ADMIN only)
+   * Create the transfer report. The case moves only after a supervisor approves it.
    */
-  transferCase(id: number, dto: TransferCaseDto): Observable<CaseResponse> {
-    return this.http.patch<CaseResponse>(`${this.apiUrl}/${id}/transfer`, dto, { headers: this.getHeaders() }).pipe(
+  transferCase(id: number, dto: TransferCaseDto): Observable<unknown> {
+    return this.http.patch<unknown>(`${this.apiUrl}/${id}/transfer`, dto, { headers: this.getHeaders() }).pipe(
       tap(() => {
-        this.notificationService.showSuccess('Caso transferido correctamente');
+        this.notificationService.showSuccess('Informe de transferencia enviado para aprobación');
       }),
       catchError((error) => {
-        this.notificationService.showError(error.error?.message || 'Error al transferir el caso');
+        this.notificationService.showError(error.error?.message || 'Error al crear el informe de transferencia');
         return throwError(() => error);
       }),
     );
+  }
+
+  /** Informes de transferencia pendientes de aprobación */
+  getPendingTransfers(): Observable<CaseTransfer[]> {
+    return this.http
+      .get<CaseTransferListResponse>(`${this.apiUrl}/transfers/pending`, { headers: this.getHeaders() })
+      .pipe(
+        map((response) => response.data || []),
+        catchError((error) => {
+          this.notificationService.showError(error.error?.message || 'Error al cargar las transferencias pendientes');
+          return throwError(() => error);
+        }),
+      );
+  }
+
+  approveTransfer(caseId: number, transferId: number, reviewNote?: string): Observable<unknown> {
+    return this.http
+      .patch<unknown>(`${this.apiUrl}/${caseId}/transfers/${transferId}/approve`, { reviewNote }, { headers: this.getHeaders() })
+      .pipe(
+        tap(() => this.notificationService.showSuccess('Transferencia aprobada; el caso fue reasignado')),
+        catchError((error) => {
+          this.notificationService.showError(error.error?.message || 'Error al aprobar la transferencia');
+          return throwError(() => error);
+        }),
+      );
+  }
+
+  rejectTransfer(caseId: number, transferId: number, reviewNote: string): Observable<unknown> {
+    return this.http
+      .patch<unknown>(`${this.apiUrl}/${caseId}/transfers/${transferId}/reject`, { reviewNote }, { headers: this.getHeaders() })
+      .pipe(
+        tap(() => this.notificationService.showSuccess('Transferencia rechazada')),
+        catchError((error) => {
+          this.notificationService.showError(error.error?.message || 'Error al rechazar la transferencia');
+          return throwError(() => error);
+        }),
+      );
+  }
+
+  /** Descarga el informe de transferencia en PDF */
+  downloadTransferPdf(caseId: number, transferId: number): Observable<Blob> {
+    const token = this.tokenStorageService.getToken();
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    return this.http.get(`${this.apiUrl}/${caseId}/transfers/${transferId}/pdf`, { headers, responseType: 'blob' });
   }
 
   /**

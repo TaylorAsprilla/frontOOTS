@@ -404,7 +404,40 @@
       </select>
     </div>
     <div class="mb-3">
-      <label class="form-label fw-semibold" for="transferReason">Motivo de la transferencia</label>
+      <label class="form-label fw-semibold" for="transferWorkSummary">Resumen de la labor realizada <span class="text-danger">*</span></label>
+      <textarea
+        id="transferWorkSummary"
+        class="form-control"
+        rows="3"
+        [(ngModel)]="transferWorkSummary"
+        [ngModelOptions]="{ standalone: true }"
+        placeholder="Describa la labor realizada con el participante..."
+      ></textarea>
+    </div>
+    <div class="mb-3">
+      <label class="form-label fw-semibold" for="transferAssessment">Ponderación <span class="text-danger">*</span></label>
+      <textarea
+        id="transferAssessment"
+        class="form-control"
+        rows="3"
+        [(ngModel)]="transferAssessment"
+        [ngModelOptions]="{ standalone: true }"
+        placeholder="Ponderación del caso..."
+      ></textarea>
+    </div>
+    <div class="mb-3">
+      <label class="form-label fw-semibold" for="transferAchievements">Logros <span class="text-danger">*</span></label>
+      <textarea
+        id="transferAchievements"
+        class="form-control"
+        rows="3"
+        [(ngModel)]="transferAchievements"
+        [ngModelOptions]="{ standalone: true }"
+        placeholder="Logros alcanzados..."
+      ></textarea>
+    </div>
+    <div class="mb-3">
+      <label class="form-label fw-semibold" for="transferReason">Motivo de la transferencia <span class="text-danger">*</span></label>
       <textarea
         id="transferReason"
         class="form-control"
@@ -414,14 +447,28 @@
         placeholder="Explique el motivo de la transferencia..."
       ></textarea>
     </div>
+    <div class="mb-3">
+      <label class="form-label fw-semibold" for="transferRecommendations">Recomendaciones <span class="text-danger">*</span></label>
+      <textarea
+        id="transferRecommendations"
+        class="form-control"
+        rows="3"
+        [(ngModel)]="transferRecommendations"
+        [ngModelOptions]="{ standalone: true }"
+        placeholder="Recomendaciones para el nuevo profesional..."
+      ></textarea>
+    </div>
+    <p class="text-muted small">
+      El informe queda <strong>pendiente de aprobación</strong>: el caso cambia de profesional cuando un supervisor lo aprueba.
+    </p>
     <div class="text-end mb-4">
       <button type="button" class="btn btn-warning" [disabled]="isTransferring" (click)="confirmTransfer()">
         @if (isTransferring) {
           <span class="spinner-border spinner-border-sm me-1"></span>
         } @else {
-          <i class="mdi mdi-account-switch me-1"></i>
+          <i class="mdi mdi-send me-1"></i>
         }
-        Transferir Caso
+        Enviar informe para aprobación
       </button>
     </div>
 
@@ -443,17 +490,38 @@
               <th>De</th>
               <th>Para</th>
               <th>Motivo</th>
-              <th>Transferido por</th>
+              <th>Elaborado por</th>
+              <th>Estado</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             @for (entry of transferHistory; track entry.id) {
               <tr>
                 <td>{{ entry.createdAt ? (entry.createdAt | localizedDate: 'short') : '—' }}</td>
-                <td>{{ getPersonName(entry.fromProfessional) }}</td>
-                <td>{{ getPersonName(entry.toProfessional) }}</td>
+                <td>{{ getPersonName(entry.fromUser) }}</td>
+                <td>{{ getPersonName(entry.toUser) }}</td>
                 <td>{{ entry.reason }}</td>
                 <td>{{ getPersonName(entry.transferredBy) }}</td>
+                <td>
+                  <span [class]="getTransferStatusClass(entry.status)">{{ getTransferStatusLabel(entry.status) }}</span>
+                  @if (entry.reviewedBy) {
+                    <div class="small text-muted">{{ getPersonName(entry.reviewedBy) }}</div>
+                  }
+                  @if (entry.reviewNote) {
+                    <div class="small text-muted">{{ entry.reviewNote }}</div>
+                  }
+                </td>
+                <td class="text-end">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    [disabled]="downloadingTransferPdfId === entry.id"
+                    (click)="downloadTransferPdf(entry)"
+                  >
+                    <i class="mdi mdi-file-pdf-box"></i> PDF
+                  </button>
+                </td>
               </tr>
             }
           </tbody>
