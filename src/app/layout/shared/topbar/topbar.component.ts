@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { ProfileAvatarService } from '../../../core/services/profile-avatar.service';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { EventService } from 'src/app/core/services/event.service';
 import { LEFT_SIDEBAR_TYPE_CONDENSED, LEFT_SIDEBAR_TYPE_DEFAULT } from '../config/layout.model';
@@ -40,6 +41,7 @@ export class TopbarComponent implements OnInit {
   searchResults: SearchResultItem[] = [];
   searchUsers: SearchUserItem[] = [];
 
+  readonly profileAvatar = inject(ProfileAvatarService);
   loggedInUser: any = {};
   topnavCollapsed: boolean = false;
 
@@ -59,6 +61,7 @@ export class TopbarComponent implements OnInit {
     this._fetchProfileOptions();
 
     this.loggedInUser = this.authService.currentUser();
+    this.profileAvatar.ensureLoaded();
 
     document.addEventListener('fullscreenchange', this.exitHandler);
     document.addEventListener('webkitfullscreenchange', this.exitHandler);

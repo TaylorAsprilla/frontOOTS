@@ -148,7 +148,7 @@
         >
           <span class="account-user-avatar">
             <img
-              [src]="loggedInUser?.avatar || 'assets/images/users/user-1.jpg'"
+              [src]="profileAvatar.url() || loggedInUser?.avatar || 'assets/images/users/user-1.jpg'"
               alt="user-image"
               class="rounded-circle"
             />

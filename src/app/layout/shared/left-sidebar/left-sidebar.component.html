@@ -3,7 +3,11 @@
   <ngx-simplebar class="h-100">
     <!-- User box -->
     <div class="user-box text-center">
-      <img [src]="loggedInUser?.avatar" alt="user-img" title="Mat Helme" class="rounded-circle avatar-md" />
+      <img
+        [src]="profileAvatar.url() || loggedInUser?.avatar || 'assets/images/users/user-1.jpg'"
+        alt="user-img"
+        class="rounded-circle avatar-md"
+      />
       <div ngbDropdown>
         <a href="javascript: void(0);" class="text-dark h5 mt-2 mb-1 d-block" id="profileMenu" ngbDropdownToggle>{{
           loggedInUser?.name
