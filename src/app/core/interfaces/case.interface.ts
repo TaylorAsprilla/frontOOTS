@@ -448,14 +448,19 @@ export interface CasesByUserResponse {
   }>;
 }
 
-/**
- * Informe de transferencia (formulario 27). Todos los campos son obligatorios.
- * El caso solo cambia de profesional cuando un supervisor aprueba el informe.
- */
+/** Paso 1: solicitud de transferencia (destino y motivo) */
 export interface TransferCaseDto {
   toProfessionalId: number;
   /** Motivo de la transferencia */
   reason: string;
+}
+
+/**
+ * Paso 2: informe de transferencia (formulario 27) que elabora el profesional que
+ * tiene el caso. Todos los campos son obligatorios. El caso solo cambia de
+ * profesional cuando un supervisor aprueba el informe.
+ */
+export interface SubmitTransferReportDto {
   /** Resumen de la labor realizada */
   workSummary: string;
   /** Ponderación */
@@ -464,7 +469,7 @@ export interface TransferCaseDto {
   recommendations: string;
 }
 
-export type TransferStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+export type TransferStatus = 'AWAITING_REPORT' | 'PENDING' | 'APPROVED' | 'REJECTED';
 
 export interface TransferPerson {
   id: number;
@@ -490,6 +495,9 @@ export interface CaseTransfer {
   status: TransferStatus;
   transferredById?: number | null;
   transferredBy?: TransferPerson | null;
+  reportedById?: number | null;
+  reportedBy?: TransferPerson | null;
+  reportedAt?: string | null;
   reviewedById?: number | null;
   reviewedBy?: TransferPerson | null;
   reviewedAt?: string | null;

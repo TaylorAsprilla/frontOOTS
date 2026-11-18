@@ -14,4 +14,6 @@ export interface MenuItem {
   countryAdminAllowed?: boolean;
   /** Solo visible para quienes aprueban transferencias (SUPERVISOR, ADMIN, ADMIN_COUNTRY). */
   approverOnly?: boolean;
+  /** Visible para los profesionales que elaboran informes de transferencia */
+  reporterOnly?: boolean;
 }

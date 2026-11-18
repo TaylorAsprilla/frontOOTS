@@ -80,10 +80,6 @@ export class AdminCasesListComponent implements OnInit, OnDestroy {
   professionals: TransferCandidate[] = [];
   transferToProfessionalId: number | null = null;
   transferReason = '';
-  transferWorkSummary = '';
-  transferAssessment = '';
-  transferAchievements = '';
-  transferRecommendations = '';
   downloadingTransferPdfId: number | null = null;
   isTransferring = false;
   isLoadingProfessionals = false;
@@ -320,10 +316,6 @@ export class AdminCasesListComponent implements OnInit, OnDestroy {
     this.transferTargetCase = caseItem;
     this.transferToProfessionalId = null;
     this.transferReason = '';
-    this.transferWorkSummary = '';
-    this.transferAssessment = '';
-    this.transferAchievements = '';
-    this.transferRecommendations = '';
     this.transferHistory = [];
     this.loadProfessionals();
     this.loadTransferHistory(caseItem.id);
@@ -372,16 +364,8 @@ export class AdminCasesListComponent implements OnInit, OnDestroy {
       this.notificationService.showWarning('Seleccione el profesional al que se transferirá el caso');
       return;
     }
-    const required: [string, string][] = [
-      [this.transferWorkSummary, 'el resumen de la labor realizada'],
-      [this.transferAssessment, 'la ponderación'],
-      [this.transferAchievements, 'los logros'],
-      [this.transferReason, 'el motivo de la transferencia'],
-      [this.transferRecommendations, 'las recomendaciones'],
-    ];
-    const missing = required.find(([value]) => !value.trim());
-    if (missing) {
-      this.notificationService.showWarning(`Complete ${missing[1]}`);
+    if (!this.transferReason.trim()) {
+      this.notificationService.showWarning('Complete el motivo de la transferencia');
       return;
     }
 
@@ -390,10 +374,6 @@ export class AdminCasesListComponent implements OnInit, OnDestroy {
       .transferCase(this.transferTargetCase.id, {
         toProfessionalId: this.transferToProfessionalId,
         reason: this.transferReason.trim(),
-        workSummary: this.transferWorkSummary.trim(),
-        assessment: this.transferAssessment.trim(),
-        achievements: this.transferAchievements.trim(),
-        recommendations: this.transferRecommendations.trim(),
       })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -433,7 +413,13 @@ export class AdminCasesListComponent implements OnInit, OnDestroy {
   }
 
   getTransferStatusLabel(status: string): string {
-    return status === 'APPROVED' ? 'Aprobado' : status === 'REJECTED' ? 'Rechazado' : 'Pendiente de aprobación';
+    return status === 'APPROVED'
+      ? 'Aprobado'
+      : status === 'REJECTED'
+        ? 'Rechazado'
+        : status === 'AWAITING_REPORT'
+          ? 'Informe por elaborar'
+          : 'Pendiente de aprobación';
   }
 
   getTransferStatusClass(status: string): string {
@@ -441,7 +427,9 @@ export class AdminCasesListComponent implements OnInit, OnDestroy {
       ? 'badge bg-success'
       : status === 'REJECTED'
         ? 'badge bg-danger'
-        : 'badge bg-warning text-dark';
+        : status === 'AWAITING_REPORT'
+          ? 'badge bg-info'
+          : 'badge bg-warning text-dark';
   }
 
   getPersonName(person?: { firstName?: string | null; firstLastName?: string | null } | null): string {

@@ -1,0 +1,60 @@
+<div class="container-fluid py-3">
+  <h4 class="mb-1"><i class="mdi mdi-file-document-edit-outline me-2"></i>Informes de transferencia por elaborar</h4>
+  <p class="text-muted">
+    Casos que usted tiene asignados y que se van a transferir. Complete el informe: pasará a supervisión para su aprobación y, al
+    aprobarse, el caso quedará asignado al nuevo profesional.
+  </p>
+
+  @if (isLoading) {
+    <div class="text-center py-5"><span class="spinner-border"></span></div>
+  } @else if (transfers.length === 0) {
+    <div class="alert alert-light border">No tiene informes de transferencia por elaborar.</div>
+  } @else {
+    @for (transfer of transfers; track transfer.id) {
+      <div class="card mb-3">
+        <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div>
+            <strong>Expediente {{ transfer.case?.caseNumber || transfer.caseId }}</strong>
+            <span class="text-muted ms-2">{{ personName(transfer.case?.participant) }}</span>
+          </div>
+          <div class="small text-muted">
+            {{ transfer.createdAt ? (transfer.createdAt | localizedDate: 'short') : '' }} ·
+            {{ personName(transfer.fromUser) }} → {{ personName(transfer.toUser) }} · solicitado por
+            {{ personName(transfer.transferredBy) }}
+          </div>
+        </div>
+        <div class="card-body">
+          <h6>Motivo de la transferencia</h6>
+          <p style="white-space: pre-wrap">{{ transfer.reason }}</p>
+
+          @for (field of fields; track field.key) {
+            <div class="mb-3">
+              <label class="form-label fw-semibold" [for]="field.key + '-' + transfer.id">
+                {{ field.label }} <span class="text-danger">*</span>
+              </label>
+              <textarea
+                class="form-control"
+                rows="3"
+                [id]="field.key + '-' + transfer.id"
+                [placeholder]="field.placeholder"
+                [(ngModel)]="forms[transfer.id][field.key]"
+                [ngModelOptions]="{ standalone: true }"
+              ></textarea>
+            </div>
+          }
+
+          <div class="text-end">
+            <button type="button" class="btn btn-warning" [disabled]="busyId !== null" (click)="submit(transfer)">
+              @if (busyId === transfer.id) {
+                <span class="spinner-border spinner-border-sm me-1"></span>
+              } @else {
+                <i class="mdi mdi-send me-1"></i>
+              }
+              Enviar informe a supervisión
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>

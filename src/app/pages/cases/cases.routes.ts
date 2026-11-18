@@ -38,6 +38,16 @@ export const CASES_ROUTES: Routes = [
     },
   },
   {
+    path: 'transfer-reports',
+    canActivate: [roleGuard(['ADMIN', 'COORDINADOR', 'SUPERVISOR', 'PSICOLOGO', 'ORIENTADOR', 'TRABAJO_SOCIAL'])],
+    loadComponent: () =>
+      import('./transfer-reports/transfer-reports.component').then((m) => m.TransferReportsComponent),
+    title: 'Cases - Transfer reports',
+    data: {
+      breadcrumb: 'Informes de transferencia',
+    },
+  },
+  {
     path: 'create/:participantId',
     canActivate: [roleGuard(['ADMIN', 'ADMIN_COUNTRY', 'COORDINADOR', 'TRABAJO_SOCIAL'])],
     loadComponent: () => import('./create-case/create-case.component').then((m) => m.CreateCaseComponent),

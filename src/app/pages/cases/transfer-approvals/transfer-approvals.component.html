@@ -18,8 +18,8 @@
           </div>
           <div class="small text-muted">
             {{ transfer.createdAt ? (transfer.createdAt | localizedDate: 'short') : '' }} ·
-            {{ personName(transfer.fromUser) }} → {{ personName(transfer.toUser) }} · elaborado por
-            {{ personName(transfer.transferredBy) }}
+            {{ personName(transfer.fromUser) }} → {{ personName(transfer.toUser) }} · informe elaborado por
+            {{ personName(transfer.reportedBy ?? transfer.transferredBy) }}
           </div>
         </div>
         <div class="card-body">

@@ -15,6 +15,7 @@ import {
   CreateCaseDto,
   CaseStatus,
   TransferCaseDto,
+  SubmitTransferReportDto,
   CaseTransfer,
   CaseTransferListResponse,
 } from '../interfaces/case.interface';
@@ -247,18 +248,45 @@ export class CaseService {
   }
 
   /**
-   * Create the transfer report. The case moves only after a supervisor approves it.
+   * Step 1: request the transfer. The current professional then writes the report,
+   * and the case moves only after a supervisor approves it.
    */
   transferCase(id: number, dto: TransferCaseDto): Observable<unknown> {
     return this.http.patch<unknown>(`${this.apiUrl}/${id}/transfer`, dto, { headers: this.getHeaders() }).pipe(
       tap(() => {
-        this.notificationService.showSuccess('Informe de transferencia enviado para aprobación');
+        this.notificationService.showSuccess('Transferencia solicitada; el profesional que tiene el caso debe elaborar el informe');
       }),
       catchError((error) => {
-        this.notificationService.showError(error.error?.message || 'Error al crear el informe de transferencia');
+        this.notificationService.showError(error.error?.message || 'Error al solicitar la transferencia');
         return throwError(() => error);
       }),
     );
+  }
+
+  /** Transferencias cuyo informe debe elaborar el usuario actual */
+  getAwaitingReportTransfers(): Observable<CaseTransfer[]> {
+    return this.http
+      .get<CaseTransferListResponse>(`${this.apiUrl}/transfers/awaiting-report`, { headers: this.getHeaders() })
+      .pipe(
+        map((response) => response.data || []),
+        catchError((error) => {
+          this.notificationService.showError(error.error?.message || 'Error al cargar los informes por elaborar');
+          return throwError(() => error);
+        }),
+      );
+  }
+
+  /** Step 2: the professional who holds the case writes the transfer report */
+  submitTransferReport(caseId: number, transferId: number, dto: SubmitTransferReportDto): Observable<unknown> {
+    return this.http
+      .patch<unknown>(`${this.apiUrl}/${caseId}/transfers/${transferId}/report`, dto, { headers: this.getHeaders() })
+      .pipe(
+        tap(() => this.notificationService.showSuccess('Informe enviado a supervisión para su aprobación')),
+        catchError((error) => {
+          this.notificationService.showError(error.error?.message || 'Error al enviar el informe de transferencia');
+          return throwError(() => error);
+        }),
+      );
   }
 
   /** Informes de transferencia pendientes de aprobación */

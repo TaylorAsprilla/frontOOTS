@@ -404,39 +404,6 @@
       </select>
     </div>
     <div class="mb-3">
-      <label class="form-label fw-semibold" for="transferWorkSummary">Resumen de la labor realizada <span class="text-danger">*</span></label>
-      <textarea
-        id="transferWorkSummary"
-        class="form-control"
-        rows="3"
-        [(ngModel)]="transferWorkSummary"
-        [ngModelOptions]="{ standalone: true }"
-        placeholder="Describa la labor realizada con el participante..."
-      ></textarea>
-    </div>
-    <div class="mb-3">
-      <label class="form-label fw-semibold" for="transferAssessment">Ponderación <span class="text-danger">*</span></label>
-      <textarea
-        id="transferAssessment"
-        class="form-control"
-        rows="3"
-        [(ngModel)]="transferAssessment"
-        [ngModelOptions]="{ standalone: true }"
-        placeholder="Ponderación del caso..."
-      ></textarea>
-    </div>
-    <div class="mb-3">
-      <label class="form-label fw-semibold" for="transferAchievements">Logros <span class="text-danger">*</span></label>
-      <textarea
-        id="transferAchievements"
-        class="form-control"
-        rows="3"
-        [(ngModel)]="transferAchievements"
-        [ngModelOptions]="{ standalone: true }"
-        placeholder="Logros alcanzados..."
-      ></textarea>
-    </div>
-    <div class="mb-3">
       <label class="form-label fw-semibold" for="transferReason">Motivo de la transferencia <span class="text-danger">*</span></label>
       <textarea
         id="transferReason"
@@ -447,19 +414,9 @@
         placeholder="Explique el motivo de la transferencia..."
       ></textarea>
     </div>
-    <div class="mb-3">
-      <label class="form-label fw-semibold" for="transferRecommendations">Recomendaciones <span class="text-danger">*</span></label>
-      <textarea
-        id="transferRecommendations"
-        class="form-control"
-        rows="3"
-        [(ngModel)]="transferRecommendations"
-        [ngModelOptions]="{ standalone: true }"
-        placeholder="Recomendaciones para el nuevo profesional..."
-      ></textarea>
-    </div>
     <p class="text-muted small">
-      El informe queda <strong>pendiente de aprobación</strong>: el caso cambia de profesional cuando un supervisor lo aprueba.
+      Pasos: (1) se solicita la transferencia; (2) el profesional que tiene el caso actualmente elabora el informe de transferencia;
+      (3) un supervisor aprueba; (4) al aprobarse, el caso queda asignado al nuevo profesional.
     </p>
     <div class="text-end mb-4">
       <button type="button" class="btn btn-warning" [disabled]="isTransferring" (click)="confirmTransfer()">
@@ -468,7 +425,7 @@
         } @else {
           <i class="mdi mdi-send me-1"></i>
         }
-        Enviar informe para aprobación
+        Solicitar transferencia
       </button>
     </div>
 
@@ -490,7 +447,7 @@
               <th>De</th>
               <th>Para</th>
               <th>Motivo</th>
-              <th>Elaborado por</th>
+              <th>Solicitado por</th>
               <th>Estado</th>
               <th></th>
             </tr>
