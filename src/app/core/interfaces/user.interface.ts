@@ -89,6 +89,10 @@ export interface UserInfoInterface {
   email?: string;
   celular?: string;
   foto?: string;
+  /** true si el usuario tiene foto de perfil en el servidor */
+  hasAvatar?: boolean;
+  /** Fecha del último cambio de foto (para refrescarla si cambia) */
+  avatarUpdatedAt?: string | null;
   cargo?: string;
   ciudad?: string;
   pais?: string;

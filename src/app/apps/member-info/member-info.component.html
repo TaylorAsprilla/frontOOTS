@@ -1,11 +1,15 @@
 <div class="text-center card">
   <div class="card-body">
     <div class="pt-2 pb-2">
-      <img
-        [src]="user.foto || 'assets/images/users/hombre-1.jpg'"
-        class="rounded-circle img-thumbnail avatar-xl"
+      <app-user-avatar
+        [userId]="user.id"
+        [hasAvatar]="!!user.hasAvatar"
+        [version]="user.avatarUpdatedAt"
+        [fallback]="user.foto || 'assets/images/users/hombre-1.jpg'"
         [alt]="user.primerNombre || 'Usuario'"
-      />
+        imgClass="rounded-circle img-thumbnail avatar-xl"
+        imgStyle="object-fit: cover"
+      ></app-user-avatar>
 
       <h4 class="mt-3 mb-1">
         <span class="text-secondary fw-semibold">{{ nombreCompleto }}</span>
