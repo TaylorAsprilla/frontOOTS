@@ -11,6 +11,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { BreadcrumbItem } from '../../../shared/page-title/page-title.model';
 import { UpdateProfileDto } from '../../../core/interfaces/auth.interface';
+import { AvatarTourService } from '../../../core/services/avatar-tour.service';
 import {
   AVATAR_ACCEPTED_TYPES,
   AVATAR_MAX_SOURCE_MB,
@@ -30,6 +31,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   private readonly notificationService = inject(NotificationService);
   private readonly destroy$ = new Subject<void>();
   readonly profileAvatar = inject(ProfileAvatarService);
+  readonly avatarTour = inject(AvatarTourService);
   readonly avatarAccept = AVATAR_ACCEPTED_TYPES.join(',');
   isUploadingAvatar = false;
 

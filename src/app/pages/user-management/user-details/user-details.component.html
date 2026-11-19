@@ -142,13 +142,15 @@
         <div class="text-center mb-4">
           <div class="user-avatar-wrapper mb-3">
             <div class="avatar-xl mx-auto">
-              <img
-                [src]="selectedUser.foto || 'assets/images/users/avatar-1.jpg'"
+              <app-user-avatar
+                [userId]="selectedUser.id"
+                [hasAvatar]="!!selectedUser.hasAvatar"
+                [version]="selectedUser.avatarUpdatedAt"
+                [fallback]="selectedUser.foto || 'assets/images/users/avatar-1.jpg'"
                 alt="User Avatar"
-                class="rounded-circle img-thumbnail"
-                style="width: 120px; height: 120px; object-fit: cover"
-                onerror="this.src = 'assets/images/users/avatar-1.jpg'"
-              />
+                imgClass="rounded-circle img-thumbnail"
+                imgStyle="width: 120px; height: 120px; object-fit: cover"
+              ></app-user-avatar>
             </div>
           </div>
           <h4 class="mb-1 fw-bold">

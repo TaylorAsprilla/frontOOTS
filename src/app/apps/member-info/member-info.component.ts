@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UserInfoInterface } from 'src/app/core/interfaces/user.interface';
+import { UserAvatarComponent } from 'src/app/shared/components/user-avatar/user-avatar.component';
 
 @Component({
   selector: 'app-contact-member-info',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslocoModule],
+  imports: [CommonModule, RouterModule, TranslocoModule, UserAvatarComponent],
   templateUrl: './member-info.component.html',
   styleUrls: ['./member-info.component.scss'],
 })

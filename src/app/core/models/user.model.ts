@@ -24,6 +24,8 @@ export interface UserBackendResponse {
   mitaNumber?: number | null;
   participantCount?: number | null;
   caseCount?: number | null;
+  hasAvatar?: boolean;
+  avatarUpdatedAt?: string | null;
   createdAt: string; // ISO string from backend
   updatedAt: string; // ISO string from backend
 }
@@ -61,6 +63,8 @@ export class UserModel {
     public flagUrl: string | null,
     public participantCount: number,
     public caseCount: number,
+    public hasAvatar: boolean = false,
+    public avatarUpdatedAt: string | null = null,
   ) {}
 
   /**
@@ -95,6 +99,8 @@ export class UserModel {
       response.country?.flagUrl ?? null,
       response.participantCount ?? 0,
       response.caseCount ?? 0,
+      !!response.hasAvatar,
+      response.avatarUpdatedAt ?? null,
     );
   }
 

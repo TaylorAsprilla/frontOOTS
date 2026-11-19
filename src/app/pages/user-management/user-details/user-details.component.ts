@@ -7,6 +7,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { PageTitleComponent } from 'src/app/shared/page-title/page-title.component';
 import { MemberInfoComponent } from 'src/app/apps/member-info/member-info.component';
 import { UserInfoInterface } from 'src/app/core/interfaces/user.interface';
+import { UserAvatarComponent } from 'src/app/shared/components/user-avatar/user-avatar.component';
 import { BreadcrumbItem } from 'src/app/shared/page-title/page-title.model';
 import { UserService } from 'src/app/core/services/user.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
@@ -19,6 +20,7 @@ import { passwordMatchValidator } from 'src/app/core/validators/password-match.v
   selector: 'app-user-details',
   standalone: true,
   imports: [
+    UserAvatarComponent,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -259,6 +261,8 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
         email: user.email,
         celular: user.phoneNumber,
         foto: this.getGenericAvatar(index),
+        hasAvatar: user.hasAvatar,
+        avatarUpdatedAt: user.avatarUpdatedAt,
         cargo: user.position || 'Sin cargo',
         ciudad: user.city || '',
         pais: user.countryName || '',

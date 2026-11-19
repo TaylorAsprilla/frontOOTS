@@ -23,9 +23,15 @@ export class ProfileAvatarService {
 
   /** URL local de la foto, o null si el usuario no tiene */
   readonly url = signal<string | null>(null);
-  /** true cuando ya se consultó al servidor si el usuario tiene foto */
+  /** Aumenta cada vez que el usuario cambia o quita su foto (para refrescar otras vistas) */
+  readonly version = signal(0);
+  /** true cuando ya se consultó al servidor si el usuario tiene foto y si vio la guía */
   readonly loaded = signal(false);
+  /** true si el usuario ya vio la guía de la foto (guardado en la base de datos) */
+  readonly tourSeen = signal(true);
   private loadedForUserId: number | null = null;
+  private photoChecked = false;
+  private statusChecked = false;
 
   private headers(): HttpHeaders {
     return new HttpHeaders({ Authorization: `Bearer ${this.tokenStorage.getToken()}` });
@@ -43,17 +49,46 @@ export class ProfileAvatarService {
     if (this.loadedForUserId === userId) return;
     this.loadedForUserId = userId;
     this.loaded.set(false);
+    this.photoChecked = false;
+    this.statusChecked = false;
     this.reload();
+    this.loadStatus();
+  }
+
+  private loadStatus(): void {
+    this.http
+      .get<{ data?: { tourSeen: boolean }; tourSeen?: boolean }>(`${this.apiUrl}/status`, { headers: this.headers() })
+      .subscribe({
+        next: (response) => {
+          this.tourSeen.set(!!(response.data?.tourSeen ?? response.tourSeen));
+          this.statusChecked = true;
+          this.markLoadedIfReady();
+        },
+        // Si falla, no se sabe si ya la vio: no se muestra la guía
+        error: () => this.tourSeen.set(true),
+      });
+  }
+
+  /** Guarda en la base de datos que el usuario ya vio la guía (no vuelve a aparecer) */
+  markTourSeen(): void {
+    this.tourSeen.set(true);
+    this.http.put(`${this.apiUrl}/tour-seen`, null, { headers: this.headers() }).subscribe({ error: () => undefined });
   }
 
   reload(): void {
     this.http
-      .get(this.apiUrl, { headers: this.headers(), responseType: 'blob', observe: 'response' })
+      .get(this.apiUrl, {
+        headers: this.headers(),
+        params: { t: Date.now() }, // evita la copia en caché del navegador tras cambiar la foto
+        responseType: 'blob',
+        observe: 'response',
+      })
       .subscribe({
         next: (response: HttpResponse<Blob>) => {
           // 204: el usuario no tiene foto
           this.setUrl(response.status === 200 && response.body ? URL.createObjectURL(response.body) : null);
-          this.loaded.set(true);
+          this.photoChecked = true;
+          this.markLoadedIfReady();
         },
         // Si falla la consulta no se sabe si tiene foto: no se muestra el aviso
         error: () => this.setUrl(null),
@@ -63,11 +98,17 @@ export class ProfileAvatarService {
   upload(image: Blob): Observable<unknown> {
     const form = new FormData();
     form.append('file', image, 'avatar.jpg');
-    return this.http.put(this.apiUrl, form, { headers: this.headers() }).pipe(tap(() => this.reload()));
+    return this.http.put(this.apiUrl, form, { headers: this.headers() }).pipe(tap(() => {
+        this.version.update((v) => v + 1);
+        this.reload();
+      }));
   }
 
   remove(): Observable<unknown> {
-    return this.http.delete(this.apiUrl, { headers: this.headers() }).pipe(tap(() => this.setUrl(null)));
+    return this.http.delete(this.apiUrl, { headers: this.headers() }).pipe(tap(() => {
+        this.version.update((v) => v + 1);
+        this.setUrl(null);
+      }));
   }
 
   /** Recorta al centro (cuadrado) y reduce a 400 px en JPEG para que pese poco */
@@ -94,6 +135,11 @@ export class ProfileAvatarService {
     return await new Promise<Blob>((resolve, reject) =>
       canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('No se pudo procesar la imagen'))), 'image/jpeg', 0.88),
     );
+  }
+
+  /** `loaded` solo es true cuando se conocen la foto y el estado de la guía (evita parpadeos) */
+  private markLoadedIfReady(): void {
+    if (this.photoChecked && this.statusChecked) this.loaded.set(true);
   }
 
   private setUrl(next: string | null): void {
