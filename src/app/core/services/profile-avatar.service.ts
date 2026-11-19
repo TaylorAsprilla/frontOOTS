@@ -23,6 +23,8 @@ export class ProfileAvatarService {
 
   /** URL local de la foto, o null si el usuario no tiene */
   readonly url = signal<string | null>(null);
+  /** true cuando ya se consultó al servidor si el usuario tiene foto */
+  readonly loaded = signal(false);
   private loadedForUserId: number | null = null;
 
   private headers(): HttpHeaders {
@@ -34,11 +36,13 @@ export class ProfileAvatarService {
     const userId = this.auth.currentUser()?.id ?? null;
     if (userId === null) {
       this.setUrl(null);
+      this.loaded.set(false);
       this.loadedForUserId = null;
       return;
     }
     if (this.loadedForUserId === userId) return;
     this.loadedForUserId = userId;
+    this.loaded.set(false);
     this.reload();
   }
 
@@ -49,7 +53,9 @@ export class ProfileAvatarService {
         next: (response: HttpResponse<Blob>) => {
           // 204: el usuario no tiene foto
           this.setUrl(response.status === 200 && response.body ? URL.createObjectURL(response.body) : null);
+          this.loaded.set(true);
         },
+        // Si falla la consulta no se sabe si tiene foto: no se muestra el aviso
         error: () => this.setUrl(null),
       });
   }

@@ -15,7 +15,9 @@ import { SimplebarAngularModule } from 'simplebar-angular';
 import { RouterModule } from '@angular/router';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslocoModule } from '@ngneat/transloco';
+import { JoyrideModule } from 'ngx-joyride';
 import { CountrySelectorComponent } from '../country-selector/country-selector.component';
+import { AvatarOnboardingComponent } from '../avatar-onboarding/avatar-onboarding.component';
 
 @Component({
   selector: 'app-topbar',
@@ -29,6 +31,8 @@ import { CountrySelectorComponent } from '../country-selector/country-selector.c
     NgbDropdownModule,
     TranslocoModule,
     CountrySelectorComponent,
+    AvatarOnboardingComponent,
+    JoyrideModule,
   ],
 })
 export class TopbarComponent implements OnInit {
