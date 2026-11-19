@@ -19,10 +19,11 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@ngneat/transloco';
+import { JoyrideModule } from 'ngx-joyride';
 
 beforeEach(() => {
   TestBed.configureTestingModule({
-    imports: [TranslocoTestingModule.forRoot({ langs: {}, translocoConfig: { availableLangs: ['es-CO'], defaultLang: 'es-CO' } })],
+    imports: [JoyrideModule.forRoot(), TranslocoTestingModule.forRoot({ langs: {}, translocoConfig: { availableLangs: ['es-CO'], defaultLang: 'es-CO' } })],
     providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
   });
 });

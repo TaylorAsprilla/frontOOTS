@@ -26,6 +26,10 @@
               class="btn btn-outline-primary btn-sm me-1"
               [disabled]="isUploadingAvatar"
               (click)="avatarInput.click()"
+              joyrideStep="avatarChangeStep"
+              title="Cambiar foto"
+              text="Pulsa este botón y elige una imagen JPG, PNG o WebP. Se recorta sola y aparecerá en el menú. Puedes cambiarla o quitarla cuando quieras."
+              stepPosition="bottom"
             >
               @if (isUploadingAvatar) {
                 <span class="spinner-border spinner-border-sm me-1"></span>

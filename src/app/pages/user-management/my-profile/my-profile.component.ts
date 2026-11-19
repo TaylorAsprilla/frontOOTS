@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
+import { JoyrideModule } from 'ngx-joyride';
 import { Subject, takeUntil } from 'rxjs';
 
 import { AuthenticationService } from '../../../core/services/auth.service';
@@ -19,7 +20,7 @@ import {
 @Component({
   selector: 'app-my-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslocoModule, PageTitleComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslocoModule, PageTitleComponent, JoyrideModule],
   templateUrl: './my-profile.component.html',
   styleUrls: ['./my-profile.component.scss'],
 })
